@@ -3,7 +3,6 @@
  */
 import { createElement } from '@wordpress/element';
 /* eslint-disable @woocommerce/dependency-group */
-// @ts-expect-error missing type.
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 // @ts-ignore No types for this exist yet.

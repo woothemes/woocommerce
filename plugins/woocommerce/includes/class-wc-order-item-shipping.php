@@ -157,11 +157,11 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 	 * Set tax_status.
 	 *
 	 * @param string $value Tax status.
+	 * @deprecated 9.7.0 order shipping lines don't support setting tax status, hook into the shipping method instead.
+	 *
+	 * @return void
 	 */
 	public function set_tax_status( $value ) {
-		if ( in_array( $value, array( 'taxable', 'none' ), true ) ) {
-			$this->set_prop( 'tax_status', $value );
-		}
 	}
 
 	/**
@@ -176,7 +176,6 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 		$this->set_total( $shipping_rate->get_cost() );
 		$this->set_taxes( $shipping_rate->get_taxes() );
 		$this->set_meta_data( $shipping_rate->get_meta_data() );
-		$this->set_tax_status( $shipping_rate->get_tax_status() );
 	}
 
 	/*
@@ -286,7 +285,8 @@ class WC_Order_Item_Shipping extends WC_Order_Item {
 	 * @return string
 	 */
 	public function get_tax_status( $context = 'view' ) {
-		return $this->get_prop( 'tax_status', $context );
+		$shipping_method = WC_Shipping_Zones::get_shipping_method( $this->get_instance_id() );
+		return $shipping_method ? $shipping_method->get_option( 'tax_status' ) : 'taxable';
 	}
 
 	/*

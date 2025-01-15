@@ -3,12 +3,13 @@
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { useCallback, useEffect, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import avatarIcon from './icon-avatar.svg';
+import { emailPreviewNonce } from './settings-email-preview-nonce';
 
 type EmailPreviewHeaderProps = {
 	emailType: string;
@@ -24,21 +25,24 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 	const [ fromName, setFromName ] = useState( '' );
 	const [ fromAddress, setFromAddress ] = useState( '' );
 	const [ subject, setSubject ] = useState( '' );
-	let subjectEl: Element | null = null;
+	const subjectEl = useRef< Element | null >( null );
+	const nonce = emailPreviewNonce();
 
 	const fetchSubject = useCallback( async () => {
 		try {
 			const response: EmailPreviewSubjectResponse = await apiFetch( {
-				path: `wc-admin-email/settings/email/preview-subject?type=${ emailType }`,
+				path: `wc-admin-email/settings/email/preview-subject?type=${ emailType }&nonce=${ nonce }`,
 			} );
 			setSubject( response.subject );
-			if ( subjectEl ) {
-				subjectEl.dispatchEvent( new Event( 'subject-updated' ) );
+			if ( subjectEl.current ) {
+				subjectEl.current.dispatchEvent(
+					new Event( 'subject-updated' )
+				);
 			}
 		} catch ( e ) {
 			setSubject( '' );
 		}
-	}, [ emailType ] );
+	}, [ emailType, nonce, subjectEl ] );
 
 	useEffect( () => {
 		const fromNameEl = document.getElementById(
@@ -82,24 +86,27 @@ export const EmailPreviewHeader: React.FC< EmailPreviewHeaderProps > = ( {
 
 	useEffect( () => {
 		fetchSubject();
-	}, [ emailType, fetchSubject ] );
+	}, [ fetchSubject ] );
 
 	useEffect( () => {
-		subjectEl = document.querySelector(
+		subjectEl.current = document.querySelector(
 			'[id^="woocommerce_"][id$="_subject"]'
 		);
 
-		if ( ! subjectEl ) {
+		if ( ! subjectEl.current ) {
 			return;
 		}
 
-		subjectEl.addEventListener( 'transient-saved', fetchSubject );
+		subjectEl.current.addEventListener( 'transient-saved', fetchSubject );
 
 		return () => {
-			if ( ! subjectEl ) {
+			if ( ! subjectEl.current ) {
 				return;
 			}
-			subjectEl.removeEventListener( 'transient-saved', fetchSubject );
+			subjectEl.current.removeEventListener(
+				'transient-saved',
+				fetchSubject
+			);
 		};
 	}, [ fetchSubject ] );
 

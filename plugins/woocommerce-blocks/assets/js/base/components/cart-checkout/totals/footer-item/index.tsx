@@ -39,11 +39,6 @@ export interface TotalsFooterItemProps {
 	 */
 	values: LooselyMustHave< CartResponseTotals, 'total_price' | 'total_tax' >;
 	className?: string;
-
-	/**
-	 * The label to display for the total. Can be overridden by filter.
-	 */
-	label: React.ReactNode;
 }
 
 /**
@@ -57,7 +52,6 @@ const TotalsFooterItem = ( {
 	currency,
 	values,
 	className,
-	label,
 }: TotalsFooterItemProps ): JSX.Element => {
 	const SHOW_TAXES =
 		getSetting< boolean >( 'taxesEnabled', true ) &&
@@ -74,9 +68,9 @@ const TotalsFooterItem = ( {
 	// eslint-disable-next-line no-unused-vars
 	const { receiveCart, ...cart } = useStoreCart();
 
-	const labelText = applyCheckoutFilter( {
+	const label = applyCheckoutFilter( {
 		filterName: 'totalLabel',
-		defaultValue: label,
+		defaultValue: __( 'Total', 'woocommerce' ),
 		extensions: cart.extensions,
 		arg: { cart },
 	} );
@@ -126,7 +120,7 @@ const TotalsFooterItem = ( {
 				className
 			) }
 			currency={ currency }
-			label={ labelText }
+			label={ label }
 			value={ value }
 			description={
 				SHOW_TAXES &&

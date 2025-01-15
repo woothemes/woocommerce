@@ -7,11 +7,9 @@ import {
 	Notice,
 	ToggleControl,
 } from '@wordpress/components';
-import { getAdminLink } from '@woocommerce/settings';
 import apiFetch from '@wordpress/api-fetch';
 import {
 	useState,
-	createElement,
 	useEffect,
 	createInterpolateElement,
 } from '@wordpress/element';
@@ -22,6 +20,7 @@ import { CollapsibleContent } from '@woocommerce/components';
  * Internal dependencies
  */
 import { SETTINGS_SLOT_FILL_CONSTANT } from '../../settings/settings-slots';
+import { BlueprintUploadDropzone } from '../components/BlueprintUploadDropzone';
 import './style.scss';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
@@ -125,50 +124,43 @@ const Blueprint = () => {
 					{ error }
 				</Notice>
 			) }
-			<p className="blueprint-settings-slotfill-description">
-				{ __(
-					'Blueprints are setup files that contain all the installation instructions. including plugins, themes and settings. Ease the setup process, allow teams to apply each others’ changes and much more.',
-					'woocommerce'
+			<h3>Import Blueprint</h3>
+			<p>
+				{ createInterpolateElement(
+					__(
+						'Import your blueprint schema to ease the setup process for your store or allow teams to apply each others’ changes. You can import only one Blueprint at the time. Want to know more? <docLink/>',
+						'woocommerce'
+					),
+					{
+						docLink: (
+							<a
+								href="#tba"
+								className="woocommerce-admin-inline-documentation-link"
+							>
+								{ __(
+									'Check our documentation',
+									'woocommerce'
+								) }
+							</a>
+						),
+					}
 				) }
 			</p>
-			<p>
-				<strong>
-					Please{ ' ' }
-					<a
-						href="https://automattic.survey.fm/woocommerce-blueprint-survey"
-						target="_blank"
-						rel="noreferrer"
-					>
-						complete the survey
-					</a>{ ' ' }
-					to help shape the direction of this feature!
-				</strong>
-			</p>
-			<h3>Import</h3>
-			<p>
-				You can import the schema on the{ ' ' }
-				<a
-					href={ getAdminLink(
-						'admin.php?page=wc-admin&path=%2Fsetup-wizard&step=intro-builder'
-					) }
-				>
-					builder setup page
-				</a>
-				{ ', or use the import WP CLI command ' }
-				<br />
-				<code>wp wc blueprint import path-to-woo-blueprint.json</code>.
-			</p>
+			<BlueprintUploadDropzone />
 			<p></p>
 			<h3>{ __( 'Export Blueprint', 'woocommerce' ) }</h3>
 			<p className="export-intro">
 				{ createInterpolateElement(
 					__(
-						'Export your blueprint schema. Select the options you want to export, then click on "Export". Want to know more? <docLink/> ',
+						'Export your blueprint schema. Select the options you want to export, then click on “Export”. Want to know more? <docLink/> ',
 						'woocommerce'
 					),
 					{
 						docLink: (
-							<a href="#tba">
+							<a
+								href="#tba"
+								className="woocommerce-admin-inline-documentation-link"
+							>
 								{ __(
 									'Check our documentation',
 									'woocommerce'
@@ -218,7 +210,7 @@ const Blueprint = () => {
 			</div>
 			<br></br>
 			<Button
-				isPrimary
+				variant="primary"
 				onClick={ () => {
 					const selectedSteps = Object.entries( checkedState ).reduce(
 						( acc, [ groupId, groupState ] ) => {

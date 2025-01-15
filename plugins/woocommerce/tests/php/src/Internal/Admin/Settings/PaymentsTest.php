@@ -9,14 +9,18 @@ use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestion
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions as ExtensionSuggestions;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
 use PHPUnit\Framework\MockObject\MockObject;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
+use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
+use WC_Gateway_COD;
+use WC_Gateway_Paypal;
 
 /**
  * Payments settings service test.
  *
  * @class Payments
  */
-class PaymentsTest extends WC_REST_Unit_Test_Case {
+class PaymentsTest extends WC_Unit_Test_Case {
 
 	/**
 	 * @var Payments
@@ -109,11 +113,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// All are WooCommerce core gateways.
 		$gateways = array(
-			new FakePaymentGateway( 'paypal', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
-			new FakePaymentGateway( 'bacs', array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( 'cheque', array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( 'cod', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_Cheque::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_COD::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 		);
 		$this->mock_providers
 			->expects( $this->atLeastOnce() )
@@ -130,11 +134,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			->willReturn(
 				array_flip(
 					array(
-						'paypal',
+						WC_Gateway_Paypal::ID,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-						'bacs',
-						'cheque',
-						'cod',
+						WC_Gateway_BACS::ID,
+						WC_Gateway_Cheque::ID,
+						WC_Gateway_COD::ID,
 					)
 				)
 			);
@@ -153,7 +157,7 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 		$this->assertCount( 5, $data );
 		// Because the core registers the PayPal PG after the offline PMs, the order we expect is this.
 		$this->assertSame(
-			array( 'paypal', PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, 'bacs', 'cheque', 'cod' ),
+			array( WC_Gateway_Paypal::ID, PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP, WC_Gateway_BACS::ID, WC_Gateway_Cheque::ID, WC_Gateway_COD::ID ),
 			array_column( $data, 'id' )
 		);
 
@@ -235,11 +239,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 
 		// All are WooCommerce core gateways.
 		$gateways = array(
-			new FakePaymentGateway( 'paypal', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_Paypal::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 			// The offline PMs.
-			new FakePaymentGateway( 'bacs', array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( 'cheque', array( 'plugin_slug' => 'woocommerce' ) ),
-			new FakePaymentGateway( 'cod', array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_BACS::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_Cheque::ID, array( 'plugin_slug' => 'woocommerce' ) ),
+			new FakePaymentGateway( WC_Gateway_COD::ID, array( 'plugin_slug' => 'woocommerce' ) ),
 		);
 		$this->mock_providers
 			->expects( $this->atLeastOnce() )
@@ -258,11 +262,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 					array(
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
 						PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-						'paypal',
+						WC_Gateway_Paypal::ID,
 						PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-						'bacs',
-						'cheque',
-						'cod',
+						WC_Gateway_BACS::ID,
+						WC_Gateway_Cheque::ID,
+						WC_Gateway_COD::ID,
 					)
 				)
 			);
@@ -353,11 +357,11 @@ class PaymentsTest extends WC_REST_Unit_Test_Case {
 			array(
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion1',
 				PaymentProviders::SUGGESTION_ORDERING_PREFIX . 'suggestion2',
-				'paypal',
+				WC_Gateway_Paypal::ID,
 				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
-				'bacs',
-				'cheque',
-				'cod',
+				WC_Gateway_BACS::ID,
+				WC_Gateway_Cheque::ID,
+				WC_Gateway_COD::ID,
 			),
 			array_column( $data, 'id' )
 		);

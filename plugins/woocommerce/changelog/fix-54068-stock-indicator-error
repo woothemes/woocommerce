@@ -1,0 +1,5 @@
+Significance: patch
+Type: fix
+Comment: Fix Stock Indicator not loading when "experimental-blocks" is disabled
+
+

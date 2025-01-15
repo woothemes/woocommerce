@@ -72,7 +72,10 @@ const setGroupBlockLayoutByThumbnailsPosition = (
 ): void => {
 	const block = select( 'core/block-editor' ).getBlock( clientId );
 	block?.innerBlocks.forEach( ( innerBlock ) => {
-		if ( innerBlock.name === 'core/group' ) {
+		if (
+			innerBlock.name === 'core/group' &&
+			innerBlock.attributes.metadata.name === 'Gallery Area'
+		) {
 			updateBlockAttributes(
 				{
 					layout: getGroupLayoutAttributes( thumbnailsPosition ),

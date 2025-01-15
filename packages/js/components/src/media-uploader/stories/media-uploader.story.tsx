@@ -159,6 +159,6 @@ export const ButtonWithOnlyIcon: React.FC = () => {
 };
 
 export default {
-	title: 'WooCommerce Admin/components/MediaUploader',
+	title: 'Components/MediaUploader',
 	component: Basic,
 };

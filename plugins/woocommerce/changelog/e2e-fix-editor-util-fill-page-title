@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: fix the fillPageTitle in editor util to fulfill the latest update in Gutenberg 19.9-nightly

@@ -64,7 +64,7 @@ export const isIncentiveDismissedInContext = (
 };
 
 /**
- * Handles enabling WooCommerce Payments and redirection based on Jetpack connection status.
+ * Handles enabling WooPayments and redirection based on Jetpack connection status.
  */
 export const parseScriptTag = ( elementId: string ) => {
 	const scriptTag = document.getElementById( elementId );
@@ -73,6 +73,16 @@ export const parseScriptTag = ( elementId: string ) => {
 
 export const isWooPayments = ( id: string ) => {
 	return [ '_wc_pes_woopayments', 'woocommerce_payments' ].includes( id );
+};
+
+/**
+ * Checks whether a provider is WooPayments and that it is eligible for WooPay.
+ */
+export const isWooPayEligible = ( provider: PaymentProvider ) => {
+	return (
+		isWooPayments( provider.id ) &&
+		( provider.tags?.includes( 'woopay_eligible' ) || false )
+	);
 };
 
 export const getWooPaymentsTestDriveAccountLink = () => {

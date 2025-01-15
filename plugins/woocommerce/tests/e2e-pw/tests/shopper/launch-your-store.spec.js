@@ -1,7 +1,6 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
 const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
-const { tags } = require( '../../fixtures/fixtures' );
 
 async function runComingSoonTests( themeContext = '' ) {
 	const testSuffix = themeContext ? ` (${ themeContext })` : '';
@@ -73,51 +72,43 @@ async function runComingSoonTests( themeContext = '' ) {
 	} );
 }
 
-test.describe(
-	'Launch Your Store front end - logged out',
-	{ tag: tags.SKIP_ON_WPCOM },
-	() => {
-		test.afterAll( async ( { baseURL } ) => {
-			try {
-				await setOption(
-					request,
-					baseURL,
-					'woocommerce_coming_soon',
-					'no'
-				);
-			} catch ( error ) {
-				console.log( error );
-			}
-		} );
-
-		test.describe( 'Block Theme (Twenty Twenty Four)', () => {
-			test.beforeAll( async ( { baseURL } ) => {
-				await activateTheme( baseURL, 'twentytwentyfour' );
-			} );
-
-			test.afterAll( async ( { baseURL } ) => {
-				// Reset theme to the default.
-				await activateTheme( baseURL, DEFAULT_THEME );
-			} );
-
-			runComingSoonTests( test.step, test.use );
-		} );
-
-		test.describe( 'Classic Theme (Storefront)', () => {
-			test.beforeAll( async ( { baseURL } ) => {
-				await activateTheme( baseURL, 'storefront' );
-			} );
-
-			test.afterAll( async ( { baseURL } ) => {
-				// Reset theme to the default.
-				await activateTheme( baseURL, DEFAULT_THEME );
-			} );
-
-			runComingSoonTests(
-				test.step,
-				test.use,
-				'Classic Theme (Storefront)'
+test.describe( 'Launch Your Store front end - logged out', () => {
+	test.afterAll( async ( { baseURL } ) => {
+		try {
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_coming_soon',
+				'no'
 			);
+		} catch ( error ) {
+			console.log( error );
+		}
+	} );
+
+	test.describe( 'Block Theme (Twenty Twenty Four)', () => {
+		test.beforeAll( async ( { baseURL } ) => {
+			await activateTheme( baseURL, 'twentytwentyfour' );
 		} );
-	}
-);
+
+		test.afterAll( async ( { baseURL } ) => {
+			// Reset theme to the default.
+			await activateTheme( baseURL, DEFAULT_THEME );
+		} );
+
+		runComingSoonTests( test.step, test.use );
+	} );
+
+	test.describe( 'Classic Theme (Storefront)', () => {
+		test.beforeAll( async ( { baseURL } ) => {
+			await activateTheme( baseURL, 'storefront' );
+		} );
+
+		test.afterAll( async ( { baseURL } ) => {
+			// Reset theme to the default.
+			await activateTheme( baseURL, DEFAULT_THEME );
+		} );
+
+		runComingSoonTests( test.step, test.use, 'Classic Theme (Storefront)' );
+	} );
+} );

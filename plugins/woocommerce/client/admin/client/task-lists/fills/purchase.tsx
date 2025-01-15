@@ -85,7 +85,6 @@ const PurchaseTaskItemFill = () => {
 };
 
 registerPlugin( 'woocommerce-admin-task-purchase', {
-	// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 	scope: 'woocommerce-tasks',
 	render: PurchaseTaskItemFill,
 } );

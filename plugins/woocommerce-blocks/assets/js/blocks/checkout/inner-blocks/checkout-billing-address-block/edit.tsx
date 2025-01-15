@@ -14,12 +14,12 @@ import {
 	AdditionalFields,
 	AdditionalFieldsContent,
 } from '../../form-step';
-import { useCheckoutBlockControlsContext } from '../../context';
 import Block from './block';
 import {
 	getBillingAddresssBlockTitle,
 	getBillingAddresssBlockDescription,
 } from './utils';
+import { AddressFieldControls } from '../../address-field-controls';
 
 export const Edit = ( {
 	attributes,
@@ -33,8 +33,6 @@ export const Edit = ( {
 	};
 	setAttributes: ( attributes: BlockAttributes ) => void;
 } ): JSX.Element | null => {
-	const { addressFieldControls: Controls } =
-		useCheckoutBlockControlsContext();
 	const { showBillingFields, forcedBillingAddress, useBillingAsShipping } =
 		useCheckoutAddress();
 
@@ -59,7 +57,7 @@ export const Edit = ( {
 				attributes?.className
 			) }
 		>
-			<Controls />
+			<AddressFieldControls />
 			<Block />
 			<AdditionalFields block={ innerBlockAreas.BILLING_ADDRESS } />
 		</FormStepBlock>

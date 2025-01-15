@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Fix - Skip variations without prices during bulk price adjustments to prevent 500 error

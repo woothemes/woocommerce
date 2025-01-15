@@ -6,6 +6,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Enums\ProductVisibility;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
@@ -204,7 +205,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 				'woocommerce_new_product_data',
 				array(
 					'post_type'      => 'product',
-					'post_status'    => $product->get_status() ? $product->get_status() : 'publish',
+					'post_status'    => $product->get_status() ? $product->get_status() : ProductStatus::PUBLISH,
 					'post_author'    => get_current_user_id(),
 					'post_title'     => $product->get_name() ? $product->get_name() : __( 'Product', 'woocommerce' ),
 					'post_content'   => $product->get_description(),
@@ -325,7 +326,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 				'post_title'     => $product->get_name( 'edit' ),
 				'post_parent'    => $product->get_parent_id( 'edit' ),
 				'comment_status' => $product->get_reviews_allowed( 'edit' ) ? 'open' : 'closed',
-				'post_status'    => $product->get_status( 'edit' ) ? $product->get_status( 'edit' ) : 'publish',
+				'post_status'    => $product->get_status( 'edit' ) ? $product->get_status( 'edit' ) : ProductStatus::PUBLISH,
 				'menu_order'     => $product->get_menu_order( 'edit' ),
 				'post_password'  => $product->get_post_password( 'edit' ),
 				'post_name'      => $product->get_slug( 'edit' ),
@@ -419,7 +420,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 			do_action( 'woocommerce_delete_' . $post_type, $id );
 		} else {
 			wp_trash_post( $id );
-			$product->set_status( 'trash' );
+			$product->set_status( ProductStatus::TRASH );
 			do_action( 'woocommerce_trash_' . $post_type, $id );
 		}
 	}
