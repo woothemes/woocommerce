@@ -7,7 +7,7 @@ import { Button } from '@wordpress/components';
 import { Pill } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { recordEvent } from '@woocommerce/tracks';
-import { PLUGINS_STORE_NAME, PluginSelectors } from '@woocommerce/data';
+import { PLUGINS_STORE_NAME, type PluginSelectors } from '@woocommerce/data';
 
 /**
  * Internal dependencies
