@@ -371,7 +371,7 @@
 							return;
 						}
 
-						if ( 'number' === typeof formattedValue ) {
+						if ( Number.isFinite( formattedValue ) ) {
 							return;
 						}
 
