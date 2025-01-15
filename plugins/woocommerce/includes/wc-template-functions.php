@@ -50,9 +50,9 @@ function wc_template_redirect() {
 	if ( is_wc_endpoint_url() && ! is_account_page() && ! is_checkout() && apply_filters( 'woocommerce_account_endpoint_page_not_found', true ) ) {
 		$wp_query->set_404();
 		status_header( 404 );
-		// Here we are ensuring 404 template is not empty.
-		if ( ! empty( get_query_template( '404' ) ) ) {
-			include get_query_template( '404' );
+		$not_found_template = get_query_template( '404' );
+		if ( ! empty( $not_found_template ) && file_exists( $not_found_template ) ) {
+			include $not_found_template;
 		}
 		exit;
 	}
