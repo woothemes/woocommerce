@@ -659,6 +659,27 @@ class WC_Install {
 	}
 
 	/**
+	 * Is DB auto-update enabled? This controls whether database updates are applied without prompting the admin.
+	 * This is the default behavior since version 9.7.0 and can be overridden via filter
+	 * 'woocommerce_enable_auto_update_db' or by setting the constant WC_DISABLE_DB_AUTO_UPDATE to `true`.
+	 *
+	 * @since 9.7.0
+	 *
+	 * @return bool TRUE if database auto-updates are enabled. FALSE otherwise.
+	 */
+	public static function is_db_auto_update_enabled(): bool {
+		/**
+		 * Allow WooCommerce to auto-update without prompting the user.
+		 *
+		 * @since 3.2.0
+		 */
+		return (bool) apply_filters(
+			'woocommerce_enable_auto_update_db',
+			! defined( 'WC_DISABLE_DB_AUTO_UPDATE' ) || false === (bool) WC_DISABLE_DB_AUTO_UPDATE
+		);
+	}
+
+	/**
 	 * See if we need to set redirect transients for activation or not.
 	 *
 	 * @since 4.6.0
@@ -681,7 +702,7 @@ class WC_Install {
 			 *
 			 * @since 3.2.0
 			 */
-			if ( apply_filters( 'woocommerce_enable_auto_update_db', true ) ) {
+			if ( self::is_db_auto_update_enabled() ) {
 				self::update();
 			} else {
 				WC_Admin_Notices::add_notice( 'update', true );
