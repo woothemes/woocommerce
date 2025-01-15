@@ -363,7 +363,8 @@ test.describe(
 		} );
 
 		test.describe( 'Delete a customer', () => {
-			test( 'can permanently delete an customer', async ( {
+			// TODO: Unskip, then conditionally skip based on whether it's a multisite installation. Context: affected by issue #384 in private repo.
+			test.skip( 'can permanently delete an customer', async ( {
 				request,
 			} ) => {
 				// Delete the customer.
@@ -537,7 +538,8 @@ test.describe(
 				);
 			} );
 
-			test( 'can batch delete customers', async ( { request } ) => {
+			// TODO: Unskip, then conditionally skip based on whether it's a multisite installation. Context: affected by issue #384 in private repo.
+			test.skip( 'can batch delete customers', async ( { request } ) => {
 				// Batch delete the 2 customers.
 				const customerIdsToDelete = expectedCustomers.map(
 					( { id } ) => id
