@@ -8,12 +8,11 @@ import { isString, FieldValidationStatus } from '@woocommerce/types';
 /**
  * Internal dependencies
  */
-import { ValidationAction } from './actions';
 import { ACTION_TYPES as types } from './action-types';
 
 const reducer: Reducer< Record< string, FieldValidationStatus > > = (
 	state: Record< string, FieldValidationStatus > = {},
-	action: Partial< ValidationAction >
+	action
 ) => {
 	const newState = { ...state };
 	switch ( action.type ) {

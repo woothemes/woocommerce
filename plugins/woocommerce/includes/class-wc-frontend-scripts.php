@@ -510,6 +510,13 @@ class WC_Frontend_Scripts {
 			case 'wc-single-product':
 				$params = array(
 					'i18n_required_rating_text'         => esc_attr__( 'Please select a rating', 'woocommerce' ),
+					'i18n_rating_options'               => array(
+						esc_attr__( '1 of 5 stars', 'woocommerce' ),
+						esc_attr__( '2 of 5 stars', 'woocommerce' ),
+						esc_attr__( '3 of 5 stars', 'woocommerce' ),
+						esc_attr__( '4 of 5 stars', 'woocommerce' ),
+						esc_attr__( '5 of 5 stars', 'woocommerce' ),
+					),
 					'i18n_product_gallery_trigger_text' => esc_attr__( 'View full-screen image gallery', 'woocommerce' ),
 					'review_rating_required'            => wc_review_ratings_required() ? 'yes' : 'no',
 					'flexslider'                        => apply_filters(
