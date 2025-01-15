@@ -193,7 +193,7 @@ class WC_Tests_API_Orders extends WC_REST_Unit_Test_Case {
 		$last_line_item = array_slice( $data['line_items'], -1 )[0];
 
 		$size_meta_data = $last_line_item['meta_data'][0];
-		$this->assertContains( $size_meta_data['id'], array_column( $line_item->get_meta_data(), 'id') );
+		$this->assertEquals( $line_item->get_meta_data()[0]->id, $size_meta_data['id'] );
 		$this->assertEquals( 'pa_size', $size_meta_data['key'] );
 		$this->assertEquals( 'size', $size_meta_data['display_key'] );
 		$this->assertEquals( 'small', $size_meta_data['value'] );
