@@ -23,6 +23,7 @@ const test = baseTest.extend( {
 } );
 
 for ( const userData of users ) {
+	// TODO Fix in multisite: Make locator compatible with "Add user" page in multisite.
 	test(
 		`can create a new ${ userData.role }`,
 		{ tag: tags.SERVICES },
