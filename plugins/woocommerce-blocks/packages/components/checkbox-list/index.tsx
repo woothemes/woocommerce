@@ -14,6 +14,7 @@ import './style.scss';
 
 export interface CheckboxListProps {
 	className?: string | undefined;
+	descriptionId?: string | undefined;
 	isLoading?: boolean | undefined;
 	isDisabled?: boolean | undefined;
 	limit?: number | undefined;
@@ -36,6 +37,7 @@ export interface CheckboxListProps {
  */
 const CheckboxList = ( {
 	className,
+	descriptionId,
 	onChange,
 	options = [],
 	checked = [],
@@ -160,7 +162,7 @@ const CheckboxList = ( {
 	);
 
 	return (
-		<ul className={ classes }>
+		<ul className={ classes } aria-describedby={ descriptionId }>
 			{ isLoading ? placeholder : renderedOptions }
 		</ul>
 	);
