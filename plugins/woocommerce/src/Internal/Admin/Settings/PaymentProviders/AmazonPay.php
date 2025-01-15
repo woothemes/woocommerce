@@ -116,7 +116,7 @@ class AmazonPay extends PaymentGateway {
 	 */
 	private function is_amazon_pay_in_sandbox_mode(): ?bool {
 		if ( class_exists( '\WC_Amazon_Payments_Advanced_API' ) &&
-			 is_callable( '\WC_Amazon_Payments_Advanced_API::get_settings' ) ) {
+			is_callable( '\WC_Amazon_Payments_Advanced_API::get_settings' ) ) {
 
 			$settings = \WC_Amazon_Payments_Advanced_API::get_settings();
 
