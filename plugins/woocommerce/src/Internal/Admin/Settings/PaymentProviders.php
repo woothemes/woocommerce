@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\AmazonPay;
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\MercadoPago;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\Mollie;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PayPal;
@@ -63,6 +64,7 @@ class PaymentProviders {
 		'mollie'                    => Mollie::class,
 		'mollie_wc_gateway_*'       => Mollie::class, // Target all the Mollie gateways.
 		'amazon_payments_advanced*' => AmazonPay::class,
+		'woo-mercado-pago-*'        => MercadoPago::class,
 	);
 
 	/**
