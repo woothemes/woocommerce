@@ -78,6 +78,7 @@ class Mollie extends PaymentGateway {
 			'mollie_stand_in',
 			array(
 				'method_title'         => $suggestion['title'],
+				'method_description'   => $suggestion['description'],
 				'enabled'              => false,
 				'test_mode'            => false,
 				'dev_mode'             => false,
