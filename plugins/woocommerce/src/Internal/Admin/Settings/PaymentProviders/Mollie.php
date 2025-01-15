@@ -80,6 +80,7 @@ class Mollie extends PaymentGateway {
 				'method_title'         => $suggestion['title'],
 				'method_description'   => $suggestion['description'],
 				'enabled'              => false,
+				'needs_setup' 		   => true,
 				'test_mode'            => false,
 				'dev_mode'             => false,
 				'account_connected'    => false,
