@@ -210,6 +210,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 		await expect( sendButton ).toBeEnabled();
 		await sendButton.click();
 
+		// TODO: Fix in multisite if not a bug: Multisite successfully sends the test email.
 		// Wait for the message, because sending will fail in test environment
 		const message = modal.locator(
 			'text=Error sending test email. Please try again.'
