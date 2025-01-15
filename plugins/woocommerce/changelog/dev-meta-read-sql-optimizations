@@ -1,0 +1,4 @@
+Significance: patch
+Type: performance
+
+SQL queries optimization related to meta-data and options selects.
