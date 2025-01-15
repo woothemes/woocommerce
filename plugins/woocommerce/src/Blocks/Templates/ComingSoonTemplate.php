@@ -78,21 +78,28 @@ class ComingSoonTemplate extends AbstractPageTemplate {
 			);
 		}
 
-		if ( ! class_exists( '\WP_Font_Face_Resolver' ) ) {
-			require_once ABSPATH . WPINC . '/fonts/class-wp-font-face-resolver.php';
+		if ( ! function_exists( 'wp_get_global_settings' ) ) {
+			require_once ABSPATH . WPINC . '/global-styles-and-settings.php';
 		}
 
-		$theme_fonts = \WP_Font_Face_Resolver::get_fonts_from_theme_json();
-		if ( is_array( $theme_fonts ) && count( $theme_fonts ) > 0 ) {
-			// Override default fonts if available in theme.json.
-			if ( isset( $theme_fonts[0][0]['font-family'] ) && ! empty( $theme_fonts[0][0]['font-family'] ) ) {
-				// Convert the font family to lowercase and replace spaces with hyphens.
-				$default_fonts['heading'] = strtolower( str_replace( ' ', '-', $theme_fonts[0][0]['font-family'] ) );
-			}
-			if ( isset( $theme_fonts[1][0]['font-family'] ) && ! empty( $theme_fonts[1][0]['font-family'] ) ) {
-				$default_fonts['body']      = strtolower( str_replace( ' ', '-', $theme_fonts[1][0]['font-family'] ) );
-				$default_fonts['paragraph'] = $default_fonts['body'];
-			}
+		$settings = wp_get_global_settings();
+		if (
+			! isset( $settings['typography']['fontFamilies']['theme'] )
+			|| ! is_array( $settings['typography']['fontFamilies']['theme'] )
+		) {
+			return $default_fonts;
+		}
+
+		$theme_fonts = $settings['typography']['fontFamilies']['theme'];
+
+		// Override default fonts if available in theme.json.
+		if ( isset( $theme_fonts[0]['slug'] ) && ! empty( $theme_fonts[0]['slug'] ) ) {
+			// Convert the font family to lowercase and replace spaces with hyphens.
+			$default_fonts['heading'] = strtolower( str_replace( ' ', '-', $theme_fonts[0]['slug'] ) );
+		}
+		if ( isset( $theme_fonts[1]['slug'] ) && ! empty( $theme_fonts[1]['slug'] ) ) {
+			$default_fonts['body']      = strtolower( str_replace( ' ', '-', $theme_fonts[1]['slug'] ) );
+			$default_fonts['paragraph'] = $default_fonts['body'];
 		}
 
 		return $default_fonts;

@@ -39,8 +39,8 @@ $email         = get_option( 'admin_email', 'marianne.renoir@mail.com' );
 			<h1 class="wp-block-heading has-text-align-center has-<?php echo esc_attr( $heading_font_family ); ?>-font-family" style="margin-top:0;margin-bottom:153px;font-size:100px;font-style:normal;font-weight:400;line-height:1.19"><?php echo esc_html( _x( 'Stay tuned.', 'Coming Soon template heading', 'woocommerce' ) ); ?></h1>
 		<!-- /wp:heading -->
 
-		<!-- wp:paragraph {"align":"center","style":{"color":{"text":"#a7aaad"},"elements":{"link":{"color":{"text":"#a7aaad"}}},"typography":{"fontSize":"14px"}}} -->
-			<p class="has-text-align-center has-text-color has-link-color" style="color:#a7aaad;font-size:14px"><?php echo esc_html( $email ); ?></p>
+		<!-- wp:paragraph {"align":"center","style":{"color":{"text":"#a7aaad"},"elements":{"link":{"color":{"text":"#a7aaad"}}},"typography":{"fontSize":"14px"}},"fontFamily":"<?php echo esc_attr( $body_font_family ); ?>"} -->
+			<p class="has-text-align-center has-text-color has-link-color has-<?php echo esc_attr( $body_font_family ); ?>-font-family" style="color:#a7aaad;font-size:14px"><?php echo esc_html( $email ); ?></p>
 		<!-- /wp:paragraph --></div>
 		<!-- /wp:group --></div>
 	<!-- /wp:group --></div></div>
