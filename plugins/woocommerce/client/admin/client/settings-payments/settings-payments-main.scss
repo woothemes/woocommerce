@@ -191,3 +191,23 @@
 		}
 	}
 }
+
+@media screen and ( max-width: 782px ) {
+	.settings-payments-main__container {
+		.woocommerce-item__payment-gateway-placeholder {
+			padding: 0 $gap;
+
+			.woocommerce-list__item-before {
+				margin-right: 0px;
+
+				.drag-handle-wrapper {
+					margin-right: 10px;
+				}
+
+				.list-placeholder__before {
+					display: none;
+				}
+			}
+		}
+	}
+}
