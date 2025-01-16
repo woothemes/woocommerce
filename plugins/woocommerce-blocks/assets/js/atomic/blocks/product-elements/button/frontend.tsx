@@ -3,7 +3,7 @@
  */
 import { store, getContext as getContextFn } from '@woocommerce/interactivity';
 // Todo: remove once we import from `@wordpress/interactivity`.
-// Todo: make sure we are not bundling the `@wordpress/interactivity` package.
+// Todo: if we ever release this, make sure we are not bundling the `@wordpress/interactivity` package.
 import type { store as StoreType } from '@wordpress/interactivity';
 
 // Todo: move the addToCart store to its own module.
@@ -13,7 +13,6 @@ import {
 } from '../../../../base/stores/add-to-cart';
 
 interface Context {
-	isLoading: boolean;
 	addToCartText: string;
 	productId: number;
 	displayViewCart: boolean;
@@ -107,6 +106,7 @@ const { state } = ( store as typeof StoreType )< Store >(
 				const { productId, quantityToAdd } = context;
 				wooActions.addToCart(
 					productId,
+					// Question: is quantityToAdd available in the cart or we need to pass it down?
 					state.quantity + quantityToAdd
 				);
 			},
@@ -146,7 +146,6 @@ const { state } = ( store as typeof StoreType )< Store >(
 				if (
 					state.hasCartLoaded &&
 					context.tempQuantity !== state.quantity &&
-					! context.isLoading &&
 					context.animationStatus === AnimationStatus.IDLE
 				) {
 					context.animationStatus = AnimationStatus.SLIDE_OUT;

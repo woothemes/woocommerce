@@ -28,7 +28,6 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 	{
 		actions: {
 			*addToCart( id, quantity ) {
-				debugger;
 				let item = state.cart.items.find(
 					( { id: productId } ) => id === productId
 				);
@@ -59,7 +58,7 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 					state.cart = yield res.json();
 				} catch ( error ) {
 					// Todo: Handle error using the new Store Notices block.
-					// const { actions } = store('woo/store-notices');
+					// const { actions } = store('woocommerce/store-notices');
 					// actions.addNotice(...);
 
 					// Reverts the optimistic update.
