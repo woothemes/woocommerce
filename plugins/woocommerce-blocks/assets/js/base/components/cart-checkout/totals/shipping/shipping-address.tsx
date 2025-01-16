@@ -12,7 +12,7 @@ import {
 	ShippingCalculatorContext,
 } from '@woocommerce/base-components/cart-checkout';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 import { createInterpolateElement, useContext } from '@wordpress/element';
 
 /**
@@ -22,8 +22,9 @@ import { getPickupLocation } from './utils';
 
 export const ShippingAddress = (): JSX.Element => {
 	const { shippingRates, shippingAddress } = useStoreCart();
-	const prefersCollection = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).prefersCollection()
+	const prefersCollection = useSelect(
+		( select ) => select( checkoutStore ).prefersCollection(),
+		[]
 	);
 
 	const hasRates = hasShippingRate( shippingRates );
