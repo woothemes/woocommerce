@@ -45,6 +45,10 @@
 			}
 		}
 
+		@media screen and ( max-width: 1024px ) {
+			padding: $gap-large;
+		}
+
 		@media screen and ( max-width: 782px ) {
 			padding: $gap-large $gap;
 		}

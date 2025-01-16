@@ -149,6 +149,14 @@
 	}
 }
 
+@media screen and ( max-width: 1024px ) {
+	.settings-payment-gateways__list {
+		.woocommerce-list__item {
+			padding: 0 $gap-large;
+		}
+	}
+}
+
 @media screen and ( max-width: 782px ) {
 	.settings-payment-gateways__list {
 		.woocommerce-list__item {

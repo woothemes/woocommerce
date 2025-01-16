@@ -14,8 +14,12 @@
 		margin: 0;
 		border: 0;
 
+		@media screen and ( max-width: 1024px ) {
+			padding: $gap-larger;
+		}
+
 		@media screen and ( max-width: 782px ) {
-			padding: $gap-large $gap-large;
+			padding: $gap-large;
 		}
 	}
 }
