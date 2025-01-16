@@ -28,21 +28,9 @@ dispatch( editSiteStore ).updateSettings( {
 	__experimentalDashboardLink: getAdminLink( 'admin.php?page=wc-admin' ),
 } );
 
-const SettingsLayout = () => {
-	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
-
-	return (
-		<Layout
-			route={ route }
-			settingsPage={ settingsPage }
-			tabs={ tabs }
-			activeSection={ activeSection }
-		/>
-	);
-};
-
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
+	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
 
 	if ( ! isRequiredGutenbergVersion ) {
 		return (
@@ -57,11 +45,16 @@ export const SettingsEditor = () => {
 	}
 
 	return (
-		<RouterProvider>
-			<SettingsLayout />
-		</RouterProvider>
+		<Layout
+			route={ route }
+			settingsPage={ settingsPage }
+			tabs={ tabs }
+			activeSection={ activeSection }
+		/>
 	);
 };
 
 export * from './components';
 export * from './legacy';
+export * from './route';
+export { RouterProvider };

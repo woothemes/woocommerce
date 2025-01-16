@@ -13,6 +13,13 @@ use WP_REST_Request;
 class EmailPreviewRestController extends RestApiControllerBase {
 
 	/**
+	 * Email preview nonce.
+	 *
+	 * @var string
+	 */
+	const NONCE_KEY = 'email-preview-nonce';
+
+	/**
 	 * Holds the EmailPreview instance for rendering email previews.
 	 *
 	 * @var EmailPreview
@@ -110,6 +117,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 				'type'              => 'string',
 				'required'          => true,
 				'validate_callback' => fn( $key ) => $this->validate_email_type( $key ),
+				'sanitize_callback' => 'sanitize_text_field',
 			),
 			'email' => array(
 				'description'       => __( 'Email address to send the email preview to.', 'woocommerce' ),
@@ -117,6 +125,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 				'format'            => 'email',
 				'required'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
+				'sanitize_callback' => 'sanitize_email',
 			),
 		);
 	}
@@ -133,6 +142,7 @@ class EmailPreviewRestController extends RestApiControllerBase {
 				'type'              => 'string',
 				'required'          => true,
 				'validate_callback' => fn( $key ) => $this->validate_email_type( $key ),
+				'sanitize_callback' => 'sanitize_text_field',
 			),
 		);
 	}
@@ -247,6 +257,14 @@ class EmailPreviewRestController extends RestApiControllerBase {
 	 * @return bool|WP_Error True if the current user has the capability, otherwise a WP_Error object.
 	 */
 	private function check_permissions( WP_REST_Request $request ) {
+		$nonce = $request->get_param( 'nonce' );
+		if ( ! wp_verify_nonce( $nonce, self::NONCE_KEY ) ) {
+			return new WP_Error(
+				'invalid_nonce',
+				__( 'Invalid nonce.', 'woocommerce' ),
+				array( 'status' => 403 ),
+			);
+		}
 		return $this->check_permission( $request, 'manage_woocommerce' );
 	}
 

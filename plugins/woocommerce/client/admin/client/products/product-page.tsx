@@ -71,7 +71,7 @@ export default function ProductPage() {
 				return (
 					<>
 						<WooProductMoreMenuItem>
-							{ ( { onClose }: { onClose: () => void } ) => (
+							{ ( { onClose } ) => (
 								<MoreMenuFill onClose={ onClose } />
 							) }
 						</WooProductMoreMenuItem>

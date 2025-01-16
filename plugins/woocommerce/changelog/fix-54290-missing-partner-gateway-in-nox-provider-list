@@ -1,0 +1,5 @@
+Significance: patch
+Type: update
+Comment: Improve the handling of non-standard payment extension behavior (e.g. Mollie not registering a gateway until after setup).
+
+
