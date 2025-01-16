@@ -665,8 +665,17 @@ jQuery( function( $ ) {
 			$( 'form.checkout_coupon' ).hide().on( 'submit', this.submit.bind( this ) );
 		},
 		show_coupon_form: function() {
+			var $showcoupon = $( this );
+
 			$( '.checkout_coupon' ).slideToggle( 400, function() {
-				$( '.checkout_coupon' ).find( ':input:eq(0)' ).trigger( 'focus' );
+				var $coupon_form = $( this );
+
+				if ( $coupon_form.is( ':visible' ) ) {
+					$showcoupon.attr( 'aria-expanded', 'true' );
+					$coupon_form.find( ':input:eq(0)' ).trigger( 'focus' );
+				} else {
+					$showcoupon.attr( 'aria-expanded', 'false' );
+				}
 			});
 			return false;
 		},
@@ -732,6 +741,7 @@ jQuery( function( $ ) {
 						// Coupon errors are shown under the input.
 						if ( response.indexOf( 'woocommerce-error' ) === -1 && response.indexOf( 'is-error' ) === -1 ) {
 							$form.slideUp( 400, function() {
+								$( 'a.showcoupon' ).attr( 'aria-expanded', 'false' );
 								$form.before( response );
 							} );
 						} else {
@@ -782,7 +792,9 @@ jQuery( function( $ ) {
 
 						// Remove coupon code from coupon field
 						$( 'form.checkout_coupon' ).find( 'input[name="coupon_code"]' ).val( '' );
-						$( 'form.checkout_coupon' ).slideUp();
+						$( 'form.checkout_coupon' ).slideUp( 400, function() {
+							$( 'a.showcoupon' ).attr( 'aria-expanded', 'false' );
+						} );
 					}
 				},
 				error: function ( jqXHR ) {
