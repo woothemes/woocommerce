@@ -12,7 +12,7 @@ const productData = {
 	},
 	'non virtual': {
 		name: `Simple product ${ Date.now() }`,
-		description: `Simple product longer description`,
+		description: `<b>Simple product HTML description.</b> <em>This should be italic.</em>`,
 		shortDescription: `Simple product short description`,
 		regularPrice: '100.05',
 		sku: `1_${ Date.now() }`,
@@ -34,6 +34,10 @@ const productData = {
 		fileName: 'e2e-product.zip',
 	},
 };
+
+function removeHtmlTags( str ) {
+	return str.replace( /<\/?[^>]+(>|$)/g, '' );
+}
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -275,7 +279,11 @@ for ( const productType of Object.keys( productData ) ) {
 				).toBeVisible();
 				await expect(
 					page
-						.getByText( productData[ productType ].description )
+						.getByText(
+							removeHtmlTags(
+								productData[ productType ].description
+							)
+						)
 						.first()
 				).toBeVisible();
 				await expect(
