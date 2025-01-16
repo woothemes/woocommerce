@@ -435,6 +435,7 @@ class Checkout extends AbstractBlock {
 
 		$this->asset_data_registry->add( 'localPickupEnabled', $pickup_location_settings['enabled'] );
 		$this->asset_data_registry->add( 'localPickupText', $pickup_location_settings['title'] );
+		$this->asset_data_registry->add( 'localPickupCost', $pickup_location_settings['cost'] );
 		$this->asset_data_registry->add( 'collectableMethodIds', $local_pickup_method_ids );
 
 		// Local pickup is included with legacy shipping methods since they do not support shipping zones.

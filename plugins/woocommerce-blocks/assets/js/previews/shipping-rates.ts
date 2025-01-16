@@ -20,6 +20,8 @@ const localPickupLocations = getSetting<
 	}[]
 >( 'localPickupLocations', {} );
 
+const localPickupCost = getSetting< string >( 'localPickupCost', '' );
+
 const localPickupRates = localPickupLocations
 	? Object.values( localPickupLocations ).map(
 			( location, index: number ) => ( {
@@ -27,7 +29,7 @@ const localPickupRates = localPickupLocations
 				name: __( 'Local pickup #1', 'woocommerce' ),
 				description: '',
 				delivery_time: '',
-				price: '0',
+				price: displayForMinorUnit( localPickupCost, 0 ) || '0',
 				taxes: '0',
 				rate_id: `pickup_location:${ index + 1 }`,
 				instance_id: index + 1,
