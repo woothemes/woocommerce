@@ -134,6 +134,22 @@ class CustomMetaBox {
 	}
 
 	/**
+     * Determine whether the current user has this metabox set to hidden.
+     *
+	 * @return bool
+	 */
+    private function is_meta_box_currently_hidden(): bool {
+	    $current_screen   = get_current_screen();
+	    if ( $current_screen && isset( $current_screen->id ) ) {
+		    $hidden = get_user_option( "metaboxhidden_{$current_screen->id}" );
+		    if ( is_array( $hidden ) && in_array( 'order_custom', $hidden, true ) ) {
+			    return true;
+		    }
+	    }
+        return false;
+    }
+
+	/**
 	 * Reimplementation of WP core's `meta_form` function. Renders meta form box.
 	 *
 	 * @param \WC_Order $order WC_Order object.
@@ -143,7 +159,12 @@ class CustomMetaBox {
 	public function render_meta_form( \WC_Order $order ) : void {
 		$meta_key_input_id = 'metakeyselect';
 
-		$keys = $this->order_meta_keys_autofill( null, $order );
+		$currently_hidden = $this->is_meta_box_currently_hidden();
+		if ( ! $currently_hidden ) {
+			$keys = $this->order_meta_keys_autofill( null, $order );
+		} else {
+			$keys = array();
+		}
 		?>
 		<p><strong><?php esc_html_e( 'Add New Custom Field:', 'woocommerce' ); ?></strong></p>
 		<table id="newmeta">
@@ -175,6 +196,9 @@ class CustomMetaBox {
 						<span id="cancelnew" class="hidden"><?php esc_html_e( 'Cancel', 'woocommerce' ); ?></span>
 					<?php } else { ?>
 						<input type="text" id="metakeyinput" name="metakeyinput" value="" />
+                        <?php if( $currently_hidden ) : ?>
+                            <span><?php esc_html_e( 'A page reload is required to display the list of predefined custom fields. Make sure your changes are saved before reloading.', 'woocommerce'); ?></span>
+                        <?php endif; ?>
 					<?php } ?>
 				</td>
 				<td><textarea id="metavalue" name="metavalue" rows="2" cols="25"></textarea>
