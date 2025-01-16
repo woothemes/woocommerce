@@ -142,12 +142,14 @@ class QueryBuilder {
 		$product_ids = $query['post__in'] ?? array();
 		$offset      = $query['offset'] ?? 0;
 		$per_page    = $query['perPage'] ?? 9;
+		$order       = $query['order'] ?? 'asc';
+		$search      = $query['search'] ?? '';
 
 		$common_query_values = array(
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			'meta_query'     => array(),
 			'posts_per_page' => $per_page,
-			'order'          => $query['order'] ?? 'asc',
+			'order'          => $order,
 			'offset'         => ( $per_page * ( $page - 1 ) ) + $offset,
 			'post__in'       => $product_ids,
 			'post_status'    => 'publish',
@@ -155,15 +157,18 @@ class QueryBuilder {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 			'tax_query'      => array(),
 			'paged'          => $page,
-			's'              => $query['search'] ?? '',
+			's'              => $search,
 		);
 
 		$is_on_sale          = $query['woocommerceOnSale'] ?? false;
+		$order_by            = $query['orderBy'] ?? '';
+		$stock_status        = $query['woocommerceStockStatus'] ?? array_keys( wc_get_product_stock_status_options() );
 		$product_attributes  = $query['woocommerceAttributes'] ?? array();
 		$taxonomies_query    = $this->get_filter_by_taxonomies_query( $query['tax_query'] ?? array() );
 		$handpicked_products = $query['woocommerceHandPickedProducts'] ?? array();
 		$time_frame          = $query['timeFrame'] ?? null;
 		$price_range         = $query['priceRange'] ?? null;
+		$featured            = $query['featured'] ?? false;
 
 		// Allow collections to modify the collection arguments passed to the query builder.
 		$handlers = $this->collection_handler_store[ $collection_args['name'] ] ?? null;
@@ -176,12 +181,12 @@ class QueryBuilder {
 			$common_query_values,
 			array(
 				'on_sale'             => $is_on_sale,
-				'stock_status'        => $query['woocommerceStockStatus'] ?? array_keys( wc_get_product_stock_status_options() ),
-				'orderby'             => $query['orderBy'] ?? 'title',
+				'stock_status'        => $stock_status,
+				'orderby'             => $order_by,
 				'product_attributes'  => $product_attributes,
 				'taxonomies_query'    => $taxonomies_query,
 				'handpicked_products' => $handpicked_products,
-				'featured'            => $query['featured'] ?? false,
+				'featured'            => $featured,
 				'timeFrame'           => $time_frame,
 				'priceRange'          => $price_range,
 			),
