@@ -44,6 +44,10 @@
 				flex-basis: 50%;
 			}
 		}
+
+		@media screen and ( max-width: 782px ) {
+			padding: $gap-large $gap;
+		}
 	}
 
 	&:has(.woocommerce-settings-payments-header__description) {

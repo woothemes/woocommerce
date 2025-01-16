@@ -13,6 +13,10 @@
 		padding: $gap-large 2 * $gap-large;
 		margin: 0;
 		border: 0;
+
+		@media screen and ( max-width: 782px ) {
+			padding: $gap-large $gap-large;
+		}
 	}
 }
 
