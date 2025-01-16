@@ -684,7 +684,7 @@ class Checkout extends AbstractCartRoute {
 
 		// Persist customer address data to account.
 		$this->order_controller->sync_customer_data_with_order( $this->order );
-		wc_log_order_step( '[Store API #7 process_customer] Synced customer data from order', array( 'customer_id' => $customer_id ) );
+		wc_log_order_step( '[Store API #7 process_customer] Synced customer data from order', array( 'customer_id' => $this->order->get_customer_id() ) );
 	}
 
 	/**
