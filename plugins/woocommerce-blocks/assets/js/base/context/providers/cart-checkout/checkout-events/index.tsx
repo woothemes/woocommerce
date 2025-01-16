@@ -15,7 +15,7 @@ import { usePrevious } from '@woocommerce/base-hooks';
 import deprecated from '@wordpress/deprecated';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 	PAYMENT_STORE_KEY,
 	validationStore,
 } from '@woocommerce/block-data';
@@ -112,7 +112,7 @@ export const CheckoutEventsProvider = ( {
 		__internalEmitValidateEvent,
 		__internalEmitAfterProcessingEvents,
 		__internalSetBeforeProcessing,
-	} = useDispatch( CHECKOUT_STORE_KEY );
+	} = useDispatch( checkoutStore );
 
 	const {
 		checkoutRedirectUrl,
@@ -124,7 +124,7 @@ export const CheckoutEventsProvider = ( {
 		checkoutOrderNotes,
 		checkoutCustomerId,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			checkoutRedirectUrl: store.getRedirectUrl(),
 			checkoutStatus: store.getCheckoutStatus(),
@@ -135,7 +135,7 @@ export const CheckoutEventsProvider = ( {
 			checkoutOrderNotes: store.getOrderNotes(),
 			checkoutCustomerId: store.getCustomerId(),
 		};
-	} );
+	}, [] );
 
 	if ( redirectUrl && redirectUrl !== checkoutRedirectUrl ) {
 		__internalSetRedirectUrl( redirectUrl );
