@@ -61,7 +61,8 @@ export const InboxNoteActionButton: React.FC< InboxNoteActionProps > = ( {
 			className="woocommerce-inbox-note__action-button"
 			variant={ variant }
 			isBusy={ inAction }
-			{ ...( href ? { href } : {} ) }
+			disabled={ inAction }
+			href={ href || undefined }
 			onClick={ handleActionClick }
 		>
 			<span>{ label }</span>
