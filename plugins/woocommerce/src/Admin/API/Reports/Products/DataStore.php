@@ -554,9 +554,10 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 					$total_shipping_refunded  = (float) $parent_order->get_total_shipping_refunded();
 					$shipping_total           = (float) $parent_order->get_shipping_total();
 					$total_shipping_to_refund = $shipping_total - $total_shipping_refunded;
+					$remaining_refund_items   = $parent_order->get_remaining_refund_items();
 
 					if ( $total_shipping_to_refund > 0 ) {
-						$shipping_amount = -abs( $parent_order->get_item_shipping_amount( $order_item, $total_shipping_to_refund ) );
+						$shipping_amount = -abs( $parent_order->get_item_shipping_amount( $order_item, $remaining_refund_items, $total_shipping_to_refund ) );
 					}
 				}
 			}

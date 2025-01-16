@@ -16,15 +16,17 @@ trait OrderTraits {
 	/**
 	 * Calculate shipping amount for line item/product as a total shipping amount ratio based on quantity.
 	 *
-	 * @param WC_Order_Item $item Line item from order.
+	 * @param WC_Order_Item $item              Line item from order.
+	 * @param int           $order_items_count (optional) The number of order items in an order. This could be the remaining items left to refund.
+	 * @param float         $shipping_amount   (optional) The shipping fee amount in an order. This could be the remaining shipping amount left to refund.
 	 *
 	 * @return float|int
 	 */
-	public function get_item_shipping_amount( $item, $shipping_amount = null ) {
+	public function get_item_shipping_amount( $item, $order_items_count = null, $shipping_amount = null ) {
 		// Shipping amount loosely based on woocommerce code in includes/admin/meta-boxes/views/html-order-item(s).php
 		// distributed simply based on number of line items.
 		$product_qty = $item->get_quantity( 'edit' );
-		$order_items = $this->get_item_count();
+		$order_items = $order_items_count ? $order_items_count : $this->get_item_count();
 		if ( 0 === $order_items ) {
 			return 0;
 		}

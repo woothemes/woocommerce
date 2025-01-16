@@ -766,7 +766,117 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 
 		$this->assertEquals( '-2', $result[0]->product_qty );
 		$this->assertEquals( -60.000000, $result[0]->product_net_revenue );   // -($30 product_2 * 2).
-		$this->assertEquals( -33.333333, $result[0]->shipping_amount );       // -($100 shipping / 6 total products x 2 product_2 ).
-		$this->assertEquals( -93.333333, $result[0]->product_gross_revenue ); // product_net_revenue + shipping_amount + + shipping_tax_amount + tax_amount.
+		$this->assertEquals( -33.333333, $result[0]->shipping_amount );       // -($100 shipping / 6 total items * 2 product_2 ).
+		$this->assertEquals( -93.333333, $result[0]->product_gross_revenue ); // product_net_revenue + shipping_amount + shipping_tax_amount + tax_amount.
+	}
+
+	/**
+	 * Tests the data stored in the wc_order_product_lookup table when an order item is refunded then a full refund is made.
+	 *
+	 * The full refunds here are the ones that change the order status to refunded.
+	 * The refund type will be full but there will not be refund order line items.
+	 */
+	public function test_sync_order_products_refund_one_product_then_full_refund() {
+		global $wpdb;
+
+		WC_Helper_Reports::reset_stats_dbs();
+
+		$product_1 = new WC_Product_Simple();
+		$product_1->set_name( 'Test Product 1' );
+		$product_1->set_regular_price( 25 );
+		$product_1->save();
+
+		$product_2 = new WC_Product_Simple();
+		$product_2->set_name( 'Test Product 2' );
+		$product_2->set_regular_price( 30 );
+		$product_2->save();
+
+		$product_3 = new WC_Product_Simple();
+		$product_3->set_name( 'Test Product 3' );
+		$product_3->set_regular_price( 40 );
+		$product_3->save();
+
+		// Create an order and add product_1 as the order item. The quantity is set to 4.
+		$order = WC_Helper_Order::create_order( 1, $product_1 );
+
+		// Add product_2 as the second order item with quantity set to 2.
+		$item = new WC_Order_Item_Product();
+		$item->set_props(
+			array(
+				'product'  => $product_2,
+				'quantity' => 2,
+				'subtotal' => wc_get_price_excluding_tax( $product_2, array( 'qty' => 2 ) ),
+				'total'    => wc_get_price_excluding_tax( $product_2, array( 'qty' => 2 ) ),
+			)
+		);
+		$item->save();
+		$order->add_item( $item );
+
+		// Add product_3 as the third order item with quantity set to 3.
+		$item = new WC_Order_Item_Product();
+		$item->set_props(
+			array(
+				'product'  => $product_3,
+				'quantity' => 3,
+				'subtotal' => wc_get_price_excluding_tax( $product_3, array( 'qty' => 3 ) ),
+				'total'    => wc_get_price_excluding_tax( $product_3, array( 'qty' => 3 ) ),
+			)
+		);
+		$item->save();
+		$order->add_item( $item );
+
+		$order->set_status( OrderStatus::COMPLETED );
+		$order->set_shipping_total( 100 );
+		$order->set_discount_total( 0 );
+		$order->set_discount_tax( 0 );
+		$order->set_cart_tax( 0 );
+		$order->set_shipping_tax( 0 );
+		$order->set_total( 380 ); // $25x4 product_1 + $30x2 product_2 + $40x3 product_3 + $100 shipping.
+		$order->save();
+
+		// Refund the first order item completely.
+		foreach ( $order->get_items() as  $item_key => $item_values ) {
+			$item_data = $item_values->get_data();
+			$refund    = wc_create_refund(
+				array(
+					'amount'     => 100,
+					'order_id'   => $order->get_id(),
+					'line_items' => array(
+						$item_data['id'] => array(
+							'qty'          => 4,
+							'refund_total' => 100,
+						),
+					),
+				)
+			);
+			break;
+		}
+
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		// Refund the order completely by changing the order status to refunded.
+		$order->set_status( OrderStatus::REFUNDED );
+		$order->save();
+
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		// Get the last order item (product_3) from the order.
+		$order_item_id = end( $order->get_items() )->get_id();
+
+		// Get the last refund order id.
+		$refund_order_id = end( $order->get_refunds() )->get_id();
+
+		$result = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM wp_wc_order_product_lookup WHERE order_item_id = %d AND order_id = %d',
+				$order_item_id,
+				$refund_order_id
+			)
+		);
+
+		$this->assertEquals( '-3', $result[0]->product_qty );
+		$this->assertEquals( -120.000000, $result[0]->product_net_revenue );   // -($40 product_3 * 3).
+		$this->assertEquals( -60.000000, $result[0]->shipping_amount );       // -($100 shipping / ( 9 total items - 4 refunded items ) * 3 product_3 ).
+		$this->assertEquals( -180.000000, $result[0]->product_gross_revenue ); // product_net_revenue + shipping_amount + shipping_tax_amount + tax_amount.
 	}
 }
