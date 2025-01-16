@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { withFilteredAttributes } from '@woocommerce/shared-hocs';
 import { FormStep } from '@woocommerce/blocks-components';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStoreDescriptor } from '@woocommerce/block-data';
 import { LOCAL_PICKUP_ENABLED } from '@woocommerce/block-settings';
 import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
 
@@ -29,12 +29,13 @@ const FrontendBlock = ( {
 } ) => {
 	const { checkoutIsProcessing, prefersCollection } = useSelect(
 		( select ) => {
-			const checkoutStore = select( CHECKOUT_STORE_KEY );
+			const checkoutStore = select( checkoutStoreDescriptor );
 			return {
 				checkoutIsProcessing: checkoutStore.isProcessing(),
 				prefersCollection: checkoutStore.prefersCollection(),
 			};
-		}
+		},
+		[]
 	);
 
 	const { showFormStepNumbers } = useCheckoutBlockContext();

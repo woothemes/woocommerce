@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { useBlockProps } from '@wordpress/block-editor';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore as checkoutStoreDescriptor } from '@woocommerce/block-data';
 import { LOCAL_PICKUP_ENABLED } from '@woocommerce/block-settings';
 
 /**
@@ -32,11 +32,11 @@ export const Edit = ( {
 	setAttributes: ( attributes: Record< string, unknown > ) => void;
 } ): JSX.Element | null => {
 	const { prefersCollection } = useSelect( ( select ) => {
-		const checkoutStore = select( CHECKOUT_STORE_KEY );
+		const checkoutStore = select( checkoutStoreDescriptor );
 		return {
 			prefersCollection: checkoutStore.prefersCollection(),
 		};
-	} );
+	}, [] );
 	const { className } = attributes;
 
 	if ( ! prefersCollection || ! LOCAL_PICKUP_ENABLED ) {
