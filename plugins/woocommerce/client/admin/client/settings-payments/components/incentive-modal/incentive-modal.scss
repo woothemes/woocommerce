@@ -7,9 +7,8 @@
 	}
 
 	&__media {
-		// Hide the image on mobile to make the text more readable.
 		@media screen and ( max-width: 782px ) {
-			display: none;
+			width: 100%;
 		}
 
 		background-color: $studio-woocommerce-purple-0;
@@ -50,5 +49,9 @@
 	&__content img {
 		width: 280px;
 		padding: 76px 40px;
+	}
+
+	@media screen and ( max-width: 782px ) {
+		margin: 0 $gap;
 	}
 }
