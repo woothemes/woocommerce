@@ -19,6 +19,8 @@ import {
 	PAYMENT_STORE_KEY,
 	validationStore,
 } from '@woocommerce/block-data';
+import { store as noticesStore } from '@wordpress/notices';
+import type { WPNotice } from '@wordpress/notices/build-types/store/selectors';
 
 /**
  * Internal dependencies
@@ -152,16 +154,16 @@ export const CheckoutEventsProvider = ( {
 
 	const checkoutNotices = useSelect(
 		( select ) => {
-			const { getNotices } = select( 'core/notices' );
+			const { getNotices } = select( noticesStore );
 			return checkoutContexts.reduce( ( acc, context ) => {
 				return [ ...acc, ...getNotices( context ) ];
-			}, [] );
+			}, [] as WPNotice[] );
 		},
 		[ checkoutContexts ]
 	);
 
 	const { paymentNotices, expressPaymentNotices } = useSelect( ( select ) => {
-		const { getNotices } = select( 'core/notices' );
+		const { getNotices } = select( noticesStore );
 		return {
 			paymentNotices: getNotices( noticeContexts.PAYMENTS ),
 			expressPaymentNotices: getNotices(
