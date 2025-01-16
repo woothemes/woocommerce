@@ -28,7 +28,7 @@ export const InternationalMarketIcon = () => (
 			/>
 		</mask>
 		<g mask="url(#mask0_5908_1702)">
-			<rect x="-9.15527e-05" width="24" height="24" fill="#720EEC"/>
+			<rect x="-9.15527e-05" width="24" height="24" fill="#720EEC" />
 		</g>
 	</svg>
 );
