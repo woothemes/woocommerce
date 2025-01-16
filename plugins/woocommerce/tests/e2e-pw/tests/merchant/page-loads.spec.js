@@ -161,36 +161,34 @@ for ( const currentPage of wcPages ) {
 			} );
 
 			for ( let i = 0; i < currentPage.subpages.length; i++ ) {
-				test(
-					`Can load ${ currentPage.subpages[ i ].name }`,
-					{ tag: tags.SKIP_ON_WPCOM },
-					async ( { page } ) => {
-						await page.goto( currentPage.url );
-						await page
-							.locator(
-								`li.wp-menu-open > ul.wp-submenu > li a:has-text("${ currentPage.subpages[ i ].name }")`
-							)
-							.click();
+				test( `Can load ${ currentPage.subpages[ i ].name }`, async ( {
+					page,
+				} ) => {
+					await page.goto( currentPage.url );
+					await page
+						.locator(
+							`li.wp-menu-open > ul.wp-submenu > li a:has-text("${ currentPage.subpages[ i ].name }")`
+						)
+						.click();
 
-						await expect(
-							page
-								.getByRole( 'heading', {
-									name: currentPage.subpages[ i ].heading,
-								} )
-								.first()
-						).toBeVisible();
+					await expect(
+						page
+							.getByRole( 'heading', {
+								name: currentPage.subpages[ i ].heading,
+							} )
+							.first()
+					).toBeVisible();
 
-						await expect(
-							page
-								.locator( currentPage.subpages[ i ].element )
-								.first()
-						).toBeVisible();
+					await expect(
+						page
+							.locator( currentPage.subpages[ i ].element )
+							.first()
+					).toBeVisible();
 
-						await expect(
-							page.locator( currentPage.subpages[ i ].element )
-						).toContainText( currentPage.subpages[ i ].text );
-					}
-				);
+					await expect(
+						page.locator( currentPage.subpages[ i ].element )
+					).toContainText( currentPage.subpages[ i ].text );
+				} );
 			}
 		}
 	);

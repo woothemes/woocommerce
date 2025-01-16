@@ -6,6 +6,11 @@ import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 import type { PaymentResult, CheckoutResponse } from '@woocommerce/types';
 import type { createErrorNotice as originalCreateErrorNotice } from '@wordpress/notices/store/actions';
+import {
+	type ActionCreatorsOf,
+	type ConfigOf,
+} from '@wordpress/data/build-types/types';
+import { checkoutStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -20,8 +25,6 @@ import {
 	CheckoutAndPaymentNotices,
 	CheckoutAfterProcessingWithErrorEventData,
 } from './types';
-import { DispatchFromMap } from '../mapped-types';
-import * as actions from './actions';
 
 /**
  * Based on the given observers, create Error Notices where necessary
@@ -68,7 +71,7 @@ export const runCheckoutFailObservers = ( {
 }: {
 	observerResponses: unknown[];
 	notices: CheckoutAndPaymentNotices;
-	dispatch: DispatchFromMap< typeof actions >;
+	dispatch: ActionCreatorsOf< ConfigOf< typeof checkoutStore > >;
 	data: CheckoutAfterProcessingWithErrorEventData;
 	createErrorNotice: typeof originalCreateErrorNotice;
 } ) => {
@@ -125,7 +128,7 @@ export const runCheckoutSuccessObservers = ( {
 	createErrorNotice,
 }: {
 	observerResponses: unknown[];
-	dispatch: DispatchFromMap< typeof actions >;
+	dispatch: ActionCreatorsOf< ConfigOf< typeof checkoutStore > >;
 	createErrorNotice: typeof originalCreateErrorNotice;
 } ) => {
 	let successResponse = null as null | Record< string, unknown >;

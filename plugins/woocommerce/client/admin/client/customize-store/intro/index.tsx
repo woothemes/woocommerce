@@ -377,9 +377,6 @@ export const Intro: CustomizeStoreComponent = ( { sendEvent, context } ) => {
 			) }
 			<div className="woocommerce-customize-store-header">
 				<SiteHub
-					variants={ {
-						view: { x: 0 },
-					} }
 					isTransparent={ false }
 					className="woocommerce-customize-store__content"
 				/>
