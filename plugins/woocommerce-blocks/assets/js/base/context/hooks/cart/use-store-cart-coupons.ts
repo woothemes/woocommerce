@@ -6,7 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	CART_STORE_KEY,
 	validationStore,
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 } from '@woocommerce/block-data';
 import { decodeEntities } from '@wordpress/html-entities';
 import type { StoreCartCoupon, ApiErrorResponse } from '@woocommerce/types';
@@ -42,8 +42,9 @@ export const useStoreCartCoupons = ( context = '' ): StoreCartCoupon => {
 		} );
 
 	const { applyCoupon, removeCoupon } = useDispatch( CART_STORE_KEY );
-	const orderId = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).getOrderId()
+	const orderId = useSelect(
+		( select ) => select( checkoutStore ).getOrderId(),
+		[]
 	);
 
 	// Return cart, checkout or generic error message.
