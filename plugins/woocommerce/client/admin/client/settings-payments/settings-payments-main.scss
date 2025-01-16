@@ -232,6 +232,11 @@
 		.woocommerce-item__payment-gateway-placeholder {
 			padding: 0 $gap;
 
+			.woocommerce-list__item-inner {
+				display: grid;
+				grid-template-columns: 30px minmax( 200px, 1fr ) 40px;
+			}
+
 			.woocommerce-list__item-before {
 				margin-right: 0px;
 
@@ -242,6 +247,14 @@
 				.list-placeholder__before {
 					display: none;
 				}
+			}
+
+			.list-placeholder__content {
+				width: 80%;
+			}
+
+			.woocommerce-list__item-after {
+				display: none;
 			}
 		}
 	}
