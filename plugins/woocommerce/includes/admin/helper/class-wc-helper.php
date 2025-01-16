@@ -6,6 +6,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -2349,7 +2350,7 @@ class WC_Helper {
 		$data = WC_Helper_Options::get( 'auth_user_data' );
 		WC_Helper_Options::update( 'last_disconnected_user_data', $data );
 		// Ignore all previously dismissed disconnect notices.
-		delete_metadata('user', 0, 'woo_disconnect_notice_dismiss', '', true);
+		delete_metadata('user', 0, PluginsHelper::DISMISS_DISCONNECT_NOTICE, '', true);
 
 		WC_Helper_Options::update( 'auth', array() );
 		WC_Helper_Options::update( 'auth_user_data', array() );
