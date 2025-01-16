@@ -10,7 +10,7 @@ import { WooPaymentsMethodsLogos } from '@woocommerce/onboarding';
  */
 import { getAdminSetting } from '~/utils/admin-settings';
 import sanitizeHTML from '~/lib/sanitize-html';
-import WooPaymentsLogo from './woopayments.svg';
+import WooPaymentsLogo from './woopayments-new.svg';
 import ExitSurveyModal from './exit-survey-modal';
 import strings from './strings';
 

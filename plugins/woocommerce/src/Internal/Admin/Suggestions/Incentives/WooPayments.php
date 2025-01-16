@@ -133,9 +133,13 @@ class WooPayments extends Incentive {
 			// Store locale, e.g. `en_US`.
 			'locale'       => get_locale(),
 			// WooCommerce store active for duration in seconds.
+			//'active_for'   => 100,
+			//'has_orders'   => false,
 			'active_for'   => WCAdminHelper::get_wcadmin_active_for_in_seconds(),
 			'has_orders'   => $this->has_orders(),
 			// Whether the store has at least one payment gateway enabled.
+			//'has_payments' => false,
+			//'has_wcpay'    => false,
 			'has_payments' => ! empty( WC()->payment_gateways()->get_available_payment_gateways() ),
 			'has_wcpay'    => $this->has_wcpay(),
 		);
