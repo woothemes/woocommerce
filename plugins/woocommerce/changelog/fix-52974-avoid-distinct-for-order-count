@@ -1,0 +1,4 @@
+Significance: minor
+Type: performance
+
+Improve order count query performance by avoiding usage of DISTINCT when not needed.
