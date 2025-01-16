@@ -139,7 +139,7 @@
 				@media screen and (max-width: 1024px) {
 					grid-template-columns: repeat(2, 1fr); /* 2 columns */
 				}
-	
+
 				@media screen and (max-width: 768px) {
 					grid-template-columns: repeat(1, 1fr); /* w columns */
 				}
@@ -234,11 +234,11 @@
 
 			.woocommerce-list__item-inner {
 				display: grid;
-				grid-template-columns: 30px minmax( 200px, 1fr ) 40px;
+				grid-template-columns: 30px minmax(200px, 1fr) 40px;
 			}
 
 			.woocommerce-list__item-before {
-				margin-right: 0px;
+				margin-right: 0;
 
 				.drag-handle-wrapper {
 					margin-right: 10px;

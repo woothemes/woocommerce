@@ -38,7 +38,7 @@
 
 			@media screen and ( max-width: 782px ) {
 				display: grid;
-				grid-template-columns: 30px minmax( 200px, 1fr ) 40px;
+				grid-template-columns: 30px minmax(200px, 1fr) 40px;
 			}
 		}
 
@@ -111,11 +111,11 @@
 
 		&-buttons {
 			margin-left: auto;
-			
+
 			@media screen and ( max-width: 782px ) {
 				order: 4;
 				grid-column: 2; /* Start below the 2nd column */
-    			grid-row: 2; /* Move to the second row */
+				grid-row: 2; /* Move to the second row */
 				margin-left: 0;
 				margin-top: $gap;
 			}
@@ -163,7 +163,8 @@
 			padding: 0 $gap;
 
 			&-before {
-				&-image, img {
+				&-image,
+				img {
 					display: none;
 				}
 			}

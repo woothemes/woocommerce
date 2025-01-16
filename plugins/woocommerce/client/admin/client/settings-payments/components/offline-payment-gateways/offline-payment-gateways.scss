@@ -23,7 +23,7 @@
 
 			@media screen and ( max-width: 782px ) {
 				display: grid;
-				grid-template-columns: 30px minmax( 200px, 1fr );
+				grid-template-columns: 30px minmax(200px, 1fr);
 			}
 		}
 
@@ -97,7 +97,7 @@
 			&-after {
 				margin-left: 0;
 				grid-column: 2; /* Start below the 2nd column */
-    			grid-row: 2; /* Move to the second row */
+				grid-row: 2; /* Move to the second row */
 				margin-top: $gap;
 			}
 		}
