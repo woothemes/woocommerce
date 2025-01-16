@@ -8,7 +8,7 @@
 	width: calc(100% + 40px);
 
 	@media screen and ( max-width: 782px ) {
-		margin-top: 60px;
+		margin-top: 40px;
 	}
 
 	.settings-payments-methods__show-more {
@@ -18,6 +18,14 @@
 		margin-left: 38px;
 		box-shadow: none;
 		color: var(--wp-admin-theme-color);
+
+		@media screen and ( max-width: 1024px ) {
+			margin-left: $gap;
+		}
+
+		@media screen and ( max-width: 782px ) {
+			margin-left: $gap-smaller;
+		}
 	}
 
 	// Override styles for woocommerce list items.
@@ -38,6 +46,14 @@
 
 			&:not(:first-child) {
 				border-top: 1px solid $gray-200;
+			}
+
+			@media screen and ( max-width: 1024px ) {
+				padding: 0 $gap-large;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				padding: 0 $gap;
 			}
 		}
 
@@ -79,6 +95,7 @@
 			&__actions {
 				display: flex;
 				gap: $gap;
+				margin-left: $gap;
 
 				.components-base-control {
 					margin-bottom: 0;
