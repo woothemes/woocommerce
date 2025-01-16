@@ -113,6 +113,15 @@
 				height: 40px;
 				border-radius: 4px;
 			}
+			@media screen and ( max-width: 782px ) {
+				align-items: flex-start;
+
+				img {
+					max-width: 30px;
+					height: 30px;
+					margin-top: 3px;
+				}
+			}
 		}
 
 		&__item-multi-row {
