@@ -1,6 +1,4 @@
-const {
-	test: baseTest,
-} = require( '../../../fixtures/block-editor-fixtures' );
+const { test: baseTest } = require( '../../../fixtures/block-editor-fixtures' );
 const { expect, tags } = require( '../../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
