@@ -95,7 +95,7 @@ class AddToCartWithOptions extends AbstractBlock {
 			ob_start();
 
 			/**
-			 * Trigger the single product add to cart action for each product type.
+			 * Trigger the single product add to cart action that prints the markup.
 			 *
 			 * @since 9.7.0
 			 */

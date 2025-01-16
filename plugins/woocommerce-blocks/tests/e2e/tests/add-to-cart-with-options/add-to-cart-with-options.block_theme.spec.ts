@@ -1,39 +1,12 @@
 /**
  * External dependencies
  */
-import { Page } from '@playwright/test';
-import { test as base, expect, Editor } from '@woocommerce/e2e-utils';
-
-/**
- * Internal dependencies
- */
+import { test, expect } from '@woocommerce/e2e-utils';
 
 const blockData = {
 	name: 'Add to Cart with Options (Experimental)',
 	slug: 'woocommerce/add-to-cart-with-options',
 };
-
-declare global {
-	interface Window {
-		eventFired: boolean;
-	}
-}
-
-class BlockUtils {
-	editor: Editor;
-	page: Page;
-
-	constructor( { editor, page }: { editor: Editor; page: Page } ) {
-		this.editor = editor;
-		this.page = page;
-	}
-}
-
-const test = base.extend< { blockUtils: BlockUtils } >( {
-	blockUtils: async ( { editor, page }, use ) => {
-		await use( new BlockUtils( { editor, page } ) );
-	},
-} );
 
 test.describe( `${ blockData.name } Block`, () => {
 	test( 'allows switching to 3rd-party product types', async ( {
