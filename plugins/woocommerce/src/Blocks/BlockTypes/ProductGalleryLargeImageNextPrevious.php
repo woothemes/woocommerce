@@ -132,7 +132,7 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 		return sprintf(
 			'<button
 				data-wc-bind--disabled="state.disable%1$s"
-				class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%2$s--inside-image"
+				class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%2$s"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" width="49" height="48" viewBox="0 0 49 48" fill="none">
 					<g filter="url(#filter0_b_397_11354)">
