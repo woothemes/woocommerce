@@ -45,6 +45,11 @@ interface CompleteSetupButtonProps {
 	buttonText?: string;
 }
 
+/**
+ * A button component that guides users through completing the setup for a payment gateway.
+ * The button dynamically determines the appropriate action (e.g., redirecting to onboarding
+ * or settings) based on the gateway's and onboarding state.
+ */
 export const CompleteSetupButton = ( {
 	gatewayId,
 	gatewayState,

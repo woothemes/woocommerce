@@ -25,7 +25,7 @@ type SlotProps = React.ComponentProps< typeof Slot >;
 function getChildrenAndProps< T = FillProps, S = Record< string, unknown > >(
 	children:
 		| React.ReactNode
-		| ( ( props: T & { order: number } ) => React.ReactElement ),
+		| ( ( props: T & { order: number } ) => React.ReactNode ),
 	order: number,
 	props: T,
 	injectProps?: S
@@ -65,14 +65,22 @@ function getChildrenAndProps< T = FillProps, S = Record< string, unknown > >(
  * @return {Node} Node.
  */
 function createOrderedChildren< T = FillProps, S = Record< string, unknown > >(
-	children: React.ReactNode,
+	children:
+		| React.ReactNode
+		| ( ( props: T & { order: number } ) => React.ReactNode ),
 	order: number,
 	props: T,
 	injectProps?: S
-): React.ReactElement {
+): React.ReactNode {
 	const { children: childrenToRender, props: propsToRender } =
 		getChildrenAndProps( children, order, props, injectProps );
-	return cloneElement( childrenToRender, propsToRender );
+	if ( ! childrenToRender || typeof childrenToRender === 'string' ) {
+		return childrenToRender;
+	}
+	return cloneElement(
+		childrenToRender as React.ReactElement,
+		propsToRender
+	);
 }
 export { createOrderedChildren };
 
