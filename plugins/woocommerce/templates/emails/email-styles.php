@@ -29,7 +29,7 @@ $body             = get_option( 'woocommerce_email_body_background_color' );
 $base             = get_option( 'woocommerce_email_base_color' );
 $text             = get_option( 'woocommerce_email_text_color' );
 $footer_text      = get_option( 'woocommerce_email_footer_text_color' );
-$header_alignment = get_option( 'woocommerce_email_header_alignment' );
+$header_alignment = get_option( 'woocommerce_email_header_alignment', $email_improvements_enabled ? 'left' : false );
 $default_font     = '"Helvetica Neue", Helvetica, Roboto, Arial, sans-serif';
 $font_family      = $email_improvements_enabled ? get_option( 'woocommerce_email_font_family', $default_font ) : $default_font;
 
