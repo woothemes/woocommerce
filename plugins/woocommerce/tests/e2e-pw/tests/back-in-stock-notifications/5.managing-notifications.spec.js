@@ -23,7 +23,7 @@ test.describe( 'Feature: Managing Notifications', () => {
 		helper = new AcceptanceHelper( baseURL, page );
 	} );
 	test.afterEach( async ( {} ) => {
-		helper.deleteAllProducts();
+		helper.deleteCurrentProduct();
 	} );
 	test.describe( 'Logged in', async () => {
 		test.use( { storageState: process.env.CUSTOMERSTATE } );

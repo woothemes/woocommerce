@@ -23,7 +23,7 @@ test.describe( 'Feature: Receiving Confirmations', () => {
 		helper = new AcceptanceHelper( baseURL, page );
 	} );
 	test.afterEach( async ( {} ) => {
-		helper.deleteAllProducts();
+		helper.deleteCurrentProduct();
 	} );
 	test.describe( 'Receiving Confirmations', () => {
 		test.use( { storageState: process.env.CUSTOMERSTATE } );

@@ -24,7 +24,7 @@ test.describe( 'Feature: Viewing Account Activity', () => {
 		helper = new AcceptanceHelper( baseURL, page );
 	} );
 	test.afterEach( async ( {} ) => {
-		helper.deleteAllProducts();
+		helper.deleteCurrentProduct();
 	} );
 	test( 'View triggered notifications activity', async () => {
 		const { given, when, then } = helper;

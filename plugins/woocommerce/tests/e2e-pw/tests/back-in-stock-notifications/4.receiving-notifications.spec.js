@@ -23,7 +23,7 @@ test.describe( 'Feature: Receiving Notifications', () => {
 		helper = new AcceptanceHelper( baseURL, page );
 	} );
 	test.afterEach( async ( {} ) => {
-		helper.deleteAllProducts();
+		helper.deleteCurrentProduct();
 	} );
 	test.use( { storageState: process.env.CUSTOMERSTATE } );
 	test( 'Receive a simple product notification', async () => {

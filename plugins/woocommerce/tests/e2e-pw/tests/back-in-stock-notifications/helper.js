@@ -811,7 +811,7 @@ class AcceptanceHelper {
 			.fill( customer.email );
 	}
 
-	deleteAllProducts() {
+	deleteCurrentProduct() {
 		this.api.post( 'products/batch', {
 			delete: [ this.productData.id ],
 		} );

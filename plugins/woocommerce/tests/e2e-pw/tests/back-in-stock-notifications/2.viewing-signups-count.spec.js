@@ -23,7 +23,7 @@ test.describe( 'Feature: Viewing Subscribers Count', () => {
 		helper = new AcceptanceHelper( baseURL, page );
 	} );
 	test.afterEach( async ( {} ) => {
-		helper.deleteAllProducts();
+		helper.deleteCurrentProduct();
 	} );
 	test( 'View number of customers who have joined the waitlist', async () => {
 		const { given, when, then } = helper;
