@@ -1,9 +1,9 @@
 const {
 	test: baseTest,
-} = require( '../../../../fixtures/block-editor-fixtures' );
-const { expect, tags } = require( '../../../../fixtures/fixtures' );
-const { updateProduct } = require( '../../../../utils/product-block-editor' );
-const { clickOnTab } = require( '../../../../utils/simple-products' );
+} = require( '../../../fixtures/block-editor-fixtures' );
+const { expect, tags } = require( '../../../fixtures/fixtures' );
+const { updateProduct } = require( '../../../utils/product-block-editor' );
+const { clickOnTab } = require( '../../../utils/simple-products' );
 const attributesData = require( './fixtures/attributes' );
 const {
 	waitForGlobalAttributesLoaded,

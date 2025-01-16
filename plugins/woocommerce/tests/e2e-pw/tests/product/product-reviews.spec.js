@@ -2,10 +2,9 @@ const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
-	reviews: async ( { api }, use ) => {
+	products: async ( { api }, use ) => {
 		const timestamp = Date.now().toString();
 		const products = [];
-		const reviews = [];
 
 		// Create the products
 		for ( let i = 0; i < 2; i++ ) {
@@ -19,6 +18,17 @@ const test = baseTest.extend( {
 					products.push( response.data );
 				} );
 		}
+
+		await use( products );
+
+		// Cleanup
+		await api.post( `products/batch`, {
+			delete: products.map( ( product ) => product.id ),
+		} );
+	},
+	reviews: async ( { api, products }, use ) => {
+		const timestamp = Date.now().toString();
+		const reviews = [];
 
 		// Create the product reviews
 		for ( const product of products ) {
@@ -40,9 +50,6 @@ const test = baseTest.extend( {
 		// Cleanup
 		await api.delete( `products/reviews/batch`, {
 			delete: reviews.map( ( review ) => review.id ),
-		} );
-		await api.post( `products/batch`, {
-			delete: products.map( ( product ) => product.id ),
 		} );
 	},
 } );
@@ -297,5 +304,33 @@ test.describe( 'Product Reviews', () => {
 				`This comment is in the Trash. Please move it out of the Trash if you want to edit it.`
 			)
 		).toBeVisible();
+	} );
+
+	// eslint-disable-next-line playwright/valid-title
+	test.describe( () => {
+		test.use( { storageState: process.env.CUSTOMERSTATE } );
+
+		test( 'shopper can post a review and see it after', async ( {
+			page,
+			products,
+		} ) => {
+			const product = products[ 0 ];
+
+			await page.goto( product.permalink );
+
+			await expect( page.locator( '.reviews_tab' ) ).toContainText(
+				'Reviews (0)'
+			);
+			await page.locator( '.reviews_tab' ).click();
+			await page.locator( '.star-4' ).click();
+			await page.locator( '#comment' ).fill( 'This product is great!' );
+			await page.locator( 'text=Submit' ).click();
+			await expect(
+				page.locator( '.woocommerce-Reviews-title' )
+			).toContainText( `1 review for ${ product.name }` );
+			await expect( page.locator( '.reviews_tab' ) ).toContainText(
+				'Reviews (1)'
+			);
+		} );
 	} );
 } );

@@ -5,9 +5,9 @@ const {
 	expectOldProductEditor,
 	isBlockProductEditorEnabled,
 	toggleBlockProductEditor,
-} = require( '../../../../utils/simple-products' );
-const { toggleBlockProductTour } = require( '../../../../utils/tours' );
-const { tags } = require( '../../../../fixtures/fixtures' );
+} = require( '../../../utils/simple-products' );
+const { toggleBlockProductTour } = require( '../../../utils/tours' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 let isNewProductEditorEnabled = false;
 

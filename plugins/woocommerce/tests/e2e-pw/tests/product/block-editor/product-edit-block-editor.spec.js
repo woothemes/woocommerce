@@ -1,7 +1,7 @@
 const {
 	test: baseTest,
-} = require( '../../../../fixtures/block-editor-fixtures' );
-const { expect, tags } = require( '../../../../fixtures/fixtures' );
+} = require( '../../../fixtures/block-editor-fixtures' );
+const { expect, tags } = require( '../../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	product: async ( { api }, use ) => {
