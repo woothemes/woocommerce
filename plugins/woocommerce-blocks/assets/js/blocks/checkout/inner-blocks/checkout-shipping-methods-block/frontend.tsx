@@ -6,7 +6,7 @@ import { withFilteredAttributes } from '@woocommerce/shared-hocs';
 import { FormStep } from '@woocommerce/blocks-components';
 import { useCheckoutAddress } from '@woocommerce/base-context/hooks';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
 
 /**
@@ -27,8 +27,9 @@ const FrontendBlock = ( {
 	className?: string;
 } ) => {
 	const { showFormStepNumbers } = useCheckoutBlockContext();
-	const checkoutIsProcessing = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).isProcessing()
+	const checkoutIsProcessing = useSelect(
+		( select ) => select( checkoutStore ).isProcessing(),
+		[]
 	);
 	const { showShippingMethods } = useCheckoutAddress();
 
