@@ -35,7 +35,15 @@ const links: PaymentGatewayLink[] = [
 describe( 'EllipsisMenuContent component', () => {
 	it( 'renders the correct links for the suggestion', () => {
 		const { getByText } = render(
-			<EllipsisMenuContent isSuggestion={ true } links={ links } />
+			<EllipsisMenuContent
+				isSuggestion={ true }
+				links={ links }
+				providerId={ 'bogus' }
+				pluginFile={ 'bogus/bogus' }
+				onToggle={ function (): void {
+					throw new Error( 'Function not implemented.' );
+				} }
+			/>
 		);
 		expect( getByText( 'See pricing & fees' ) ).toBeInTheDocument();
 		expect( getByText( 'Learn more' ) ).toBeInTheDocument();
@@ -45,7 +53,15 @@ describe( 'EllipsisMenuContent component', () => {
 
 	it( 'renders the correct links for the non-enabled gateway', () => {
 		const { getByText } = render(
-			<EllipsisMenuContent isSuggestion={ false } links={ links } />
+			<EllipsisMenuContent
+				isSuggestion={ false }
+				links={ links }
+				providerId={ 'bogus' }
+				pluginFile={ 'bogus/bogus' }
+				onToggle={ function (): void {
+					throw new Error( 'Function not implemented.' );
+				} }
+			/>
 		);
 		expect( getByText( 'See pricing & fees' ) ).toBeInTheDocument();
 		expect( getByText( 'Learn more' ) ).toBeInTheDocument();
@@ -59,6 +75,11 @@ describe( 'EllipsisMenuContent component', () => {
 				isSuggestion={ false }
 				isEnabled={ true }
 				links={ links }
+				providerId={ 'bogus' }
+				pluginFile={ 'bogus/bogus' }
+				onToggle={ function (): void {
+					throw new Error( 'Function not implemented.' );
+				} }
 			/>
 		);
 		expect( getByText( 'See pricing & fees' ) ).toBeInTheDocument();
@@ -67,15 +88,18 @@ describe( 'EllipsisMenuContent component', () => {
 		expect( getByText( 'Disable' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the correct links for the enabled woopayments gateway in a test mode', () => {
+	it( 'renders the correct links for the enabled gateway with sandbox account that can be reset', () => {
 		const { getByText } = render(
 			<EllipsisMenuContent
 				isSuggestion={ false }
-				isWooPayments={ true }
 				isEnabled={ true }
-				needsSetup={ false }
-				testMode={ true }
+				canResetAccount={ true }
 				links={ links }
+				providerId={ 'bogus' }
+				pluginFile={ 'bogus/bogus' }
+				onToggle={ function (): void {
+					throw new Error( 'Function not implemented.' );
+				} }
 			/>
 		);
 		expect( getByText( 'See pricing & fees' ) ).toBeInTheDocument();

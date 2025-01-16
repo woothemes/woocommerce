@@ -89,6 +89,10 @@ require( 'fs-extra' ).ensureSymlinkSync(
 
 const webpackConfig = {
 	mode: NODE_ENV,
+	ignoreWarnings:
+		process.env.HIDE_TYPESCRIPT_WARNINGS === 'true'
+			? [ { message: /TS\d{4,6}:\ / } ]
+			: [],
 	entry: getEntryPoints(),
 	output: {
 		filename: ( data ) => {
@@ -179,10 +183,35 @@ const webpackConfig = {
 	plugins: [
 		...styleConfig.plugins,
 		// Runs TypeScript type checker on a separate process.
-		! process.env.STORYBOOK && new ForkTsCheckerWebpackPlugin(),
+		! process.env.STORYBOOK &&
+			! ( process.env.DISABLE_TYPESCRIPT_CHECKING === 'true' ) &&
+			new ForkTsCheckerWebpackPlugin(),
 		! process.env.STORYBOOK &&
 			new TypeScriptWarnOnlyWebpackPlugin( [
-				/* specify TS error codes here, e.g. 'TS2322' */
+				// these are the errors that have been converted into warnings during the react-18 upgrade
+				// the number is the original number of instances of that error when this comment is written
+				// hopefully this information helps prioritize fixing the errors :)
+				'TS2349', // ~107: This expression is not callable.
+				'TS2554', // ~60: Expected 2 arguments, but got 1.
+				'TS2339', // ~51: Property 'getActivePlugins' does not exist on type 'never'.
+				'TS7006', // ~38: Parameter implicitly has an 'any' type.
+				'TS2322', // ~31: Type mismatch in assignment.
+				'TS2503', // ~27: Cannot find namespace 'Slot'.
+				'TS2559', // ~11: Type mismatch in object property.
+				'TS2786', // ~10: Component cannot be used as a JSX element.
+				'TS2604', // ~10: JSX element type has no construct or call signatures.
+				'TS2345', // ~7: Argument type mismatch.
+				'TS2741', // ~5: Missing required property in type.
+				'TS2305', // ~4: Module has no exported member.
+				'TS2347', // ~3: Untyped function calls may not accept type arguments.
+				'TS2769', // ~2: No overload matches this call.
+				'TS2558', // ~2: Unexpected number of type arguments.
+				'TS2344', // ~2: Type does not satisfy a specific constraint.
+				'TS18046', // ~2: Variable is of type 'unknown'.
+				'TS2677', // 1: Type predicate's type must be assignable to its parameter's type.
+				'TS2571', // 1: Object is of type 'unknown'.
+				'TS2352', // 1: Invalid type conversion.
+				'TS18049', // 1: Nullable or undefined value encountered.
 			] ),
 		new CustomTemplatedPathPlugin( {
 			modulename( outputPath, data ) {

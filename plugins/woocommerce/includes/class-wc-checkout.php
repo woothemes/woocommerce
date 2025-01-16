@@ -9,6 +9,7 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 
 defined( 'ABSPATH' ) || exit;
@@ -486,7 +487,7 @@ class WC_Checkout {
 			return $order_id;
 		} catch ( Exception $e ) {
 			if ( $order && $order instanceof WC_Order ) {
-				$order->get_data_store()->release_held_coupons( $order );
+				wc_release_coupons_for_order( $order );
 				/**
 				 * Action hook fired when an order is discarded due to Exception.
 				 *
@@ -554,8 +555,8 @@ class WC_Checkout {
 					array(
 						'name'         => $product->get_name(),
 						'tax_class'    => $product->get_tax_class(),
-						'product_id'   => $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id(),
-						'variation_id' => $product->is_type( 'variation' ) ? $product->get_id() : 0,
+						'product_id'   => $product->is_type( ProductType::VARIATION ) ? $product->get_parent_id() : $product->get_id(),
+						'variation_id' => $product->is_type( ProductType::VARIATION ) ? $product->get_id() : 0,
 					)
 				);
 			}
@@ -632,6 +633,7 @@ class WC_Checkout {
 						'taxes'        => array(
 							'total' => $shipping_rate->taxes,
 						),
+						'tax_status'   => $shipping_rate->tax_status,
 					)
 				);
 

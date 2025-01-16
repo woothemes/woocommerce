@@ -1,6 +1,7 @@
 const {
 	test: baseTest,
 	expect,
+	tags,
 } = require( '../../../fixtures/api-tests-fixtures' );
 const { BASE_URL } = process.env;
 const { admin } = require( '../../../test-data/data' );
@@ -591,7 +592,7 @@ test.describe( 'Products API tests: CRUD', () => {
 
 	test.describe(
 		'Product review tests: CRUD',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		() => {
 			let productReviewId;
 			let reviewsTestProduct;
@@ -983,7 +984,7 @@ test.describe( 'Products API tests: CRUD', () => {
 
 		test(
 			'can batch update product shipping classes',
-			{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+			{ tag: [ tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ] },
 			async ( { request } ) => {
 				// Batch create product shipping classes.
 				const response = await request.post(

@@ -1,9 +1,10 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe.serial(
 	'WooCommerce Orders > Refund an order',
-	{ tag: [ '@payments', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.HPOS ] },
 	() => {
 		let productId, orderId, currencySymbol;
 
@@ -91,11 +92,7 @@ test.describe.serial(
 
 			// Do the refund
 			page.on( 'dialog', ( dialog ) => dialog.accept() );
-			await page
-				.locator( '.do-manual-refund', {
-					waitForLoadState: 'networkidle',
-				} )
-				.click();
+			await page.locator( '.do-manual-refund' ).click();
 
 			// Verify the product line item shows the refunded quantity and amount
 			await expect(
@@ -147,7 +144,7 @@ test.describe.serial(
 
 test.describe(
 	'WooCommerce Orders > Refund and restock an order item',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		let productWithStockId, productWithNoStockId, orderId;
 
@@ -247,11 +244,7 @@ test.describe(
 			await page.locator( '.refund_order_item_qty >> nth=1' ).fill( '2' );
 			await page.locator( '#refund_reason' ).fill( 'No longer wanted' );
 			page.on( 'dialog', ( dialog ) => dialog.accept() );
-			await page
-				.locator( '.do-manual-refund', {
-					waitForLoadState: 'networkidle',
-				} )
-				.click();
+			await page.locator( '.do-manual-refund' ).click();
 
 			// Verify restock system note was added
 			await expect(

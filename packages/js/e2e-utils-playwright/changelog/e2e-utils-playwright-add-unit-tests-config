@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-Added unit tests configuration and created tests for getOrderIdFromUrl function

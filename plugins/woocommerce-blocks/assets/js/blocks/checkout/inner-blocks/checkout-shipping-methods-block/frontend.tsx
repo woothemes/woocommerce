@@ -23,12 +23,6 @@ const FrontendBlock = ( {
 }: {
 	title: string;
 	description: string;
-	showCompanyField: boolean;
-	requireCompanyField: boolean;
-	showApartmentField: boolean;
-	requireApartmentField: boolean;
-	showPhoneField: boolean;
-	requirePhoneField: boolean;
 	children: JSX.Element;
 	className?: string;
 } ) => {

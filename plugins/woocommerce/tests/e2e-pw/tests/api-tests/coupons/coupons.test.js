@@ -1,4 +1,8 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
+const {
+	test,
+	expect,
+	tags,
+} = require( '../../../fixtures/api-tests-fixtures' );
 const { coupon, order } = require( '../../../data' );
 
 test.describe( 'Coupons API tests', () => {
@@ -71,7 +75,7 @@ test.describe( 'Coupons API tests', () => {
 
 	test(
 		'can permanently delete a coupon',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		async ( { request } ) => {
 			//call API to delete previously created coupon
 			const response = await request.delete(
@@ -186,7 +190,7 @@ test.describe( 'Batch update coupons', () => {
 
 	test(
 		'can batch delete coupons',
-		{ tag: '@skip-on-default-wpcom' },
+		{ tag: tags.SKIP_ON_WPCOM },
 		async ( { request } ) => {
 			// Batch delete the 2 coupons.
 			const couponIdsToDelete = expectedCoupons.map( ( { id } ) => id );

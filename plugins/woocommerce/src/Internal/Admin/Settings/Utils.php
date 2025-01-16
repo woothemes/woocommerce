@@ -187,4 +187,124 @@ class Utils {
 
 		return $updated_map;
 	}
+
+	/**
+	 * Get the list of plugin slug suffixes used for handling non-standard testing slugs.
+	 *
+	 * @return string[] The list of plugin slug suffixes used for handling non-standard testing slugs.
+	 */
+	public static function get_testing_plugin_slug_suffixes(): array {
+		return array( '-dev', '-rc', '-test', '-beta', '-alpha' );
+	}
+
+	/**
+	 * Generate a list of testing plugin slugs from a standard/official plugin slug.
+	 *
+	 * @param string $slug             The standard/official plugin slug. Most likely the WPORG slug.
+	 * @param bool   $include_original Optional. Whether to include the original slug in the list.
+	 *                                 If true, the original slug will be the first item in the list.
+	 *
+	 * @return string[] The list of testing plugin slugs generated from the standard/official plugin slug.
+	 */
+	public static function generate_testing_plugin_slugs( string $slug, bool $include_original = false ): array {
+		$slugs = array();
+		if ( $include_original ) {
+			$slugs[] = $slug;
+		}
+
+		foreach ( self::get_testing_plugin_slug_suffixes() as $suffix ) {
+			$slugs[] = $slug . $suffix;
+		}
+
+		return $slugs;
+	}
+
+	/**
+	 * Normalize a plugin slug to a standard/official slug.
+	 *
+	 * This is a best-effort approach.
+	 * It will remove beta testing suffixes and lowercase the slug.
+	 * It will NOT convert plugin titles to slugs or sanitize the slug like sanitize_title() does.
+	 *
+	 * @param string $slug The plugin slug.
+	 *
+	 * @return string The normalized plugin slug.
+	 */
+	public static function normalize_plugin_slug( string $slug ): string {
+		// If the slug is empty or contains anything other than alphanumeric and dash characters, it will be left as is.
+		if ( empty( $slug ) || ! preg_match( '/^[\w-]+$/', $slug, $matches ) ) {
+			return $slug;
+		}
+
+		// Lowercase the slug.
+		$slug = strtolower( $slug );
+		// Remove testing suffixes.
+		foreach ( self::get_testing_plugin_slug_suffixes() as $suffix ) {
+			$slug = str_ends_with( $slug, $suffix ) ? substr( $slug, 0, -strlen( $suffix ) ) : $slug;
+		}
+
+		return $slug;
+	}
+
+	/**
+	 * Truncate a text to a target character length while preserving whole words.
+	 *
+	 * We take a greedy approach: if some characters of a word fit in the target length, the whole word is included.
+	 * This means we might exceed the target length by a few characters.
+	 * The append string length is not included in the character count.
+	 *
+	 * @param string      $text          The text to truncate.
+	 *                                   It will not be sanitized, stripped of HTML tags, or modified in any way before truncation.
+	 * @param int         $target_length The target character length of the truncated text.
+	 * @param string|null $append        Optional. The string to append to the truncated text, if there is any truncation.
+	 *
+	 * @return string The truncated text.
+	 */
+	public static function truncate_with_words( string $text, int $target_length, string $append = null ): string {
+		// First, deal with locale that doesn't have words separated by spaces, but instead deals with characters.
+		// Borrowed from wp_trim_words().
+		if ( str_starts_with( wp_get_word_count_type(), 'characters' ) && preg_match( '/^utf\-?8$/i', get_option( 'blog_charset' ) ) ) {
+			$text = trim( preg_replace( "/[\n\r\t ]+/", ' ', $text ), ' ' );
+			preg_match_all( '/./u', $text, $words_array );
+
+			// Nothing to do if the text is already short enough.
+			if ( count( $words_array[0] ) <= $target_length ) {
+				return $text;
+			}
+
+			$words_array = array_slice( $words_array[0], 0, $target_length );
+			$truncated   = implode( '', $words_array );
+			if ( null !== $append ) {
+				$truncated .= $append;
+			}
+
+			return $truncated;
+		}
+
+		// Deal with locale that has words separated by spaces.
+		if ( strlen( $text ) <= $target_length ) {
+			return $text;
+		}
+
+		$words_array = preg_split( "/[\n\r\t ]+/", $text, - 1, PREG_SPLIT_NO_EMPTY );
+		$sep         = ' ';
+
+		// Include words until the target length is reached.
+		$truncated        = '';
+		$remaining_length = $target_length;
+		while ( $remaining_length > 0 && ! empty( $words_array ) ) {
+			$word              = array_shift( $words_array );
+			$truncated        .= $word . $sep;
+			$remaining_length -= strlen( $word . $sep );
+		}
+
+		// Remove the last separator.
+		$truncated = rtrim( $truncated, $sep );
+
+		if ( null !== $append ) {
+			$truncated .= $append;
+		}
+
+		return $truncated;
+	}
 }

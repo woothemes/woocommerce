@@ -1,29 +1,48 @@
-.list-placeholder {
-	&__title,
-	&__after,
-	&__before,
-	&__content {
-		background-color: $gray-100;
-		border-radius: 4px;
+.woocommerce-item__payment-gateway-placeholder {
+	border-top: 1px solid $gray-200;
+	border-bottom: 1px solid $gray-200;
+	padding: 0 48px;
+
+	&:hover {
+		background-color: $white;
 	}
 
-	&__title {
-		width: 120px;
-		height: 20px;
+	.woocommerce-list__item-inner {
+		padding: $gap-large 0;
+		align-items: flex-start;
 	}
 
-	&__after {
-		height: 32px;
-		width: 104px;
+	.drag-handle-wrapper {
+		margin-right: 20px;
 	}
 
-	&__before {
-		width: 40px;
-		height: 40px;
-	}
+	.list-placeholder {
+		&__title,
+		&__after,
+		&__before,
+		&__content {
+			background-color: $gray-100;
+			border-radius: 4px;
+		}
 
-	&__content {
-		width: 360px;
-		height: 20px;
+		&__title {
+			width: 120px;
+			height: 20px;
+		}
+
+		&__after {
+			height: 32px;
+			width: 104px;
+		}
+
+		&__before {
+			width: 40px;
+			height: 40px;
+		}
+
+		&__content {
+			width: 360px;
+			height: 20px;
+		}
 	}
 }

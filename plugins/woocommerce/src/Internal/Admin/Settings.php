@@ -9,8 +9,8 @@ use Automattic\WooCommerce\Admin\API\Plugins;
 use Automattic\WooCommerce\Admin\PageController;
 use Automattic\WooCommerce\Admin\API\Reports\Orders\DataStore as OrdersDataStore;
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Internal\Admin\WCPayPromotion\Init as WCPayPromotionInit;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use Automattic\WooCommerce\Internal\BrandingController;
 use WC_Marketplace_Suggestions;
 
 /**
@@ -200,6 +200,12 @@ class Settings {
 			'installedPlugins' => PluginsHelper::get_installed_plugin_slugs(),
 			'activePlugins'    => Plugins::get_active_plugins(),
 		);
+
+		// DO NOT use outside of core, these can be removed without deprecation.
+		$settings['__experimentalFlags'] = array(
+			'isNewBranding' => BrandingController::use_new_branding(),
+		);
+
 		// Plugins that depend on changing the translation work on the server but not the client -
 		// WooCommerce Branding is an example of this - so pass through the translation of
 		// 'WooCommerce' to wcSettings.
@@ -232,6 +238,7 @@ class Settings {
 		$settings['allowMarketplaceSuggestions']      = WC_Marketplace_Suggestions::allow_suggestions();
 		$settings['connectNonce']                     = wp_create_nonce( 'connect' );
 		$settings['wcpay_welcome_page_connect_nonce'] = wp_create_nonce( 'wcpay-connect' );
+		$settings['email_preview_nonce']              = wp_create_nonce( 'email-preview-nonce' );
 		$settings['wc_helper_nonces']                 = array(
 			'refresh' => wp_create_nonce( 'refresh' ),
 		);

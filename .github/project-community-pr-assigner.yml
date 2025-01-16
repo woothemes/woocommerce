@@ -38,7 +38,7 @@
   - team: woo-fse
 
 "packages/js/currency/**/*":
-  - team: woo-fse
+  - team: fractal
 
 "packages/js/customer-effort-score/**/*":
   - team: woo-fse

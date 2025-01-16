@@ -39,6 +39,7 @@ export default function FullEditorToolbarButton( {
 	label = __( 'Edit Product description', 'woocommerce' ),
 	text = __( 'Full editor', 'woocommerce' ),
 } ) {
+	// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 	const { openModalEditor, setModalEditorBlocks } = dispatch( store );
 	const [ description ] = useEntityProp< string >(
 		'postType',

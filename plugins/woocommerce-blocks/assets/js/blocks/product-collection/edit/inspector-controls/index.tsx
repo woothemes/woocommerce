@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { type ElementType, useMemo } from '@wordpress/element';
 import { EditorBlock } from '@woocommerce/types';
 import { addFilter } from '@wordpress/hooks';
-import { ProductCollectionFeedbackPrompt } from '@woocommerce/editor-components/feedback-prompt';
 import {
 	revertMigration,
 	getUpgradeStatus,
@@ -14,6 +13,7 @@ import {
 	UPGRADE_NOTICE_DISPLAY_COUNT_THRESHOLD,
 } from '@woocommerce/blocks/migration-products-to-product-collection';
 import { recordEvent } from '@woocommerce/tracks';
+import { CesFeedbackButton } from '@woocommerce/editor-components/ces-feedback-button';
 import {
 	PanelBody,
 	// @ts-expect-error Using experimental features
@@ -221,7 +221,10 @@ const ProductCollectionInspectorControls = (
 					) }
 				</ToolsPanel>
 			) : null }
-			<ProductCollectionFeedbackPrompt />
+			<CesFeedbackButton
+				blockName={ metadata.title }
+				wrapper={ PanelBody }
+			/>
 		</InspectorControls>
 	);
 };

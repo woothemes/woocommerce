@@ -14,22 +14,20 @@ import {
 	BillingStateInput,
 	ShippingStateInput,
 } from '@woocommerce/base-components/state-input';
-import { useEffect, useMemo, useRef } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { useInstanceId } from '@wordpress/compose';
-import { useShallowEqual } from '@woocommerce/base-hooks';
+import { useShallowEqual, usePrevious } from '@woocommerce/base-hooks';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import clsx from 'clsx';
-import {
-	AddressFormValues,
-	ContactFormValues,
-	FormFieldsConfig,
-} from '@woocommerce/settings';
+import { AddressFormValues, ContactFormValues } from '@woocommerce/settings';
 import { objectHasProp } from '@woocommerce/types';
+import { useCheckoutAddress } from '@woocommerce/base-context';
+import fastDeepEqual from 'fast-deep-equal/es6';
 
 /**
  * Internal dependencies
  */
-import { AddressFormProps, AddressFormFields } from './types';
+import { AddressFormProps } from './types';
 import prepareFormFields from './prepare-form-fields';
 import validateCountry from './validate-country';
 import customValidationHandler from './custom-validation-handler';
@@ -48,84 +46,56 @@ import { validateState } from './validate-state';
 const Form = < T extends AddressFormValues | ContactFormValues >( {
 	id = '',
 	fields,
-	fieldConfig = {} as FormFieldsConfig,
 	onChange,
 	addressType = 'shipping',
 	values,
 	children,
 	isEditing,
+	ariaDescribedBy,
 }: AddressFormProps< T > ): JSX.Element => {
 	const instanceId = useInstanceId( Form );
 	const isFirstRender = useRef( true );
+	const { defaultFields } = useCheckoutAddress();
 
 	// Track incoming props.
 	const currentFields = useShallowEqual( fields );
-	const currentFieldConfig = useShallowEqual( fieldConfig );
 	const currentCountry = useShallowEqual(
 		objectHasProp( values, 'country' ) ? values.country : ''
 	);
 
-	// Memoize the address form fields passed in from the parent component.
-	const addressFormFields = useMemo( (): AddressFormFields => {
-		const preparedFields = prepareFormFields(
-			currentFields,
-			currentFieldConfig,
-			currentCountry
-		);
-		return {
-			fields: preparedFields,
-			addressType,
-			required: preparedFields.filter( ( field ) => field.required ),
-			hidden: preparedFields.filter( ( field ) => field.hidden ),
-		};
-	}, [ currentFields, currentFieldConfig, currentCountry, addressType ] );
+	// Prepare address form fields by combining fields from the locale and default fields.
+	const formFields = prepareFormFields(
+		currentFields,
+		defaultFields,
+		currentCountry
+	);
 
-	// Stores refs for rendered fields so we can access them later.
-	const fieldsRef = useRef<
+	// Store previous fields to track changes.
+	const previousFormFields = usePrevious( formFields );
+	const previousIsEditing = usePrevious( isEditing );
+	const previousValues = usePrevious( values );
+
+	// Stores refs for rendered inputs so we can access them later.
+	const inputsRef = useRef<
 		Record< string, ValidatedTextInputHandle | null >
 	>( {} );
 
-	// Clear values for hidden fields.
-	useEffect( () => {
-		const newValues = {
-			...values,
-			...Object.fromEntries(
-				addressFormFields.hidden.map( ( field ) => [ field.key, '' ] )
-			),
-		};
-		if ( ! isShallowEqual( values, newValues ) ) {
-			onChange( newValues );
-		}
-	}, [ onChange, addressFormFields, values ] );
-
-	// Maybe validate country and state when other fields change so user is notified that they're required.
-	useEffect( () => {
-		if ( objectHasProp( values, 'country' ) ) {
-			validateCountry( addressType, values );
-		}
-
-		if ( objectHasProp( values, 'state' ) ) {
-			const stateField = addressFormFields.fields.find(
-				( f ) => f.key === 'state'
-			);
-
-			if ( stateField ) {
-				validateState( addressType, values, stateField );
-			}
-		}
-	}, [ values, addressType, addressFormFields ] );
-
 	// Changing country may change format for postcodes.
 	useEffect( () => {
-		fieldsRef.current?.postcode?.revalidate();
+		inputsRef.current?.postcode?.revalidate();
 	}, [ currentCountry ] );
 
 	// Focus the first input when opening the form.
 	useEffect( () => {
 		let timeoutId: ReturnType< typeof setTimeout >;
 
-		if ( ! isFirstRender.current && isEditing && fieldsRef.current ) {
-			const firstField = addressFormFields.fields.find(
+		if (
+			! isFirstRender.current &&
+			isEditing &&
+			inputsRef.current &&
+			previousIsEditing !== isEditing
+		) {
+			const firstField = formFields.find(
 				( field ) => field.hidden === false
 			);
 
@@ -153,14 +123,65 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 		return () => {
 			clearTimeout( timeoutId );
 		};
-	}, [ isEditing, addressFormFields, id, instanceId, addressType ] );
+	}, [
+		isEditing,
+		formFields,
+		id,
+		instanceId,
+		addressType,
+		previousIsEditing,
+	] );
+
+	// Clear values for hidden fields when fields change.
+	useEffect( () => {
+		if ( fastDeepEqual( previousFormFields, formFields ) ) {
+			return;
+		}
+		const newValues = {
+			...values,
+			...Object.fromEntries(
+				formFields
+					.filter( ( field ) => field.hidden )
+					.map( ( field ) => [ field.key, '' ] )
+			),
+		};
+		if ( ! isShallowEqual( values, newValues ) ) {
+			onChange( newValues );
+		}
+	}, [ onChange, formFields, previousFormFields, values ] );
+
+	// Maybe validate country and state when other fields change so user is notified that they're required.
+	useEffect( () => {
+		if (
+			fastDeepEqual( previousFormFields, formFields ) &&
+			fastDeepEqual( previousValues, values )
+		) {
+			return;
+		}
+		if ( objectHasProp( values, 'country' ) ) {
+			validateCountry( addressType, values );
+		}
+		if ( objectHasProp( values, 'state' ) ) {
+			const stateField = formFields.find( ( f ) => f.key === 'state' );
+
+			if ( stateField ) {
+				validateState( addressType, values, stateField );
+			}
+		}
+	}, [
+		values,
+		previousValues,
+		addressType,
+		formFields,
+		previousFormFields,
+	] );
 
 	id = id || `${ instanceId }`;
 
 	return (
 		<div id={ id } className="wc-block-components-address-form">
-			{ addressFormFields.fields.map( ( field ) => {
-				if ( field.hidden ) {
+			{ formFields.map( ( field ) => {
+				if ( !! field.hidden ) {
 					return null;
 				}
 
@@ -177,7 +198,9 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 					return (
 						<CheckboxControl
 							key={ field.key }
-							checked={ Boolean( values[ field.key ] ) }
+							checked={ Boolean(
+								values[ field.key as keyof T ]
+							) }
 							onChange={ ( checked: boolean ) => {
 								onChange( {
 									...values,
@@ -193,12 +216,12 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 				if ( field.key === 'address_1' ) {
 					const address1 = getFieldData(
 						'address_1',
-						addressFormFields.fields,
+						formFields,
 						values
 					);
 					const address2 = getFieldData(
 						'address_2',
-						addressFormFields.fields,
+						formFields,
 						values
 					);
 
@@ -290,7 +313,10 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 									'-'
 								)
 							) }
-							value={ values[ field.key ] }
+							value={
+								( values[ field.key as keyof T ] as string ) ||
+								''
+							}
 							onChange={ ( newValue: string ) => {
 								onChange( {
 									...values,
@@ -310,11 +336,14 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 					<ValidatedTextInput
 						key={ field.key }
 						ref={ ( el ) =>
-							( fieldsRef.current[ field.key ] = el )
+							( inputsRef.current[ field.key ] = el )
 						}
 						{ ...fieldProps }
 						type={ field.type }
-						value={ values[ field.key ] }
+						ariaDescribedBy={ ariaDescribedBy }
+						value={
+							( values[ field.key as keyof T ] as string ) || ''
+						}
 						onChange={ ( newValue: string ) =>
 							onChange( {
 								...values,

@@ -17,6 +17,7 @@ import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
  */
 import { useCustomerData } from './use-customer-data';
 import { useShippingData } from './shipping/use-shipping-data';
+import { useEditorContext } from '../providers/editor-context';
 
 interface CheckoutAddress {
 	shippingAddress: ShippingAddress;
@@ -43,6 +44,7 @@ interface CheckoutAddress {
  * Custom hook for exposing address related functionality for the checkout address form.
  */
 export const useCheckoutAddress = (): CheckoutAddress => {
+	const { isEditor, getPreviewData } = useEditorContext();
 	const { needsShipping } = useShippingData();
 	const {
 		useShippingAsBilling,
@@ -88,7 +90,9 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		setShippingAddress,
 		setBillingAddress,
 		setEmail,
-		defaultFields,
+		defaultFields: isEditor
+			? ( getPreviewData( 'defaultFields', defaultFields ) as FormFields )
+			: defaultFields,
 		useShippingAsBilling,
 		setUseShippingAsBilling: __internalSetUseShippingAsBilling,
 		editingBillingAddress,

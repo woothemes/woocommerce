@@ -28,7 +28,7 @@ class MiniCart extends \WP_UnitTestCase {
 				)
 			),
 		);
-		wc_empty_cart();
+		WC()->cart->empty_cart();
 		add_filter( 'woocommerce_is_rest_api_request', '__return_false', 1 );
 	}
 
@@ -36,8 +36,9 @@ class MiniCart extends \WP_UnitTestCase {
 	 * Tear down test. Called after every test.
 	 * @return void
 	 */
-	protected function tearDown(): void {
+	public function tearDown(): void {
 		parent::tearDown();
+		WC()->cart->empty_cart();
 		remove_filter( 'woocommerce_is_rest_api_request', '__return_false', 1 );
 	}
 
@@ -55,7 +56,7 @@ class MiniCart extends \WP_UnitTestCase {
 		// Tests badge is not shown, because product count is not greater than zero when "greater_than_zero" is selected.
 		$block  = parse_blocks( '<!-- wp:woocommerce/mini-cart {"productCountVisibility":"greater_than_zero"} /-->' );
 		$output = render_block( $block[0] );
-		$this->assertStringNotContainsString( '<span class="wc-block-mini-cart__badge"', $output );
+		$this->assertStringContainsString( '<span class="wc-block-mini-cart__badge"', $output );
 
 		// Tests badge is not shown when "never" is selected.
 		$block  = parse_blocks( '<!-- wp:woocommerce/mini-cart {"productCountVisibility":"never"} /-->' );

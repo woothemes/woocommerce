@@ -293,11 +293,12 @@ class ProductButton extends AbstractBlock {
 					class="added_to_cart wc_forward"
 					title="%2$s"
 				>
-					%2$s
+					%3$s
 				</a>
 			</span>',
-			wc_get_cart_url(),
-			__( 'View cart', 'woocommerce' )
+			esc_url( wc_get_cart_url() ),
+			esc_attr__( 'View cart', 'woocommerce' ),
+			esc_html__( 'View cart', 'woocommerce' )
 		);
 	}
 }

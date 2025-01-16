@@ -11,7 +11,6 @@ import {
 	CardBody,
 	CardFooter,
 	CardHeader,
-	// @ts-expect-error: Suppressing Module '"@wordpress/components"' has no exported member '__experimentalText'
 	__experimentalText as Text,
 } from '@wordpress/components';
 
@@ -47,6 +46,7 @@ const TableCard: React.VFC< TableCardProps > = ( {
 	actions,
 	className,
 	hasSearch,
+	tablePreface,
 	headers = [],
 	ids,
 	isLoading = false,
@@ -146,6 +146,7 @@ const TableCard: React.VFC< TableCardProps > = ( {
 							'Choose which values to display',
 							'woocommerce'
 						) }
+						placement="bottom-end"
 						renderContent={ () => (
 							<Fragment>
 								<MenuTitle>
@@ -183,6 +184,11 @@ const TableCard: React.VFC< TableCardProps > = ( {
 			{ /* Ignoring the error to make it backward compatible for now. */ }
 			{ /* @ts-expect-error: size must be one of small, medium, largel, xSmall, extraSmall. */ }
 			<CardBody size={ null }>
+				{ tablePreface && (
+					<div className="woocommerce-table__preface">
+						{ tablePreface }
+					</div>
+				) }
 				{ isLoading ? (
 					<Fragment>
 						<span className="screen-reader-text">
@@ -221,7 +227,6 @@ const TableCard: React.VFC< TableCardProps > = ( {
 				) }
 			</CardBody>
 
-			{ /* @ts-expect-error: justify is missing from the latest @types/wordpress__components */ }
 			<CardFooter justify="center">
 				{ isLoading ? (
 					<TableSummaryPlaceholder />

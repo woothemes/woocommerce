@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEntityProp } from '@wordpress/core-data';
+import { useEntityProp, store as coreStore } from '@wordpress/core-data';
 import { dispatch, useSelect, select as wpSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { Product, ProductStatus, PRODUCTS_STORE_NAME } from '@woocommerce/data';
@@ -47,18 +47,12 @@ export function useProductManager< T = Product >( postType: string ) {
 			setIsSaving( true );
 
 			await validate( extraProps );
-			const { saveEntityRecord } = dispatch( 'core' );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const { saveEntityRecord } = dispatch( coreStore );
 
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			const { blocks, content, selection, ...editedProduct } =
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				wpSelect( 'core' ).getEntityRecordEdits(
-					'postType',
-					postType,
-					id
-				);
+			const { blocks, content, selection, ...editedProduct } = wpSelect(
+				coreStore
+			).getEntityRecordEdits( 'postType', postType, id );
 
 			const savedProduct = await saveEntityRecord(
 				'postType',
@@ -92,6 +86,7 @@ export function useProductManager< T = Product >( postType: string ) {
 					? { name }
 					: {};
 			setIsSaving( true );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const duplicatedProduct = await dispatch(
 				PRODUCTS_STORE_NAME
 			).duplicateProduct( id, data );
