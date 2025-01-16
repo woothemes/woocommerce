@@ -67,6 +67,6 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 
 	// Clears the log if instructed and all steps are unique.
 	if ( $final_step && count( array_unique( $steps ) ) === count( $steps ) ) {
-		//$logger->clear( $context['source'], true );
+		$logger->clear( $context['source'], true );
 	}
 }

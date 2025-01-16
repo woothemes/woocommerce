@@ -1297,7 +1297,7 @@ class WC_Checkout {
 				throw new Exception( $expiry_message );
 			}
 
-			wc_log_order_step( '[Shortcode #1] Place Order flow initiated' );
+			wc_log_order_step( '[Shortcode #1] Place Order flow initiated', null, false, true );
 
 			do_action( 'woocommerce_checkout_process' );
 
