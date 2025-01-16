@@ -23,7 +23,10 @@
 			}
 		}
 
-		.woocommerce-input-wrapper {
+		// Wrapper adds specificity to the styles but is not required due to some forms (account) not using the wrapper
+		// element.
+		.woocommerce-input-wrapper,
+		& {
 			.description {
 				background: #1e85be;
 				color: #fff;
