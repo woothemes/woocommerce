@@ -39,7 +39,7 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 
 	$context['order_uid'] = $order_uid;
 	$context['source']    = 'place-order-debug-' . $order_uid_short; // Source is segmented per order unique id.
-	$context['backtrace'] = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
+	$context['backtrace'] = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 ); // Ignoring args to avoid logging sensitive data.
 
 	if ( ! is_null( error_get_last() ) ) {
 		$context['last_error'] = error_get_last();
@@ -56,6 +56,6 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 
 	// Clears the log if instructed and all steps are unique.
 	if ( $final_step && count( array_unique( $steps ) ) === count( $steps ) ) {
-		$logger->clear( $context['source'], true );
+		//$logger->clear( $context['source'], true );
 	}
 }
