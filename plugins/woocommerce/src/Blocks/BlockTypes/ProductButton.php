@@ -84,21 +84,20 @@ class ProductButton extends AbstractBlock {
 
 		// Todo: move this to a general function so it's only triggered once.
 		$cart = rest_do_request( new \WP_REST_Request( 'GET', '/wc/store/v1/cart' ) );
-
-		// Todo: move this to wp_interactivity_config() instead of state.
 		wc_initial_state(
 			'woocommerce',
 			array(
+				'cart' => $cart->data,
+				'nonce' => $cart->headers['Nonce'],
+
+				// Todo: move this to wp_interactivity_config() instead of state.
 				'restUrl' => get_rest_url(),
-				'wcStoreApiNonce' => $cart->headers['Nonce'],
 			)
 		);
 
 		wc_initial_state(
 			'woocommerce/product-button',
 			array(
-				'cart' => $cart->data,
-
 				// Todo: move this to wp_interactivity_config() instead of state.
 				'inTheCartText' => sprintf(
 					/* translators: %s: product number. */
@@ -153,7 +152,7 @@ class ProductButton extends AbstractBlock {
 				'quantityToAdd'          => $quantity_to_add,
 				'productId'              => $product->get_id(),
 				'addToCartText'          => null !== $product->add_to_cart_text() ? $product->add_to_cart_text() : __( 'Add to cart', 'woocommerce' ),
-				'temporaryNumberOfItems' => $number_of_items_in_cart,
+				'tempQuantity'           => $number_of_items_in_cart,
 				'animationStatus'        => 'IDLE',
 			);
 
@@ -202,13 +201,14 @@ class ProductButton extends AbstractBlock {
 				data-wc-on--click="woocommerce/product-collection::actions.viewProduct"
 			';
 
+			// Todo: switch data-wc-layout-init to data-wp-run.
 			$span_button_directives = '
 				data-wc-text="state.addToCartText"
 				data-wc-class--wc-block-slide-in="state.slideInAnimation"
 				data-wc-class--wc-block-slide-out="state.slideOutAnimation"
 				data-wc-on--animationend="actions.handleAnimationEnd"
 				data-wc-watch="callbacks.startAnimation"
-				data-wc-layout-init="callbacks.syncTemporaryNumberOfItemsOnLoad"
+				data-wc-layout-init="callbacks.syncTempQuantityOnLoad"
 			';
 
 			$wrapper_attributes = get_block_wrapper_attributes(

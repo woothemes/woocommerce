@@ -2,6 +2,15 @@
  * External dependencies
  */
 import { store, getContext as getContextFn } from '@woocommerce/interactivity';
+// Todo: remove once we import from `@wordpress/interactivity`.
+// Todo: make sure we are not bundling the `@wordpress/interactivity` package.
+import type { store as StoreType } from '@wordpress/interactivity';
+
+// Todo: move the addToCart store to its own module.
+import {
+	state as wooState,
+	actions as wooActions,
+} from '../../../../base/stores/add-to-cart';
 
 interface Context {
 	isLoading: boolean;
@@ -9,9 +18,11 @@ interface Context {
 	productId: number;
 	displayViewCart: boolean;
 	quantityToAdd: number;
-	temporaryNumberOfItems: number;
+	tempQuantity: number;
 	animationStatus: AnimationStatus;
 }
+
+const getContext = () => getContextFn< Context >();
 
 enum AnimationStatus {
 	IDLE = 'IDLE',
@@ -19,19 +30,10 @@ enum AnimationStatus {
 	SLIDE_IN = 'SLIDE-IN',
 }
 
-interface Cart {
-	items: {
-		key?: string;
-		id: number;
-		quantity: number;
-	}[];
-}
-
 interface Store {
 	state: {
-		cart: Cart;
-		inTheCartText?: string;
-		numberOfItemsInTheCart: number;
+		inTheCartText: string;
+		quantity: number;
 		hasCartLoaded: boolean;
 		slideInAnimation: boolean;
 		slideOutAnimation: boolean;
@@ -44,163 +46,114 @@ interface Store {
 	};
 	callbacks: {
 		startAnimation: () => void;
-		syncTemporaryNumberOfItemsOnLoad: () => void;
+		syncTempQuantityOnLoad: () => void;
 	};
 }
 
-const getProductById = ( cartState: Cart | undefined, productId: number ) => {
-	return cartState?.items.find( ( item ) => item.id === productId );
-};
-
-const getButtonText = (
-	addToCart: string,
-	inTheCart: string,
-	numberOfItems: number
-): string => {
-	if ( numberOfItems === 0 ) return addToCart;
-	return inTheCart.replace( '###', numberOfItems.toString() );
-};
-
-const getContext = ( ns?: string ) => getContextFn< Context >( ns );
-
-window.wooStore = store( 'woocommerce/product-button' );
-
-const { state } = store< Store >( 'woocommerce/product-button', {
-	state: {
-		get slideInAnimation() {
-			const { animationStatus } = getContext();
-			return animationStatus === AnimationStatus.SLIDE_IN;
-		},
-		get slideOutAnimation() {
-			const { animationStatus } = getContext();
-			return animationStatus === AnimationStatus.SLIDE_OUT;
-		},
-		get numberOfItemsInTheCart() {
-			const { productId } = getContext();
-			const product = getProductById( state.cart, productId );
-			return product?.quantity || 0;
-		},
-		get hasCartLoaded(): boolean {
-			return !! state.cart;
-		},
-		get addToCartText(): string {
-			const context = getContext();
-			const inTheCartText = state.inTheCartText || '';
-			// We use the temporary number of items when there's no animation, or the
-			// second part of the animation hasn't started.
-			const showTemporaryNumber =
-				context.animationStatus === AnimationStatus.IDLE ||
-				context.animationStatus === AnimationStatus.SLIDE_OUT;
-			const numberOfItems = showTemporaryNumber
-				? context.temporaryNumberOfItems
-				: state.numberOfItemsInTheCart;
-
-			return getButtonText(
-				context.addToCartText,
-				inTheCartText,
-				numberOfItems
-			);
-		},
-		get displayViewCart(): boolean {
-			const { displayViewCart, temporaryNumberOfItems } = getContext();
-			if ( ! displayViewCart ) return false;
-			if ( ! state.hasCartLoaded ) {
-				return temporaryNumberOfItems > 0;
-			}
-			return state.numberOfItemsInTheCart > 0;
-		},
-	},
-	actions: {
-		*addToCart() {
-			const { productId, quantityToAdd } = getContext();
-			const { restUrl, wcStoreApiNonce } = store< {
-				state: { restUrl: string; wcStoreApiNonce: string };
-			} >( 'woocommerce' ).state;
-			let item = state.cart.items.find( ( { id } ) => id === productId );
-			let endpoint = `update-item`;
-
-			// Optimistically update the number of items in the cart and then
-			// update the database.
-			if ( item ) {
-				item.quantity += quantityToAdd;
-			} else {
-				endpoint = 'add-item';
-				item = {
-					id: productId,
-					quantity: quantityToAdd,
-				};
-				state.cart.items.push( item );
-			}
-
-			// Update the database.
-			try {
-				const res: Response = yield fetch(
-					`${ restUrl }wc/store/v1/cart/${ endpoint }`,
-					{
-						method: 'POST',
-						headers: {
-							Nonce: wcStoreApiNonce,
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify( item ),
-					}
+// Todo: Remove the type cast once we import from `@wordpress/interactivity`.
+const { state } = ( store as typeof StoreType )< Store >(
+	'woocommerce/product-button',
+	{
+		state: {
+			get quantity() {
+				const { productId } = getContext();
+				const product = wooState.cart.items.find(
+					( item ) => item.id === productId
 				);
-				state.cart = yield res.json();
-			} catch ( error ) {
-				// Todo: Handle error using the new Store Notices block.
-				// const { actions } = store('woo/store-notices');
-				// actions.addNotice(...);
+				return product?.quantity || 0;
+			},
+			get slideInAnimation() {
+				const { animationStatus } = getContext();
+				return animationStatus === AnimationStatus.SLIDE_IN;
+			},
+			get slideOutAnimation() {
+				const { animationStatus } = getContext();
+				return animationStatus === AnimationStatus.SLIDE_OUT;
+			},
+			get hasCartLoaded(): boolean {
+				return !! wooState.cart;
+			},
+			get addToCartText(): string {
+				const { animationStatus, tempQuantity, addToCartText } =
+					getContext();
 
-				// Revert the optimistic update.
-				if ( item ) {
-					item.quantity -= quantityToAdd;
-				} else {
-					// Todo: Avoid race conditions here.
-					state.cart.items.pop();
+				// We use the temporary quantity when there's no animation, or when
+				// the second part of the animation hasn't started yet.
+				const showTemporaryNumber =
+					animationStatus === AnimationStatus.IDLE ||
+					animationStatus === AnimationStatus.SLIDE_OUT;
+				const quantity = showTemporaryNumber
+					? tempQuantity
+					: state.quantity;
+
+				if ( quantity === 0 ) return addToCartText;
+				return state.inTheCartText.replace(
+					'###',
+					quantity.toString()
+				);
+			},
+			get displayViewCart(): boolean {
+				const { displayViewCart, tempQuantity } = getContext();
+				if ( ! displayViewCart ) return false;
+				if ( ! state.hasCartLoaded ) {
+					return tempQuantity > 0;
 				}
-			}
+				return state.quantity > 0;
+			},
 		},
-		handleAnimationEnd: ( event: AnimationEvent ) => {
-			const context = getContext();
-			if ( event.animationName === 'slideOut' ) {
-				// When the first part of the animation (slide-out) ends, we move
-				// to the second part (slide-in).
-				context.animationStatus = AnimationStatus.SLIDE_IN;
-			} else if ( event.animationName === 'slideIn' ) {
-				// When the second part of the animation ends, we update the
-				// temporary number of items to sync it with the cart and reset the
-				// animation status so it can be triggered again.
-				context.temporaryNumberOfItems = state.numberOfItemsInTheCart;
-				context.animationStatus = AnimationStatus.IDLE;
-			}
+		actions: {
+			addToCart() {
+				const context = getContext();
+				const { productId, quantityToAdd } = context;
+				wooActions.addToCart(
+					productId,
+					state.quantity + quantityToAdd
+				);
+			},
+			handleAnimationEnd( event: AnimationEvent ) {
+				const context = getContext();
+				if ( event.animationName === 'slideOut' ) {
+					// When the first part of the animation (slide-out) ends, we move
+					// to the second part (slide-in).
+					context.animationStatus = AnimationStatus.SLIDE_IN;
+				} else if ( event.animationName === 'slideIn' ) {
+					// When the second part of the animation ends, we update the
+					// temporary number of items to sync it with the cart and reset the
+					// animation status so it can be triggered again.
+					context.tempQuantity = state.quantity;
+					context.animationStatus = AnimationStatus.IDLE;
+				}
+			},
 		},
-	},
-	callbacks: {
-		syncTemporaryNumberOfItemsOnLoad: () => {
-			const context = getContext();
-			// If the cart has loaded when we instantiate this element, we sync
-			// the temporary number of items with the number of items in the cart
-			// to avoid triggering the animation. We do this only once, but we
-			// use useLayoutEffect to avoid the useEffect flickering.
-			if ( state.hasCartLoaded ) {
-				context.temporaryNumberOfItems = state.numberOfItemsInTheCart;
-			}
+		callbacks: {
+			// Todo: switch to a data-wp-run directive with a `useLayoutEffect` hook inside.
+			syncTempQuantityOnLoad() {
+				const context = getContext();
+				// If the cart has loaded when we instantiate this element, we sync
+				// the temporary number of items with the number of items in the cart
+				// to avoid triggering the animation. We do this only once, but we
+				// use useLayoutEffect to avoid the useEffect flickering.
+				if ( state.hasCartLoaded ) {
+					context.tempQuantity = state.quantity;
+				}
+			},
+			startAnimation() {
+				const context = getContext();
+				// We start the animation if the cart has loaded, the temporary number
+				// of items is out of sync with the number of items in the cart, the
+				// button is not loading (because that means the user started the
+				// interaction) and the animation hasn't started yet.
+				if (
+					state.hasCartLoaded &&
+					context.tempQuantity !== state.quantity &&
+					! context.isLoading &&
+					context.animationStatus === AnimationStatus.IDLE
+				) {
+					context.animationStatus = AnimationStatus.SLIDE_OUT;
+				}
+			},
 		},
-		startAnimation: () => {
-			const context = getContext();
-			// We start the animation if the cart has loaded, the temporary number
-			// of items is out of sync with the number of items in the cart, the
-			// button is not loading (because that means the user started the
-			// interaction) and the animation hasn't started yet.
-			if (
-				state.hasCartLoaded &&
-				context.temporaryNumberOfItems !==
-					state.numberOfItemsInTheCart &&
-				! context.isLoading &&
-				context.animationStatus === AnimationStatus.IDLE
-			) {
-				context.animationStatus = AnimationStatus.SLIDE_OUT;
-			}
-		},
-	},
-} );
+	}
+	// Todo: Lock this store once we import from `@wordpress/interactivity`.
+	// { lock: true }
+);
