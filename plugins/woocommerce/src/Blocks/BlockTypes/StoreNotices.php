@@ -65,7 +65,6 @@ class StoreNotices extends AbstractBlock {
 	 */
 	protected function render_interactivity_notices_region() {
 		$namespace = array( 'namespace' => 'woocommerce/store-notices' );
-		$context   = wp_json_encode( array( 'notices' => array() ) );
 
 		wc_initial_state(
 			'woocommerce/store-notices',
@@ -76,7 +75,7 @@ class StoreNotices extends AbstractBlock {
 
 		ob_start();
 		?>
-		<div data-wc-context="<?php echo esc_attr( $context ); ?>" data-wc-interactive="<?php echo esc_attr( wp_json_encode( $namespace ) ); ?>" class="woocommerce-notices-wrapper">
+		<div data-wc-interactive="<?php echo esc_attr( wp_json_encode( $namespace ) ); ?>" class="woocommerce-notices-wrapper">
 			<template
 				data-wc-each--notice="state.notices"
 				data-wc-each-key="context.notice.id"
@@ -90,12 +89,14 @@ class StoreNotices extends AbstractBlock {
 					</div>
 					<button
 						data-wc-bind--hidden="!callbacks.isNoticeDismissible"
-						class="wc-block-components-notice-banner__dismiss"
+						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
 						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
 						data-wc-on--click="callbacks.dismissNotice"
 						hidden
 					>
-						X
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+							<path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" />
+						</svg>	
 					</button>
 				</div>
 			</template>

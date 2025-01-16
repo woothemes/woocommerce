@@ -5,9 +5,11 @@ import { store, getContext as getContextFn } from '@woocommerce/interactivity';
 import { select, subscribe, dispatch } from '@wordpress/data';
 import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
 import { Cart } from '@woocommerce/type-defs/cart';
-import { createRoot } from '@wordpress/element';
-// import NoticeBanner from '@woocommerce/base-components/notice-banner';
 import { decodeEntities } from '@wordpress/html-entities';
+
+/**
+ * Internal dependencies
+ */
 import { StoreNoticesStore } from '../../../../blocks/store-notices/frontend';
 
 interface Context {
@@ -46,29 +48,6 @@ interface Store {
 		syncTemporaryNumberOfItemsOnLoad: () => void;
 	};
 }
-
-const storeNoticeClass = '.wc-block-store-notices';
-
-const createNoticeContainer = () => {
-	const noticeContainer = document.createElement( 'div' );
-	noticeContainer.classList.add( storeNoticeClass.replace( '.', '' ) );
-	return noticeContainer;
-};
-
-const injectNotice = ( domNode: Element, errorMessage: string ) => {
-	const root = createRoot( domNode );
-
-	root.render(
-		<NoticeBanner status="error" onRemove={ () => root.unmount() }>
-			{ errorMessage }
-		</NoticeBanner>
-	);
-
-	domNode?.scrollIntoView( {
-		behavior: 'smooth',
-		inline: 'nearest',
-	} );
-};
 
 const getProductById = ( cartState: Cart | undefined, productId: number ) => {
 	return cartState?.items.find( ( item ) => item.id === productId );
@@ -147,36 +126,16 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 				// After the cart is updated, sync the temporary number of items again.
 				context.temporaryNumberOfItems = state.numberOfItemsInTheCart;
 			} catch ( error ) {
+				const message = ( error as Error ).message;
 				const noticesStore = store< StoreNoticesStore >(
 					'woocommerce/store-notices'
 				);
 
 				noticesStore.actions.addNotice( {
-					notice: 'test',
+					notice: decodeEntities( message ),
 					type: 'error',
 					dismissible: true,
-					id: '1234',
 				} );
-
-				console.log( noticesStore );
-				// const storeNoticeBlock =
-				// 	document.querySelector( storeNoticeClass );
-
-				// if ( ! storeNoticeBlock ) {
-				// 	document
-				// 		.querySelector( '.entry-content' )
-				// 		?.prepend( createNoticeContainer() );
-				// }
-
-				// const domNode =
-				// 	storeNoticeBlock ??
-				// 	document.querySelector( storeNoticeClass );
-
-				const message = ( error as Error ).message;
-
-				// if ( domNode ) {
-				// 	injectNotice( domNode, decodeEntities( message ) );
-				// }
 
 				// We don't care about errors blocking execution, but will
 				// console.error for troubleshooting.

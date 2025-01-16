@@ -1,22 +1,20 @@
 /**
  * External dependencies
  */
-import {
-	getContext,
-	getElement,
-	store,
-	withScope,
-} from '@woocommerce/interactivity';
-
-type StoreNoticesState = {
-	notices: Notice[];
-};
+import { getContext, getElement, store } from '@woocommerce/interactivity';
 
 type Notice = {
 	notice: string;
 	type: 'error' | 'success' | 'notice';
-	id: string;
 	dismissible: boolean;
+};
+
+type NoticeWithId = Notice & {
+	id: string;
+};
+
+type StoreNoticesState = {
+	notices: NoticeWithId[];
 };
 
 export type StoreNoticesStore = {
@@ -51,13 +49,16 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 		addNotice: ( notice: Notice ) => {
 			state.notices = [
 				...state.notices,
-				{ ...notice, id: Date.now().toString() },
+				{
+					...notice,
+					id: `${ notice.type }-${ state.notices.length }`,
+				},
 			];
 		},
 	},
 	callbacks: {
 		getNoticeClass: () => {
-			const context = getContext< { notice: Notice } >();
+			const context = getContext< { notice: NoticeWithId } >();
 
 			const noticeTypeClass = {
 				error: 'is-error',
@@ -69,7 +70,7 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 		},
 
 		getNoticeRole: () => {
-			const context = getContext< { notice: Notice } >();
+			const context = getContext< { notice: NoticeWithId } >();
 			if (
 				context.notice.type === 'error' ||
 				context.notice.type === 'success'
@@ -81,25 +82,29 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 		},
 
 		getNoticeIconPath: () => {
-			const context = getContext< { notice: Notice } >();
+			const context = getContext< { notice: NoticeWithId } >();
 			const noticeType = context.notice.type;
 			return ICON_PATHS[ noticeType ];
 		},
 
 		renderNoticeContent: () => {
-			const context = getContext< { notice: Notice } >();
+			const context = getContext< { notice: NoticeWithId } >();
 			const { ref } = getElement();
 
 			ref.innerHTML = context.notice.notice;
 		},
 
 		isNoticeDismissible: () => {
-			const context = getContext< { notice: Notice } >();
+			const context = getContext< { notice: NoticeWithId } >();
 			return context.notice.dismissible;
 		},
 
 		dismissNotice: () => {
-			// TODO: Implement dismiss notice
+			const context = getContext< { notice: NoticeWithId } >();
+
+			state.notices = state.notices.filter(
+				( notice ) => notice.id !== context.notice.id
+			);
 		},
 	},
 } );
