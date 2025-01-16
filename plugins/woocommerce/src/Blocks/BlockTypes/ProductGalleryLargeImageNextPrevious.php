@@ -1,7 +1,6 @@
-<?php
-namespace Automattic\WooCommerce\Blocks\BlockTypes;
+<?php declare(strict_types=1);
 
-use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
+namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 /**
  * ProductGalleryLargeImage class.
@@ -36,25 +35,7 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 	 * @return string[]
 	 */
 	protected function get_block_type_uses_context() {
-		return [ 'nextPreviousButtonsPosition', 'productGalleryClientId' ];
-	}
-
-	/**
-	 *  Return class suffix
-	 *
-	 * @param array $context Block context.
-	 * @return string
-	 */
-	private function get_class_suffix( $context ) {
-		switch ( $context['nextPreviousButtonsPosition'] ) {
-			case 'insideTheImage':
-				return 'inside-image';
-			case 'outsideTheImage':
-				return 'outside-image';
-			case 'off':
-			default:
-				return 'off';
-		}
+		return [ 'productGalleryClientId' ];
 	}
 
 	/**
@@ -83,14 +64,7 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			return null;
 		}
 
-		$context      = $block->context;
-		$class_suffix = $this->get_class_suffix( $context );
-
-		if ( 'off' === $class_suffix ) {
-			return null;
-		}
-
-		$prev_button = $this->get_button( 'previous', $context );
+		$prev_button = $this->get_button( 'previous' );
 		$p           = new \WP_HTML_Tag_Processor( $prev_button );
 
 		if ( $p->next_tag() ) {
@@ -105,7 +79,7 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			$prev_button = $p->get_updated_html();
 		}
 
-		$next_button = $this->get_button( 'next', $context );
+		$next_button = $this->get_button( 'next' );
 		$p           = new \WP_HTML_Tag_Processor( $next_button );
 
 		if ( $p->next_tag() ) {
@@ -120,15 +94,12 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			$next_button = $p->get_updated_html();
 		}
 
-		$alignment_class = isset( $attributes['layout']['verticalAlignment'] ) ? 'is-vertically-aligned-' . $attributes['layout']['verticalAlignment'] : '';
-		$position_class  = 'wc-block-product-gallery-large-image-next-previous--' . $class_suffix;
-
 		return strtr(
 			'<div
-				class="wc-block-product-gallery-large-image-next-previous wp-block-woocommerce-product-gallery-large-image-next-previous {alignment_class}"
+				class="wc-block-product-gallery-large-image-next-previous wp-block-woocommerce-product-gallery-large-image-next-previous"
 				data-wc-interactive=\'{data_wc_interactive}\'
 			>
-				<div class="wc-block-product-gallery-large-image-next-previous-container {position_class}">
+				<div class="wc-block-product-gallery-large-image-next-previous-container">
 					{prev_button}
 					{next_button}
 				</div>
@@ -136,8 +107,6 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			array(
 				'{prev_button}'         => $prev_button,
 				'{next_button}'         => $next_button,
-				'{alignment_class}'     => $alignment_class,
-				'{position_class}'      => $position_class,
 				'{data_wc_interactive}' => wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			)
 		);
@@ -147,25 +116,9 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 	 * Generates the HTML for a next or previous button for the product gallery large image.
 	 *
 	 * @param string $button_type The type of button to generate. Either 'previous' or 'next'.
-	 * @param string $context     The block context.
 	 * @return string The HTML for the generated button.
 	 */
-	protected function get_button( $button_type, $context ) {
-		if ( 'insideTheImage' === $context['nextPreviousButtonsPosition'] ) {
-			return $this->get_inside_button( $button_type, $context );
-		}
-
-		return $this->get_outside_button( $button_type, $context );
-	}
-
-	/**
-	 * Returns an HTML button element with an SVG icon for the previous or next button when the buttons are inside the image.
-	 *
-	 * @param string $button_type The type of button to return. Either "previous" or "next".
-	 * @param string $context The context in which the button is being used.
-	 * @return string The HTML for the button element.
-	 */
-	protected function get_inside_button( $button_type, $context ) {
+	protected function get_button( $button_type ) {
 		$previous_button_icon_path = 'M28.1 12L30.5 14L21.3 24L30.5 34L28.1 36L17.3 24L28.1 12Z';
 		$next_button_icon_path     = 'M21.7001 12L19.3 14L28.5 24L19.3 34L21.7001 36L32.5 24L21.7001 12Z';
 		$icon_path                 = $previous_button_icon_path;
@@ -179,12 +132,12 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 		return sprintf(
 			'<button
 				data-wc-bind--disabled="state.disable%1$s"
-				class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%2$s--%3$s"
+				class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%2$s--inside-image"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" width="49" height="48" viewBox="0 0 49 48" fill="none">
 					<g filter="url(#filter0_b_397_11354)">
 						<rect x="0.5" width="48" height="48" rx="5" fill="black" fill-opacity="0.5"/>
-						<path d="%4$s" fill="white"/>
+						<path d="%3$s" fill="white"/>
 					</g>
 					<defs>
 						<filter id="filter0_b_397_11354" x="-9.5" y="-10" width="68" height="68" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
@@ -198,51 +151,6 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 			</button>',
 			ucfirst( $button_side_class ),
 			$button_side_class,
-			$this->get_class_suffix( $context ),
-			$icon_path
-		);
-	}
-
-	/**
-	 * Returns an HTML button element with an SVG icon for the previous or next button when the buttons are outside the image.
-	 *
-	 * @param string $button_type The type of button to return. Either "previous" or "next".
-	 * @param string $context The context in which the button is being used.
-	 * @return string The HTML for the button element.
-	 */
-	protected function get_outside_button( $button_type, $context ) {
-		$next_button_icon_path     = 'M1 1.28516L8 8.28516L1 15.2852';
-		$previous_button_icon_path = 'M9 1.28516L2 8.28516L9 15.2852';
-		$icon_path                 = $previous_button_icon_path;
-		$button_side_class         = 'left';
-
-		if ( 'next' === $button_type ) {
-			$icon_path         = $next_button_icon_path;
-			$button_side_class = 'right';
-		}
-
-		return sprintf(
-			'<button
-				data-wc-bind--disabled="state.disable%1$s"
-				class="wc-block-product-gallery-large-image-next-previous--button wc-block-product-gallery-large-image-next-previous-%2$s--%3$s"
-			>
-				<svg
-					width="10"
-					height="16"
-					viewBox="0 0 10 16"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="%4$s"
-						stroke="black"
-						stroke-width="1.5"
-					/>
-				</svg>
-			</button>',
-			ucfirst( $button_side_class ),
-			$button_side_class,
-			$this->get_class_suffix( $context ),
 			$icon_path
 		);
 	}
