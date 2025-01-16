@@ -19,7 +19,7 @@ const escapeRegExp = ( string ) => {
  * Format number when it's exclusively a number or a string of numbers, otherwise return the input.
  */
 export const safeNumberFormat = ( config, number ) => {
-	if ( typeof number === 'number' ) {
+	if ( typeof number === 'number' || ( typeof number === 'string' && /^\d+\.\d+$/.test( number ) ) ) {
 		return numberFormat( config, number );
 	}
 
