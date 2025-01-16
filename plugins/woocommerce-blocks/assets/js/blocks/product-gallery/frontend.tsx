@@ -9,7 +9,7 @@ import {
 import { StorePart } from '@woocommerce/utils';
 
 export interface ProductGalleryContext {
-	selectedImage: string;
+	selectedImageIndex: number;
 	firstMainImageId: string;
 	imageId: string;
 	visibleImagesIds: string[];
@@ -45,51 +45,37 @@ const getImageIndex = ( context: ProductGalleryContext, imageId: string ) => {
 	return imagesIds.indexOf( imageId );
 };
 
-const getImageId = ( context: ProductGalleryContext, imageIndex: number ) => {
-	const imagesIds = getCurrentImages( context );
-
-	if ( imageIndex < 0 ) {
-		return imagesIds.at( 0 ) || '';
-	}
-
-	if ( imageIndex > imagesIds.length - 1 ) {
-		return imagesIds.at( -1 ) || '';
-	}
-
-	return imagesIds[ imageIndex ];
-};
-
 const disableArrows = (
 	context: ProductGalleryContext,
 	nextImageIndex: number
 ) => {
 	const imagesIds = getCurrentImages( context );
-	context.disableLeft = nextImageIndex === 0;
-	context.disableRight = nextImageIndex === imagesIds.length - 1;
+	context.disableLeft = nextImageIndex === 1;
+	context.disableRight = nextImageIndex === imagesIds.length;
 };
 
 const selectImage = (
 	context: ProductGalleryContext,
 	type: 'prev' | 'next' | 'current'
 ) => {
-	const selectedImageIdIndex = getImageIndex(
-		context,
-		context.selectedImage
-	);
+	const { selectedImageIndex, imageId, dialogVisibleImagesIds } = context;
+	let newImageIndex = 1;
 
-	// explicit "current"
-	let nextPotentialIndex = selectedImageIdIndex;
+	if ( type === 'current' ) {
+		newImageIndex = getImageIndex( context, imageId ) + 1;
+	}
 
 	if ( type === 'prev' ) {
-		nextPotentialIndex = selectedImageIdIndex - 1;
+		newImageIndex = Math.max( 1, selectedImageIndex - 1 );
 	}
 	if ( type === 'next' ) {
-		nextPotentialIndex = selectedImageIdIndex + 1;
+		newImageIndex = Math.min(
+			dialogVisibleImagesIds.length,
+			selectedImageIndex + 1
+		);
 	}
 
-	const newImageId = getImageId( context, nextPotentialIndex );
-	const newImageIndex = getImageIndex( context, newImageId );
-	context.selectedImage = newImageId;
+	context.selectedImageIndex = newImageIndex;
 	disableArrows( context, newImageIndex );
 };
 
@@ -110,8 +96,10 @@ const closeDialog = ( context: ProductGalleryContext ) => {
 const productGallery = {
 	state: {
 		get isSelected() {
-			const { selectedImage, imageId } = getContext();
-			return selectedImage === imageId;
+			const context = getContext();
+			const { selectedImageIndex, imageId } = context;
+			const imageIndex = getImageIndex( context, imageId );
+			return selectedImageIndex === imageIndex + 1;
 		},
 		get disableLeft() {
 			return getContext().disableLeft;
@@ -165,7 +153,7 @@ const productGallery = {
 		selectImage: () => {
 			const context = getContext();
 			const nextImageIndex = getImageIndex( context, context.imageId );
-			context.selectedImage = context.imageId;
+			context.selectedImageIndex = nextImageIndex + 1;
 			disableArrows( context, nextImageIndex );
 		},
 		selectNextImage: ( event?: MouseEvent ) => {
@@ -250,7 +238,11 @@ const productGallery = {
 							currentImageAttribute
 						)
 					) {
-						context.selectedImage = currentImageAttribute;
+						const nextImageIndex = getImageIndex(
+							context,
+							currentImageAttribute
+						);
+						context.selectedImageIndex = nextImageIndex + 1;
 					}
 				}
 			} );
@@ -264,7 +256,7 @@ const productGallery = {
 			);
 
 			const selectFirstImage = () => {
-				context.selectedImage = context.firstMainImageId;
+				context.selectedImageIndex = 1;
 			};
 
 			if ( clearVariationsLink ) {
