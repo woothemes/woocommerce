@@ -31,9 +31,6 @@ class SW_BIS_Acceptance_Test_Helper
 		// Register shortcodes for viewing confirmation emails.
 		add_action('plugins_loaded', array(__CLASS__, 'register_shortcodes'));
 
-		// Creates some notifications that are required for tests.
-		add_action('wc_e2e_provision', array(__CLASS__, 'create_notifications'));
-
 		add_action('rest_api_init', array(__CLASS__, 'register_rest_routes'));
 	}
 
