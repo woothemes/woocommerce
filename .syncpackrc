@@ -57,6 +57,7 @@
 				"@wordpress/html-entities",
 				"@wordpress/i18n",
 				"@wordpress/icons",
+				"@wordpress/interactivity",
 				"@wordpress/is-shallow-equal",
 				"@wordpress/notices",
 				"@wordpress/plugins",
