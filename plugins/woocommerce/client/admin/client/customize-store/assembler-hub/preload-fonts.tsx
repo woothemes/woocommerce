@@ -2,7 +2,10 @@
 /**
  * External dependencies
  */
-import { privateApis as blockEditorPrivateApis } from '@wordpress/block-editor';
+import {
+	// @ts-expect-error No types for this exist yet.
+	privateApis as blockEditorPrivateApis,
+} from '@wordpress/block-editor';
 // @ts-expect-error No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
 

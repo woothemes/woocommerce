@@ -1599,13 +1599,4 @@ jQuery( function ( $ ) {
 	wc_meta_boxes_order_notes.init();
 	wc_meta_boxes_order_downloads.init();
 	wc_meta_boxes_order_custom_meta.init();
-
-	// this allows third party plugin to call woocommerce function
-	window.wcOrderMetaBoxes = {
-		wc_meta_boxes_order: wc_meta_boxes_order,
-		wc_meta_boxes_order_items: wc_meta_boxes_order_items,
-		wc_meta_boxes_order_notes: wc_meta_boxes_order_notes,
-		wc_meta_boxes_order_downloads: wc_meta_boxes_order_downloads,
-		wc_meta_boxes_order_custom_meta: wc_meta_boxes_order_custom_meta,
-	};
 });

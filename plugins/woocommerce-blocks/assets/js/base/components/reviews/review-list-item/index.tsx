@@ -5,6 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import ReadMore from '@woocommerce/base-components/read-more';
 import { ReviewBlockAttributes } from '@woocommerce/blocks/reviews/attributes';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
@@ -76,15 +77,9 @@ function getReviewContent( review: Review ): JSX.Element {
 function getReviewProductName( review: Review ): JSX.Element {
 	return (
 		<div className="wc-block-review-list-item__product wc-block-components-review-list-item__product">
-			<a
-				href={ review.product_permalink }
-				dangerouslySetInnerHTML={ {
-					// `product_name` might have html entities for things like
-					// emdash. So to display properly we need to allow the
-					// browser to render.
-					__html: review.product_name,
-				} }
-			/>
+			<a href={ review.product_permalink }>
+				{ decodeEntities( review.product_name ) }
+			</a>
 		</div>
 	);
 }

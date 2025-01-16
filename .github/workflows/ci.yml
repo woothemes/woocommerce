@@ -446,7 +446,7 @@ jobs:
   validate-changelog:
     name: 'Validate changelog'
     if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-changelog-validation == 'true' }}
-    needs: [ 'identify-jobs-to-run', 'project-jobs' ]
+    needs: [ 'identify-jobs-to-run' ]
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: read
@@ -474,7 +474,7 @@ jobs:
   validate-markdown:
     name: 'Validate markdown'
     if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-markdown-validation == 'true' }}
-    needs: [ 'identify-jobs-to-run', 'project-jobs' ]
+    needs: [ 'identify-jobs-to-run' ]
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: read

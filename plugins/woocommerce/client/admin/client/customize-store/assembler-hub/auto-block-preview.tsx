@@ -3,8 +3,14 @@
 /**
  * External dependencies
  */
-import { useResizeObserver, pure } from '@wordpress/compose';
-import { useContext, useEffect, useMemo, useState } from '@wordpress/element';
+import { useResizeObserver } from '@wordpress/compose';
+import {
+	memo,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from '@wordpress/element';
 import { Disabled, Popover } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { noop } from 'lodash';
@@ -46,8 +52,14 @@ import { useInsertPatternByName } from './hooks/use-insert-pattern-by-name';
 
 const { Provider: DisabledProvider } = Disabled.Context;
 
+type RenderAppenderType = boolean | ( () => Element ) | undefined;
+
+interface BlockListWithRenderAppender
+	extends Omit< React.ComponentProps< typeof BlockList >, 'renderAppender' > {
+	renderAppender?: RenderAppenderType;
+}
 // This is used to avoid rendering the block list if the sizes change.
-let MemoizedBlockList: typeof BlockList | undefined;
+let MemoizedBlockList: React.FC< BlockListWithRenderAppender >;
 
 const { useGlobalSetting } = unlock( blockEditorPrivateApis );
 const MAX_HEIGHT = 2000;
@@ -115,10 +127,11 @@ function ScaledBlockPreview( {
 	const { setSelectedBlockRef } = useContext( SelectedBlockContext );
 
 	const selectedBlockClientId = useSelect( ( select ) => {
-		const block = select( 'core/block-editor' ).getSelectedBlock();
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+		const block = select( blockEditorStore ).getSelectedBlock();
 
 		return block?.clientId;
-	} );
+	}, [] );
 
 	useEffect( () => {
 		if ( selectedBlockClientId && iframeRef ) {
@@ -165,8 +178,7 @@ function ScaledBlockPreview( {
 		: 0;
 
 	// Initialize on render instead of module top level, to avoid circular dependency issues.
-	MemoizedBlockList = MemoizedBlockList || pure( BlockList );
-
+	MemoizedBlockList = MemoizedBlockList || memo( BlockList );
 	const isResizing = useContext( IsResizingContext );
 	const query = useQuery();
 

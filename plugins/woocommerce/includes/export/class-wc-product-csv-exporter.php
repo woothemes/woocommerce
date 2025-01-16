@@ -6,6 +6,7 @@
  * @version 3.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -163,7 +164,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 	 */
 	public function prepare_data_to_export() {
 		$args = array(
-			'status'   => array( 'private', 'publish', 'draft', 'future', 'pending' ),
+			'status'   => array( ProductStatus::PRIVATE, ProductStatus::PUBLISH, ProductStatus::DRAFT, ProductStatus::FUTURE, ProductStatus::PENDING ),
 			'type'     => $this->product_types_to_export,
 			'limit'    => $this->get_limit(),
 			'page'     => $this->get_page(),
@@ -280,15 +281,15 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 	 */
 	protected function get_column_value_published( $product ) {
 		$statuses = array(
-			'draft'   => -1,
-			'private' => 0,
-			'publish' => 1,
+			ProductStatus::DRAFT   => -1,
+			ProductStatus::PRIVATE => 0,
+			ProductStatus::PUBLISH => 1,
 		);
 
 		// Fix display for variations when parent product is a draft.
 		if ( ProductType::VARIATION === $product->get_type() ) {
 			$parent = $product->get_parent_data();
-			$status = 'draft' === $parent['status'] ? $parent['status'] : $product->get_status( 'edit' );
+			$status = ProductStatus::DRAFT === $parent['status'] ? $parent['status'] : $product->get_status( 'edit' );
 		} else {
 			$status = $product->get_status( 'edit' );
 		}
