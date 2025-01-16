@@ -5,8 +5,10 @@ import { MenuGroup } from '@wordpress/components';
 import { createElement, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isWpVersion } from '@woocommerce/settings';
-// eslint-disable-next-line @woocommerce/dependency-group
-import { ActionItem } from '@wordpress/interface';
+import {
+	ActionItem,
+	// @ts-expect-error missing types.
+} from '@wordpress/interface';
 
 /**
  * Internal dependencies
@@ -23,7 +25,7 @@ export const MoreMenu = () => {
 
 	return (
 		<MoreMenuDropdown>
-			{ ( { onClose }: { onClose: () => void } ) => (
+			{ ( onClose ) => (
 				<>
 					{ renderBlockToolbar && <WritingMenu /> }
 

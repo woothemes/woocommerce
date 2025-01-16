@@ -22,61 +22,18 @@ import _omit from 'lodash/omit';
 /**
  * Internal dependencies
  */
-import { FormContext, FormErrors } from './form-context';
-
-type FormProps< Values > = {
-	/**
-	 * Object of all initial errors to store in state.
-	 */
-	errors?: FormErrors< Values >;
-	/**
-	 * Object key:value pair list of all initial field values.
-	 */
-	initialValues?: Values;
-	/**
-	 * This prop helps determine whether or not a field has received focus
-	 */
-	touched?: Record< keyof Values, boolean >;
-	/**
-	 * Function to call when a form is submitted with valid fields.
-	 *
-	 * @deprecated
-	 */
-	onSubmitCallback?: ( values: Values ) => void;
-	/**
-	 * Function to call when a form is submitted with valid fields.
-	 */
-	onSubmit?: ( values: Values ) => void;
-	/**
-	 * Function to call when a value changes in the form.
-	 *
-	 * @deprecated
-	 */
-	onChangeCallback?: () => void;
-	/**
-	 * Function to call when a value changes in the form.
-	 */
-	onChange?: (
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		value: { name: string; value: any },
-		values: Values,
-		isValid: boolean
-	) => void;
-	/**
-	 * Function to call when one or more values change in the form.
-	 */
-	onChanges?: (
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		changedValues: { name: string; value: any }[],
-		values: Values,
-		isValid: boolean
-	) => void;
-	/**
-	 * A function that is passed a list of all values and
-	 * should return an `errors` object with error response.
-	 */
-	validate?: ( values: Values ) => FormErrors< Values >;
-};
+import { FormContext } from './form-context';
+import {
+	CheckboxProps,
+	ConsumerInputProps,
+	FormProps,
+	FormRef,
+	InputProps,
+	PropsWithChildrenFunction,
+	SelectControlProps,
+	FormContextType,
+	FormErrors,
+} from './types';
 
 function isChangeEvent< T >(
 	value: T | ChangeEvent< HTMLInputElement >
@@ -84,86 +41,11 @@ function isChangeEvent< T >(
 	return ( value as ChangeEvent< HTMLInputElement > ).target !== undefined;
 }
 
-export type FormRef< Values > = {
-	resetForm: ( initialValues: Values ) => void;
-};
-
-export type InputProps< Values, Value > = {
-	value: Value;
-	checked: boolean;
-	selected?: boolean;
-	onChange: (
-		value: ChangeEvent< HTMLInputElement > | Values[ keyof Values ]
-	) => void;
-	onBlur: () => void;
-	className: string | undefined;
-	help: string | null | undefined;
-};
-
-export type CheckboxProps< Values, Value > = Omit<
-	InputProps< Values, Value >,
-	'value' | 'selected'
->;
-
-export type SelectControlProps< Values, Value > = Omit<
-	InputProps< Values, Value >,
-	'value'
-> & {
-	value: string | undefined;
-};
-
-export type ConsumerInputProps< Values > = {
-	className?: string;
-	onChange?: (
-		value: ChangeEvent< HTMLInputElement > | Values[ keyof Values ]
-	) => void;
-	onBlur?: () => void;
-	[ key: string ]: unknown;
-	sanitize?: ( value: Values[ keyof Values ] ) => Values[ keyof Values ];
-};
-
-type StateAndHelpers< Values > = {
-	values: Values;
-	errors: FormErrors< Values >;
-	touched: { [ P in keyof Values ]?: boolean };
-	isDirty: boolean;
-	isValidForm: boolean;
-	setTouched: React.Dispatch<
-		React.SetStateAction< { [ P in keyof Values ]?: boolean | undefined } >
-	>;
-	setValue: ( name: string, value: Values[ keyof Values ] ) => void;
-	setValues: ( valuesToSet: Values ) => void;
-	handleSubmit: () => unknown;
-	getCheckboxControlProps: < P extends keyof Values >(
-		name: P,
-		inputProps?: ConsumerInputProps< Values >
-	) => CheckboxProps< Values, Values[ P ] >;
-	getInputProps: < P extends keyof Values >(
-		name: P,
-		inputProps?: ConsumerInputProps< Values >
-	) => InputProps< Values, Values[ P ] >;
-	getSelectControlProps: < P extends keyof Values >(
-		name: P,
-		inputProps?: ConsumerInputProps< Values >
-	) => SelectControlProps< Values, Values[ P ] >;
-	resetForm: (
-		newInitialValues?: Values,
-		newTouchedFields?:
-			| { [ P in keyof Values ]?: boolean | undefined }
-			| undefined,
-		newErrors?: FormErrors< Values >
-	) => void;
-};
-
-type PropsWithChildrenFunction< P, T > = P & {
-	children?: React.ReactNode | ( ( props: T ) => React.ReactElement );
-};
-
 /**
  * A form component to handle form state and provide input helper props.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function FormComponent< Values extends Record< string, any > >(
+function FormComponent< Values extends Record< string, any > = any >(
 	{
 		children,
 		onSubmit = () => {},
@@ -172,7 +54,7 @@ function FormComponent< Values extends Record< string, any > >(
 		...props
 	}: PropsWithChildrenFunction<
 		FormProps< Values >,
-		StateAndHelpers< Values >
+		FormContextType< Values >
 	>,
 	ref: React.Ref< FormRef< Values > >
 ): React.ReactElement | null {
@@ -415,7 +297,7 @@ function FormComponent< Values extends Record< string, any > >(
 		[ initialValues.current, values ]
 	);
 
-	const getStateAndHelpers = () => {
+	const getStateAndHelpers = (): FormContextType< Values > => {
 		return {
 			values,
 			errors,
@@ -453,7 +335,7 @@ const Form = forwardRef( FormComponent ) as <
 >(
 	props: PropsWithChildrenFunction<
 		FormProps< Values >,
-		StateAndHelpers< Values >
+		FormContextType< Values >
 	> & {
 		ref?: React.ForwardedRef< FormRef< Values > >;
 	},

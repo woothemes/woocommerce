@@ -54,6 +54,11 @@ interface EnableGatewayButtonProps {
 	incentive?: PaymentIncentive | null;
 }
 
+/**
+ * A button component that allows users to enable a payment gateway.
+ * Depending on the gateway's state, it redirects to settings, onboarding, or recommended payment methods pages.
+ * If incentive data is provided, it will trigger the `acceptIncentive` callback with the incentive ID.
+ */
 export const EnableGatewayButton = ( {
 	gatewayId,
 	gatewayState,
@@ -124,8 +129,26 @@ export const EnableGatewayButton = ( {
 							window.location.href = onboardingHref;
 							return;
 						}
+					} else {
+						createErrorNotice(
+							__(
+								'The provider could not be enabled. Check the Manage page for details.',
+								'woocommerce'
+							),
+							{
+								type: 'snackbar',
+								explicitDismiss: true,
+								actions: [
+									{
+										label: __( 'Manage', 'woocommerce' ),
+										url: settingsHref,
+									},
+								],
+							}
+						);
 					}
 				}
+				// If no redirect occured, the data needs to be refreshed.
 				invalidateResolutionForStoreSelector(
 					isOffline
 						? 'getOfflinePaymentGateways'

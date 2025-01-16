@@ -1,9 +1,15 @@
-const { test } = require( '../../../../fixtures/block-editor-fixtures' );
-const { expect } = require( '@playwright/test' );
+/**
+ * External dependencies
+ */
+import { expect } from '@playwright/test';
+import { insertBlock } from '@woocommerce/e2e-utils-playwright';
 
-const { clickOnTab } = require( '../../../../utils/simple-products' );
-const { insertBlock } = require( '../../../../utils/editor' );
-const { tags } = require( '../../../../fixtures/fixtures' );
+/**
+ * Internal dependencies
+ */
+import { test } from '../../../../fixtures/block-editor-fixtures';
+import { clickOnTab } from '../../../../utils/simple-products';
+import { tags } from '../../../../fixtures/fixtures';
 
 const NEW_EDITOR_ADD_PRODUCT_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product';

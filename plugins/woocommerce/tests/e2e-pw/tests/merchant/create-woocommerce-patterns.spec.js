@@ -1,5 +1,5 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle, publishPage } = require( '../../utils/editor' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
 /**
@@ -10,6 +10,7 @@ import {
 	getCanvas,
 	goToPageEditor,
 	insertBlock,
+	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
 
 // some WooCommerce Patterns to use

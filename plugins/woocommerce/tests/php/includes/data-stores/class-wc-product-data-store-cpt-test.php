@@ -214,31 +214,51 @@ class WC_Product_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	}
 
 	/**
-	 * @testdox Cost of Goods Sold information is persisted when the feature is enabled and the value is non-zero.
+	 * @testdox Cost of Goods Sold information is persisted when the feature is enabled and the value is not null.
 	 */
-	public function test_cogs_is_persisted_when_feature_is_enabled_and_value_is_non_zero() {
+	public function test_cogs_is_persisted_when_feature_is_enabled_and_value_is_not_null() {
 		$this->enable_cogs_feature();
 
-		$product = new WC_Product();
+		// phpcs:disable Squiz.Commenting
+		$product = new class() extends WC_Product {
+			protected function adjust_cogs_value_before_set( ?float $value ): ?float {
+				return $value;
+			}
+		};
+		// phpcs:enable Squiz.Commenting
 		$product->set_cogs_value( 12.34 );
 		$product->save();
 
 		$this->assertEquals( '12.34', get_post_meta( $product->get_id(), '_cogs_total_value', true ) );
+
+		// Explicitly test for zero, as in the past the COGS value was not nullable
+		// and the behavior of the data store was "don't store when it's zero".
+
+		$product->set_cogs_value( 0 );
+		$product->save();
+
+		$this->assertEquals( '0', get_post_meta( $product->get_id(), '_cogs_total_value', true ) );
 	}
 
 	/**
-	 * @testdox Cost of Goods Sold information is not persisted when the feature is enabled but the value is zero.
+	 * @testdox Cost of Goods Sold information is not persisted when the feature is enabled but the value is null.
 	 */
-	public function test_cogs_is_not_persisted_when_feature_is_enabled_and_value_is_zero() {
+	public function test_cogs_is_not_persisted_when_feature_is_enabled_and_value_is_null() {
 		$this->enable_cogs_feature();
 
-		$product = new WC_Product();
+		// phpcs:disable Squiz.Commenting
+		$product = new class() extends WC_Product {
+			protected function adjust_cogs_value_before_set( ?float $value ): ?float {
+				return $value;
+			}
+		};
+		// phpcs:enable Squiz.Commenting
 		$product->set_cogs_value( 12.34 );
 		$product->save();
 
 		$this->assertEquals( '12.34', get_post_meta( $product->get_id(), '_cogs_total_value', true ) );
 
-		$product->set_cogs_value( 0 );
+		$product->set_cogs_value( null );
 		$product->save();
 
 		$this->assertEmpty( get_post_meta( $product->get_id(), '_cogs_total_value', true ) );
@@ -276,7 +296,7 @@ class WC_Product_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	}
 
 	/**
-	 * @testdox Saving of the Cost of Goods Sold information can be suppressed using the woocommerce_save_cogs_value filter with a return value of null.
+	 * @testdox Saving of the Cost of Goods Sold information can be suppressed using the woocommerce_save_cogs_value filter with a return value of false.
 	 */
 	public function test_cogs_saved_value_saving_can_be_suppressed_via_filter() {
 		$this->enable_cogs_feature();
@@ -286,7 +306,7 @@ class WC_Product_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$product->save();
 
 		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-		add_filter( 'woocommerce_save_product_cogs_value', fn( $value, $product ) => null, 10, 2 );
+		add_filter( 'woocommerce_save_product_cogs_value', fn( $value, $product ) => false, 10, 2 );
 
 		$product->set_cogs_value( 56.78 );
 		$product->save();
