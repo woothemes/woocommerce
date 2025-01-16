@@ -18,14 +18,25 @@ defined( 'ABSPATH' ) || exit;
  * @param string     $message Message to log.
  * @param array|null $context Optional. Additional information for log handlers.
  * @param bool       $final_step Optional. Whether this is the final step of the order logging, and should clear the log.
+ * @param bool       $first_step Optional. Whether this is declared the first step in order to start a new log.
  *
  * @internal This function is intended for internal use only.
  * @since 9.7.0
  */
-function wc_log_order_step( string $message, ?array $context = null, bool $final_step = false ): void {
+function wc_log_order_step( string $message, ?array $context = null, bool $final_step = false, bool $first_step = false ): void {
 
-	if ( '' === $message ) {
+	if ( empty ( $message ) ) {
 		return; // Nothing to log.
+	}
+
+	static $logging_active;
+
+	if ( $first_step ) {
+		$logging_active = true;
+	}
+
+	if ( ! $logging_active ) {
+		return; // Whenever the method is called without a started logging session, it will be ignored.
 	}
 
 	static $logger, $order_uid, $order_uid_short;
