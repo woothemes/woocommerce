@@ -15,15 +15,19 @@
  * @version 9.7.0
  */
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 
 ?>
 
 <?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
-<div class="email-introduction">
+<?php echo $email_improvements_enabled ? '<div class="email-introduction">' : ''; ?>
 <?php /* translators: %s: Customer username */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $user_login ) ); ?></p>
 <?php /* translators: %s: Store name */ ?>
@@ -36,18 +40,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php esc_html_e( 'Click here to reset your password', 'woocommerce' ); ?>
 	</a>
 </p>
-</div>
+<?php echo $email_improvements_enabled ? '</div>' : ''; ?>
 
 <?php
 /**
  * Show user-defined additional content - this is set in each email's settings.
  */
 if ( $additional_content ) {
-	?>
-	<div class="email-additional-content">
-		<?php echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) ); ?>
-	</div>
-	<?php
+	echo $email_improvements_enabled ? '<div class="email-additional-content">' : '';
+	echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) );
+	echo $email_improvements_enabled ? '</div>' : '';
 }
 
 do_action( 'woocommerce_email_footer', $email );

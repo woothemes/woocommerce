@@ -15,18 +15,22 @@
  * @version 9.7.0
  */
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
+
 defined( 'ABSPATH' ) || exit;
+
+$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 
 /*
  * @hooked WC_Emails::email_header() Output the email header
  */
 do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
-<div class="email-introduction">
+<?php echo $email_improvements_enabled ? '<div class="email-introduction">' : ''; ?>
 <?php /* translators: %s: Customer first name */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $order->get_billing_first_name() ) ); ?></p>
 <p><?php esc_html_e( 'Thanks for your order. It’s on-hold until we confirm that payment has been received.', 'woocommerce' ); ?></p>
-</div>
+<?php echo $email_improvements_enabled ? '</div>' : ''; ?>
 
 <?php
 
@@ -53,11 +57,9 @@ do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_
  * Show user-defined additional content - this is set in each email's settings.
  */
 if ( $additional_content ) {
-	?>
-	<div class="email-additional-content">
-		<?php echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) ); ?>
-	</div>
-	<?php
+	echo $email_improvements_enabled ? '<div class="email-additional-content">' : '';
+	echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) );
+	echo $email_improvements_enabled ? '</div>' : '';
 }
 
 /*
