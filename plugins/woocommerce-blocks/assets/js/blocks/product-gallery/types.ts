@@ -45,7 +45,7 @@ export type ProductGalleryContext = {
 	thumbnailsNumberOfThumbnails: number;
 	productGalleryClientId: string;
 	pagerDisplayMode: PagerDisplayModes;
-} & ProductGalleryNextPreviousBlockAttributes;
+};
 
 export type ProductGalleryPagerContext = Pick<
 	ProductGalleryContext,
@@ -54,7 +54,7 @@ export type ProductGalleryPagerContext = Pick<
 
 export type ProductGalleryLargeImageNextPreviousContext = Pick<
 	ProductGalleryContext,
-	'productGalleryClientId' | 'nextPreviousButtonsPosition'
+	'productGalleryClientId'
 >;
 
 export type ProductGalleryThumbnailsContext = Pick<
