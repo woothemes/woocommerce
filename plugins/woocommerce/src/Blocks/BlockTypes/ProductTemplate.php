@@ -92,7 +92,7 @@ class ProductTemplate extends AbstractBlock {
 			$block_instance['blockName'] = 'core/null';
 
 			// Relay the block context to the inner blocks.
-			$block_context = array_merge(
+			$available_context = array_merge(
 				(array) $block->context,
 				array(
 					'postType' => get_post_type(),
