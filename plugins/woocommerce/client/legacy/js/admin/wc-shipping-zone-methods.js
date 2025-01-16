@@ -351,6 +351,48 @@
 
 					$( document.body ).trigger( 'init_tooltips' );
 				},
+				// Cost values need to be stripped of thier thousandth separators and made sure
+				// the decimal separator is a ".".
+				unformatShippingMethodNumericValues: function( data ) {
+					if ( ! window.wc.wcSettings.CURRENCY ) {
+						return data;
+					}
+
+					const config = window.wc.wcSettings.CURRENCY ;
+					const numericValuesFields = [
+						'woocommerce_free_shipping_min_amount',
+						'woocommerce_flat_rate_cost',
+					];
+
+					numericValuesFields.forEach( function( field ) {
+						const formattedValue = data[ field ];
+						
+						if ( ! formattedValue ) {
+							return;
+						}
+
+						if ( Number.isFinite( formattedValue ) ) {
+							return;
+						}
+
+						// Brackets signal a formula. Avoid unformatting these values.
+						if ( formattedValue.includes( '[' ) && formattedValue.includes( ']' ) ) {
+							return;
+						}
+
+						// Create regex to match only numbers and configured separators
+						const regex = new RegExp(`[^0-9${config.thousandSeparator}${config.decimalSeparator}]`, 'g');
+						const strippedValue = formattedValue.replace(regex, '');
+
+						const unformattedValue = strippedValue
+							.replaceAll( config.thousandSeparator, '' )
+							.replace( config.decimalSeparator, '.' );
+
+						data[ field ] = unformattedValue;
+					} );
+
+					return data;
+				},
 				onConfigureShippingMethodSubmitted: function( event, target, posted_data ) {
 					if ( 'wc-modal-shipping-method-settings' === target ) {
 						shippingMethodView.block();
@@ -361,7 +403,7 @@
 							{
 								wc_shipping_zones_nonce : data.wc_shipping_zones_nonce,
 								instance_id             : posted_data.instance_id,
-								data                    : posted_data
+								data                    : shippingMethodView.unformatShippingMethodNumericValues( posted_data )
 							},
 							function( response, textStatus ) {
 								if ( 'success' === textStatus && response.success ) {

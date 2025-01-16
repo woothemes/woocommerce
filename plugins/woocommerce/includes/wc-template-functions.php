@@ -3163,13 +3163,12 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 
 				break;
 			case 'select':
-				$field   = '';
 				$options = '';
 
 				if ( ! empty( $args['options'] ) ) {
 					foreach ( $args['options'] as $option_key => $option_text ) {
 						if ( '' === $option_key ) {
-							// If we have a blank option, select2 needs a placeholder.
+							// A blank option is the proper way to set a placeholder. If one is supplied we make sure the placeholder key is set for selectWoo.
 							if ( empty( $args['placeholder'] ) ) {
 								$args['placeholder'] = $option_text ? $option_text : __( 'Choose an option', 'woocommerce' );
 							}
