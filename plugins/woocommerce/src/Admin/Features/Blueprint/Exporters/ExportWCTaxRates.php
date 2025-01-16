@@ -61,4 +61,22 @@ class ExportWCTaxRates implements StepExporter {
 	public function get_step_name() {
 		return 'setWCTaxRates';
 	}
+
+	/**
+	 * Return label used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_label() {
+		return __( 'Tax Rates', 'woocommerce' );
+	}
+
+	/**
+	 * Return description used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_description() {
+		return __( 'It includes tax rates and locations.', 'woocommerce' );
+	}
 }

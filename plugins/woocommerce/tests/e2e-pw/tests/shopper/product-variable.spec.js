@@ -1,5 +1,10 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 const productPrice = '18.16';
 const cartDialogMessage =
@@ -131,13 +136,14 @@ const variations2 = [
 
 test.describe(
 	'Variable Product Page',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const variableProductName = `Variable single product ${ Date.now() }`;
 		const slug = variableProductName.replace( / /gi, '-' ).toLowerCase();
 		let variableProductId, totalPrice;
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,
@@ -243,7 +249,7 @@ test.describe(
 
 test.describe(
 	'Shopper > Update variable product',
-	{ tag: [ '@payments', '@services' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
 		const variableProductName = `Variable single product ${ Date.now() }`;
 		const slug = variableProductName.replace( / /gi, '-' ).toLowerCase();
@@ -384,12 +390,12 @@ test.describe(
 
 			await expect(
 				page.locator( '.woocommerce-product-attributes-item--weight' )
-			).toContainText( '100 kg' );
+			).toContainText( '100 lbs' );
 			await expect(
 				page.locator(
 					'.woocommerce-product-attributes-item--dimensions'
 				)
-			).toContainText( '5 × 10 × 10 cm' );
+			).toContainText( '5 × 10 × 10 in' );
 
 			await page.locator( '#size' ).selectOption( 'XLarge' );
 
@@ -408,12 +414,12 @@ test.describe(
 
 			await expect(
 				page.locator( '.woocommerce-product-attributes-item--weight' )
-			).toContainText( '400 kg' );
+			).toContainText( '400 lbs' );
 			await expect(
 				page.locator(
 					'.woocommerce-product-attributes-item--dimensions'
 				)
-			).toContainText( '20 × 40 × 30 cm' );
+			).toContainText( '20 × 40 × 30 in' );
 		} );
 
 		test( 'Shopper can change variable product attributes to variation with a different price', async ( {
@@ -504,7 +510,7 @@ test.describe(
 				Number( productPrice * 1.25 )
 			);
 
-			await page.locator( 'button.reset_variations' ).click();
+			await page.locator( 'a.reset_variations' ).click();
 
 			// Verify the reset by attempting to add the product to the cart
 			page.on( 'dialog', async ( dialog ) => {

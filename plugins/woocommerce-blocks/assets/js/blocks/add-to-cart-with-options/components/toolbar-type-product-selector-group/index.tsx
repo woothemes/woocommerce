@@ -3,8 +3,8 @@
  */
 import { eye } from '@woocommerce/icons';
 import { useProductDataContext } from '@woocommerce/shared-context';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { recordEvent } from '@woocommerce/tracks';
 import {
 	Icon,
 	ToolbarGroup,
@@ -16,29 +16,14 @@ import {
 /**
  * Internal dependencies
  */
-import { store as woocommerceTemplateStateStore } from '../../store';
-import { ProductTypeProps } from '../../types';
+import useProductTypeSelector from '../../hooks/use-product-type-selector';
 
 export default function ToolbarProductTypeGroup() {
-	/*
-	 * Get the product types and the current product type
-	 * from the store.
-	 */
-	const { productTypes, currentProductType } = useSelect< {
-		productTypes: ProductTypeProps[];
-		currentProductType: ProductTypeProps;
-	} >( ( select ) => {
-		const { getProductTypes, getCurrentProductType } = select(
-			woocommerceTemplateStateStore
-		);
-
-		return {
-			productTypes: getProductTypes(),
-			currentProductType: getCurrentProductType(),
-		};
-	}, [] );
-
-	const { switchProductType } = useDispatch( woocommerceTemplateStateStore );
+	const {
+		current: currentProductType,
+		productTypes,
+		set,
+	} = useProductTypeSelector();
 
 	const { product } = useProductDataContext();
 
@@ -61,7 +46,19 @@ export default function ToolbarProductTypeGroup() {
 				value={ currentProductType?.slug }
 				controls={ productTypes.map( ( productType ) => ( {
 					title: productType.label,
-					onClick: () => switchProductType( productType.slug ),
+					onClick: () => {
+						set( productType.slug );
+						if ( currentProductType?.slug !== productType.slug ) {
+							recordEvent(
+								'blocks_add_to_cart_with_options_product_type_switched',
+								{
+									context: 'toolbar',
+									from: currentProductType?.slug,
+									to: productType.slug,
+								}
+							);
+						}
+					},
 				} ) ) }
 			/>
 		</ToolbarGroup>

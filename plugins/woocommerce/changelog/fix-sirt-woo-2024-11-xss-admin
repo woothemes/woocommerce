@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Validate and sanitize the event origin and event data when listening to message events from attachParentListeners function to prevent xss attacks during the customize your store flow

@@ -1021,7 +1021,7 @@ const stateOptions = {
 	'IN:ML': 'India - Meghalaya',
 	'IN:MZ': 'India - Mizoram',
 	'IN:NL': 'India - Nagaland',
-	'IN:OR': 'India - Odisha',
+	'IN:OD': 'India - Odisha',
 	'IN:PB': 'India - Punjab',
 	'IN:RJ': 'India - Rajasthan',
 	'IN:SK': 'India - Sikkim',

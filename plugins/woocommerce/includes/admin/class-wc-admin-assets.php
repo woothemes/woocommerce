@@ -9,6 +9,7 @@
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Admin\Analytics;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 use Automattic\WooCommerce\Internal\BrandingController;
@@ -305,6 +306,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 					'i18n_enter_a_value'                  => esc_js( __( 'Enter a value', 'woocommerce' ) ),
 					'i18n_enter_menu_order'               => esc_js( __( 'Variation menu order (determines position in the list of variations)', 'woocommerce' ) ),
 					'i18n_enter_a_value_fixed_or_percent' => esc_js( __( 'Enter a value (fixed or %)', 'woocommerce' ) ),
+					'i18n_sale_price_warning'            => esc_js( __( 'Warning: Sale prices will be removed if they are not lower than regular prices.', 'woocommerce' ) ),
 					'i18n_delete_all_variations'          => esc_js( __( 'Are you sure you want to delete all variations? This cannot be undone.', 'woocommerce' ) ),
 					'i18n_last_warning'                   => esc_js( __( 'Last warning, are you sure?', 'woocommerce' ) ),
 					'i18n_choose_image'                   => esc_js( __( 'Choose an image', 'woocommerce' ) ),
@@ -426,7 +428,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 					'currency_format'                                 => esc_attr( str_replace( array( '%1$s', '%2$s' ), array( '%s', '%v' ), get_woocommerce_price_format() ) ), // For accounting JS.
 					'rounding_precision'                              => wc_get_rounding_precision(),
 					'tax_rounding_mode'                               => wc_get_tax_rounding_mode(),
-					'product_types'                                   => array_unique( array_merge( array( 'simple', 'grouped', 'variable', 'external' ), array_keys( wc_get_product_types() ) ) ),
+					'product_types'                                   => array_unique( array_merge( array( ProductType::SIMPLE, ProductType::GROUPED, ProductType::VARIABLE, ProductType::EXTERNAL ), array_keys( wc_get_product_types() ) ) ),
 					'i18n_download_permission_fail'                   => __( 'Could not grant access - the user may already have permission for this file or billing email is not set. Ensure the billing email is set, and the order has been saved.', 'woocommerce' ),
 					'i18n_permission_revoke'                          => __( 'Are you sure you want to revoke access to this download?', 'woocommerce' ),
 					'i18n_tax_rate_already_exists'                    => __( 'You cannot add the same tax rate twice!', 'woocommerce' ),

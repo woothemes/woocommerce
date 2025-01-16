@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Added selected rate name when showing multiple shipping packages in cart and checkout.

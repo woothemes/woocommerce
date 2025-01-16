@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-Comment: fix: `woocommerce_store_api_add_to_cart_data` documentation arg count
-

@@ -33,6 +33,6 @@ export const Draggable = () => {
 };
 
 export default {
-	title: 'WooCommerce Admin/components/ListItem',
+	title: 'Components/ListItem',
 	component: ListItem,
 };

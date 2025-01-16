@@ -169,7 +169,6 @@ test.describe( 'Product Collection', () => {
 			'Beanie', // core/post-title
 			'$20.00 Original price was: $20.00.$18.00Current price is: $18.00.', // woocommerce/product-price
 			'woo-beanie', // woocommerce/product-sku
-			'In stock', // woocommerce/product-stock-indicator
 			'This is a simple product.', // core/post-excerpt
 			'Accessories', // core/post-terms - product_cat
 			'Recommended', // core/post-terms - product_tag

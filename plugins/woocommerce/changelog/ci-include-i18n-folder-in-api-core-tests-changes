@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-Update CI config to run tests for updates of i18n dir

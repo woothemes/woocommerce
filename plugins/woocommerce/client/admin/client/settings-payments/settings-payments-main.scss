@@ -15,6 +15,10 @@
 			justify-content: space-between;
 			padding: $gap-smaller 48px $gap-large;
 			align-items: center;
+
+			@media screen and ( max-width: 782px ) {
+				display: block;
+			}
 		}
 
 		&__header-title {
@@ -37,85 +41,14 @@
 			.components-base-control__field {
 				margin-bottom: 0;
 			}
-		}
 
-		// Override styles for woocommerce list items.
-		.woocommerce-list {
-			border-top: 1px solid $gray-200;
-			border-bottom: 1px solid $gray-200;
-
-			&__item {
-				padding: 0 48px;
-
-				&:hover {
-					background-color: $white;
-
-					.woocommerce-list__item-title {
-						color: $gray-900;
-					}
-				}
-
-				&:not(:first-child) {
-					border-top: 1px solid $gray-200;
-				}
-			}
-
-			&__item.clickable-list-item:hover {
-				background-color: rgba(0, 0, 0, 0.02); /* Light overlay effect */
-			}
-
-			&__item-inner {
-				padding: $gap-large 0;
-				align-items: flex-start;
-			}
-
-			&__item-inner:focus {
-				box-shadow: none;
-			}
-
-			&__item-title {
-				font-size: 16px;
-				line-height: 24px;
-				color: $gray-900;
-				font-weight: 600;
-				display: inline-flex;
-				gap: 10px;
-				align-items: center;
-			}
-
-			&__item-content {
-				font-size: 13px;
-				font-weight: 400;
-				line-height: 20px;
-				color: $gray-700;
-
-				.woocommerce-woopayments-payment-methods-logos {
-					flex-wrap: wrap;
-				}
-			}
-
-			&__item-after {
-				&__actions {
-					display: flex;
-					gap: $gap;
-
-					.components-button {
-						height: 32px;
-					}
-				}
-			}
-
-			&__item-before {
-				img {
-					max-width: 96px;
-					height: 40px;
-					border-radius: 4px;
-				}
+			@media screen and ( max-width: 782px ) {
+				margin-top: $gap-smaller;
 			}
 		}
 	}
 
-	.other-payment-gateways__header__title__image-placeholder {
+	.other-payment-gateways__header__title-image-placeholder {
 		width: 24px;
 		height: 24px;
 		background-color: $gray-100;
@@ -143,6 +76,12 @@
 				font-size: 16px;
 				font-weight: 600;
 				line-height: 24px;
+
+				&-image {
+					width: 24px;
+					height: 24px;
+					border-radius: 2px;
+				}
 			}
 
 			/* Override hover and focus states for the button */
@@ -197,10 +136,11 @@
 				align-items: flex-start; /* Align items to the top */
 				padding: $gap 0;
 
-				img {
+				&-image {
 					width: 40px;
 					height: 40px;
 					margin-right: 20px; /* Space between image and text */
+					border-radius: 4px;
 				}
 
 				&__content {

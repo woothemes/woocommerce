@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-Abort building zip if the cherry-picked PRs are open either by bot or humans

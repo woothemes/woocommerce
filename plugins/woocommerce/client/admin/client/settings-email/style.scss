@@ -1,4 +1,9 @@
 $wc-setting-email-preview-gap: 16px;
+$wc-setting-email-width: 634px;
+
+#wc_settings_email_preview_slotfill {
+	position: relative;
+}
 
 .wc-settings-email-preview-container {
 	background: $gray-100;
@@ -10,6 +15,12 @@ $wc-setting-email-preview-gap: 16px;
 	height: 960px;
 	padding: $wc-setting-email-preview-gap;
 	width: 652px;
+}
+
+.wc-settings-email-preview-container-floating {
+	bottom: 0;
+	position: absolute;
+	left: $wc-setting-email-width + $wc-setting-email-preview-gap * 2;
 }
 
 .wc-settings-email-preview-controls {
@@ -146,6 +157,11 @@ $wc-setting-email-preview-gap: 16px;
 	font-weight: normal;
 	line-height: 21px;
 	margin: 0 0 $wc-setting-email-preview-gap;
+
+	&::before {
+		// Zero-width space to prevent jumping when subject is async loaded
+		content: "\200b";
+	}
 }
 
 .wc-settings-email-preview-header-data {
@@ -229,6 +245,12 @@ $wc-setting-email-preview-gap: 16px;
 			box-shadow: none;
 		}
 	}
+}
+
+.wc-settings-email-color-palette-separator {
+	border-bottom: none;
+	margin-left: 0;
+	max-width: $wc-setting-email-width;
 }
 
 .wc-settings-email-color-palette-title {

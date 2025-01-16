@@ -411,8 +411,9 @@ function wc_customer_bought_product( $customer_email, $user_id, $product_id ) {
 		return $result;
 	}
 
-	$transient_name    = 'wc_customer_bought_product_' . md5( $customer_email . $user_id );
-	$transient_version = WC_Cache_Helper::get_transient_version( 'orders' );
+	$transient_name = 'wc_customer_bought_product_' . md5( $customer_email . $user_id );
+	// Lookup tables get refreshed along with the `woocommerce_reports` transient version.
+	$transient_version = WC_Cache_Helper::get_transient_version( 'woocommerce_reports' );
 	$transient_value   = get_transient( $transient_name );
 
 	if ( isset( $transient_value['value'], $transient_value['version'] ) && $transient_value['version'] === $transient_version ) {
@@ -452,27 +453,29 @@ function wc_customer_bought_product( $customer_email, $user_id, $product_id ) {
 				$user_id_clause = 'OR o.customer_id = ' . absint( $user_id );
 			}
 			$sql    = "
-SELECT DISTINCT im.meta_value FROM $order_table AS o
-INNER JOIN {$wpdb->prefix}woocommerce_order_items AS i ON o.id = i.order_id
-INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS im ON i.order_item_id = im.order_item_id
+SELECT DISTINCT product_or_variation_id FROM (
+SELECT CASE WHEN product_id != 0 THEN product_id ELSE variation_id END AS product_or_variation_id
+FROM {$wpdb->prefix}wc_order_product_lookup lookup
+INNER JOIN $order_table AS o ON lookup.order_id = o.ID
 WHERE o.status IN ('" . implode( "','", $statuses ) . "')
-AND im.meta_key IN ('_product_id', '_variation_id' )
-AND im.meta_value != 0
 AND ( o.billing_email IN ('" . implode( "','", $customer_data ) . "') $user_id_clause )
+) AS subquery
+WHERE product_or_variation_id != 0
 ";
 			$result = $wpdb->get_col( $sql );
 		} else {
 			$result = $wpdb->get_col(
 				"
-SELECT DISTINCT im.meta_value FROM {$wpdb->posts} AS p
+SELECT DISTINCT product_or_variation_id FROM (
+SELECT CASE WHEN lookup.product_id != 0 THEN lookup.product_id ELSE lookup.variation_id END AS product_or_variation_id
+FROM {$wpdb->prefix}wc_order_product_lookup AS lookup
+INNER JOIN {$wpdb->posts} AS p ON p.ID = lookup.order_id
 INNER JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id
-INNER JOIN {$wpdb->prefix}woocommerce_order_items AS i ON p.ID = i.order_id
-INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS im ON i.order_item_id = im.order_item_id
 WHERE p.post_status IN ( 'wc-" . implode( "','wc-", $statuses ) . "' )
 AND pm.meta_key IN ( '_billing_email', '_customer_user' )
-AND im.meta_key IN ( '_product_id', '_variation_id' )
-AND im.meta_value != 0
 AND pm.meta_value IN ( '" . implode( "','", $customer_data ) . "' )
+) AS subquery
+WHERE product_or_variation_id != 0
 		"
 			); // WPCS: unprepared SQL ok.
 		}

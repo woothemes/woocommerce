@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-Comment: This PR does not require a changelog entry, as it is an alteration of https://github.com/woocommerce/woocommerce/pull/52173, a PR that has not been released yet.
-

@@ -1,4 +1,0 @@
-Significance: minor
-Type: enhancement
-
-Add conditions so desc_at_end attribute can be used to display field descriptions below textarea fields in settings

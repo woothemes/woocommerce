@@ -3,6 +3,7 @@ const { expect } = require( '@playwright/test' );
 
 const { clickOnTab } = require( '../../../../utils/simple-products' );
 const { api } = require( '../../../../utils' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const NEW_EDITOR_ADD_PRODUCT_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product';
@@ -29,7 +30,7 @@ const groupedProductsData = [
 
 const productIds = [];
 
-test.describe( 'General tab', { tag: '@gutenberg' }, () => {
+test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Grouped product', () => {
 		test.beforeAll( async () => {
 			for ( const product of groupedProductsData ) {

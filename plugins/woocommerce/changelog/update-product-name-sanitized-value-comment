@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Add html comment for sanitized html, safe usage of the React dangerous html API and eslint ignore rules

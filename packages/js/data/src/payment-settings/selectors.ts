@@ -3,7 +3,7 @@
  */
 import {
 	PaymentProvider,
-	OfflinePaymentGateway,
+	OfflinePaymentMethodProvider,
 	PaymentSettingsState,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
@@ -11,14 +11,16 @@ import {
 import { WPDataSelector, WPDataSelectors } from '../types';
 
 export function getPaymentProviders(
-	state: PaymentSettingsState
+	state: PaymentSettingsState,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	location?: string | null
 ): Array< PaymentProvider > {
 	return state.providers;
 }
 
 export function getOfflinePaymentGateways(
 	state: PaymentSettingsState
-): Array< OfflinePaymentGateway > {
+): Array< OfflinePaymentMethodProvider > {
 	return state.offlinePaymentGateways;
 }
 
@@ -44,5 +46,6 @@ export type PaymentSettingsSelectors = {
 		typeof getOfflinePaymentGateways
 	>;
 	getSuggestions: WPDataSelector< typeof getSuggestions >;
+	getSuggestionCategories: WPDataSelector< typeof getSuggestionCategories >;
 	isFetching: WPDataSelector< typeof isFetching >;
 } & WPDataSelectors;

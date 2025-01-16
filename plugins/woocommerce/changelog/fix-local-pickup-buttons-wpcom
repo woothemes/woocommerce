@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Improve shipping method block CSS specificity to prevent a display issue for admin accounts on WordPress.com

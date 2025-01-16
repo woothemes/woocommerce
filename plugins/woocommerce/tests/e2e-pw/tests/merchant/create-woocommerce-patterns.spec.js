@@ -1,5 +1,5 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const { fillPageTitle, publishPage } = require( '../../utils/editor' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
 /**
@@ -10,6 +10,7 @@ import {
 	getCanvas,
 	goToPageEditor,
 	insertBlock,
+	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
 
 // some WooCommerce Patterns to use
@@ -32,12 +33,7 @@ const test = baseTest.extend( {
 test.describe(
 	'Add WooCommerce Patterns Into Page',
 	{
-		tag: [
-			'@gutenberg',
-			'@services',
-			'@skip-on-default-pressable',
-			'@skip-on-default-wpcom',
-		],
+		tag: [ tags.GUTENBERG, tags.SKIP_ON_EXTERNAL_ENV ],
 	},
 	() => {
 		test( 'can insert WooCommerce patterns into page', async ( {

@@ -1123,7 +1123,7 @@ class CheckoutFields {
 
 		$value = $wc_object->get_meta( $meta_key, true );
 
-		if ( ! $value ) {
+		if ( ! $value && '0' !== $value ) {
 			/**
 			 * Allow providing a default value for additional fields if no value is already set.
 			 *

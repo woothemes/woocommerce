@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-Update CI config for api core tests to be triggered by changes in the setup and configuration files

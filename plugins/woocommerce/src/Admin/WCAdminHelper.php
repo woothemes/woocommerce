@@ -193,6 +193,8 @@ class WCAdminHelper {
 			}
 		}
 
+		$url_path = wp_parse_url( $normalized_path, PHP_URL_PATH );
+
 		foreach ( $store_pages as $page => $page_id ) {
 			if ( 0 >= $page_id ) {
 				continue;
@@ -204,12 +206,18 @@ class WCAdminHelper {
 				continue;
 			}
 
-			if ( 0 === strpos( $normalized_path, self::get_normalized_url_path( $permalink ) ) ) {
+			$normalized_permalink = self::get_normalized_url_path( $permalink );
+
+			// Compare the URL path with the permalink path.
+			// If the URL path is null, it means the provided URL doesn't have any paths.
+			// In that case, compare the normalized permalink with the normalized URL.
+			// Otherwise, compare the normalized permalink path with the URL path.
+			if ( null === $url_path && $normalized_permalink === $normalized_path ) {
+				return true;
+			} elseif ( $normalized_permalink === $url_path ) {
 				return true;
 			}
 		}
-
-		$url_path = wp_parse_url( $normalized_path, PHP_URL_PATH );
 
 		// Check if the URL matches any of the WooCommerce permalink structures.
 		if ( $url_path ) {
@@ -270,7 +278,6 @@ class WCAdminHelper {
 				if ( strpos( $permalink_structure[ $key ], '%' ) !== false ) {
 					global $wp_rewrite;
 					$rules = $wp_rewrite->generate_rewrite_rule( $permalink_structure[ $key ] );
-
 					if ( is_array( $rules ) && ! empty( $rules ) ) {
 						// rule key is the regex pattern.
 						$rule = array_keys( $rules )[0];

@@ -1,14 +1,19 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
+import { __, sprintf, getLocaleData } from '@wordpress/i18n';
 
 const defaultValidityMessage =
 	( label: string | undefined ) =>
 	( validity: ValidityState ): string | undefined => {
-		const fieldLabel = label
-			? label.toLowerCase()
-			: __( 'field', 'woocommerce' );
+		const localeData = getLocaleData();
+		const shouldKeepOriginalCase = [ 'de', 'de_AT', 'de_CH' ].includes(
+			localeData?.[ '' ]?.lang ?? 'en'
+		);
+
+		const fieldLabel = shouldKeepOriginalCase
+			? label
+			: label?.toLocaleLowerCase() || __( 'field', 'woocommerce' );
 
 		const invalidFieldMessage = sprintf(
 			/* translators: %s field label */

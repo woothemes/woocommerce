@@ -75,7 +75,7 @@ class WC_Tracks {
 	 */
 	public static function get_role_details( $user ) {
 		return array(
-			'role'                   => ! empty( $user->roles ) ? $user->roles[0] : '',
+			'role'                   => ! empty( $user->roles ) ? reset( $user->roles ) : '',
 			'can_install_plugins'    => $user->has_cap( 'install_plugins' ),
 			'can_activate_plugins'   => $user->has_cap( 'activate_plugins' ),
 			'can_manage_woocommerce' => $user->has_cap( 'manage_woocommerce' ),
@@ -113,6 +113,29 @@ class WC_Tracks {
 		}
 
 		return $event_obj->record();
+	}
+
+	/**
+	 * Track when the user attempts to toggle
+	 * woocommerce_allow_tracking option.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $prev_value The previous value for the setting. 'yes' or 'no'.
+	 * @param string $new_value The new value for the setting. 'yes' or 'no'.
+	 * @param string $context Which avenue the user utilized to toggle.
+	 */
+	public static function track_woocommerce_allow_tracking_toggled( $prev_value, $new_value, $context = 'settings' ) {
+		if ( $new_value !== $prev_value ) {
+			self::record_event(
+				'woocommerce_allow_tracking_toggled',
+				array(
+					'previous_value' => $prev_value,
+					'new_value'      => $new_value,
+					'context'        => $context,
+				)
+			);
+		}
 	}
 
 	/**

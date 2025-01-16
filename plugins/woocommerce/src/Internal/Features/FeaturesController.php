@@ -200,6 +200,18 @@ class FeaturesController {
 					'is_experimental' => false,
 					'disable_ui'      => true,
 				),
+				'rate_limit_checkout'    => array(
+					'name'               => __( 'Rate limit Checkout', 'woocommerce' ),
+					'description'        => sprintf(
+						// translators: %s is the URL to the rate limiting documentation.
+						__( 'Enables rate limiting for Checkout place order and Store API /checkout endpoint. To further control this, refer to <a href="%s" target="_blank">rate limiting documentation</a>.', 'woocommerce' ),
+						'https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/StoreApi/docs/rate-limiting.md'
+					),
+					'is_experimental'    => false,
+					'disable_ui'         => false,
+					'enabled_by_default' => false,
+					'is_legacy'          => true,
+				),
 				'marketplace'            => array(
 					'name'               => __( 'Marketplace', 'woocommerce' ),
 					'description'        => __(
@@ -280,7 +292,7 @@ class FeaturesController {
 						'woocommerce'
 					),
 					'enabled_by_default' => true,
-					'disable_ui'         => true,
+					'disable_ui'         => false,
 
 					/*
 					 * This is not truly a legacy feature (it is not a feature that pre-dates the FeaturesController),
@@ -291,7 +303,7 @@ class FeaturesController {
 					 * @see https://github.com/woocommerce/woocommerce/pull/39701#discussion_r1376976959
 					 */
 					'is_legacy'          => true,
-					'is_experimental'    => true,
+					'is_experimental'    => false,
 				),
 				'email_improvements'     => array(
 					'name'        => __( 'Email improvements', 'woocommerce' ),
@@ -299,7 +311,6 @@ class FeaturesController {
 						'Enable modern email design and live preview for transactional emails',
 						'woocommerce'
 					),
-					'disable_ui'  => true,
 				),
 			);
 
@@ -588,7 +599,7 @@ class FeaturesController {
 	 *
 	 * @return bool True if 'woocommerce_init' has run or is running, false otherwise.
 	 */
-	private function verify_did_woocommerce_init( string $function_name = null ): bool {
+	private function verify_did_woocommerce_init( ?string $function_name = null ): bool {
 		if ( ! $this->proxy->call_function( 'did_action', 'woocommerce_init' ) &&
 			! $this->proxy->call_function( 'doing_action', 'woocommerce_init' ) ) {
 			if ( ! is_null( $function_name ) ) {

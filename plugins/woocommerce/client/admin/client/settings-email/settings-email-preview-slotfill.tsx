@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import { createSlotFill, SelectControl, Spinner } from '@wordpress/components';
+import { createSlotFill, Spinner } from '@wordpress/components';
+import { SelectControlSingleSelectionProps } from '@wordpress/components/build-types/select-control/types';
 import { registerPlugin } from '@wordpress/plugins';
-import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from '@wordpress/element';
+import { debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,44 +17,73 @@ import {
 	DEVICE_TYPE_DESKTOP,
 } from './settings-email-preview-device-type';
 import { EmailPreviewHeader } from './settings-email-preview-header';
+import { EmailPreviewIframe } from './settings-email-preview-iframe';
 import { EmailPreviewSend } from './settings-email-preview-send';
 import { EmailPreviewType } from './settings-email-preview-type';
 
 const { Fill } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
-export type EmailType = SelectControl.Option & {
-	subject: string;
-};
+export type EmailTypes = NonNullable<
+	SelectControlSingleSelectionProps[ 'options' ]
+>;
 
 type EmailPreviewFillProps = {
-	emailTypes: EmailType[];
+	emailTypes: EmailTypes;
 	previewUrl: string;
+	settingsIds: string[];
 };
 
 const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	emailTypes,
 	previewUrl,
+	settingsIds,
 } ) => {
+	const FLOATING_PREVIEW_WIDTH_LIMIT = 1550;
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
+	const isSingleEmail = emailTypes.length === 1;
 	const [ emailType, setEmailType ] = useState< string >(
-		'WC_Email_Customer_Processing_Order'
+		isSingleEmail
+			? emailTypes[ 0 ].value
+			: 'WC_Email_Customer_Processing_Order'
 	);
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
+	const [ isWide, setIsWide ] = useState< boolean >(
+		! isSingleEmail && window.innerWidth > FLOATING_PREVIEW_WIDTH_LIMIT
+	);
 	const finalPreviewUrl = `${ previewUrl }&type=${ emailType }`;
+
+	useEffect( () => {
+		if ( isSingleEmail ) {
+			return;
+		}
+		const handleResize = debounce( () => {
+			setIsWide( window.innerWidth > FLOATING_PREVIEW_WIDTH_LIMIT );
+		}, 400 );
+		window.addEventListener( 'resize', handleResize );
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+		};
+	}, [ isSingleEmail ] );
 
 	return (
 		<Fill>
-			<div className="wc-settings-email-preview-container">
+			<div
+				className={ `wc-settings-email-preview-container ${
+					isWide ? 'wc-settings-email-preview-container-floating' : ''
+				}` }
+			>
 				<div className="wc-settings-email-preview-controls">
-					<EmailPreviewType
-						emailTypes={ emailTypes }
-						emailType={ emailType }
-						setEmailType={ ( newEmailType: string ) => {
-							setIsLoading( true );
-							setEmailType( newEmailType );
-						} }
-					/>
+					{ ! isSingleEmail && (
+						<EmailPreviewType
+							emailTypes={ emailTypes }
+							emailType={ emailType }
+							setEmailType={ ( newEmailType: string ) => {
+								setIsLoading( true );
+								setEmailType( newEmailType );
+							} }
+						/>
+					) }
 					<div className="wc-settings-email-preview-spinner">
 						{ isLoading && <Spinner /> }
 					</div>
@@ -67,14 +97,11 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 				<div
 					className={ `wc-settings-email-preview wc-settings-email-preview-${ deviceType }` }
 				>
-					<EmailPreviewHeader
-						emailTypes={ emailTypes }
-						emailType={ emailType }
-					/>
-					<iframe
+					<EmailPreviewHeader emailType={ emailType } />
+					<EmailPreviewIframe
 						src={ finalPreviewUrl }
-						title={ __( 'Email preview frame', 'woocommerce' ) }
-						onLoad={ () => setIsLoading( false ) }
+						setIsLoading={ setIsLoading }
+						settingsIds={ settingsIds }
 					/>
 				</div>
 			</div>
@@ -93,16 +120,23 @@ export const registerSettingsEmailPreviewFill = () => {
 		return null;
 	}
 	const emailTypesData = slotElement.getAttribute( 'data-email-types' );
-	let emailTypes: EmailType[] = [];
+	let emailTypes: EmailTypes = [];
 	try {
 		emailTypes = JSON.parse( emailTypesData || '' );
 	} catch ( e ) {}
+	const settingsIdsData = slotElement.getAttribute(
+		'data-email-settings-ids'
+	);
+	let settingsIds: string[] = [];
+	try {
+		settingsIds = JSON.parse( settingsIdsData || '' );
+	} catch ( e ) {}
 
 	registerPlugin( 'woocommerce-admin-settings-email-preview', {
-		// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 		scope: 'woocommerce-email-preview-settings',
 		render: () => (
 			<EmailPreviewFill
+				settingsIds={ settingsIds }
 				emailTypes={ emailTypes }
 				previewUrl={ previewUrl }
 			/>

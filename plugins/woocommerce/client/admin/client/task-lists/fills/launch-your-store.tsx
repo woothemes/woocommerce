@@ -24,7 +24,6 @@ const LaunchYourStoreTaskItem = () => {
 };
 
 registerPlugin( 'woocommerce-admin-task-launch-your-store', {
-	// @ts-expect-error scope is not defined in the type definition but it is a valid property
 	scope: 'woocommerce-tasks',
 	render: LaunchYourStoreTaskItem,
 } );

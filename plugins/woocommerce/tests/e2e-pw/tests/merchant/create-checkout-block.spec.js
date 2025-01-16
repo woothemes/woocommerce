@@ -1,10 +1,5 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	fillPageTitle,
-	transformIntoBlocks,
-	publishPage,
-} = require( '../../utils/editor' );
-const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 
 /**
  * External dependencies
@@ -15,6 +10,8 @@ import {
 	getCanvas,
 	insertBlock,
 	goToPageEditor,
+	transformIntoBlocks,
+	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
 
 const simpleProductName = 'Very Simple Product';
@@ -29,7 +26,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Transform Classic Checkout To Checkout Block',
-	{ tag: [ '@gutenberg', '@services' ] },
+	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
 	() => {
 		test.beforeAll( async ( { api } ) => {
 			// enable COD
@@ -76,15 +73,18 @@ test.describe(
 
 		test(
 			'can transform classic checkout to checkout block',
-			{ tag: '@skip-on-default-pressable' },
+			{ tag: tags.SKIP_ON_PRESSABLE },
 			async ( { page, api, testPage } ) => {
 				await goToPageEditor( { page } );
 
 				await closeChoosePatternModal( { page } );
 
 				await fillPageTitle( page, testPage.title );
-				const wordPressVersion = await getInstalledWordPressVersion();
-				await insertBlock( page, 'Classic Checkout', wordPressVersion );
+				await insertBlock(
+					page,
+					'Classic Checkout',
+					Date.now().toString()
+				);
 				await transformIntoBlocks( page );
 
 				// When Gutenberg is active, the canvas is in an iframe
@@ -150,9 +150,7 @@ test.describe(
 					page.getByRole( 'heading', { name: testPage.title } )
 				).toBeVisible();
 				await expect(
-					page
-						.getByRole( 'group', { name: 'Contact information' } )
-						.locator( 'legend' )
+					page.getByRole( 'heading', { name: 'Contact information' } )
 				).toBeVisible();
 				await expect(
 					page

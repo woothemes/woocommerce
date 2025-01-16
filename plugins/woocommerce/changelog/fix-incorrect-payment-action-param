@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fixes the parameter passed in one of the set-active-payment-method events to use the paymentMethodSlug argument name, in line with the documentation

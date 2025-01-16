@@ -5,8 +5,9 @@ import {
 	addAProductToCart,
 	getOrderIdFromUrl,
 } from '@woocommerce/e2e-utils-playwright';
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { getFakeCustomer, getFakeProduct } = require( '../../utils/data' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 const test = baseTest.extend( {
 	page: async ( { page, api }, use ) => {
@@ -109,8 +110,13 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Shopper Checkout Login Account',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.HPOS ] },
 	() => {
+		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
+		} );
+		//todo audit follow-up: this is a variation of a checkout/placing an order flow,
+		// should be part of another spec maybe. See checkout.spec.js
 		test( 'can login to an existing account during checkout', async ( {
 			page,
 			product,

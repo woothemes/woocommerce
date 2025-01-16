@@ -4,9 +4,14 @@
 import { Button, Modal, TextControl } from '@wordpress/components';
 import { Icon, check, warning } from '@wordpress/icons';
 import apiFetch from '@wordpress/api-fetch';
-import { useState } from 'react';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isValidEmail } from '@woocommerce/product-editor';
+
+/**
+ * Internal dependencies
+ */
+import { emailPreviewNonce } from './settings-email-preview-nonce';
 
 type EmailPreviewSendProps = {
 	type: string;
@@ -32,13 +37,14 @@ export const EmailPreviewSend: React.FC< EmailPreviewSendProps > = ( {
 	const [ isSending, setIsSending ] = useState( false );
 	const [ notice, setNotice ] = useState( '' );
 	const [ noticeType, setNoticeType ] = useState( '' );
+	const nonce = emailPreviewNonce();
 
 	const handleSendEmail = async () => {
 		setIsSending( true );
 		setNotice( '' );
 		try {
 			const response: EmailPreviewSendResponse = await apiFetch( {
-				path: 'wc-admin-email/settings/email/send-preview',
+				path: `wc-admin-email/settings/email/send-preview?nonce=${ nonce }`,
 				method: 'POST',
 				data: { email, type },
 			} );

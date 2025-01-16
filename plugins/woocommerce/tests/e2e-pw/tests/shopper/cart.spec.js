@@ -1,15 +1,21 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const productName = `Cart product test ${ Date.now() }`;
 const productPrice = '13.99';
 const twoProductPrice = +productPrice * 2;
 const fourProductPrice = +productPrice * 4;
 
-test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
+test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 	let productId, product2Id, product3Id;
 
 	test.beforeAll( async ( { baseURL } ) => {
+		await setComingSoon( { baseURL, enabled: 'no' } );
+
 		const api = new wcApi( {
 			url: baseURL,
 			consumerKey: process.env.CONSUMER_KEY,
@@ -83,7 +89,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should display no item in the cart',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await page.goto( 'cart/' );
 			await expect(
@@ -94,7 +100,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should add the product to the cart from the shop page',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
@@ -107,7 +113,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should increase item quantity when "Add to cart" of the same product is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			let qty = 2;
 			while ( qty-- ) {
@@ -121,7 +127,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should update quantity when updated via quantity input',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
@@ -137,7 +143,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should remove the item from the cart when remove is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 			await page.goto( 'cart/' );
@@ -160,7 +166,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should update subtotal in cart totals when adding product to the cart',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
@@ -180,7 +186,7 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 
 	test(
 		'should go to the checkout page when "Proceed to Checkout" is clicked',
-		{ tag: [ '@could-be-lower-level-test' ] },
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 		async ( { page } ) => {
 			await goToShopPageAndAddProductToCart( page, productName );
 
@@ -192,6 +198,8 @@ test.describe( 'Cart page', { tag: [ '@payments', '@services' ] }, () => {
 		}
 	);
 
+	//todo audit follow-up: revisit this test and check parts of it make more sens in a cross-sell products test.
+	// It's not clear what this test does and the name is not very descriptive.
 	test( 'can manage cross-sell products and maximum item quantity', async ( {
 		page,
 	} ) => {

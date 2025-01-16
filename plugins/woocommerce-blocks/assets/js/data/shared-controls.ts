@@ -20,7 +20,7 @@ const invalidJsonError = {
 	message: __( 'The response is not a valid JSON response.', 'woocommerce' ),
 };
 
-const setNonceOnFetch = ( headers: Headers ): void => {
+const processHeadersOnFetch = ( headers: Headers ): void => {
 	if (
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
@@ -39,6 +39,26 @@ const setNonceOnFetch = ( headers: Headers ): void => {
 		// eslint-disable-next-line no-console
 		console.error(
 			'The monkey patched function on APIFetch, "setNonce", is not present, likely another plugin or some other code has removed this augmentation'
+		);
+	}
+	if (
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		triggerFetch.setCartHash &&
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		typeof triggerFetch?.setCartHash === 'function'
+	) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		triggerFetch.setCartHash( headers );
+	} else {
+		// eslint-disable-next-line no-console
+		console.error(
+			'The monkey patched function on APIFetch, "setCartHash", is not present, likely another plugin or some other code has removed this augmentation'
 		);
 	}
 };
@@ -134,7 +154,7 @@ const doApiFetchWithHeaders = ( options: APIFetchOptions ) =>
 									response,
 									headers: fetchResponse.headers,
 								} );
-								setNonceOnFetch( fetchResponse.headers );
+								processHeadersOnFetch( fetchResponse.headers );
 							} )
 							.catch( () => {
 								reject( invalidJsonError );
@@ -145,7 +165,7 @@ const doApiFetchWithHeaders = ( options: APIFetchOptions ) =>
 				} )
 				.catch( ( errorResponse ) => {
 					if ( errorResponse.name !== 'AbortError' ) {
-						setNonceOnFetch( errorResponse.headers );
+						processHeadersOnFetch( errorResponse.headers );
 					}
 					if ( typeof errorResponse.json === 'function' ) {
 						// Parse error response before rejecting it.
@@ -171,7 +191,7 @@ const doApiFetchWithHeaders = ( options: APIFetchOptions ) =>
 							response: response.body,
 							headers: response.headers,
 						} );
-						setNonceOnFetch( response.headers );
+						processHeadersOnFetch( response.headers );
 					}
 
 					// Status code indicates error.
@@ -179,7 +199,7 @@ const doApiFetchWithHeaders = ( options: APIFetchOptions ) =>
 				} )
 				.catch( ( errorResponse: ApiResponse< unknown > ) => {
 					if ( errorResponse.headers ) {
-						setNonceOnFetch( errorResponse.headers );
+						processHeadersOnFetch( errorResponse.headers );
 					}
 					if ( errorResponse.body ) {
 						reject( errorResponse.body );

@@ -1,4 +1,4 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -43,95 +43,112 @@ const test = baseTest.extend( {
 } );
 
 test.describe( 'Payment setup task', () => {
-	test( 'Saving valid bank account transfer details enables the payment method', async ( {
-		page,
-		api,
-	} ) => {
-		await api.put( 'payment_gateways/bacs', {
-			enabled: false,
-		} );
+	test(
+		'Saving valid bank account transfer details enables the payment method',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page, api } ) => {
+			await api.put( 'payment_gateways/bacs', {
+				enabled: false,
+			} );
 
-		// Load the bank transfer page.
-		await page.goto(
-			'wp-admin/admin.php?page=wc-admin&task=payments&id=bacs'
-		);
+			// Load the bank transfer page.
+			await page.goto(
+				'wp-admin/admin.php?page=wc-admin&task=payments&id=bacs'
+			);
 
-		// Fill in bank transfer form.
-		await page
-			.locator( '//input[@placeholder="Account name"]' )
-			.fill( 'Savings' );
-		await page
-			.locator( '//input[@placeholder="Account number"]' )
-			.fill( '1234' );
-		await page
-			.locator( '//input[@placeholder="Bank name"]' )
-			.fill( 'Test Bank' );
-		await page.locator( '//input[@placeholder="Sort code"]' ).fill( '12' );
-		await page
-			.locator( '//input[@placeholder="IBAN"]' )
-			.fill( '12 3456 7890' );
-		await page
-			.locator( '//input[@placeholder="BIC / Swift"]' )
-			.fill( 'ABBA' );
-		await page.getByRole( 'button', { name: 'Save' } ).click();
+			// Fill in bank transfer form.
+			await page
+				.locator( '//input[@placeholder="Account name"]' )
+				.fill( 'Savings' );
+			await page
+				.locator( '//input[@placeholder="Account number"]' )
+				.fill( '1234' );
+			await page
+				.locator( '//input[@placeholder="Bank name"]' )
+				.fill( 'Test Bank' );
+			await page
+				.locator( '//input[@placeholder="Sort code"]' )
+				.fill( '12' );
+			await page
+				.locator( '//input[@placeholder="IBAN"]' )
+				.fill( '12 3456 7890' );
+			await page
+				.locator( '//input[@placeholder="BIC / Swift"]' )
+				.fill( 'ABBA' );
+			await page.getByRole( 'button', { name: 'Save' } ).click();
 
-		// Check that bank transfers were set up.
-		await expect(
-			page.locator( 'div.components-snackbar__content' )
-		).toContainText( 'Direct bank transfer details added successfully' );
+			// Check that bank transfers were set up.
+			await expect(
+				page.locator( 'div.components-snackbar__content' )
+			).toContainText(
+				'Direct bank transfer details added successfully'
+			);
 
-		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=checkout' );
+			await page.goto(
+				'wp-admin/admin.php?page=wc-settings&tab=checkout'
+			);
 
-		await expect(
-			page.locator(
-				'//tr[@data-gateway_id="bacs"]/td[@class="status"]/a'
-			)
-		).toHaveClass( 'wc-payment-gateway-method-toggle-enabled' );
-	} );
+			await expect(
+				page.locator(
+					'//tr[@data-gateway_id="bacs"]/td[@class="status"]/a'
+				)
+			).toHaveClass( 'wc-payment-gateway-method-toggle-enabled' );
+		}
+	);
 
-	test( 'Can visit the payment setup task from the homescreen if the setup wizard has been skipped', async ( {
-		page,
-	} ) => {
-		await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-		await page.getByRole( 'button', { name: '3 Get paid' } ).click();
-		await expect(
-			page.locator( '.woocommerce-layout__header-wrapper > h1' )
-		).toHaveText( 'Get paid' );
-	} );
+	//todo audit follow-up: maybe the better place for this test is activate-and-setup/task-list.spec.js
+	test(
+		'Can visit the payment setup task from the homescreen if the setup wizard has been skipped',
+		{ tag: [ tags.NOT_E2E ] },
+		async ( { page } ) => {
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
+			await page.getByRole( 'button', { name: '3 Get paid' } ).click();
+			await expect(
+				page.locator( '.woocommerce-layout__header-wrapper > h1' )
+			).toHaveText( 'Get paid' );
+		}
+	);
 
-	test( 'Enabling cash on delivery enables the payment method', async ( {
-		page,
-		api,
-	} ) => {
-		await api.put( 'payment_gateways/cod', {
-			enabled: false,
-		} );
+	test(
+		'Enabling cash on delivery enables the payment method',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page, api } ) => {
+			await api.put( 'payment_gateways/cod', {
+				enabled: false,
+			} );
 
-		const paymentGatewaysResponse = page.waitForResponse(
-			( response ) =>
-				response.url().includes( 'wp-json/wc/v3/payment_gateways' ) &&
-				response.ok()
-		);
-		await page.goto( 'wp-admin/admin.php?page=wc-admin&task=payments' );
-		await paymentGatewaysResponse;
+			const paymentGatewaysResponse = page.waitForResponse(
+				( response ) =>
+					response
+						.url()
+						.includes( 'wp-json/wc/v3/payment_gateways' ) &&
+					response.ok()
+			);
+			await page.goto( 'wp-admin/admin.php?page=wc-admin&task=payments' );
+			await paymentGatewaysResponse;
 
-		// Enable COD payment option.
-		await page
-			.locator( 'div.woocommerce-task-payment-cod' )
-			.getByRole( 'button', { name: 'Enable' } )
-			.click();
-		// Check that COD was set up.
-		await expect(
-			page
+			// Enable COD payment option.
+			await page
 				.locator( 'div.woocommerce-task-payment-cod' )
-				.getByRole( 'button', { name: 'Manage' } )
-		).toBeVisible();
+				.getByRole( 'button', { name: 'Enable' } )
+				.click();
+			// Check that COD was set up.
+			await expect(
+				page
+					.locator( 'div.woocommerce-task-payment-cod' )
+					.getByRole( 'button', { name: 'Manage' } )
+			).toBeVisible();
 
-		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=checkout' );
+			await page.goto(
+				'wp-admin/admin.php?page=wc-settings&tab=checkout'
+			);
 
-		// Check that the COD payment method was enabled.
-		await expect(
-			page.locator( '//tr[@data-gateway_id="cod"]/td[@class="status"]/a' )
-		).toHaveClass( 'wc-payment-gateway-method-toggle-enabled' );
-	} );
+			// Check that the COD payment method was enabled.
+			await expect(
+				page.locator(
+					'//tr[@data-gateway_id="cod"]/td[@class="status"]/a'
+				)
+			).toHaveClass( 'wc-payment-gateway-method-toggle-enabled' );
+		}
+	);
 } );

@@ -26,7 +26,6 @@ export const getNextPreviousImagesWithClassName = (
 				classname: 'outside-image',
 			};
 		case 'off':
-			return null;
 		default:
 			return null;
 	}

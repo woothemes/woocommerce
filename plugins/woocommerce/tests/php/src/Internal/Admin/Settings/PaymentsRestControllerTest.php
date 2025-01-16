@@ -3,11 +3,16 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
+use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\Payments;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentsRestController;
 use PHPUnit\Framework\MockObject\MockObject;
 use WC_REST_Unit_Test_Case;
 use WP_REST_Request;
+use WC_Gateway_BACS;
+use WC_Gateway_Cheque;
+use WC_Gateway_COD;
+use WC_Gateway_PayPal;
 
 /**
  * PaymentsRestController API controller test.
@@ -25,7 +30,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	/**
 	 * @var PaymentsRestController
 	 */
-	protected PaymentsRestController $controller;
+	protected PaymentsRestController $sut;
 
 	/**
 	 * @var MockObject|Payments
@@ -50,9 +55,9 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		$this->mock_service = $this->getMockBuilder( Payments::class )->getMock();
 
-		$this->controller = new PaymentsRestController();
-		$this->controller->init( $this->mock_service );
-		$this->controller->register_routes( true );
+		$this->sut = new PaymentsRestController();
+		$this->sut->init( $this->mock_service );
+		$this->sut->register_routes( true );
 	}
 
 	/**
@@ -132,12 +137,14 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'enabled', $provider['state'], 'Provider (gateway) `state[enabled]` entry is missing' );
 		$this->assertArrayHasKey( 'needs_setup', $provider['state'], 'Provider (gateway) `state[needs_setup]` entry is missing' );
 		$this->assertArrayHasKey( 'test_mode', $provider['state'], 'Provider (gateway) `state[test_mode]` entry is missing' );
-		$this->assertArrayHasKey( 'management', $provider, 'Provider (gateway) `management` entry is missing' );
-		$this->assertArrayHasKey( 'settings_url', $provider['management'], 'Provider (gateway) `management[settings_url]` entry is missing' );
+		$this->assertArrayHasKey( 'management', $provider, 'Gateway `management` entry is missing' );
+		$this->assertArrayHasKey( '_links', $provider['management'], 'Gateway `management[_links]` entry is missing' );
+		$this->assertArrayHasKey( 'settings', $provider['management']['_links'], 'Gateway `management[_links][settings]` entry is missing' );
 		$this->assertArrayHasKey( 'links', $provider, 'Provider (gateway) `links` entry is missing' );
 		$this->assertCount( 1, $provider['links'] );
 		$this->assertArrayHasKey( 'plugin', $provider, 'Provider (gateway) `plugin` entry is missing' );
 		$this->assertArrayHasKey( 'slug', $provider['plugin'], 'Provider (gateway) `plugin[slug]` entry is missing' );
+		$this->assertArrayHasKey( 'file', $provider['plugin'], 'Provider (gateway) `plugin[file]` entry is missing' );
 		$this->assertArrayHasKey( 'status', $provider['plugin'], 'Provider (gateway) `plugin[status]` entry is missing' );
 		$this->assertArrayHasKey( '_links', $provider, 'Provider (gateway) `_links` entry is missing' );
 
@@ -212,8 +219,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			array(
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
-				Payments::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+				WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -286,8 +293,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			array(
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
-				Payments::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+				WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -337,7 +344,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			array(
 				'_wc_pes_woopayments',
 				'_wc_pes_paypal_full_stack',
-				'paypal',
+				WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -382,8 +389,8 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		// Assert that we have the right providers, in the right order.
 		$this->assertSame(
 			array(
-				Payments::OFFLINE_METHODS_ORDERING_GROUP,
-				'paypal',
+				PaymentProviders::OFFLINE_METHODS_ORDERING_GROUP,
+				WC_Gateway_Paypal::ID,
 			),
 			array_column( $data['providers'], 'id' )
 		);
@@ -539,27 +546,27 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 		return array(
 			array( 1 ),
 			array( false ),
-			array( 0 => 'paypal' ),
-			array( array( 'paypal' ) ),
-			array( array( 'paypal' => false ) ),
-			array( array( 'paypal' => 'bogus' ) ),
-			array( array( 'paypal' => '1.0' ) ),
+			array( 0 => WC_Gateway_Paypal::ID ),
+			array( array( WC_Gateway_Paypal::ID ) ),
+			array( array( WC_Gateway_Paypal::ID => false ) ),
+			array( array( WC_Gateway_Paypal::ID => 'bogus' ) ),
+			array( array( WC_Gateway_Paypal::ID => '1.0' ) ),
 			array( array( '()/paypal%#' => 1 ) ),
 			array(
 				array(
-					'paypal'                  => '1.1',
+					WC_Gateway_Paypal::ID     => '1.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					'paypal'                  => '0.1',
+					WC_Gateway_Paypal::ID     => '0.1',
 					'offline_payment_methods' => 2,
 				),
 			),
 			array(
 				array(
-					'paypal' => 1,
+					WC_Gateway_Paypal::ID => 1,
 					'offline_payment_methods',
 				),
 			),
@@ -841,7 +848,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'                => '_wc_pes_woopayments',
 				'_order'            => $order++,
-				'_type'             => Payments::PROVIDER_TYPE_SUGGESTION,
+				'_type'             => PaymentProviders::TYPE_SUGGESTION,
 				'title'             => 'Accept payments with Woo',
 				'description'       => 'With WooPayments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.',
 				'short_description' => 'Credit/debit cards, Apple Pay, Google Pay and more.',
@@ -888,7 +895,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'                => '_wc_pes_paypal_full_stack',
 				'_order'            => $order++,
-				'_type'             => Payments::PROVIDER_TYPE_SUGGESTION,
+				'_type'             => PaymentProviders::TYPE_SUGGESTION,
 				'title'             => 'PayPal Payments',
 				'description'       => 'Safe and secure payments using credit cards or your customer&#039;s PayPal account.',
 				'short_description' => '',
@@ -929,22 +936,24 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 			$mock_providers[] = array(
 				'id'          => '_wc_offline_payment_methods_group',
 				'_order'      => $order++,
-				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PMS_GROUP,
+				'_type'       => PaymentProviders::TYPE_OFFLINE_PMS_GROUP,
 				'title'       => 'Offline Payment Methods',
 				'description' => 'Allow shoppers to pay offline.',
 				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
 			);
 			$mock_providers[] = array(
-				'id'          => 'bacs',
+				'id'          => WC_Gateway_BACS::ID,
 				'_order'      => $order++,
-				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PM,
+				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Direct bank transfer',
 				'description' => 'Take payments in person via BACS. More commonly known as direct bank/wire transfer.',
 				'supports'    => array(
 					'products',
 				),
 				'plugin'      => array(
+					'_type'  => 'wporg',
 					'slug'   => 'woocommerce',
+					'file'   => 'woocommerce/woocommerce',
 					'status' => 'active',
 				),
 				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/bacs.svg',
@@ -958,22 +967,29 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
-					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
+					'_links' => array(
+						'settings' => array(
+							'href' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=bacs',
+						),
+					),
 				),
 			);
 			$mock_providers[] = array(
-				'id'          => 'cheque',
+				'id'          => WC_Gateway_Cheque::ID,
 				'_order'      => $order++,
-				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PM,
+				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Check payments',
 				'description' => 'Take payments in person via checks. This offline gateway can also be useful to test purchases.',
 				'supports'    => array(
 					'products',
 				),
 				'plugin'      => array(
+					'_type'  => 'wporg',
 					'slug'   => 'woocommerce',
+					'file'   => 'woocommerce/woocommerce',
 					'status' => 'active',
 				),
 				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cheque.svg',
@@ -987,22 +1003,29 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
-					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
+					'_links' => array(
+						'settings' => array(
+							'href' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cheque',
+						),
+					),
 				),
 			);
 			$mock_providers[] = array(
-				'id'          => 'cod',
+				'id'          => WC_Gateway_COD::ID,
 				'_order'      => $order++,
-				'_type'       => Payments::PROVIDER_TYPE_OFFLINE_PM,
+				'_type'       => PaymentProviders::TYPE_OFFLINE_PM,
 				'title'       => 'Cash on delivery',
-				'description' => 'Have your customers pay with cash (or by other means) upon delivery.',
+				'description' => 'Let your shoppers pay upon delivery — by cash or other methods of payment.',
 				'supports'    => array(
 					'products',
 				),
 				'plugin'      => array(
+					'_type'  => 'wporg',
 					'slug'   => 'woocommerce',
+					'file'   => 'woocommerce/woocommerce',
 					'status' => 'active',
 				),
 				'icon'        => 'http://localhost:8888/wp-content/plugins/woocommerce/assets/images/payment_methods/cod.svg',
@@ -1016,18 +1039,23 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => false,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
-					'settings_url' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
+					'_links' => array(
+						'settings' => array(
+							'href' => 'http://localhost:8888/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod',
+						),
+					),
 				),
 			);
 		}
 
 		if ( ! $skip_paypal ) {
 			$mock_providers[] = array(
-				'id'          => 'paypal',
+				'id'          => WC_Gateway_Paypal::ID,
 				'_order'      => $order++,
-				'_type'       => Payments::PROVIDER_TYPE_GATEWAY,
+				'_type'       => PaymentProviders::TYPE_GATEWAY,
 				'title'       => 'PayPal',
 				'description' => 'PayPal',
 				'supports'    => array( 'products' ),
@@ -1035,9 +1063,14 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 					'enabled'     => $enabled_core_paypal_pg,
 					'needs_setup' => false,
 					'test_mode'   => false,
+					'dev_mode'    => false,
 				),
 				'management'  => array(
-					'settings_url' => 'admin.php?page=wc-settings&tab=checkout&section=paypal',
+					'_links' => array(
+						'settings' => array(
+							'href' => 'admin.php?page=wc-settings&tab=checkout&section=paypal',
+						),
+					),
 				),
 				'image'       => 'https://example.com/image.png',
 				'icon'        => 'https://example.com/icon.png',
@@ -1050,6 +1083,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'plugin'      => array(
 					'_type'  => 'wporg',
 					'slug'   => 'woocommerce',
+					'file'   => 'woocommerce/woocommerce',
 					'status' => 'active',
 				),
 			);
@@ -1068,13 +1102,18 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	 *
 	 * @param string|null $location The location to return the suggestions for.
 	 */
-	private function mock_extension_suggestions( string $location = null ) {
+	private function mock_extension_suggestions( ?string $location = null ) {
 		$mocker = $this->mock_service
 			->expects( $this->any() )
-			->method( 'get_extension_suggestions' );
+			->method( 'get_payment_extension_suggestions' );
 
 		if ( ! is_null( $location ) ) {
 			$mocker = $mocker->with( $location );
+
+			$this->mock_service
+				->expects( $this->any() )
+				->method( 'get_country' )
+				->willReturn( $location );
 		}
 
 		$mocker->willReturn(
@@ -1181,7 +1220,7 @@ class PaymentsRestControllerTest extends WC_REST_Unit_Test_Case {
 	private function mock_extension_suggestions_categories() {
 		$this->mock_service
 			->expects( $this->any() )
-			->method( 'get_extension_suggestion_categories' )
+			->method( 'get_payment_extension_suggestion_categories' )
 			->willReturn(
 				array(
 					array(
