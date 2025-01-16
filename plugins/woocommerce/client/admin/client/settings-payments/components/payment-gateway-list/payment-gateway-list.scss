@@ -147,6 +147,10 @@
 				gap: $gap;
 			}
 		}
+
+		&-after.no-buttons {
+			margin-left: auto;
+		}
 	}
 }
 
