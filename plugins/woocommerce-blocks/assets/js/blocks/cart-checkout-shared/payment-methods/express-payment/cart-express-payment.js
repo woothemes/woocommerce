@@ -7,7 +7,7 @@ import { noticeContexts } from '@woocommerce/base-context';
 import { StoreNoticesContainer } from '@woocommerce/blocks-components';
 import LoadingMask from '@woocommerce/base-components/loading-mask';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ const CartExpressPayment = () => {
 		isComplete,
 		hasError,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			isCalculating: store.isCalculating(),
 			isProcessing: store.isProcessing(),
@@ -34,7 +34,7 @@ const CartExpressPayment = () => {
 			isComplete: store.isComplete(),
 			hasError: store.hasError(),
 		};
-	} );
+	}, [] );
 	const isExpressPaymentMethodActive = useSelect( ( select ) =>
 		select( PAYMENT_STORE_KEY ).isExpressPaymentMethodActive()
 	);
