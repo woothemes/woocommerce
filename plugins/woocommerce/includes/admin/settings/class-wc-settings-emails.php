@@ -31,6 +31,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		'Comic Sans MS'   => "'Comic Sans MS', 'Marker Felt-Thin', Arial, sans-serif",
 		'Courier New'     => "'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace",
 		'Georgia'         => "Georgia, Times, 'Times New Roman', serif",
+		'Helvetica'       => "'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif",
 		'Lucida'          => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
 		'Tahoma'          => 'Tahoma, Verdana, Segoe, sans-serif',
 		'Times New Roman' => "'Times New Roman', Times, Baskerville, Georgia, serif",
@@ -170,7 +171,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			$font_family = array(
 				'title'   => __( 'Font family', 'woocommerce' ),
 				'id'      => 'woocommerce_email_font_family',
-				'default' => 'Arial',
+				'default' => 'Helvetica',
 				'type'    => 'email_font_family',
 			);
 
