@@ -36,6 +36,10 @@
 			line-height: 20px;
 			color: $gray-700;
 		}
+
+		@media screen and ( max-width: 782px ) {
+			padding: calc(32px) $gap;
+		}
 	}
 
 	&__terms {
@@ -43,7 +47,7 @@
 		color: $gray-700;
 	}
 
-	@media screen and ( max-width: 782px ) {
+	@media screen and ( max-width: 1024px ) {
 		margin: 24px 0px;
 	}
 
