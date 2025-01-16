@@ -57,9 +57,11 @@ $store_description = ! empty( $site_tagline )
 		<div class="wp-block-group alignfull woocommerce-coming-soon-minimal-left-image__content" style="margin-top:120px;margin-bottom:120px;padding-top:0;padding-bottom:0"><!-- wp:group {"layout":{"type":"constrained"}} -->
 			<div class="wp-block-group"><!-- wp:columns {"className":"alignfull","style":{"spacing":{"padding":{"top":"0","bottom":"0","left":"0","right":"0"},"blockGap":{"top":"0","left":"60px"},"margin":{"top":"0px","bottom":"0px"}},"layout":{"selfStretch":"fit","flexSize":null}}} -->
 				<div class="wp-block-columns alignfull" style="margin-top:0px;margin-bottom:0px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0"><!-- wp:column {"verticalAlignment":"bottom","width":"481px","className":"woocommerce-coming-soon-minimal-left-image__content-image","layout":{"type":"default"}} -->
-					<div class="wp-block-column is-vertically-aligned-bottom woocommerce-coming-soon-minimal-left-image__content-image" style="flex-basis:481px"><!-- wp:image {"scale":"cover","style":{"border":{"radius":"16px"}}} -->
-						<figure class="wp-block-image has-custom-border"><img src="<?php echo esc_url( $default_image ); ?>" alt="Decorative Image" style="border-radius:16px;object-fit:cover"/></figure>
-						<!-- /wp:image --></div>
+					<div class="wp-block-column is-vertically-aligned-bottom woocommerce-coming-soon-minimal-left-image__content-image" style="flex-basis:481px">
+						<!-- wp:image {"aspectRatio":"481/576","scale":"cover","style":{"border":{"radius":"16px"}}} -->
+						<figure class="wp-block-image has-custom-border"><img src="<?php echo esc_url( $default_image ); ?>" alt="Decorative Image" style="border-radius:16px;aspect-ratio:481/576;object-fit:cover"/></figure>
+						<!-- /wp:image -->
+					</div>
 					<!-- /wp:column -->
 
 					<!-- wp:column {"verticalAlignment":"stretch","width":"453px","className":"woocommerce-coming-soon-minimal-left-image__content-text","style":{"spacing":{"blockGap":"0","padding":{"right":"0","left":"0","bottom":"0","top":"53px"}}},"layout":{"type":"default"}} -->
