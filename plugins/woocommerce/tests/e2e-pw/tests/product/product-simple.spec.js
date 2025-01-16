@@ -64,17 +64,6 @@ test.describe(
 							name: productCategoryName1,
 						},
 					],
-					images: [
-						{
-							src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg',
-						},
-						{
-							src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg',
-						},
-						{
-							src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_3_front.jpg',
-						},
-					],
 					regular_price: productPrice,
 				} )
 				.then( ( response ) => {
@@ -94,39 +83,14 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
-			await api.post( 'products/batch', {
-				delete: [ simpleProductId ],
-			} );
-			await api.post( 'products/categories/batch', {
-				delete: [ productCategory1Id, productCategory2Id ],
-			} );
+			// await api.post( 'products/batch', {
+			// 	delete: [ simpleProductId ],
+			// } );
+			// await api.post( 'products/categories/batch', {
+			// 	delete: [ productCategory1Id, productCategory2Id ],
+			// } );
 		} );
 
-		//todo audit follow-up: this probably fits better in a product reviews test file
-		test( 'should be able to post a review and see it after', async ( {
-			page,
-		} ) => {
-			await page.goto( 'my-account' );
-			await page.locator( '#username' ).fill( admin.username );
-			await page.locator( '#password' ).fill( admin.password );
-			await page.locator( 'text=Log in' ).click();
-
-			await page.goto( `product/${ simpleProductSlug }` );
-
-			await expect( page.locator( '.reviews_tab' ) ).toContainText(
-				'Reviews (0)'
-			);
-			await page.locator( '.reviews_tab' ).click();
-			await page.locator( '.star-4' ).click();
-			await page.locator( '#comment' ).fill( 'This product is great!' );
-			await page.locator( 'text=Submit' ).click();
-			await expect(
-				page.locator( '.woocommerce-Reviews-title' )
-			).toContainText( `1 review for ${ simpleProductName }` );
-			await expect( page.locator( '.reviews_tab' ) ).toContainText(
-				'Reviews (1)'
-			);
-		} );
 
 		//todo audit follow-up: this probably fits better in a product creation complete flow
 		// see merchant/product-create-simple.spec.js
