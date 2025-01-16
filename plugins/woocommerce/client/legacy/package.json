@@ -42,7 +42,6 @@
 		"wireit": "0.14.3"
 	},
 	"dependencies": {
-		"@automattic/color-studio": "^2.5.0",
 		"sourcebuster": "github:woocommerce/sourcebuster-js#v1.2.0"
 	},
 	"wireit": {

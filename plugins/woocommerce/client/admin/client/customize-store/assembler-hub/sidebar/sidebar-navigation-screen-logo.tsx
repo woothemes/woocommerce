@@ -44,6 +44,10 @@ import {
 } from './constants';
 import { trackEvent } from '~/customize-store/tracking';
 
+type Media = {
+	id: string | number;
+} & { [ key: string ]: string };
+
 const useLogoEdit = ( {
 	shouldSyncIcon,
 	setAttributes,
@@ -55,26 +59,32 @@ const useLogoEdit = ( {
 		const { canUser, getEditedEntityRecord } = select( coreStore );
 		const _canUserEdit = canUser( 'update', 'settings' );
 		const siteSettings = _canUserEdit
-			? getEditedEntityRecord( 'root', 'site' )
+			? // @ts-expect-error No support for root and site
+			  ( getEditedEntityRecord( 'root', 'site' ) as {
+					site_icon: string | undefined;
+			  } )
 			: undefined;
 
 		const _siteIconId = siteSettings?.site_icon;
 		return {
 			siteIconId: _siteIconId,
-			mediaUpload: select( blockEditorStore ).getSettings().mediaUpload,
+			mediaUpload:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				select( blockEditorStore ).getSettings().mediaUpload,
 		};
 	}, [] );
 
 	const { editEntityRecord } = useDispatch( coreStore );
 
-	const setIcon = ( newValue: string | undefined | null ) =>
+	const setIcon = ( newValue: string | undefined | null | number ) =>
 		// The new value needs to be `null` to reset the Site Icon.
+		// @ts-expect-error No support for root and site
 		editEntityRecord( 'root', 'site', undefined, {
 			site_icon: newValue ?? null,
 		} );
 
 	const setLogo = (
-		newValue: string | undefined | null,
+		newValue: string | undefined | null | number,
 		shouldForceSync = false
 	) => {
 		// `shouldForceSync` is used to force syncing when the attribute
@@ -83,15 +93,13 @@ const useLogoEdit = ( {
 			setIcon( newValue );
 		}
 
+		// @ts-expect-error No support for root and site
 		editEntityRecord( 'root', 'site', undefined, {
 			site_logo: newValue,
 		} );
 	};
 
-	const onSelectLogo = (
-		media: { id: string; url: string },
-		shouldForceSync = false
-	) => {
+	const onSelectLogo = ( media: Media, shouldForceSync = false ) => {
 		if ( ! media ) {
 			return;
 		}
@@ -106,7 +114,7 @@ const useLogoEdit = ( {
 		setAttributes( { width: DEFAULT_LOGO_WIDTH } );
 	};
 
-	const onInitialSelectLogo = ( media: { id: string; url: string } ) => {
+	const onInitialSelectLogo = ( media: Media ) => {
 		// Initialize the syncSiteIcon toggle. If we currently have no site logo and no
 		// site icon, automatically sync the logo to the icon.
 		if ( shouldSyncIcon === undefined ) {
@@ -135,7 +143,7 @@ const useLogoEdit = ( {
 		mediaUpload( {
 			allowedTypes: [ 'image' ],
 			filesList,
-			onFileChange( [ image ]: [ { id: string; url: string } ] ) {
+			onFileChange( [ image ]: Media[] ) {
 				if ( isBlobURL( image?.url ) ) {
 					return;
 				}
@@ -284,7 +292,7 @@ const LogoEdit = ( {
 		);
 	}
 
-	function handleMediaUploadSelect( media: { id: string; url: string } ) {
+	function handleMediaUploadSelect( media: Media ) {
 		onInitialSelectLogo( media );
 		trackEvent( 'customize_your_store_assembler_hub_logo_select' );
 	}
@@ -393,28 +401,36 @@ export const SidebarNavigationScreenLogo = ( {
 
 			const _canUserEdit = canUser( 'update', 'settings' );
 			const siteSettings = _canUserEdit
-				? getEditedEntityRecord( 'root', 'site' )
+				? // @ts-expect-error No support for root and site
+				  ( getEditedEntityRecord( 'root', 'site' ) as {
+						site_logo: string;
+				  } )
 				: undefined;
-			const siteData = getEntityRecord( 'root', '__unstableBase' );
+			// @ts-expect-error No support for root and site
+			const siteData = getEntityRecord( 'root', '__unstableBase' ) as {
+				site_logo: string;
+			};
 			const _siteLogoId = _canUserEdit
 				? siteSettings?.site_logo
 				: siteData?.site_logo;
 
 			const mediaItem =
 				_siteLogoId &&
+				// @ts-expect-error No getMedia selector type definition
 				select( coreStore ).getMedia( _siteLogoId, {
 					context: 'view',
 				} );
 			const _isRequestingMediaItem =
 				_siteLogoId &&
+				// @ts-expect-error No hasFinishedResolution selector type definition
 				! select( coreStore ).hasFinishedResolution( 'getMedia', [
 					_siteLogoId,
 					{ context: 'view' },
 				] );
 
 			return {
-				siteLogoId: _siteLogoId,
-				canUserEdit: _canUserEdit,
+				siteLogoId: _siteLogoId ?? '',
+				canUserEdit: _canUserEdit ?? false,
 				mediaItemData: mediaItem,
 				isRequestingMediaItem: _isRequestingMediaItem,
 			};

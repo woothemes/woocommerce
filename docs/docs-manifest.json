@@ -114,19 +114,19 @@
         },
         {
           "post_title": "Cart and Checkout - Removing checkout fields",
-          "menu_title": "Extensibility",
+          "menu_title": "Removing checkout fields",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/removing-checkout-fields.md",
-          "hash": "ab83ee595edc38155f7492a03e19ed67dc5e3bfcedace8e576e3459dd0c79757",
+          "hash": "6eaeb0393487dd1007367a5f2d3984420c085c6ae26dda04c4e08ee33ac6faf6",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/removing-checkout-fields.md",
           "id": "030247059754260bce6285cfb352a4a733f1f677"
         },
         {
           "post_title": "Cart and Checkout - Overview of data flow between client and server",
-          "menu_title": "Data flow",
+          "menu_title": "Data flow overview",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
-          "hash": "ce9b67884f37af97d1f96a47d6bbc65e24ee49f97ec3444d3deba23bb6568d48",
+          "hash": "6953a9883ab34d238fd6a8c5f4839795e0e7f12b71b4e94a3cf626aa4fcd97aa",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
           "id": "d2d8cf26967438f16815b129da855324be7a7ef8"
         },
@@ -150,10 +150,10 @@
         },
         {
           "post_title": "Cart and Checkout - Frequently Asked Questions",
-          "menu_title": "Extensibility",
+          "menu_title": "Frequently Asked Questions",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/faq.md",
-          "hash": "866772d4bb02e8f5a734f3b56af1a9e8c6b2873e772a3122a20d2a45ef6700a7",
+          "hash": "f83f3517106b024b853718d17c3c44a522156ea55aa441de9433d3f312d5f851",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/faq.md",
           "id": "041787aca25af363a5eff3e710bd669cc8aebc4b",
           "links": {
@@ -162,10 +162,10 @@
         },
         {
           "post_title": "Cart and Checkout - Extensibility getting started guide",
-          "menu_title": "Extensibility",
-          "tags": "reference",
+          "menu_title": "Extensibility - Getting started",
+          "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/extensibility-getting-started.md",
-          "hash": "7d12b211f899c98aa7c0560462fdcfd547ab6e3db0b4ca526d7e235f4409f923",
+          "hash": "e5bc04784214cc1662dd23cb7ff2e2e06c6ac33070676f72cdcfd79643a32dc5",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/extensibility-getting-started.md",
           "id": "7a379c2d6d96f15fe234a707d19ebdc20f8e9dd3"
         },
@@ -1915,5 +1915,5 @@
       "categories": []
     }
   ],
-  "hash": "aae825231ecebbbc1e157d989547112bc15e9d44ce66af11eba382ea1ce0cb92"
+  "hash": "35c7649104b1618028b6e2dcaeb2cd79bcc1b12af5b3b6506d2ca3809f277541"
 }

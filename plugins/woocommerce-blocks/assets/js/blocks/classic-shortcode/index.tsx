@@ -225,11 +225,7 @@ const Edit = ( { clientId, attributes }: BlockEditProps< Attributes > ) => {
 						</span>
 						<span>{ placeholderTitle }</span>
 					</div>
-					<p
-						dangerouslySetInnerHTML={ {
-							__html: placeholderDescription,
-						} }
-					/>
+					<p>{ placeholderDescription }</p>
 					<p>{ learnMoreContent }</p>
 					{ canConvert && blockifyConfig && (
 						<ConvertTemplate

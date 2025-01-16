@@ -357,7 +357,7 @@ test.describe( 'Update variations', { tag: tags.GUTENBERG }, () => {
 		} );
 
 		await test.step( 'Click on the "Variations" tab.', async () => {
-			await page.getByRole( 'link', { name: ' Variations' } ).click();
+			await page.getByRole( 'link', { name: 'Variations' } ).click();
 		} );
 
 		await test.step( 'Expand all variations', async () => {

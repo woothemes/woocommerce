@@ -1,9 +1,5 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const {
-	fillPageTitle,
-	transformIntoBlocks,
-	publishPage,
-} = require( '../../utils/editor' );
+const { fillPageTitle } = require( '../../utils/editor' );
 
 /**
  * External dependencies
@@ -14,6 +10,8 @@ import {
 	getCanvas,
 	insertBlock,
 	goToPageEditor,
+	transformIntoBlocks,
+	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
 
 const simpleProductName = 'Very Simple Product';

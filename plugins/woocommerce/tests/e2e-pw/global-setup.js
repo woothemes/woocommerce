@@ -36,7 +36,12 @@ module.exports = async ( config ) => {
 						},
 					}
 				);
-				console.log( 'Reset successful:', response.status() );
+
+				if ( response.ok() ) {
+					console.log( 'Reset successful:', response.status() );
+				} else {
+					console.error( 'ERROR! Reset failed:', response.status() );
+				}
 			} catch ( error ) {
 				console.error(
 					'Reset failed:',

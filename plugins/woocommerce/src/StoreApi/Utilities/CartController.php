@@ -2,6 +2,7 @@
 namespace Automattic\WooCommerce\StoreApi\Utilities;
 
 use Automattic\WooCommerce\Checkout\Helpers\ReserveStock;
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\StoreApi\Exceptions\InvalidCartException;
 use Automattic\WooCommerce\StoreApi\Exceptions\NotPurchasableException;
@@ -1131,7 +1132,7 @@ class CartController {
 	protected function get_product_for_cart( $request ) {
 		$product = wc_get_product( $request['id'] );
 
-		if ( ! $product || 'trash' === $product->get_status() ) {
+		if ( ! $product || ProductStatus::TRASH === $product->get_status() ) {
 			throw new RouteException(
 				'woocommerce_rest_cart_invalid_product',
 				__( 'This product cannot be added to the cart.', 'woocommerce' ),
@@ -1420,7 +1421,7 @@ class CartController {
 			$product = wc_get_product( $product->get_parent_id() );
 		}
 
-		if ( ! $product || 'trash' === $product->get_status() ) {
+		if ( ! $product || ProductStatus::TRASH === $product->get_status() ) {
 			throw new RouteException(
 				'woocommerce_rest_cart_invalid_parent_product',
 				__( 'This product cannot be added to the cart.', 'woocommerce' ),
