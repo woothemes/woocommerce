@@ -20,7 +20,10 @@ export function UpgradeDowngradeNotice( {
 	return (
 		<Notice
 			{ ...props }
-			className={ clsx( 'wc-block-upgrade-downgrade-notice', className ) }
+			className={ clsx(
+				'wc-block-editor-components-upgrade-downgrade-notice',
+				className
+			) }
 			actions={ [
 				{
 					label: actionLabel,
@@ -31,7 +34,7 @@ export function UpgradeDowngradeNotice( {
 				},
 			] }
 		>
-			<div className="wc-block-upgrade-downgrade-notice__text">
+			<div className="wc-block-editor-components-upgrade-downgrade-notice__text">
 				{ children }
 			</div>
 		</Notice>
