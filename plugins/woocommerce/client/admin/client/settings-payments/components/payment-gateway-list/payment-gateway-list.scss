@@ -102,6 +102,7 @@
 
 			.woocommerce-woopayments-payment-methods-logos {
 				flex-wrap: wrap;
+				padding: $gap-small 0 0 0; /* Top, Right, Bottom, Left */
 			}
 
 			@media screen and ( max-width: 782px ) {

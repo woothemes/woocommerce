@@ -1,7 +1,7 @@
 .woocommerce-woopayments-payment-methods-logos {
 	display: flex;
 	align-items: center;
-	padding: $gap-small 0 0 0; /* Top, Right, Bottom, Left */
+	padding: $gap-small 0;
 	gap: $gap-smaller;
 
 	svg {
