@@ -49,12 +49,12 @@ class ProductGalleryPager extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		$post_id              = $block->context['postId'] ?? '';
-		$product              = wc_get_product( $post_id );
+		$post_id = $block->context['postId'] ?? '';
+		$product = wc_get_product( $post_id );
 
 		if ( $product ) {
 			$product_gallery_images_ids = ProductGalleryUtils::get_product_gallery_image_ids( $product );
-			$total_images = count( $product_gallery_images_ids );
+			$total_images               = count( $product_gallery_images_ids );
 
 			if ( $total_images === 0 ) {
 				return '';
@@ -64,9 +64,8 @@ class ProductGalleryPager extends AbstractBlock {
 
 			return sprintf(
 				'<div class="wc-block-product-gallery-pager">
-					%1$s / %2$s
+					<span data-wc-text="context.selectedImageIndex"></span> / %1$s
 				</div>',
-				$current_image,
 				$total_images,
 			);
 		}
