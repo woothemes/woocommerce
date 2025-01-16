@@ -11,7 +11,7 @@ import {
 } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 	PAYMENT_STORE_KEY,
 	validationStore,
 } from '@woocommerce/block-data';
@@ -57,14 +57,14 @@ export const PaymentEventsProvider = ( {
 		isCalculating: checkoutIsCalculating,
 		hasError: checkoutHasError,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			isProcessing: store.isProcessing(),
 			isIdle: store.isIdle(),
 			hasError: store.hasError(),
 			isCalculating: store.isCalculating(),
 		};
-	} );
+	}, [] );
 	const { isPaymentReady } = useSelect( ( select ) => {
 		const store = select( PAYMENT_STORE_KEY );
 
