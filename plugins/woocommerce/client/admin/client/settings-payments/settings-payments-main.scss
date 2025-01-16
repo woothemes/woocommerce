@@ -83,6 +83,10 @@
 					height: 24px;
 					border-radius: 2px;
 				}
+
+				@media screen and ( max-width: 782px ) {
+					font-weight: 500;
+				}
 			}
 
 			/* Override hover and focus states for the button */
@@ -127,8 +131,9 @@
 				grid-template-columns: repeat(3, 1fr); /* 3 columns */
 				gap: $gap; /* Space between columns */
 				padding: $gap 0;
+	
 				@media screen and (max-width: 768px) {
-					grid-template-columns: repeat(2, 1fr); /* w columns */
+					grid-template-columns: repeat(1, 1fr); /* w columns */
 				}
 			}
 
@@ -142,6 +147,11 @@
 					height: 40px;
 					margin-right: 20px; /* Space between image and text */
 					border-radius: 4px;
+
+					@media screen and ( max-width: 782px ) {
+						width: 24px;
+						height: 24px;
+					}
 				}
 
 				&__content {
@@ -188,6 +198,11 @@
 					text-decoration: none;
 				}
 			}
+		}
+
+		@media screen and ( max-width: 782px ) {
+			margin: 32px $gap 0 $gap;
+			padding: $gap-smaller $gap;
 		}
 	}
 }
