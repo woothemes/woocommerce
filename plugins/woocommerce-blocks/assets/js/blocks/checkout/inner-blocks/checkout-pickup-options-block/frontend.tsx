@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { withFilteredAttributes } from '@woocommerce/shared-hocs';
 import { FormStep } from '@woocommerce/blocks-components';
 import { useSelect } from '@wordpress/data';
-import { checkoutStoreDescriptor } from '@woocommerce/block-data';
+import { checkoutStore as checkoutStoreDescriptor } from '@woocommerce/block-data';
 import { LOCAL_PICKUP_ENABLED } from '@woocommerce/block-settings';
 import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
 

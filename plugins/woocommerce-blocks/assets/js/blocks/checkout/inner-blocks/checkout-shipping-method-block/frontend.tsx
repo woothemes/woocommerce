@@ -49,7 +49,7 @@ const FrontendBlock = ( {
 		},
 		[]
 	);
-	const { setPrefersCollection } = useDispatch( checkoutStore );
+	const { setPrefersCollection } = useDispatch( checkoutStoreDescriptor );
 	const {
 		shippingRates,
 		needsShipping,
