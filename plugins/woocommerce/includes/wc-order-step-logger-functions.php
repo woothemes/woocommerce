@@ -5,7 +5,7 @@
  * Tracks the steps of the checkout process for place order debugging.
  *
  * @package WooCommerce\Functions
- * @version 9.6.0
+ * @version 9.7.0
  */
 
 declare(strict_types=1);
