@@ -57,6 +57,12 @@ const canMakePayment = ( { cartNeedsShipping, selectedShippingMethods } ) => {
 	// Look for a supported shipping method in the user's selected
 	// shipping methods. If one is found, then COD is allowed.
 	const selectedMethods = Object.values( selectedShippingMethods );
+
+	// Enable until proven unavailable.
+	if ( selectedMethods.length === 0 ) {
+		return true;
+	}
+
 	// supported shipping methods might be global (eg. "Any flat rate"), hence
 	// this is doing a `String.prototype.includes` match vs a `Array.prototype.includes` match.
 	return settings.enableForShippingMethods.some( ( shippingMethodId ) => {
