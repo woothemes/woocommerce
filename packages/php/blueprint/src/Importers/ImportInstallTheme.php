@@ -55,6 +55,10 @@ class ImportInstallTheme implements StepProcessor {
 		// phpcs:ignore
 		$theme = $schema->themeZipFile;
 
+		if ( ! isset( $schema->options ) ) {
+			$schema->options = new \stdClass();
+		}
+
 		if ( isset( $installed_themes[ $theme->slug ] ) ) {
 			$this->result->add_info( "Skipped installing {$theme->slug}. It is already installed." );
 			return $this->result;
@@ -81,12 +85,14 @@ class ImportInstallTheme implements StepProcessor {
 			$this->result->add_error( "Failed to install theme '$theme->slug'." );
 		}
 
-		$theme_switch = true === $theme->activate && $this->wp_switch_theme( $theme->slug );
-
-		if ( $theme_switch ) {
-			$this->result->add_info( "Switched theme to '$theme->slug'." );
-		} else {
-			$this->result->add_error( "Failed to switch theme to '$theme->slug'." );
+		if ( isset( $schema->options->activate ) && true === $schema->options->activate ) {
+			$this->wp_switch_theme( $theme->slug );
+			$current_theme = $this->wp_get_theme()->get_stylesheet();
+			if ( $current_theme === $theme->slug ) {
+				$this->result->add_info( "Switched theme to '$theme->slug'." );
+			} else {
+				$this->result->add_error( "Failed to switch theme to '$theme->slug'." );
+			}
 		}
 
 		return $this->result;
