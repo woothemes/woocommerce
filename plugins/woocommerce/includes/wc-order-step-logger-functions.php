@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
  * @internal This function is intended for internal use only.
  * @since 9.7.0
  */
-function wc_log_order_step( string $message, ?array $context = null, bool $final_step = false ) {
+function wc_log_order_step( string $message, ?array $context = null, bool $final_step = false ): void {
 
 	if ( '' === $message ) {
 		return; // Nothing to log.
@@ -51,6 +51,6 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 
 	// Clears the log if instructed and all steps are unique.
 	if ( $final_step && count( array_unique( $steps ) ) === count( $steps ) ) {
-		$logger->clear( $context['source'], true);
+		$logger->clear( $context['source'], true );
 	}
 }
