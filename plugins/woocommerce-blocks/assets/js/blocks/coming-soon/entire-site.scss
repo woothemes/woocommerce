@@ -83,23 +83,25 @@ body:has(.woocommerce-coming-soon-banner) {
 	}
 
 	h1.wp-block-heading.woocommerce-coming-soon-banner {
-		font-size: clamp(27px, 1.74rem + ((1vw - 3px) * 2), 48px);
-		font-weight: 400;
-		line-height: 58px;
-		font-family: Cardo, serif;
-		letter-spacing: normal;
-		text-align: center;
-		font-style: normal;
 		max-width: 820px;
-		color: var(--wp--preset--color--contrast);
-		margin: 0 auto;
 		text-wrap: balance;
 	}
 }
 
-.woocommerce-coming-soon-entire-site,
-.woocommerce-coming-soon-image-gallery,
-.woocommerce-coming-soon-minimal-left-image {
+.wp-block-woocommerce-coming-soon {
+	// Allow the heading to inherit the color from the coming soon block.
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p {
+		&:not(.has-text-color) {
+			color: inherit;
+		}
+	}
+
 	.wp-block-loginout a {
 		text-decoration: none;
 	}
@@ -122,7 +124,6 @@ body:has(.woocommerce-coming-soon-banner) {
 
 // Modern black template styles
 .woocommerce-coming-soon-modern-black {
-	--wp--preset--color--contrast: #fff;
 	font-family: Inter, sans-serif;
 }
 
