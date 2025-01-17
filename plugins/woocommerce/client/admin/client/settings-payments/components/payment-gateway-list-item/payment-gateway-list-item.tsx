@@ -45,7 +45,7 @@ export const PaymentGatewayListItem = ( {
 	const gatewayHasRecommendedPaymentMethods =
 		( gateway.onboarding.recommended_payment_methods ?? [] ).length > 0;
 
-	// If the account is not connected or the onboarding is not started, or not completed then the gateway needs setup.
+	// If the account is not connected or the onboarding is not started, or not completed then the gateway needs onboarding.
 	const gatewayNeedsOnboarding =
 		! gateway.state.account_connected ||
 		( gateway.state.account_connected &&
