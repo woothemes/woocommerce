@@ -402,6 +402,8 @@ final class BlockTypesController {
 			'ProductsByAttribute',
 			'ProductCategory',
 			'ProductTag',
+			'AccordionGroup',
+			'AccordionItem'
 		);
 	}
 
@@ -489,6 +491,10 @@ final class BlockTypesController {
 			'OrderConfirmation\AdditionalFieldsWrapper',
 			'OrderConfirmation\AdditionalFields',
 			'OrderConfirmation\CreateAccount',
+			'AccordionGroup',
+			'AccordionItem',
+			'AccordionPanel',
+			'AccordionHeader'
 		);
 
 		$block_types = array_merge(

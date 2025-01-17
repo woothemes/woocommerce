@@ -185,6 +185,16 @@ const blocks = {
 		customDir: 'order-confirmation/create-account',
 		isExperimental: true,
 	},
+	'accordion-group': {},
+	'accordion-header': {
+		// customDir: 'inner-blocks/accordion-header',
+	},
+	'accordion-item': {
+		// customDir: 'inner-blocks/accordion-item',
+	},
+	'accordion-panel': {
+		// customDir: 'inner-blocks/accordion-panel',
+	},
 };
 
 // Intentional separation of cart and checkout entry points to allow for better code splitting.

@@ -32,10 +32,14 @@ abstract class AbstractInnerBlock extends AbstractBlock {
 
 		$metadata_path = $this->asset_api->get_block_metadata_path( $this->block_name, 'inner-blocks/' );
 		// Prefer to register with metadata if the path is set in the block's class.
-		register_block_type_from_metadata(
+		$test = register_block_type_from_metadata(
 			$metadata_path,
 			$block_settings
 		);
+		if ( $this->block_name === 'accordion-item' ) {
+			// error_log($metadata_path);
+			// error_log(print_r($test, true ));
+		}
 	}
 
 	/**
