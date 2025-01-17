@@ -87,8 +87,8 @@ class OrderActionsRestController extends RestApiControllerBase {
 	/**
 	 * Handle a request for one of the provided REST API endpoints.
 	 *
-	 * @param WP_REST_Request $request The incoming HTTP REST request.
-	 * @param string $method_name      The name of the class method to execute.
+	 * @param WP_REST_Request $request     The incoming HTTP REST request.
+	 * @param string          $method_name The name of the class method to execute.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
@@ -199,7 +199,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 			OrderStatus::NEW,
 			OrderStatus::TRASH,
 		);
-		if ( ! in_array( $order_status, $unavailable_statuses ) ) {
+		if ( ! in_array( $order_status, $unavailable_statuses, true ) ) {
 			$valid_template_classes = array(
 				'WC_Email_Customer_Invoice',
 			);
@@ -230,6 +230,8 @@ class OrderActionsRestController extends RestApiControllerBase {
 		 * Filter the list of valid email templates for a given order.
 		 *
 		 * Note that the email class must also exist in WC_Emails::$emails.
+		 *
+		 * @since 9.8.0
 		 *
 		 * @param string[] $valid_template_classes Array of email template class names that are valid for a given order.
 		 * @param WC_Order $order                  The order.
@@ -371,7 +373,6 @@ class OrderActionsRestController extends RestApiControllerBase {
 
 			case 'customer_invoice':
 				return $this->send_order_details( $request );
-				break;
 
 			default:
 
@@ -381,7 +382,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 
 		$user_agent = esc_html( $request->get_header( 'User-Agent' ) );
 		$messages[] = sprintf(
-			// translators: 1. The name of an email template; 2. Email address; 3. User-agent that requested the action;
+			// translators: 1. The name of an email template; 2. Email address; 3. User-agent that requested the action.
 			__( 'Email template "%1$s" sent to %2$s, via %3$s.', 'woocommerce' ),
 			esc_html( $template->get_title() ),
 			esc_html( $order->get_billing_email() ),
