@@ -107,6 +107,7 @@ export const PaymentGatewayList = ( {
 							>
 								{ PaymentGatewayListItem( {
 									gateway,
+									installingPlugin,
 									acceptIncentive,
 								} ) }
 							</SortableItem>

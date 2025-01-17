@@ -45,6 +45,10 @@ interface EnableGatewayButtonProps {
 	 */
 	gatewayHasRecommendedPaymentMethods: boolean;
 	/**
+	 * ID of the plugin that is being installed.
+	 */
+	installingPlugin: string | null;
+	/**
 	 * The text of the button.
 	 */
 	buttonText?: string;
@@ -67,6 +71,7 @@ export const EnableGatewayButton = ( {
 	isOffline,
 	acceptIncentive = () => {},
 	gatewayHasRecommendedPaymentMethods,
+	installingPlugin,
 	buttonText = __( 'Enable', 'woocommerce' ),
 	incentive = null,
 }: EnableGatewayButtonProps ) => {
@@ -168,7 +173,7 @@ export const EnableGatewayButton = ( {
 		<Button
 			variant={ 'primary' }
 			isBusy={ isUpdating }
-			disabled={ isUpdating }
+			disabled={ isUpdating || !! installingPlugin }
 			onClick={ enableGateway }
 			href={ settingsHref }
 		>
