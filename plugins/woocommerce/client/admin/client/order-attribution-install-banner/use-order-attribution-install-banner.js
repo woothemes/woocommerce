@@ -128,10 +128,12 @@ export const useOrderAttributionInstallBanner = () => {
 				loadingRecommendations: ! hasFinishedResolution(
 					'getMiscRecommendations'
 				),
-				recommendations: getMiscRecommendations(),
+				recommendations: canUserInstallPlugins
+					? getMiscRecommendations()
+					: [],
 			};
 		},
-		[]
+		[ canUserInstallPlugins ]
 	);
 
 	const percentages = useMemo( () => {
