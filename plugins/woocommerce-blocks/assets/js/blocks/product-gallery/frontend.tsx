@@ -146,8 +146,7 @@ const productGallery = {
 				return;
 			}
 
-			// Recalculate images and arrows. Last image now may not be last in the dialog.
-			selectImage( context, 'current' );
+			disableArrows( context, context.selectedImageIndex );
 			setTimeout( () => {
 				( dialogPreviousButton as HTMLButtonElement ).focus();
 			}, 100 );
