@@ -1,4 +1,8 @@
-const { devices } = require( '@playwright/test' );
+/**
+ * External dependencies
+ */
+import { defineConfig, devices } from '@playwright/test';
+
 require( 'dotenv' ).config( { path: __dirname + '/.env' } );
 
 const testsRootPath = __dirname;
@@ -17,6 +21,11 @@ const {
 	E2E_MAX_FAILURES,
 	REPEAT_EACH,
 } = process.env;
+
+export const STORAGE_DIR_PATH = `${ testsRootPath }/.state/`;
+export const ADMIN_STATE_PATH = `${ STORAGE_DIR_PATH }/admin.json`;
+export const CUSTOMER_STATE_PATH = `${ STORAGE_DIR_PATH }/customer.json`;
+export const CONSUMER_KEY = { name: '', key: '', secret: '' };
 
 const reporter = [
 	[ 'list' ],
@@ -59,14 +68,12 @@ if ( process.env.CI ) {
 	] );
 }
 
-const config = {
+export default defineConfig( {
 	timeout: DEFAULT_TIMEOUT_OVERRIDE
 		? Number( DEFAULT_TIMEOUT_OVERRIDE )
 		: 120 * 1000,
 	expect: { timeout: 20 * 1000 },
 	outputDir: testsResultsPath,
-	globalSetup: require.resolve( './global-setup' ),
-	globalTeardown: require.resolve( './global-teardown' ),
 	testDir: `${ testsRootPath }/tests`,
 	retries: CI ? 1 : 0,
 	repeatEach: REPEAT_EACH ? Number( REPEAT_EACH ) : 1,
@@ -78,7 +85,6 @@ const config = {
 	use: {
 		baseURL: `${ BASE_URL }/`.replace( /\/+$/, '/' ),
 		screenshot: { mode: 'only-on-failure', fullPage: true },
-		stateDir: `${ testsRootPath }/.state/`,
 		trace:
 			/^https?:\/\/localhost/.test( BASE_URL ) || ! CI
 				? 'retain-on-first-failure'
@@ -92,14 +98,37 @@ const config = {
 	snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}',
 	projects: [
 		{
+			name: 'global authentication',
+			testDir: `${ testsRootPath }/fixtures`,
+			testMatch: 'auth.setup.js',
+		},
+		{
+			name: 'consumer token setup',
+			testDir: `${ testsRootPath }/fixtures`,
+			testMatch: 'token.setup.js',
+			teardown: 'consumer token teardown',
+			dependencies: [ 'global authentication' ],
+		},
+		{
+			name: 'consumer token teardown',
+			testDir: `${ testsRootPath }/fixtures`,
+			testMatch: `token.teardown.js`,
+		},
+		{
+			name: 'site setup',
+			testDir: `${ testsRootPath }/fixtures`,
+			testMatch: `site.setup.js`,
+			dependencies: [ 'consumer token setup' ],
+		},
+		{
 			name: 'ui',
 			testIgnore: '**/api-tests/**',
+			dependencies: [ 'site setup' ],
 		},
 		{
 			name: 'api',
 			testMatch: '**/api-tests/**',
+			dependencies: [ 'site setup' ],
 		},
 	],
-};
-
-module.exports = config;
+} );
