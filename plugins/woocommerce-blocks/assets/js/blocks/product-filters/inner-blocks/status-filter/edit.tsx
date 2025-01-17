@@ -54,9 +54,7 @@ const Edit = ( props: EditProps ) => {
 							: null,
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
-				[
-					'woocommerce/product-filter-checkbox-list',
-				],
+				[ 'woocommerce/product-filter-checkbox-list' ],
 			],
 		}
 	);

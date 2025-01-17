@@ -68,15 +68,11 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 							},
 						],
 						clearButton
-							? [
-									'woocommerce/product-filter-clear-button',
-							  ]
+							? [ 'woocommerce/product-filter-clear-button' ]
 							: null,
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
-				[
-					'woocommerce/product-filter-checkbox-list',
-				],
+				[ 'woocommerce/product-filter-checkbox-list' ],
 			],
 		}
 	);

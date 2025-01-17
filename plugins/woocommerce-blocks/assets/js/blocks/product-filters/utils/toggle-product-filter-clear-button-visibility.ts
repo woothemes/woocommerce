@@ -74,9 +74,7 @@ export const toggleProductFilterClearButtonVisibilityFactory = () => {
 					parentBlockId: clearButtonParentBlockId,
 				} = previousClearButtonBlockPosition;
 				insertBlock(
-					createBlock(
-						'woocommerce/product-filter-clear-button',
-					),
+					createBlock( 'woocommerce/product-filter-clear-button' ),
 					clearButtonBlockPosition,
 					clearButtonParentBlockId,
 					false
@@ -100,9 +98,7 @@ export const toggleProductFilterClearButtonVisibilityFactory = () => {
 				return false;
 			}
 			insertBlock(
-				createBlock(
-					'woocommerce/product-filter-clear-button',
-				),
+				createBlock( 'woocommerce/product-filter-clear-button' ),
 				positionIndexToInsertBlock,
 				parentClientIdToInsertBlock,
 				false
