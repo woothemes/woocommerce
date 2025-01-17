@@ -163,7 +163,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		top: 5px;
 		left: 5px;
 
-		& > * {
+		> * {
 			margin-left: unset;
 			margin-right: unset;
 		}
