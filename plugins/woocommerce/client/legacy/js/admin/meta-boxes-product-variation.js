@@ -1199,7 +1199,8 @@ jQuery( function ( $ ) {
 			var do_variation_action = $( this ).val(),
 				data = {},
 				changes = 0,
-				value;
+				value,
+				cancel = false;
 
 			switch ( do_variation_action ) {
 				case 'delete_all':
@@ -1264,7 +1265,7 @@ jQuery( function ( $ ) {
 							);
 						}
 					} else {
-						return;
+						cancel = true;
 					}
 					break;
 				case 'variable_regular_price':
@@ -1284,7 +1285,44 @@ jQuery( function ( $ ) {
 					if ( value != null ) {
 						data.value = value;
 					} else {
-						return;
+						cancel = true;
+					}
+					break;
+				case 'variable_set_cogs_value':
+					value = window.prompt(
+						woocommerce_admin_meta_boxes_variations.i18n_enter_variations_cost_value
+					);
+					if( value == null ) {
+						cancel = true;
+						break;
+					}
+
+					value = value.trim().replace( ',', '.' );
+					if ( value.trim() == '' ) {
+						window.alert(
+							woocommerce_admin_meta_boxes_variations.i18n_variation_cost_cant_be_empty
+						);
+						cancel = true;
+					}
+					else if( isNaN(value) || isNaN( parseFloat( value ) ) ) {
+						window.alert(
+							woocommerce_admin_meta_boxes_variations.i18n_invalid_number
+						);
+						cancel = true;
+					}
+					else if ( value != null ) {
+						data.value = value;
+					} else {
+						cancel = true;
+					}
+					break;
+				case 'variable_unset_cogs_value':
+					if( 
+						! window.confirm(
+							woocommerce_admin_meta_boxes_variations.i18n_variation_cost_remove_warning
+							)
+					) {
+						cancel = true;
 					}
 					break;
 				case 'variable_sale_schedule':
@@ -1304,7 +1342,7 @@ jQuery( function ( $ ) {
 					}
 
 					if ( false === data.date_to && false === data.date_from ) {
-						return;
+						cancel = true;
 					}
 					break;
 				default:
@@ -1317,41 +1355,48 @@ jQuery( function ( $ ) {
 					);
 
 					if ( null === data ) {
-						return;
+						cancel = true;
 					}
 					break;
 			}
 
-			if ( 'delete_all' === do_variation_action && data.allowed ) {
-				$( '#variable_product_options' )
-					.find( '.variation-needs-update' )
-					.removeClass( 'variation-needs-update' );
-				$( '.generate_variations' ).text( 'Generate variations' );
+			if( cancel ) {
+				document.getElementById( 'field_to_edit' ).selectedIndex = 0;
 			} else {
-				wc_meta_boxes_product_variations_ajax.check_for_changes();
-			}
+				if ( 'delete_all' === do_variation_action && data.allowed ) {
+					$( '#variable_product_options' )
+						.find( '.variation-needs-update' )
+						.removeClass( 'variation-needs-update' );
+					$( '.generate_variations' ).text( 'Generate variations' );
+				} else {
+					wc_meta_boxes_product_variations_ajax.check_for_changes();
+				}
 
-			wc_meta_boxes_product_variations_ajax.block();
+				wc_meta_boxes_product_variations_ajax.block();
 
-			$.ajax( {
-				url: woocommerce_admin_meta_boxes_variations.ajax_url,
-				data: {
-					action: 'woocommerce_bulk_edit_variations',
-					security:
+				$.ajax({
+					url: woocommerce_admin_meta_boxes_variations.ajax_url,
+					data: {
+						action: 'woocommerce_bulk_edit_variations',
+						security:
 						woocommerce_admin_meta_boxes_variations.bulk_edit_variations_nonce,
-					product_id: woocommerce_admin_meta_boxes_variations.post_id,
-					product_type: $( '#product-type' ).val(),
-					bulk_action: do_variation_action,
-					data: data,
-				},
-				type: 'POST',
-				success: function () {
-					wc_meta_boxes_product_variations_pagenav.go_to_page(
-						1,
-						changes
-					);
-				},
-			} );
+						product_id: woocommerce_admin_meta_boxes_variations.post_id,
+						product_type: $( '#product-type' ).val(),
+						bulk_action: do_variation_action,
+						data: data,
+					},
+					type: 'POST',
+					success: function () {
+						wc_meta_boxes_product_variations_pagenav.go_to_page(
+							1,
+							changes
+						);
+					},
+					complete: function() {
+						document.getElementById( 'field_to_edit' ).selectedIndex = 0;
+					}
+				});
+			}
 		},
 
 		/**

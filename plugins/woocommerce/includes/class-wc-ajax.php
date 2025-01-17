@@ -2787,6 +2787,53 @@ class WC_AJAX {
 	}
 
 	/**
+	 * Bulk action - Set cost values.
+	 *
+	 * @param array $variations List of variations.
+	 * @param array $data Data to set.
+	 *
+	 * @used-by bulk_edit_variations
+	 */
+	private static function variation_bulk_action_variable_set_cogs_value( $variations, $data ) {
+		if ( ! isset( $data['value'] ) ) {
+			return;
+		}
+
+		$cost_value = floatval( wc_clean( $data['value'] ) );
+		self::bulk_set_cogs_value( $variations, $cost_value );
+	}
+
+	/**
+	 * Bulk action - Unset cost values.
+	 *
+	 * @param array $variations List of variations.
+	 * @param array $data Data to set.
+	 *
+	 * @used-by bulk_edit_variations
+	 */
+	private static function variation_bulk_action_variable_unset_cogs_value( $variations, $data ) {
+		self::bulk_set_cogs_value( $variations, null );
+	}
+
+	/**
+	 * Common method to set and unset cost values.
+	 *
+	 * @param array      $variation_ids List of variation ids.
+	 * @param float|null $value The value to set as the cost of all the variations in the list.
+	 */
+	private static function bulk_set_cogs_value( array $variation_ids, ?float $value ) {
+		if ( ! wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+			return;
+		}
+
+		foreach ( $variation_ids as $variation_id ) {
+			$variation = wc_get_product( $variation_id );
+			$variation->set_cogs_value( $value );
+			$variation->save();
+		}
+	}
+
+	/**
 	 * Bulk action - Set Price.
 	 *
 	 * @param array  $variations List of variations.
