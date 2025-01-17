@@ -35,17 +35,13 @@
 	}
 
 	&__button {
-		width: 100%;
-		background-color: #fff;
+		width: 277px;
 		margin: 0 1px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		padding: 6px 8px;
-		min-width: 240px;
-		max-width: 280px;
 		text-overflow: ellipsis;
-		border: 1px solid $gray-300;
 
 		&:hover {
 			color: initial;
@@ -69,10 +65,6 @@
 			fill: initial;
 			width: 18px;
 			flex: 0 0 18px;
-		}
-
-		@media screen and ( max-width: 782px ) {
-			max-width: 100%;
 		}
 	}
 
