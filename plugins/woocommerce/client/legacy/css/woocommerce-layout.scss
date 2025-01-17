@@ -414,7 +414,7 @@
 			background-color: transparent;
 			border-radius: 0;
 			border: 0;
-			color: inherit;
+			color: var(--wc-form-color-text, #000);
 			cursor: pointer;
 			font-size: inherit;
 			line-height: inherit;
