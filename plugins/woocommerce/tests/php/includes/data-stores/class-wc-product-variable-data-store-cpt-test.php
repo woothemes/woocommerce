@@ -226,6 +226,29 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 			$this->invokeMethod( $data_store, 'validate_prices_data', array( $mixed_valid_invalid, $current_version ) ),
 			'Data with mix of valid and invalid hashes should fail validation'
 		);
+
+		// Test empty prices data with version (likely corrupt).
+		$empty_prices_with_version = array(
+			'version'    => $current_version,
+			$price_hash1 => array(
+				'price'         => array(),
+				'regular_price' => array(),
+				'sale_price'    => array(),
+			),
+		);
+
+		$this->assertFalse(
+			$this->invokeMethod( $data_store, 'validate_prices_data', array( $empty_prices_with_version, $current_version ) ),
+			'Empty prices data with version should fail validation as likely corrupt'
+		);
+
+		// Test uninitialized prices data (new product, should pass).
+		$uninitialized_prices = array();
+
+		$this->assertFalse(
+			$this->invokeMethod( $data_store, 'validate_prices_data', array( $uninitialized_prices, $current_version ) ),
+			'Uninitialized prices data should pass validation as could be new product'
+		);
 	}
 
 	/**
@@ -299,6 +322,37 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$this->assertFalse(
 			$this->invokeMethod( $data_store, 'validate_children_data', array( $wrong_version, $current_version ) ),
 			'Data with wrong version should fail validation'
+		);
+
+		// Test empty children data with version (likely corrupt).
+		$empty_children_with_version = array(
+			'version' => $current_version,
+			'all'     => array(),
+			'visible' => array(),
+		);
+
+		$this->assertFalse(
+			$this->invokeMethod( $data_store, 'validate_children_data', array( $empty_children_with_version, $current_version ) ),
+			'Empty children data with version should fail validation as likely corrupt'
+		);
+
+		// Test empty children data without version (new product, should pass).
+		$empty_children_no_version = array(
+			'all'     => array(),
+			'visible' => array(),
+		);
+
+		$this->assertFalse(
+			$this->invokeMethod( $data_store, 'validate_children_data', array( $empty_children_no_version, $current_version ) ),
+			'Empty children data without version should fail validation as likely corrupt'
+		);
+
+		// Test uninitialized children data.
+		$uninitialized_children = array();
+
+		$this->assertFalse(
+			$this->invokeMethod( $data_store, 'validate_children_data', array( $uninitialized_children, $current_version ) ),
+			'Uninitialized children data should fail validation to trigger rebuild'
 		);
 	}
 

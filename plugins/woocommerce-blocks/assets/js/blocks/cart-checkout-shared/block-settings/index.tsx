@@ -13,10 +13,19 @@ export const BlockSettings = ( {
 	attributes: BlockAttributes;
 	setAttributes: ( attrs: BlockAttributes ) => void;
 } ) => {
-	const { hasDarkControls } = attributes;
+	const { hasDarkControls, showFormStepNumbers } = attributes;
 	return (
 		<InspectorControls>
 			<PanelBody title={ __( 'Style', 'woocommerce' ) }>
+				<ToggleControl
+					label={ __( 'Show form step numbers', 'woocommerce' ) }
+					checked={ showFormStepNumbers }
+					onChange={ () =>
+						setAttributes( {
+							showFormStepNumbers: ! showFormStepNumbers,
+						} )
+					}
+				/>
 				<ToggleControl
 					label={ __( 'Dark mode inputs', 'woocommerce' ) }
 					help={ __(

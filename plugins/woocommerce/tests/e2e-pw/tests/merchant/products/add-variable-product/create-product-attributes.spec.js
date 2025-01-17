@@ -24,6 +24,7 @@ const step_goToAttributesTab = async ( page ) => {
 	} );
 };
 
+//todo remove serial mode
 test.describe.configure( { mode: 'serial' } );
 
 test.describe( 'Add product attributes', { tag: tags.GUTENBERG }, () => {

@@ -6,18 +6,13 @@
 	"title": "Product Gallery (Beta)",
 	"description": "Showcase your products relevant images and media.",
 	"category": "woocommerce",
-	"keywords": [
-		"WooCommerce"
-	],
+	"keywords": [ "WooCommerce" ],
 	"supports": {
 		"align": true,
-		"multiple": false,
 		"interactivity": true
 	},
 	"textdomain": "woocommerce",
-	"usesContext": [
-		"postId"
-	],
+	"usesContext": [ "postId" ],
 	"providesContext": {
 		"thumbnailsPosition": "thumbnailsPosition",
 		"thumbnailsNumberOfThumbnails": "thumbnailsNumberOfThumbnails",
@@ -29,6 +24,7 @@
 		"mode": "mode",
 		"cropImages": "cropImages"
 	},
+	"ancestor": [ "woocommerce/single-product" ],
 	"attributes": {
 		"thumbnailsPosition": {
 			"type": "string",

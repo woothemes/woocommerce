@@ -16,7 +16,6 @@ import { useSelect } from '@wordpress/data';
  */
 import {
 	moveInnerBlocksToPosition,
-	getInnerBlocksLockAttributes,
 	getClassNameByNextPreviousButtonsPosition,
 } from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
@@ -36,10 +35,7 @@ const TEMPLATE: InnerBlockTemplate[] = [
 			},
 		},
 		[
-			[
-				'woocommerce/product-gallery-thumbnails',
-				getInnerBlocksLockAttributes( 'lock' ),
-			],
+			[ 'woocommerce/product-gallery-thumbnails' ],
 			[
 				'core/group',
 				{
@@ -55,12 +51,11 @@ const TEMPLATE: InnerBlockTemplate[] = [
 					metadata: {
 						name: 'Large Image and Navigation',
 					},
-					...getInnerBlocksLockAttributes( 'lock' ),
 				},
 				[
 					[
 						'woocommerce/product-gallery-large-image',
-						getInnerBlocksLockAttributes( 'lock' ),
+						{},
 						[
 							[
 								'woocommerce/product-sale-badge',
@@ -76,7 +71,6 @@ const TEMPLATE: InnerBlockTemplate[] = [
 											},
 										},
 									},
-									lock: { move: true },
 								},
 							],
 							[
@@ -86,15 +80,11 @@ const TEMPLATE: InnerBlockTemplate[] = [
 										type: 'flex',
 										verticalAlignment: 'bottom',
 									},
-									lock: { move: true, remove: true },
 								},
 							],
 						],
 					],
-					[
-						'woocommerce/product-gallery-pager',
-						{ lock: { move: true, remove: true } },
-					],
+					[ 'woocommerce/product-gallery-pager' ],
 				],
 			],
 		],
@@ -122,13 +112,13 @@ export const Edit = ( {
 		),
 	} );
 
-	const { currentTemplateId, templateType } = useSelect(
-		( select ) => ( {
-			currentTemplateId: select( 'core/edit-site' ).getEditedPostId(),
-			templateType: select( 'core/edit-site' ).getEditedPostType(),
-		} ),
-		[]
-	);
+	const { currentTemplateId, templateType } = useSelect( ( select ) => {
+		const store = select( 'core/edit-site' );
+		return {
+			currentTemplateId: store ? store.getEditedPostId() : '',
+			templateType: store ? store.getEditedPostType() : '',
+		};
+	}, [] );
 
 	useEffect( () => {
 		const mode = getMode( currentTemplateId, templateType );

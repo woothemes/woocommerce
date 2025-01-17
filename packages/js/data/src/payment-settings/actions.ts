@@ -9,7 +9,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { ACTION_TYPES } from './action-types';
 import {
 	PaymentProvider,
-	OfflinePaymentGateway,
+	OfflinePaymentMethodProvider,
 	OrderMap,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
@@ -27,13 +27,13 @@ export function getPaymentProvidersRequest(): {
 
 export function getPaymentProvidersSuccess(
 	providers: PaymentProvider[],
-	offlinePaymentGateways: OfflinePaymentGateway[],
+	offlinePaymentGateways: OfflinePaymentMethodProvider[],
 	suggestions: SuggestedPaymentExtension[],
 	suggestionCategories: SuggestedPaymentExtensionCategory[]
 ): {
 	type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_SUCCESS;
 	providers: PaymentProvider[];
-	offlinePaymentGateways: OfflinePaymentGateway[];
+	offlinePaymentGateways: OfflinePaymentMethodProvider[];
 	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 } {
@@ -82,15 +82,11 @@ export function* togglePaymentGateway(
 	}
 }
 
-export function* hideGatewaySuggestion( gatewayId: string ) {
+export function* hidePaymentExtensionSuggestion( url: string ) {
 	try {
 		// Use apiFetch for the AJAX request
 		const result: { success: boolean } = yield apiFetch( {
-			path:
-				WC_ADMIN_NAMESPACE +
-				'/settings/payments/suggestion/' +
-				gatewayId +
-				'/hide',
+			url,
 			method: 'POST',
 		} );
 
@@ -125,5 +121,5 @@ export type Actions =
 	| ReturnType< typeof getPaymentProvidersSuccess >
 	| ReturnType< typeof getPaymentProvidersError >
 	| ReturnType< typeof togglePaymentGateway >
-	| ReturnType< typeof hideGatewaySuggestion >
+	| ReturnType< typeof hidePaymentExtensionSuggestion >
 	| ReturnType< typeof updateProviderOrdering >;

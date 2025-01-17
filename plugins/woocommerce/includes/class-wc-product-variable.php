@@ -8,6 +8,8 @@
  * @package WooCommerce\Classes\Products
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -42,7 +44,7 @@ class WC_Product_Variable extends WC_Product {
 	 * @return string
 	 */
 	public function get_type() {
-		return 'variable';
+		return ProductType::VARIABLE;
 	}
 
 	/*

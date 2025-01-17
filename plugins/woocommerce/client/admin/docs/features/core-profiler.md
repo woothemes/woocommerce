@@ -73,6 +73,16 @@ These options are set by looking up the currency data from `@woocommerce/currenc
 
 Refer to [Shop currency documentation](https://woocommerce.com/document/shop-currency/) and [class-wc-settings-general.php](https://woocommerce.github.io/code-reference/files/woocommerce-includes-admin-settings-class-wc-settings-general.html) for the full details of the currency settings.
 
+### Weight and Dimension options
+
+These options are set by looking up the weight and dimension data from admin localeInfo settings after the user has selected their country.
+
+- `woocommerce_weight_unit`
+
+- `woocommerce_dimension_unit`
+
+Refer to [class-wc-settings-products.php](https://woocommerce.github.io/code-reference/files/woocommerce-includes-admin-settings-class-wc-settings-products.html) and [locale-info.php](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/i18n/locale-info.php) for the full details of the weight and dimension settings.
+
 ### Coming soon options
 
 These options are set by the API call `coreProfilerCompleted()` on exit of the Core Profiler, and they set the store to private mode until the store is launched. 

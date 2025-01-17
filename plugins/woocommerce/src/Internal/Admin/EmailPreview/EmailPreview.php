@@ -11,6 +11,8 @@ use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use WC_Email;
 use WC_Order;
 use WC_Product;
+use WC_Product_Variation;
+use WP_User;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,6 +22,42 @@ defined( 'ABSPATH' ) || exit;
  */
 class EmailPreview {
 	const DEFAULT_EMAIL_TYPE = 'WC_Email_Customer_Processing_Order';
+	const DEFAULT_EMAIL_ID   = 'customer_processing_order';
+	const USER_OBJECT_EMAILS = array(
+		'WC_Email_Customer_New_Account',
+		'WC_Email_Customer_Reset_Password',
+	);
+
+	/**
+	 * All fields IDs that can customize email styles in Settings.
+	 *
+	 * @var array
+	 */
+	private static array $email_style_settings_ids = array(
+		'woocommerce_email_background_color',
+		'woocommerce_email_base_color',
+		'woocommerce_email_body_background_color',
+		'woocommerce_email_font_family',
+		'woocommerce_email_footer_text',
+		'woocommerce_email_footer_text_color',
+		'woocommerce_email_header_alignment',
+		'woocommerce_email_header_image',
+		'woocommerce_email_text_color',
+	);
+
+	/**
+	 * All fields IDs that can customize specific email content in Settings.
+	 *
+	 * @var array
+	 */
+	private static array $email_content_settings_ids = array();
+
+	/**
+	 * Whether the email settings IDs are initialized.
+	 *
+	 * @var bool
+	 */
+	private static bool $email_settings_ids_initialized = false;
 
 	/**
 	 * The email type to preview.
@@ -55,6 +93,51 @@ class EmailPreview {
 	}
 
 	/**
+	 * Get all email settings IDs.
+	 */
+	public static function get_all_email_settings_ids() {
+		if ( ! self::$email_settings_ids_initialized ) {
+			self::$email_settings_ids_initialized = true;
+
+			$emails = WC()->mailer()->get_emails();
+			foreach ( $emails as $email ) {
+				self::$email_content_settings_ids = array_merge(
+					self::$email_content_settings_ids,
+					self::get_email_content_settings_ids( $email->id )
+				);
+			}
+			self::$email_content_settings_ids = array_unique( self::$email_content_settings_ids );
+		}
+		return array_merge(
+			self::$email_style_settings_ids,
+			self::$email_content_settings_ids,
+		);
+	}
+
+	/**
+	 * Get email style settings IDs.
+	 */
+	public static function get_email_style_settings_ids() {
+		return self::$email_style_settings_ids;
+	}
+
+	/**
+	 * Get email content settings IDs for specific email.
+	 *
+	 * @param string|null $email_id Email ID.
+	 */
+	public static function get_email_content_settings_ids( ?string $email_id ) {
+		if ( ! $email_id ) {
+			return array();
+		}
+		return array(
+			"woocommerce_{$email_id}_subject",
+			"woocommerce_{$email_id}_heading",
+			"woocommerce_{$email_id}_additional_content",
+		);
+	}
+
+	/**
 	 * Set the email type to preview.
 	 *
 	 * @param string $email_type Email type.
@@ -68,12 +151,20 @@ class EmailPreview {
 		}
 		$this->email_type = $email_type;
 		$this->email      = $emails[ $email_type ];
+		$object           = null;
 
-		$order = $this->get_dummy_order();
-		$this->email->set_object( $order );
+		if ( in_array( $email_type, self::USER_OBJECT_EMAILS, true ) ) {
+			$object                  = new WP_User( 0 );
+			$this->email->user_email = 'user_preview@example.com';
+			$this->email->user_login = 'user_preview';
+			$this->email->set_object( $object );
+		} else {
+			$object = $this->get_dummy_order();
+			$this->email->set_object( $object );
+		}
 		$this->email->placeholders = array_merge(
 			$this->email->placeholders,
-			$this->get_placeholders( $order )
+			$this->get_placeholders( $object )
 		);
 
 		/**
@@ -99,6 +190,26 @@ class EmailPreview {
 	}
 
 	/**
+	 * Ensure links open in new tab. User in WooCommerce Settings,
+	 * so the links don't open inside the iframe.
+	 *
+	 * @param string $content Email content HTML.
+	 * @return string
+	 */
+	public function ensure_links_open_in_new_tab( string $content ) {
+		return (string) preg_replace_callback(
+			'/<a\s+([^>]*?)(target=["\']?[^"\']*["\']?)?([^>]*)>/i',
+			function ( $matches ) {
+				$before = $matches[1];
+				$target = 'target="_blank"';
+				$after  = $matches[3];
+				return "<a $before $target $after>";
+			},
+			$content
+		);
+	}
+
+	/**
 	 * Get the preview email content.
 	 *
 	 * @return string
@@ -107,7 +218,10 @@ class EmailPreview {
 		if ( ! $this->email ) {
 			return '';
 		}
-		return $this->email->get_subject();
+		$this->set_up_filters();
+		$subject = $this->email->get_subject();
+		$this->clean_up_filters();
+		return $subject;
 	}
 
 	/**
@@ -164,11 +278,12 @@ class EmailPreview {
 		}
 
 		$content = $this->email->get_content_html();
+		$inlined = $this->email->style_inline( $content );
 
 		$this->clean_up_filters();
 
 		/** This filter is documented in src/Internal/Admin/EmailPreview/EmailPreview.php */
-		return apply_filters( 'woocommerce_mail_content', $this->email->style_inline( $content ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
+		return apply_filters( 'woocommerce_mail_content', $inlined ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingSinceComment
 	}
 
 	/**
@@ -177,14 +292,24 @@ class EmailPreview {
 	 * @return WC_Order
 	 */
 	private function get_dummy_order() {
-		$product = $this->get_dummy_product();
+		$product   = $this->get_dummy_product();
+		$variation = $this->get_dummy_product_variation();
 
 		$order = new WC_Order();
-		$order->add_product( $product, 2 );
+		if ( $product ) {
+			$order->add_product( $product, 2 );
+		}
+		if ( $variation ) {
+			$order->add_product( $variation );
+		}
 		$order->set_id( 12345 );
 		$order->set_date_created( time() );
 		$order->set_currency( 'USD' );
-		$order->set_total( 100 );
+		$order->set_discount_total( 10 );
+		$order->set_shipping_total( 5 );
+		$order->set_total( 65 );
+		$order->set_payment_method_title( __( 'Direct bank transfer', 'woocommerce' ) );
+		$order->set_customer_note( __( "This is a customer note. Customers can add a note to their order on checkout.\n\nIt can be multiple lines. If there’s no note, this section is hidden.", 'woocommerce' ) );
 
 		$address = $this->get_dummy_address();
 		$order->set_billing_address( $address );
@@ -224,6 +349,33 @@ class EmailPreview {
 	}
 
 	/**
+	 * Get a dummy product variation.
+	 *
+	 * @return WC_Product_Variation
+	 */
+	private function get_dummy_product_variation() {
+		$variation = new WC_Product_Variation();
+		$variation->set_name( 'Dummy Product Variation' );
+		$variation->set_price( 20 );
+		$variation->set_attributes(
+			array(
+				'pa_color' => 'red',
+				'pa_size'  => 'small',
+			)
+		);
+
+		/**
+		 * A dummy WC_Product_Variation used in email preview.
+		 *
+		 * @param WC_Product_Variation $variation The dummy product variation object.
+		 * @param string               $email_type The email type to preview.
+		 *
+		 * @since 9.7.0
+		 */
+		return apply_filters( 'woocommerce_email_preview_dummy_product_variation', $variation, $this->email_type );
+	}
+
+	/**
 	 * Get a dummy address.
 	 *
 	 * @return array
@@ -256,16 +408,16 @@ class EmailPreview {
 	/**
 	 * Get the placeholders for the email preview.
 	 *
-	 * @param WC_Order $order The order object.
+	 * @param WC_Order|WP_User $email_object The object to render email with.
 	 * @return array
 	 */
-	private function get_placeholders( $order ) {
+	private function get_placeholders( $email_object ) {
 		$placeholders = array();
 
-		if ( is_a( $order, 'WC_Order' ) ) {
-			$placeholders['{order_date}']              = wc_format_datetime( $order->get_date_created() );
-			$placeholders['{order_number}']            = $order->get_order_number();
-			$placeholders['{order_billing_full_name}'] = $order->get_formatted_billing_full_name();
+		if ( is_a( $email_object, 'WC_Order' ) ) {
+			$placeholders['{order_date}']              = wc_format_datetime( $email_object->get_date_created() );
+			$placeholders['{order_number}']            = $email_object->get_order_number();
+			$placeholders['{order_billing_full_name}'] = $email_object->get_formatted_billing_full_name();
 		}
 
 		/**
@@ -288,6 +440,10 @@ class EmailPreview {
 		// Email templates fetch product from the database to show additional information, which are not
 		// saved in WC_Order_Item_Product. This filter enables fetching that data also in email preview.
 		add_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10, 1 );
+		// Enable email preview mode - this way transient values are fetched for live preview.
+		add_filter( 'woocommerce_is_email_preview', array( $this, 'enable_preview_mode' ) );
+		// Get shipping method without needing to save it in the order.
+		add_filter( 'woocommerce_order_shipping_method', array( $this, 'get_shipping_method' ) );
 	}
 
 	/**
@@ -296,6 +452,17 @@ class EmailPreview {
 	private function clean_up_filters() {
 		remove_filter( 'woocommerce_order_needs_shipping_address', array( $this, 'enable_shipping_address' ) );
 		remove_filter( 'woocommerce_order_item_product', array( $this, 'get_dummy_product_when_not_set' ), 10 );
+		remove_filter( 'woocommerce_is_email_preview', array( $this, 'enable_preview_mode' ) );
+		remove_filter( 'woocommerce_order_shipping_method', array( $this, 'get_shipping_method' ) );
+	}
+
+	/**
+	 * Get the shipping method for the preview email.
+	 *
+	 * @return string
+	 */
+	public function get_shipping_method() {
+		return __( 'Flat rate', 'woocommerce' );
 	}
 
 	/**
@@ -305,6 +472,16 @@ class EmailPreview {
 	 * @return true
 	 */
 	public function enable_shipping_address() {
+		return true;
+	}
+
+	/**
+	 * Enable preview mode to use transient values in email-styles.php. Not using __return_true
+	 * so we don't accidentally remove the same filter used by other plugin or theme.
+	 *
+	 * @return true
+	 */
+	public function enable_preview_mode() {
 		return true;
 	}
 }

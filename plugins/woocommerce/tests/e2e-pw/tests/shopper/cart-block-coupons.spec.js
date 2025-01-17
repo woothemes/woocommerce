@@ -1,6 +1,6 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { fillPageTitle } = require( '../../utils/editor' );
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 /**
  * External dependencies
  */
@@ -65,7 +65,8 @@ test.describe(
 	() => {
 		const couponBatchId = [];
 
-		test.beforeAll( async ( { api } ) => {
+		test.beforeAll( async ( { api, baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			// make sure the currency is USD
 			await api.put( 'settings/general/woocommerce_currency', {
 				value: 'USD',

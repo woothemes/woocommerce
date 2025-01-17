@@ -1,4 +1,0 @@
-Significance: patch
-Type: update
-
-Add support for IPs with port in WC_Geolocation::get_ip_address

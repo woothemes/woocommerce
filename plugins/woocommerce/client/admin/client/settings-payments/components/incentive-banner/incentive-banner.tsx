@@ -6,7 +6,7 @@ import { Button, Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
-import { PaymentIncentive } from '@woocommerce/data';
+import { PaymentIncentive, PaymentProvider } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import { PaymentIncentive } from '@woocommerce/data';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 import './incentive-banner.scss';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
+import { isIncentiveDismissedInContext } from '~/settings-payments/utils';
 
 interface IncentiveBannerProps {
 	/**
@@ -21,12 +22,19 @@ interface IncentiveBannerProps {
 	 */
 	incentive: PaymentIncentive;
 	/**
+	 * Payment provider.
+	 */
+	provider: PaymentProvider;
+	/**
+	 * Onboarding URL (if available).
+	 */
+	onboardingUrl: string | null;
+	/**
 	 * Callback used when an incentive is accepted.
 	 *
-	 * @param id   Plugin ID.
-	 * @param slug Plugin slug.
+	 * @param id Incentive ID.
 	 */
-	onAccept: ( id: string, slug: string ) => void;
+	onAccept: ( id: string ) => void;
 	/**
 	 * Callback to handle dismiss action.
 	 *
@@ -34,38 +42,69 @@ interface IncentiveBannerProps {
 	 * @param context    The context in which the incentive is dismissed. (e.g. whether it was in a modal or banner).
 	 */
 	onDismiss: ( dismissUrl: string, context: string ) => void;
+	/**
+	 * Callback to setup the plugin.
+	 *
+	 * @param id            Extension ID.
+	 * @param slug          Extension slug.
+	 * @param onboardingUrl Onboarding URL (if available).
+	 */
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
 }
 
+/**
+ * A banner component that displays a promotional incentive to the user. The banner allows the user to:
+ * - Accept the incentive, triggering setup actions.
+ * - Dismiss the incentive, removing it from the current context.
+ */
 export const IncentiveBanner = ( {
 	incentive,
+	provider,
+	onboardingUrl,
 	onDismiss,
 	onAccept,
+	setupPlugin,
 }: IncentiveBannerProps ) => {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const [ isBusy, setIsBusy ] = useState( false );
 
-	const incentiveContext = 'wc_settings_payments__banner';
+	const context = 'wc_settings_payments__banner';
 
+	/**
+	 * Handles accepting the incentive.
+	 * Triggers the onAccept callback, dismisses the banner, and triggers plugin setup.
+	 */
 	const handleAccept = () => {
 		setIsBusy( true );
-		onAccept( 'woopayments', 'woocommerce-payments' );
-		setIsBusy( false );
+		onAccept( incentive.promo_id );
+		onDismiss( incentive._links.dismiss.href, context ); // We also dismiss the incentive when it is accepted.
 		setIsSubmitted( true );
+		setupPlugin( provider.id, provider.plugin.slug, onboardingUrl );
+		setIsBusy( false );
 	};
 
+	/**
+	 * Handles dismissing the incentive.
+	 * Triggers the onDismiss callback and hides the banner.
+	 */
 	const handleDismiss = () => {
 		setIsBusy( true );
-		onDismiss( incentive._links.dismiss.href, incentiveContext );
+		onDismiss( incentive._links.dismiss.href, context );
 		setIsBusy( false );
 		setIsDismissed( true );
 	};
 
-	const isDismissedInContext =
-		incentive._dismissals.includes( 'all' ) ||
-		incentive._dismissals.includes( incentiveContext );
-
-	if ( isDismissedInContext || isSubmitted || isDismissed ) {
+	// Do not render the banner if it has been submitted, dismissed, or already dismissed in this context.
+	if (
+		isSubmitted ||
+		isIncentiveDismissedInContext( incentive, context ) ||
+		isDismissed
+	) {
 		return null;
 	}
 

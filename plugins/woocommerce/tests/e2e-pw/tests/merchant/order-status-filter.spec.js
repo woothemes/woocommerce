@@ -19,7 +19,7 @@ const orderStatus = [
 
 test.describe(
 	'WooCommerce Orders > Filter Order by Status',
-	{ tag: [ tags.SERVICES, tags.HPOS ] },
+	{ tag: [ tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

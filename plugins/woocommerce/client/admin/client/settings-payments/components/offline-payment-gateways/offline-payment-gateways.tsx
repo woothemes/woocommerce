@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { type OfflinePaymentGateway } from '@woocommerce/data';
+import { type OfflinePaymentMethodProvider } from '@woocommerce/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -12,11 +12,24 @@ import { ListPlaceholder } from '~/settings-payments/components/list-placeholder
 import './offline-payment-gateways.scss';
 
 interface OfflinePaymentGatewaysProps {
+	/**
+	 * Indicates if the data for offline payment gateways is still being fetched.
+	 */
 	isFetching: boolean;
-	offlinePaymentGateways: OfflinePaymentGateway[];
-	updateOrdering: ( gateways: OfflinePaymentGateway[] ) => void;
+	/**
+	 * Array of offline payment gateways to display.
+	 */
+	offlinePaymentGateways: OfflinePaymentMethodProvider[];
+	/**
+	 * Callback function to update the ordering of the gateways after sorting.
+	 */
+	updateOrdering: ( gateways: OfflinePaymentMethodProvider[] ) => void;
 }
 
+/**
+ * A component that renders the list of offline payment gateways in the WooCommerce settings.
+ * Displays a loading placeholder while data is being fetched and the list of gateways once available.
+ */
 export const OfflinePaymentGateways = ( {
 	isFetching,
 	offlinePaymentGateways,

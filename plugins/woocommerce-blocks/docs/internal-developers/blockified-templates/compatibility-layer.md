@@ -2,6 +2,8 @@
 
 The Compatibility Layer ensures that blockified templates work correctly with extensions that use hooks to extend their behavior. It appends/pre-appends the corresponding hooks to each block. Also, it removes the default callbacks added to those hooks by WooCommerce.
 
+A limitation of the Compatibility Layer is the order of hook execution. Blocks are rendered from the innermost to the outermost, meaning inner blocks are rendered first. This may cause the execution order of hooks to differ from that of the classic template.
+
 The Compatibility Layer is disabled when either of classic template blocks are added on the page:
 
 - `Product (Classic)`,

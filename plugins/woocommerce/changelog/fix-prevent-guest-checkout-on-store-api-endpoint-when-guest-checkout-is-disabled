@@ -1,4 +1,0 @@
-Significance: minor
-Type: fix
-
-Added new validation to Store API checkout endpoint regarding Accounts & Privacy definitions.

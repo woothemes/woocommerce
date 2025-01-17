@@ -6,6 +6,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
 use Automattic\WooCommerce\Internal\BrandingController;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
@@ -30,6 +31,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		'Comic Sans MS'   => "'Comic Sans MS', 'Marker Felt-Thin', Arial, sans-serif",
 		'Courier New'     => "'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace",
 		'Georgia'         => "Georgia, Times, 'Times New Roman', serif",
+		'Helvetica'       => "'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif",
 		'Lucida'          => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
 		'Tahoma'          => 'Tahoma, Verdana, Segoe, sans-serif',
 		'Times New Roman' => "'Times New Roman', Times, Baskerville, Georgia, serif",
@@ -51,6 +53,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		add_action( 'woocommerce_admin_field_email_color_palette', array( $this, 'email_color_palette' ) );
 		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
 			add_action( 'woocommerce_email_settings_after', array( $this, 'email_preview_single' ) );
+			add_filter( 'woocommerce_admin_settings_sanitize_option_woocommerce_email_header_image', array( $this, 'sanitize_email_header_image' ), 10, 3 );
 		}
 		parent::__construct();
 	}
@@ -168,7 +171,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			$font_family = array(
 				'title'   => __( 'Font family', 'woocommerce' ),
 				'id'      => 'woocommerce_email_font_family',
-				'default' => 'Arial',
+				'default' => 'Helvetica',
 				'type'    => 'email_font_family',
 			);
 
@@ -441,11 +444,21 @@ class WC_Settings_Emails extends WC_Settings_Page {
 
 			if ( wc_current_theme_is_fse_theme() && function_exists( 'wp_get_global_styles' ) ) {
 				$global_styles             = wp_get_global_styles( array(), array( 'transforms' => array( 'resolve-variables' ) ) );
-				$base_color_default        = $global_styles['elements']['button']['color']['text'] ?? $base_color_default;
-				$bg_color_default          = $global_styles['color']['background'] ?? $bg_color_default;
-				$body_bg_color_default     = $global_styles['color']['background'] ?? $body_bg_color_default;
-				$body_text_color_default   = $global_styles['color']['text'] ?? $body_text_color_default;
-				$footer_text_color_default = $global_styles['elements']['caption']['color']['text'] ?? $footer_text_color_default;
+				$base_color_global         = isset( $global_styles['elements']['button']['color']['text'] )
+					? sanitize_hex_color( $global_styles['elements']['button']['color']['text'] ) : '';
+				$bg_color_global           = isset( $global_styles['color']['background'] )
+					? sanitize_hex_color( $global_styles['color']['background'] ) : '';
+				$body_bg_color_global      = isset( $global_styles['color']['background'] )
+					? sanitize_hex_color( $global_styles['color']['background'] ) : '';
+				$body_text_color_global    = isset( $global_styles['color']['text'] )
+					? sanitize_hex_color( $global_styles['color']['text'] ) : '';
+				$footer_text_color_global  = isset( $global_styles['elements']['caption']['color']['text'] )
+					? sanitize_hex_color( $global_styles['elements']['caption']['color']['text'] ) : '';
+				$base_color_default        = $base_color_global ? $base_color_global : $base_color_default;
+				$bg_color_default          = $bg_color_global ? $bg_color_global : $bg_color_default;
+				$body_bg_color_default     = $body_bg_color_global ? $body_bg_color_global : $body_bg_color_default;
+				$body_text_color_default   = $body_text_color_global ? $body_text_color_global : $body_text_color_default;
+				$footer_text_color_default = $footer_text_color_global ? $footer_text_color_global : $footer_text_color_default;
 			}
 		}
 
@@ -628,6 +641,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
+		$this->delete_transient_email_settings( null );
 		$emails      = WC()->mailer()->get_emails();
 		$email_types = array();
 		foreach ( $emails as $type => $email ) {
@@ -641,6 +655,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			id="wc_settings_email_preview_slotfill"
 			data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 			data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
+			data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::get_email_style_settings_ids() ) ); ?>"
 		></div>
 		<?php
 	}
@@ -651,6 +666,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * @param object $email The email object to run the method on.
 	 */
 	public function email_preview_single( $email ) {
+		$this->delete_transient_email_settings( $email->id );
 		// Email types array should have a single entry for current email.
 		$email_types = array(
 			array(
@@ -667,11 +683,28 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				id="wc_settings_email_preview_slotfill"
 				data-preview-url="<?php echo esc_url( wp_nonce_url( admin_url( '?preview_woocommerce_mail=true' ), 'preview-mail' ) ); ?>"
 				data-email-types="<?php echo esc_attr( wp_json_encode( $email_types ) ); ?>"
+				data-email-settings-ids="<?php echo esc_attr( wp_json_encode( EmailPreview::get_email_content_settings_ids( $email->id ) ) ); ?>"
 			></div>
 			<input type="hidden" id="woocommerce_email_from_name" value="<?php echo esc_attr( get_option( 'woocommerce_email_from_name' ) ); ?>" />
 			<input type="hidden" id="woocommerce_email_from_address" value="<?php echo esc_attr( get_option( 'woocommerce_email_from_address' ) ); ?>" />
 		</div>
 		<?php
+	}
+
+	/**
+	 * Deletes transient with email settings used for live preview. This is to
+	 * prevent conflicts where the preview would show values from previous session.
+	 *
+	 * @param string|null $email_id Email ID.
+	 */
+	private function delete_transient_email_settings( ?string $email_id ) {
+		$setting_ids = array_merge(
+			EmailPreview::get_email_style_settings_ids(),
+			EmailPreview::get_email_content_settings_ids( $email_id ),
+		);
+		foreach ( $setting_ids as $id ) {
+			delete_transient( $id );
+		}
 	}
 
 	/**
@@ -704,6 +737,18 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			</td>
 		</tr>
 		<?php
+	}
+
+	/**
+	 * Sanitize email image URL.
+	 *
+	 * @param  string $value     Option value.
+	 * @param  array  $option    Option name.
+	 * @param  string $raw_value Raw value.
+	 * @return string
+	 */
+	public function sanitize_email_header_image( $value, $option, $raw_value ) {
+		return sanitize_url( $raw_value );
 	}
 
 	/**
@@ -786,6 +831,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 		$default_colors = $this->get_email_default_colors();
 
 		?>
+		<hr class="wc-settings-email-color-palette-separator" />
 		<h2 class="wc-settings-email-color-palette-title"><?php echo esc_html( $value['title'] ); ?></h2>
 		<div
 			class="wc-settings-email-color-palette-buttons"

@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-Comment: Small tweak to avoid unnecessary method calls and var init.
-

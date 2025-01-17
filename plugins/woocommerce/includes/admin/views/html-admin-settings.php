@@ -34,7 +34,7 @@ if ( ! $tab_exists ) {
 }
 
 $hide_nav = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
-	( 'checkout' === $current_tab && ( 'offline' === $current_section || 'recommended' === $current_section ) );
+	( 'checkout' === $current_tab && 'offline' === $current_section );
 ?>
 
 <div class="wrap woocommerce">

@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+Add dangerouslySetInnerHTML ESLint comments to settings-payments components.

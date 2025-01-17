@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\StoreApi\Utilities\Pagination;
 use Automattic\WooCommerce\StoreApi\Utilities\ProductQuery;
 
@@ -264,7 +265,7 @@ class Products extends AbstractRoute {
 		$params['type'] = array(
 			'description'       => __( 'Limit result set to products assigned a specific type.', 'woocommerce' ),
 			'type'              => 'string',
-			'enum'              => array_merge( array_keys( wc_get_product_types() ), [ 'variation' ] ),
+			'enum'              => array_merge( array_keys( wc_get_product_types() ), [ ProductType::VARIATION ] ),
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',
 		);

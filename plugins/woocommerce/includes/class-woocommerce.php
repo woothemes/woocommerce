@@ -42,7 +42,7 @@ final class WooCommerce {
 	 *
 	 * @var string
 	 */
-	public $version = '9.6.0';
+	public $version = '9.7.0';
 
 	/**
 	 * WooCommerce Schema version.
@@ -305,6 +305,7 @@ final class WooCommerce {
 		add_action( 'woocommerce_installed', array( $this, 'add_woocommerce_remote_variant' ) );
 		add_action( 'woocommerce_updated', array( $this, 'add_woocommerce_remote_variant' ) );
 		add_action( 'woocommerce_newly_installed', 'wc_set_hooked_blocks_version', 10 );
+		add_action( 'update_option_woocommerce_allow_tracking', array( $this, 'get_tracking_history' ), 10, 2 );
 
 		add_filter( 'robots_txt', array( $this, 'robots_txt' ) );
 		add_filter( 'wp_plugin_dependencies_slug', array( $this, 'convert_woocommerce_slug' ) );
@@ -1340,5 +1341,26 @@ final class WooCommerce {
 	public function register_remote_log_handler( $handlers ) {
 		$handlers[] = wc_get_container()->get( RemoteLogger::class );
 		return $handlers;
+	}
+
+	/**
+	 * Tracks the history WooCommerce Allow Tracking option.
+	 * - When the field was first set to allow tracking
+	 * - Last time the option was changed
+	 *
+	 * @param string $old_value The old value for the woocommerce_allow_tracking option.
+	 * @param string $value The current value for the woocommerce_allow_tracking option.
+	 * @since x.x.x
+	 *
+	 * @return void
+	 */
+	public function get_tracking_history( $old_value, $value ) {
+		// If woocommerce_allow_tracking_first_optin is not set. It means is the first time it gets set.
+		if ( ! get_option( 'woocommerce_allow_tracking_first_optin' ) && 'yes' === $value ) {
+			update_option( 'woocommerce_allow_tracking_first_optin', time() );
+		}
+
+		// Always update the last change.
+		update_option( 'woocommerce_allow_tracking_last_modified', time() );
 	}
 }

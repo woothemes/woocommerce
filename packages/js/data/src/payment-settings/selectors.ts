@@ -3,7 +3,7 @@
  */
 import {
 	PaymentProvider,
-	OfflinePaymentGateway,
+	OfflinePaymentMethodProvider,
 	PaymentSettingsState,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
@@ -20,7 +20,7 @@ export function getPaymentProviders(
 
 export function getOfflinePaymentGateways(
 	state: PaymentSettingsState
-): Array< OfflinePaymentGateway > {
+): Array< OfflinePaymentMethodProvider > {
 	return state.offlinePaymentGateways;
 }
 

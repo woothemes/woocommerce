@@ -3,6 +3,16 @@ on:
     push:
         branches:
             - trunk
+        paths-ignore:
+            - 'docs/**'
+            - 'packages/php/**'
+            - 'tools/**'
+            - '**/changelog/**'
+            - '**/tests/**'
+            - '**/*.md'
+            - '.husky/**'
+            - '.github/**'
+            - '!.github/workflows/build-live-branch.yml'
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
@@ -49,16 +59,10 @@ jobs:
                   echo "$CURRENT_VERSION" > "$GITHUB_WORKSPACE/plugins/woocommerce/version.txt"
 
                   cd "$GITHUB_WORKSPACE/plugins/woocommerce"
-                  bash bin/build-zip.sh
+                  PLUGIN_SLUG='woocommerce-dev' bash bin/build-zip.sh
 
                   mkdir "$GITHUB_WORKSPACE/zips"
-                  mv "$GITHUB_WORKSPACE/plugins/woocommerce/woocommerce.zip" "$GITHUB_WORKSPACE/zips/woocommerce.zip"
-                  cd "$GITHUB_WORKSPACE/zips"
-                  unzip -qq woocommerce.zip
-                  rm woocommerce.zip
-                  mv woocommerce woocommerce-dev
-                  zip -q -r -9 "woocommerce-dev.zip" "woocommerce-dev/"
-                  rm -fR "$GITHUB_WORKSPACE/zips/woocommerce-dev"
+                  mv "$GITHUB_WORKSPACE/plugins/woocommerce/woocommerce-dev.zip" "$GITHUB_WORKSPACE/zips/woocommerce-dev.zip"
 
                   # Plugin data is passed as a JSON object.
                   PLUGIN_DATA="{}"          

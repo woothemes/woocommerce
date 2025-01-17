@@ -92,87 +92,81 @@ const productAttributes = [ 'Color', 'Size' ];
 
 const errorMessage = 'File is empty. Please upload something more substantial.';
 
-test.describe.serial(
-	'Import Products from a CSV file',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
-	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+//todo remove serial mode
+test.describe.serial( 'Import Products from a CSV file', () => {
+	test.use( { storageState: process.env.ADMINSTATE } );
 
-		test.beforeAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-			// make sure the currency is USD
-			await api.put( 'settings/general/woocommerce_currency', {
-				value: 'USD',
-			} );
+	test.beforeAll( async ( { baseURL } ) => {
+		const api = new wcApi( {
+			url: baseURL,
+			consumerKey: process.env.CONSUMER_KEY,
+			consumerSecret: process.env.CONSUMER_SECRET,
+			version: 'wc/v3',
 		} );
-
-		test.afterAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-			// get a list of all products
-			await api.get( 'products?per_page=50' ).then( ( response ) => {
-				for ( let i = 0; i < response.data.length; i++ ) {
-					// if the product is one we imported, add it to the array
-					for ( let j = 0; j < productNamesOverride.length; j++ ) {
-						if (
-							response.data[ i ].name ===
-							productNamesOverride[ j ]
-						) {
-							productIds.push( response.data[ i ].id );
-						}
-					}
-				}
-			} );
-			// batch delete all products in the array
-			await api.post( 'products/batch', { delete: [ ...productIds ] } );
-			// get a list of all product categories
-			await api.get( 'products/categories' ).then( ( response ) => {
-				for ( let i = 0; i < response.data.length; i++ ) {
-					// if the product category is one that was created, add it to the array
-					for ( let j = 0; j < productCategories.length; j++ ) {
-						if (
-							response.data[ i ].name === productCategories[ j ]
-						) {
-							categoryIds.push( response.data[ i ].id );
-						}
-					}
-				}
-			} );
-			// batch delete all categories in the array
-			await api.post( 'products/categories/batch', {
-				delete: [ ...categoryIds ],
-			} );
-			// get a list of all product attributes
-			await api.get( 'products/attributes' ).then( ( response ) => {
-				for ( let i = 0; i < response.data.length; i++ ) {
-					// if the product attribute is one that was created, add it to the array
-					for ( let j = 0; j < productAttributes.length; j++ ) {
-						if (
-							response.data[ i ].name === productAttributes[ j ]
-						) {
-							attributeIds.push( response.data[ i ].id );
-						}
-					}
-				}
-			} );
-			// batch delete attributes in the array
-			await api.post( 'products/attributes/batch', {
-				delete: [ ...attributeIds ],
-			} );
+		// make sure the currency is USD
+		await api.put( 'settings/general/woocommerce_currency', {
+			value: 'USD',
 		} );
+	} );
 
-		test( 'should show error message if you go without providing CSV file', async ( {
-			page,
-		} ) => {
+	test.afterAll( async ( { baseURL } ) => {
+		const api = new wcApi( {
+			url: baseURL,
+			consumerKey: process.env.CONSUMER_KEY,
+			consumerSecret: process.env.CONSUMER_SECRET,
+			version: 'wc/v3',
+		} );
+		// get a list of all products
+		await api.get( 'products?per_page=50' ).then( ( response ) => {
+			for ( let i = 0; i < response.data.length; i++ ) {
+				// if the product is one we imported, add it to the array
+				for ( let j = 0; j < productNamesOverride.length; j++ ) {
+					if (
+						response.data[ i ].name === productNamesOverride[ j ]
+					) {
+						productIds.push( response.data[ i ].id );
+					}
+				}
+			}
+		} );
+		// batch delete all products in the array
+		await api.post( 'products/batch', { delete: [ ...productIds ] } );
+		// get a list of all product categories
+		await api.get( 'products/categories' ).then( ( response ) => {
+			for ( let i = 0; i < response.data.length; i++ ) {
+				// if the product category is one that was created, add it to the array
+				for ( let j = 0; j < productCategories.length; j++ ) {
+					if ( response.data[ i ].name === productCategories[ j ] ) {
+						categoryIds.push( response.data[ i ].id );
+					}
+				}
+			}
+		} );
+		// batch delete all categories in the array
+		await api.post( 'products/categories/batch', {
+			delete: [ ...categoryIds ],
+		} );
+		// get a list of all product attributes
+		await api.get( 'products/attributes' ).then( ( response ) => {
+			for ( let i = 0; i < response.data.length; i++ ) {
+				// if the product attribute is one that was created, add it to the array
+				for ( let j = 0; j < productAttributes.length; j++ ) {
+					if ( response.data[ i ].name === productAttributes[ j ] ) {
+						attributeIds.push( response.data[ i ].id );
+					}
+				}
+			}
+		} );
+		// batch delete attributes in the array
+		await api.post( 'products/attributes/batch', {
+			delete: [ ...attributeIds ],
+		} );
+	} );
+
+	test(
+		'should show error message if you go without providing CSV file',
+		{ tag: [ tags.NOT_E2E, tags.NON_CRITICAL ] },
+		async ( { page } ) => {
 			await page.goto(
 				'wp-admin/edit.php?post_type=product&page=product_importer'
 			);
@@ -182,11 +176,13 @@ test.describe.serial(
 			await expect( page.locator( 'div.error.inline' ) ).toContainText(
 				errorMessage
 			);
-		} );
+		}
+	);
 
-		test( 'can upload the CSV file and import products', async ( {
-			page,
-		} ) => {
+	test(
+		'can upload the CSV file and import products',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
 			await page.goto(
 				'wp-admin/edit.php?post_type=product&page=product_importer'
 			);
@@ -223,11 +219,13 @@ test.describe.serial(
 				.allTextContents();
 
 			expect( productTitles.sort() ).toEqual( productNames.sort() );
-		} );
+		}
+	);
 
-		test( 'can override the existing products via CSV import', async ( {
-			page,
-		} ) => {
+	test(
+		'can override the existing products via CSV import',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
 			await page.goto(
 				'wp-admin/edit.php?post_type=product&page=product_importer'
 			);
@@ -281,6 +279,6 @@ test.describe.serial(
 			expect( productPrices.sort() ).toStrictEqual(
 				productPricesOverride.sort()
 			);
-		} );
-	}
-);
+		}
+	);
+} );

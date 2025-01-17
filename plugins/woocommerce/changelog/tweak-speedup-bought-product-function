@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-
-Speed up `wc_customer_bought_product` by refactoring the DB query logic

@@ -17,23 +17,48 @@ import { getWooPaymentsSetupLiveAccountLink } from '~/settings-payments/utils';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
 
 interface WooPaymentsReadyToTestModalProps {
+	/**
+	 * Indicates if the modal is currently open.
+	 */
 	isOpen: boolean;
+	/**
+	 *  Indicates if the developer mode is on.
+	 */
+	devMode: boolean;
+	/**
+	 * Callback function to handle modal closure.
+	 */
 	onClose: () => void;
 }
 
+/**
+ * A modal component displayed when a sandbox account is ready for testing payments. It provides
+ * options to continue setting up the store or to activate payments.
+ * Supports dev mode: makes modal shorter and activate payments button is not available in this case.
+ */
 export const WooPaymentsPostSandboxAccountSetupModal = ( {
 	isOpen,
+	devMode,
 	onClose,
 }: WooPaymentsReadyToTestModalProps ) => {
 	const [ isActivatingPayments, setIsActivatingPayments ] = useState( false );
 	const [ isContinuingStoreSetup, setIsContinuingStoreSetup ] =
 		useState( false );
+
+	/**
+	 * Handles the "Activate Payments" action.
+	 * Redirects the user to the WooPayments setup live account link.
+	 */
 	const handleActivatePayments = () => {
 		setIsActivatingPayments( true );
 
 		window.location.href = getWooPaymentsSetupLiveAccountLink();
 	};
 
+	/**
+	 * Handles the "Continue Store Setup" action.
+	 * Redirects the user to the WooCommerce admin store setup page.
+	 */
 	const handleContinueStoreSetup = () => {
 		setIsContinuingStoreSetup( true );
 
@@ -98,37 +123,44 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 								</div>
 							</div>
 						</div>
-						<div className="woocommerce-woopayments-modal__content__item-flex">
-							<img
-								src={ WC_ASSET_URL + 'images/icons/dollar.svg' }
-								alt="dollar icon"
-							/>
-							<div className="woocommerce-woopayments-modal__content__item-flex__description">
-								<h3>
-									{ __( 'Activate payments', 'woocommerce' ) }
-								</h3>
-								<div>
-									<p>
-										{ interpolateComponents( {
-											mixedString: __(
-												'Provide some additional details about your business so you can being accepting real payments. {{link}}Learn more{{/link}}',
-												'woocommerce'
-											),
-											components: {
-												link: (
-													<Link
-														href="https://woocommerce.com/document/woopayments/startup-guide/#sign-up-process"
-														target="_blank"
-														rel="noreferrer"
-														type="external"
-													/>
+						{ ! devMode && (
+							<div className="woocommerce-woopayments-modal__content__item-flex">
+								<img
+									src={
+										WC_ASSET_URL + 'images/icons/dollar.svg'
+									}
+									alt="dollar icon"
+								/>
+								<div className="woocommerce-woopayments-modal__content__item-flex__description">
+									<h3>
+										{ __(
+											'Activate payments',
+											'woocommerce'
+										) }
+									</h3>
+									<div>
+										<p>
+											{ interpolateComponents( {
+												mixedString: __(
+													'Provide some additional details about your business so you can being accepting real payments. {{link}}Learn more{{/link}}',
+													'woocommerce'
 												),
-											},
-										} ) }
-									</p>
+												components: {
+													link: (
+														<Link
+															href="https://woocommerce.com/document/woopayments/startup-guide/#sign-up-process"
+															target="_blank"
+															rel="noreferrer"
+															type="external"
+														/>
+													),
+												},
+											} ) }
+										</p>
+									</div>
 								</div>
 							</div>
-						</div>
+						) }
 					</div>
 					<div className="woocommerce-woopayments-modal__actions">
 						<Button
@@ -139,14 +171,16 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 						>
 							{ __( 'Continue store setup', 'woocommerce' ) }
 						</Button>
-						<Button
-							variant="secondary"
-							isBusy={ isActivatingPayments }
-							disabled={ isActivatingPayments }
-							onClick={ handleActivatePayments }
-						>
-							{ __( 'Activate payments', 'woocommerce' ) }
-						</Button>
+						{ ! devMode && (
+							<Button
+								variant="secondary"
+								isBusy={ isActivatingPayments }
+								disabled={ isActivatingPayments }
+								onClick={ handleActivatePayments }
+							>
+								{ __( 'Activate payments', 'woocommerce' ) }
+							</Button>
+						) }
 					</div>
 				</Modal>
 			) }

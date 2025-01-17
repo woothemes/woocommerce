@@ -28,14 +28,34 @@ interface StatusBadgeProps {
 	 * Override the default status message to display a custom one. Optional.
 	 */
 	message?: string;
+	/**
+	 * Optionally pass in tooltip text. If this is passed in,
+	 * the badge will be wrapped in a Tooltip component.
+	 */
 	tooltipText?: string;
 }
 
-export const StatusBadge = ( {
-	status,
-	message,
-	tooltipText,
-}: StatusBadgeProps ) => {
+/**
+ * A component that displays a status badge with a customizable appearance and message.
+ * The appearance and default message are determined by the `status` prop,
+ * but a custom message can be provided via the `message` prop.
+ *
+ * @example
+ * // Render a status badge with the default message for "active" status.
+ * <StatusBadge status="active" />
+ *
+ * @example
+ * // Render a status badge with a custom message.
+ * <StatusBadge status="inactive" message="Not in use" />
+ *
+ * @example
+ * // Render a status badge which displays a tooltip.
+ * <StatusBadge status="active" message="Active" tooltipText="This is an active status badge" />
+ */
+export const StatusBadge = ( { status, message, tooltipText }: StatusBadgeProps ) => {
+	/**
+	 * Get the appropriate CSS class for the badge based on the status.
+	 */
 	const getStatusClass = () => {
 		switch ( status ) {
 			case 'active':
@@ -52,6 +72,9 @@ export const StatusBadge = ( {
 		}
 	};
 
+	/**
+	 * Get the default message for the badge based on the status.
+	 */
 	const getStatusMessage = () => {
 		switch ( status ) {
 			case 'active':
@@ -71,11 +94,12 @@ export const StatusBadge = ( {
 
 	return (
 		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
-			{ message || getStatusMessage() }
-			{ tooltipText && (
+			{ tooltipText ? (
 				<Tooltip text={ tooltipText }>
-					<Icon icon={ info } />
+					{ message || getStatusMessage() } <Icon icon={ info } />
 				</Tooltip>
+			) : (
+				message || getStatusMessage()
 			) }
 		</Pill>
 	);

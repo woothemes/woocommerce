@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-A required text additional field will now accept 0 as a valid input.

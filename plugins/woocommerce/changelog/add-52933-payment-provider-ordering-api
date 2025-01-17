@@ -1,4 +1,0 @@
-Significance: minor
-Type: add
-
-Add provider-agnostic ordering API for the Payments NOX while retaining BC with legacy gateway ordering.

@@ -27,7 +27,7 @@ export const WC_HEADER_PAGE_TITLE_SLOT_NAME = 'woocommerce_header_page_title';
 export const WooHeaderPageTitle: React.FC< {
 	children?: React.ReactNode;
 } > & {
-	Slot: React.FC< Slot.Props >;
+	Slot: React.FC< React.ComponentProps< typeof Slot > >;
 } = ( { children } ) => {
 	return <Fill name={ WC_HEADER_PAGE_TITLE_SLOT_NAME }>{ children }</Fill>;
 };
@@ -35,6 +35,7 @@ export const WooHeaderPageTitle: React.FC< {
 WooHeaderPageTitle.Slot = ( { fillProps } ) => (
 	<Slot name={ WC_HEADER_PAGE_TITLE_SLOT_NAME } fillProps={ fillProps }>
 		{ ( fills ) => {
+			// @ts-expect-error -- TODO: react-18-upgrade - examine why the type is inferred to be ReactNode but the code seems to think it's an array
 			return <>{ [ ...fills ].pop() }</>;
 		} }
 	</Slot>

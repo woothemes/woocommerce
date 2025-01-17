@@ -422,7 +422,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 						type: 'select',
 						default: '',
 						tip: 'Choose which countries you want to ship to, or choose to ship to all locations you sell to.',
-						value: '',
+						value: expect.any( String ),
 						options: expect.objectContaining( {
 							'': 'Ship to all countries you sell to',
 							all: 'Ship to all countries',
@@ -782,7 +782,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 						description:
 							'This controls what unit you will define weights in.',
 						type: 'select',
-						default: 'kg',
+						default: 'lbs',
 						options: {
 							kg: 'kg',
 							g: 'g',
@@ -790,7 +790,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 							oz: 'oz',
 						},
 						tip: 'This controls what unit you will define weights in.',
-						value: 'kg',
+						value: 'lbs',
 					} ),
 				] )
 			);
@@ -802,7 +802,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 						description:
 							'This controls what unit you will define lengths in.',
 						type: 'select',
-						default: 'cm',
+						default: 'in',
 						options: {
 							m: 'm',
 							cm: 'cm',
@@ -811,7 +811,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 							yd: 'yd',
 						},
 						tip: 'This controls what unit you will define lengths in.',
-						value: 'cm',
+						value: 'in',
 					} ),
 				] )
 			);
@@ -2052,7 +2052,7 @@ test.describe( 'Settings API tests: CRUD', () => {
 							tip: expect.stringContaining(
 								'Enter recipients (comma separated) for this email. Defaults to'
 							),
-							value: '',
+							value: expect.any( String ),
 						} ),
 					] )
 				);

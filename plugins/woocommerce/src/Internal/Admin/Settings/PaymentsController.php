@@ -4,6 +4,7 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 use Exception;
 
 defined( 'ABSPATH' ) || exit;
@@ -83,8 +84,8 @@ class PaymentsController {
 			56, // Position after WooCommerce Product menu item.
 		);
 
-		// If the store doesn't have any enabled gateways or providers need action, add a notice badge to the Payments menu item.
-		if ( ! $this->store_has_enabled_gateways() || $this->store_has_providers_with_action() ) {
+		// If there are providers with active incentive, add a notice badge to the Payments menu item.
+		if ( $this->store_has_providers_with_incentive() ) {
 			$badge = ' <span class="wcpay-menu-badge awaiting-mod count-1"><span class="plugin-count">1</span></span>';
 			foreach ( $menu as $index => $menu_item ) {
 				// Only add the badge markup if not already present and the menu item is the Payments menu item.
@@ -134,7 +135,7 @@ class PaymentsController {
 	 */
 	public function add_allowed_promo_notes( array $promo_notes = array() ): array {
 		try {
-			$providers = $this->payments->get_payment_providers( WC()->countries->get_base_country() );
+			$providers = $this->payments->get_payment_providers( $this->payments->get_country() );
 		} catch ( Exception $e ) {
 			// In case of an error, bail.
 			return $promo_notes;
@@ -168,32 +169,28 @@ class PaymentsController {
 	}
 
 	/**
-	 * Check if the store has any payment providers that need an action/attention.
+	 * Check if the store has any payment providers that have an active incentive.
 	 *
-	 * This includes gateways that are enabled but not configured (need setup).
-	 *
-	 * @return bool True if the store has enabled gateways that need attention, false otherwise.
+	 * @return bool True if the store has providers with an active incentive.
 	 */
-	private function store_has_providers_with_action(): bool {
+	private function store_has_providers_with_incentive(): bool {
 		try {
-			$providers = $this->payments->get_payment_providers( WC()->countries->get_base_country() );
+			$providers = $this->payments->get_payment_providers( $this->payments->get_country() );
 		} catch ( Exception $e ) {
 			// In case of an error, just return false.
 			return false;
 		}
 
-		// Go through the providers and check if any of them need attention from the user.
+		// Go through the providers and check if any of them have a "prominently" visible incentive (i.e., modal or banner).
 		foreach ( $providers as $provider ) {
-			// Handle payment gateways and offline payment methods that need setup.
-			if (
-				in_array( $provider['_type'], array( Payments::PROVIDER_TYPE_GATEWAY, Payments::PROVIDER_TYPE_OFFLINE_PM ), true ) &&
-				! empty( $provider['state']['needs_setup'] )
+			// We check to see if the incentive was dismissed in the banner context.
+			// In case an incentive uses the modal surface also (like the WooPayments Switch incentive),
+			// we rely on the fact that the modal falls back to the banner, once dismissed.
+			if ( ! empty( $provider['_incentive'] ) &&
+				( empty( $provider['_incentive']['_dismissals'] ) ||
+					! in_array( 'wc_settings_payments__banner', $provider['_incentive']['_dismissals'], true )
+				)
 			) {
-				return true;
-			}
-
-			// If there are incentives, the provider needs attention.
-			if ( ! empty( $provider['_incentive'] ) ) {
 				return true;
 			}
 		}

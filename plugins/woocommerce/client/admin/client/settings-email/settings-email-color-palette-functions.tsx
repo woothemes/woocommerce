@@ -53,29 +53,20 @@ export const areColorsChanged = ( colors: DefaultColors ): boolean => {
 export const addListeners = ( listener: () => void ) => {
 	// Input listeners
 	for ( const inputId of Object.keys( colorFieldMap ) ) {
-		const inputElement = document.getElementById(
-			inputId
-		) as HTMLInputElement;
-		inputElement.addEventListener( 'change', listener );
+		const field = jQuery( `#${ inputId }` );
+		if ( field.length ) {
+			// Using jQuery events due to iris (color picker) usage
+			field.on( 'change', listener );
+		}
 	}
-	// Color picker listeners
-	const $colorPickers = document.querySelectorAll( '.iris-picker' );
-	$colorPickers.forEach( ( item: Element ) =>
-		item.addEventListener( 'click', listener )
-	);
 };
 
 export const removeListeners = ( listener: () => void ) => {
 	// Input listeners
 	for ( const inputId of Object.keys( colorFieldMap ) ) {
-		const inputElement = document.getElementById(
-			inputId
-		) as HTMLInputElement;
-		inputElement.removeEventListener( 'change', listener );
+		const field = jQuery( `#${ inputId }` );
+		if ( field.length ) {
+			field.off( 'change', listener );
+		}
 	}
-	// Color picker listeners
-	const $colorPickers = document.querySelectorAll( '.iris-picker' );
-	$colorPickers.forEach( ( item: Element ) =>
-		item.removeEventListener( 'click', listener )
-	);
 };

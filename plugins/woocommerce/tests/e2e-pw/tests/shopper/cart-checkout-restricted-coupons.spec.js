@@ -11,7 +11,7 @@ import {
 import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const includedProductName = 'Included test product';
 const excludedProductName = 'Excluded test product';
 const includedCategoryName = 'Included Category';
@@ -60,6 +60,7 @@ test.describe(
 		const couponBatchId = [];
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

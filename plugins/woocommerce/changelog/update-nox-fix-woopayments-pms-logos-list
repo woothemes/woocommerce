@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix the behavior of the WooPayments PMs logos list on the new Payments settings page.

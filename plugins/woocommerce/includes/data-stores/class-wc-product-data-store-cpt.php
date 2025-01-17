@@ -6,6 +6,8 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Automattic\WooCommerce\Internal\DownloadPermissionsAdjuster;
 use Automattic\WooCommerce\Utilities\NumberUtil;
@@ -202,7 +204,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 				'woocommerce_new_product_data',
 				array(
 					'post_type'      => 'product',
-					'post_status'    => $product->get_status() ? $product->get_status() : 'publish',
+					'post_status'    => $product->get_status() ? $product->get_status() : ProductStatus::PUBLISH,
 					'post_author'    => get_current_user_id(),
 					'post_title'     => $product->get_name() ? $product->get_name() : __( 'Product', 'woocommerce' ),
 					'post_content'   => $product->get_description(),
@@ -323,7 +325,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 				'post_title'     => $product->get_name( 'edit' ),
 				'post_parent'    => $product->get_parent_id( 'edit' ),
 				'comment_status' => $product->get_reviews_allowed( 'edit' ) ? 'open' : 'closed',
-				'post_status'    => $product->get_status( 'edit' ) ? $product->get_status( 'edit' ) : 'publish',
+				'post_status'    => $product->get_status( 'edit' ) ? $product->get_status( 'edit' ) : ProductStatus::PUBLISH,
 				'menu_order'     => $product->get_menu_order( 'edit' ),
 				'post_password'  => $product->get_post_password( 'edit' ),
 				'post_name'      => $product->get_slug( 'edit' ),
@@ -397,7 +399,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 	 */
 	public function delete( &$product, $args = array() ) {
 		$id        = $product->get_id();
-		$post_type = $product->is_type( 'variation' ) ? 'product_variation' : 'product';
+		$post_type = $product->is_type( ProductType::VARIATION ) ? 'product_variation' : 'product';
 
 		$args = wp_parse_args(
 			$args,
@@ -417,7 +419,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 			do_action( 'woocommerce_delete_' . $post_type, $id );
 		} else {
 			wp_trash_post( $id );
-			$product->set_status( 'trash' );
+			$product->set_status( ProductStatus::TRASH );
 			do_action( 'woocommerce_trash_' . $post_type, $id );
 		}
 	}
@@ -498,7 +500,8 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 	 * @param WC_Product $product The product to apply the loaded data to.
 	 */
 	protected function load_cogs_data( $product ) {
-		$cogs_value = (float) ( get_post_meta( $product->get_id(), '_cogs_total_value', true ) );
+		$cogs_value = get_post_meta( $product->get_id(), '_cogs_total_value', true );
+		$cogs_value = '' === $cogs_value ? null : (float) $cogs_value;
 
 		/**
 		 * Filter to customize the Cost of Goods Sold value that gets loaded for a given product.
@@ -717,7 +720,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 					break;
 				case 'stock_quantity':
 					// Fire actions to let 3rd parties know the stock is about to be changed.
-					if ( $product->is_type( 'variation' ) ) {
+					if ( $product->is_type( ProductType::VARIATION ) ) {
 						/**
 						* Action to signal that the value of 'stock_quantity' for a variation is about to change.
 						*
@@ -755,13 +758,13 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 			 *
 			 * @since 9.5.0
 			 *
-			 * @param float|null $cogs_value The value to be written to the database. If returned as null, nothing will be written.
+			 * @param float|null|false $cogs_value The value to be written to the database. If returned as false, nothing will be written.
 			 * @param WC_Product $product The product for which the value is being saved.
 			 */
 			$cogs_value = apply_filters( 'woocommerce_save_product_cogs_value', $cogs_value, $product );
 
-			if ( ! is_null( $cogs_value ) ) {
-				$updated = $this->update_or_delete_post_meta( $product, '_cogs_total_value', 0.0 === $cogs_value ? '' : $cogs_value );
+			if ( false !== $cogs_value ) {
+				$updated = $this->update_or_delete_post_meta( $product, '_cogs_total_value', is_null( $cogs_value ) ? '' : $cogs_value );
 				if ( $updated ) {
 					$this->updated_props[] = 'cogs_value';
 				}
@@ -800,7 +803,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 	 * @param WC_Product $product Product Object.
 	 */
 	protected function handle_updated_props( &$product ) {
-		$price_is_synced = $product->is_type( array( 'variable', 'grouped' ) );
+		$price_is_synced = $product->is_type( array( ProductType::VARIABLE, ProductType::GROUPED ) );
 
 		if ( ! $price_is_synced ) {
 			if ( in_array( 'regular_price', $this->updated_props, true ) || in_array( 'sale_price', $this->updated_props, true ) ) {
@@ -830,7 +833,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		}
 
 		if ( in_array( 'stock_quantity', $this->updated_props, true ) ) {
-			if ( $product->is_type( 'variation' ) ) {
+			if ( $product->is_type( ProductType::VARIATION ) ) {
 				/**
 				 * Action to signal that the value of 'stock_quantity' for a variation has changed.
 				 *
@@ -852,7 +855,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		}
 
 		if ( in_array( 'stock_status', $this->updated_props, true ) ) {
-			if ( $product->is_type( 'variation' ) ) {
+			if ( $product->is_type( ProductType::VARIATION ) ) {
 				/**
 				 * Action to signal that the `stock_status` for a variation has changed.
 				 *
@@ -1036,7 +1039,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 				}
 			}
 
-			if ( $product->is_type( 'variation' ) ) {
+			if ( $product->is_type( ProductType::VARIATION ) ) {
 				do_action( 'woocommerce_process_product_file_download_paths', $product->get_parent_id(), $product->get_id(), $downloads );
 			} else {
 				do_action( 'woocommerce_process_product_file_download_paths', $product->get_id(), 0, $downloads );
@@ -1361,7 +1364,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 	 * @return int Matching variation ID or 0.
 	 */
 	public function find_matching_product_variation( $product, $match_attributes = array() ) {
-		if ( 'variation' === $product->get_type() ) {
+		if ( ProductType::VARIATION === $product->get_type() ) {
 			// Can't get a variation of a variation.
 			return 0;
 		}
@@ -1487,7 +1490,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 			if ( in_array( $possible_attribute, $existing_attributes ) ) { // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 				continue;
 			}
-			$variation = wc_get_product_object( 'variation' );
+			$variation = wc_get_product_object( ProductType::VARIATION );
 			$variation->set_props( $default_values );
 			foreach ( $metadata as $meta ) {
 				$variation->add_meta_data( $meta['key'], $meta['value'] );
@@ -2016,10 +2019,10 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		$post_type = get_post_type( $product_id );
 
 		if ( 'product_variation' === $post_type ) {
-			$product_type = 'variation';
+			$product_type = ProductType::VARIATION;
 		} elseif ( 'product' === $post_type ) {
 			$terms        = get_the_terms( $product_id, 'product_type' );
-			$product_type = ! empty( $terms ) && ! is_wp_error( $terms ) ? sanitize_title( current( $terms )->name ) : 'simple';
+			$product_type = ! empty( $terms ) && ! is_wp_error( $terms ) ? sanitize_title( current( $terms )->name ) : ProductType::SIMPLE;
 		} else {
 			$product_type = false;
 		}
@@ -2112,9 +2115,9 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		}
 
 		// Handle product types.
-		if ( 'variation' === $query_vars['type'] ) {
+		if ( ProductType::VARIATION === $query_vars['type'] ) {
 			$wp_query_args['post_type'] = 'product_variation';
-		} elseif ( is_array( $query_vars['type'] ) && in_array( 'variation', $query_vars['type'], true ) ) {
+		} elseif ( is_array( $query_vars['type'] ) && in_array( ProductType::VARIATION, $query_vars['type'], true ) ) {
 			$wp_query_args['post_type']   = array( 'product_variation', 'product' );
 			$wp_query_args['tax_query'][] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 				'relation' => 'OR',

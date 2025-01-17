@@ -5,15 +5,13 @@ import preloadScript from '@woocommerce/base-utils/preload-script';
 import lazyLoadScript from '@woocommerce/base-utils/lazy-load-script';
 import getNavigationType from '@woocommerce/base-utils/get-navigation-type';
 import { translateJQueryEventToNative } from '@woocommerce/base-utils/legacy-events';
+import { select, subscribe } from '@wordpress/data';
+import { CART_STORE_KEY } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
  */
-import {
-	getMiniCartTotalsFromLocalStorage,
-	getMiniCartTotalsFromServer,
-	updateTotals,
-} from './utils/data';
+import { updateTotals } from './utils/data';
 import setStyles from './utils/set-styles';
 
 interface dependencyData {
@@ -24,8 +22,6 @@ interface dependencyData {
 	translations?: string;
 }
 
-updateTotals( getMiniCartTotalsFromLocalStorage() );
-getMiniCartTotalsFromServer().then( updateTotals );
 setStyles();
 
 declare global {
@@ -35,6 +31,14 @@ declare global {
 }
 
 window.addEventListener( 'load', () => {
+	// Update the totals immediately on load.
+	updateTotals( select( CART_STORE_KEY ).getCartData() );
+
+	// Triggers JS event whenever the cart store is updated.
+	subscribe( () => {
+		updateTotals( select( CART_STORE_KEY ).getCartData() );
+	}, CART_STORE_KEY );
+
 	const miniCartBlocks = document.querySelectorAll( '.wc-block-mini-cart' );
 	let wasLoadScriptsCalled = false;
 

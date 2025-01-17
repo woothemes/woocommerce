@@ -29,7 +29,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Products > Related products',
-	{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+	{ tag: [ tags.GUTENBERG ] },
 	() => {
 		async function navigate( page, productId ) {
 			await test.step( 'Navigate to product edit page', async () => {

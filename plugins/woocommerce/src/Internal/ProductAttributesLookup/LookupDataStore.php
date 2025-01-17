@@ -5,6 +5,7 @@
 
 namespace Automattic\WooCommerce\Internal\ProductAttributesLookup;
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\StringUtil;
 
@@ -882,7 +883,7 @@ class LookupDataStore {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$product_ids_with_stock_status = $wpdb->get_results( $sql, ARRAY_A );
 
-		$main_product_row = array_filter( $product_ids_with_stock_status, fn( $item ) => 'variation' !== $item['product_type'] );
+		$main_product_row = array_filter( $product_ids_with_stock_status, fn( $item ) => ProductType::VARIATION !== $item['product_type'] );
 		$is_variation     = empty( $main_product_row );
 
 		$main_product_id =
@@ -890,7 +891,7 @@ class LookupDataStore {
 			current( $product_ids_with_stock_status )['parent'] :
 			$product_id;
 
-		$is_variable_product = ! $is_variation && ( 'variable' === current( $main_product_row )['product_type'] );
+		$is_variable_product = ! $is_variation && ( ProductType::VARIABLE === current( $main_product_row )['product_type'] );
 
 		$product_ids_with_stock_status = ArrayUtil::group_by_column( $product_ids_with_stock_status, 'id', true );
 		$variation_ids                 = $is_variation ? array( $product_id ) : array_keys( array_diff_key( $product_ids_with_stock_status, array( $product_id => null ) ) );

@@ -10,24 +10,29 @@ export interface PluginData {
 	status: 'installed' | 'active' | 'not_installed';
 }
 
-export interface StateData {
+export interface PaymentProviderState {
 	enabled: boolean;
+	account_connected: boolean;
 	needs_setup: boolean;
 	test_mode: boolean;
-}
-
-export interface ManagementData {
-	settings_url: string; // URL to the settings page for the payment gateway.
-}
-
-export enum PaymentProviderType {
-	OfflinePmsGroup = 'offline_pms_group',
-	Suggestion = 'suggestion',
-	Gateway = 'gateway',
+	dev_mode: boolean;
 }
 
 export interface LinkData {
 	href: string;
+}
+
+export interface ManagementData {
+	_links: {
+		settings: LinkData; // URL to the payment gateway management page.
+	};
+}
+
+export enum PaymentProviderType {
+	OfflinePmsGroup = 'offline_pms_group',
+	OfflinePm = 'offline_pm',
+	Suggestion = 'suggestion',
+	Gateway = 'gateway',
 }
 
 export type PaymentIncentive = {
@@ -45,6 +50,25 @@ export type PaymentIncentive = {
 	};
 };
 
+export type RecommendedPaymentMethod = {
+	id: string;
+	_order: number;
+	title: string;
+	description: string;
+	icon: string;
+	enabled: boolean;
+	extraTitle: string;
+	extraDescription: string;
+	extraIcon: string;
+};
+
+export type PaymentProviderOnboardingState = {
+	started: boolean;
+	completed: boolean;
+	test_mode: boolean;
+};
+
+// General payment provider type.
 export type PaymentProvider = {
 	id: string;
 	_order: number;
@@ -53,29 +77,66 @@ export type PaymentProvider = {
 	description: string;
 	icon: string;
 	image?: string;
-	tags?: string[];
 	supports?: string[];
 	plugin: PluginData;
 	short_description?: string;
 	management?: ManagementData;
-	state?: StateData;
+	state?: PaymentProviderState;
 	links?: PaymentGatewayLink[];
+	onboarding?: {
+		state: PaymentProviderOnboardingState;
+		_links: {
+			onboard: LinkData;
+		};
+		recommended_payment_methods?: RecommendedPaymentMethod[];
+	};
+	tags?: string[];
+	_suggestion_id?: string;
+	_links?: Record< string, LinkData >;
 	_incentive?: PaymentIncentive;
 };
 
-export type OfflinePaymentGateway = {
-	id: string;
-	_type: 'offline_pm';
-	_order: number;
-	title: string;
-	description: string;
-	icon: string;
+// Payment gateway provider type.
+export type PaymentGatewayProvider = PaymentProvider & {
 	supports: string[];
 	management: ManagementData;
-	state: StateData;
-	plugin: PluginData;
+	state: PaymentProviderState;
+	onboarding: {
+		state: PaymentProviderOnboardingState;
+		_links: {
+			onboard: LinkData;
+		};
+		recommended_payment_methods: RecommendedPaymentMethod[];
+	};
 };
 
+// Offline payment method provider type.
+export type OfflinePaymentMethodProvider = PaymentProvider & {
+	supports: string[];
+	management: ManagementData;
+	state: PaymentProviderState;
+	onboarding: {
+		state: PaymentProviderOnboardingState;
+		_links: {
+			onboard: LinkData;
+		};
+	};
+};
+
+// Offline payment methods group provider type.
+export type OfflinePmsGroupProvider = PaymentProvider & {
+	management: ManagementData;
+	state: PaymentProviderState;
+};
+
+export type PaymentExtensionSuggestionProvider = PaymentProvider & {
+	_suggestion_id: string;
+	_links: {
+		hide: LinkData;
+	};
+};
+
+// Payment extension suggestion outside providers.
 export type SuggestedPaymentExtension = {
 	id: string;
 	_type: string;
@@ -100,7 +161,7 @@ export type SuggestedPaymentExtensionCategory = {
 
 export type PaymentSettingsState = {
 	providers: PaymentProvider[];
-	offlinePaymentGateways: OfflinePaymentGateway[];
+	offlinePaymentGateways: OfflinePaymentMethodProvider[];
 	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 	isFetching: boolean;
@@ -111,7 +172,7 @@ export type OrderMap = Record< string, number >;
 
 export type PaymentProvidersResponse = {
 	providers: PaymentProvider[];
-	offline_payment_methods: OfflinePaymentGateway[];
+	offline_payment_methods: OfflinePaymentMethodProvider[];
 	suggestions: SuggestedPaymentExtension[];
 	suggestion_categories: SuggestedPaymentExtensionCategory[];
 };

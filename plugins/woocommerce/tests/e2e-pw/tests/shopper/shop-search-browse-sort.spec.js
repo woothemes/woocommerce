@@ -3,6 +3,7 @@
  */
 import { test, expect, tags } from '../../fixtures/fixtures';
 import { getFakeCategory, getFakeProduct } from '../../utils/data';
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 test.describe(
 	'Search, browse by categories and sort items in the shop',
@@ -11,7 +12,8 @@ test.describe(
 		let categories = [];
 		let products = [];
 
-		test.beforeAll( async ( { api } ) => {
+		test.beforeAll( async ( { baseURL, api } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			await api
 				.post( 'products/categories/batch', {
 					create: [
@@ -76,11 +78,12 @@ test.describe(
 		// default theme doesn't have a search box, but can simulate a search by visiting the search URL
 		test( 'should let user search the store', async ( { page } ) => {
 			await test.step( 'Go to the shop and perform the search', async () => {
-				await page.goto( `shop/?s=${ products[ 0 ].name }%201` );
+				await page.goto( `shop/?s=${ products[ 0 ].name }` );
 
 				await expect(
 					page.getByRole( 'heading', {
 						name: `${ products[ 0 ].name }`,
+						level: 1,
 					} )
 				).toBeVisible();
 				await expect( page.getByLabel( 'Breadcrumb' ) ).toContainText(
@@ -117,6 +120,7 @@ test.describe(
 				await expect(
 					page.getByRole( 'heading', {
 						name: products[ 1 ].name,
+						level: 1,
 					} )
 				).toBeVisible();
 			} );

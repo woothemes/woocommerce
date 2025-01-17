@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { apiFetch } from '@wordpress/data-controls';
+import apiFetch from '@wordpress/api-fetch';
 import {
 	PaymentProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
@@ -22,18 +22,29 @@ interface PaymentGatewaysProps {
 	providers: PaymentProvider[];
 	installedPluginSlugs: string[];
 	installingPlugin: string | null;
-	setupPlugin: ( id: string, slug: string ) => void;
+	setupPlugin: (
+		id: string,
+		slug: string,
+		onboardingUrl: string | null
+	) => void;
+	acceptIncentive: ( id: string ) => void;
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 	isFetching: boolean;
 	businessRegistrationCountry: string | null;
 	setBusinessRegistrationCountry: ( country: string ) => void;
 }
 
+/**
+ * A component for displaying and managing the list of payment providers. It includes a country selector
+ * to filter providers based on the business location and supports real-time updates when the country or
+ * provider order changes.
+ */
 export const PaymentGateways = ( {
 	providers,
 	installedPluginSlugs,
 	installingPlugin,
 	setupPlugin,
+	acceptIncentive,
 	updateOrdering,
 	isFetching,
 	businessRegistrationCountry,
@@ -41,6 +52,9 @@ export const PaymentGateways = ( {
 }: PaymentGatewaysProps ) => {
 	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 
+	/**
+	 * Generates a list of country options from the WooCommerce settings.
+	 */
 	const countryOptions = useMemo( () => {
 		return Object.entries( window.wcSettings.countries || [] )
 			.map( ( [ key, name ] ) => ( {
@@ -70,16 +84,18 @@ export const PaymentGateways = ( {
 						}
 						options={ countryOptions }
 						onChange={ ( value: string ) => {
-							setBusinessRegistrationCountry( value );
-							invalidateResolution( 'getPaymentProviders', [
-								value,
-							] );
+							// Save selected country and refresh the store by invalidating getPaymentProviders.
 							apiFetch( {
 								path:
 									WC_ADMIN_NAMESPACE +
 									'/settings/payments/country',
 								method: 'POST',
 								data: { location: value },
+							} ).then( () => {
+								setBusinessRegistrationCountry( value );
+								invalidateResolution( 'getPaymentProviders', [
+									value,
+								] );
 							} );
 						} }
 					/>
@@ -93,6 +109,7 @@ export const PaymentGateways = ( {
 					installedPluginSlugs={ installedPluginSlugs }
 					installingPlugin={ installingPlugin }
 					setupPlugin={ setupPlugin }
+					acceptIncentive={ acceptIncentive }
 					updateOrdering={ updateOrdering }
 				/>
 			) }

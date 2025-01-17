@@ -7,6 +7,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -448,7 +449,7 @@ class WC_Admin_Post_Types {
 
 		$product->set_featured( isset( $request_data['_featured'] ) );
 
-		if ( $product->is_type( 'simple' ) || $product->is_type( 'external' ) ) {
+		if ( $product->is_type( ProductType::SIMPLE ) || $product->is_type( ProductType::EXTERNAL ) ) {
 
 			if ( isset( $request_data['_regular_price'] ) ) {
 				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -482,18 +483,18 @@ class WC_Admin_Post_Types {
 
 		// Handle Stock Data.
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$manage_stock = ! empty( $request_data['_manage_stock'] ) && 'grouped' !== $product->get_type() ? 'yes' : 'no';
+		$manage_stock = ! empty( $request_data['_manage_stock'] ) && ProductType::GROUPED !== $product->get_type() ? 'yes' : 'no';
 		$backorders   = ! empty( $request_data['_backorders'] ) ? wc_clean( $request_data['_backorders'] ) : 'no';
 		if ( ! empty( $request_data['_stock_status'] ) ) {
 			$stock_status = wc_clean( $request_data['_stock_status'] );
 		} else {
-			$stock_status = $product->is_type( 'variable' ) ? null : 'instock';
+			$stock_status = $product->is_type( ProductType::VARIABLE ) ? null : 'instock';
 		}
 		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		$product->set_manage_stock( $manage_stock );
 
-		if ( 'external' !== $product->get_type() ) {
+		if ( ProductType::EXTERNAL !== $product->get_type() ) {
 			$product->set_backorders( $backorders );
 		}
 
@@ -577,8 +578,14 @@ class WC_Admin_Post_Types {
 			}
 		}
 
-		// Handle price - remove dates and set to lowest.
-		$change_price_product_types    = apply_filters( 'woocommerce_bulk_edit_save_price_product_types', array( 'simple', 'external' ) );
+		/**
+		 * Handle price - remove dates and set to lowest.
+		 *
+		 * @param array $product_types Array of product types that can change price.
+		 *
+		 * @since 3.0.0
+		 */
+		$change_price_product_types    = apply_filters( 'woocommerce_bulk_edit_save_price_product_types', array( ProductType::SIMPLE, ProductType::EXTERNAL ) );
 		$can_product_type_change_price = false;
 		foreach ( $change_price_product_types as $product_type ) {
 			if ( $product->is_type( $product_type ) ) {
@@ -607,7 +614,7 @@ class WC_Admin_Post_Types {
 		$backorders         = ! empty( $request_data['_backorders'] ) ? wc_clean( $request_data['_backorders'] ) : $backorders;
 
 		if ( ! empty( $request_data['_manage_stock'] ) ) {
-			$manage_stock = 'yes' === wc_clean( $request_data['_manage_stock'] ) && 'grouped' !== $product->get_type() ? 'yes' : 'no';
+			$manage_stock = 'yes' === wc_clean( $request_data['_manage_stock'] ) && ProductType::GROUPED !== $product->get_type() ? 'yes' : 'no';
 		} else {
 			$manage_stock = $was_managing_stock;
 		}
@@ -616,7 +623,7 @@ class WC_Admin_Post_Types {
 
 		$product->set_manage_stock( $manage_stock );
 
-		if ( 'external' !== $product->get_type() ) {
+		if ( ProductType::EXTERNAL !== $product->get_type() ) {
 			$product->set_backorders( $backorders );
 		}
 
@@ -858,11 +865,11 @@ class WC_Admin_Post_Types {
 	 * @return WC_Product The supplied product, or the synced product if it was a variable product.
 	 */
 	private function maybe_update_stock_status( $product, $stock_status ) {
-		if ( $product->is_type( 'external' ) ) {
+		if ( $product->is_type( ProductType::EXTERNAL ) ) {
 			// External products are always in stock.
 			$product->set_stock_status( 'instock' );
 		} elseif ( isset( $stock_status ) ) {
-			if ( $product->is_type( 'variable' ) && ! $product->get_manage_stock() ) {
+			if ( $product->is_type( ProductType::VARIABLE ) && ! $product->get_manage_stock() ) {
 				// Stock status is determined by children.
 				foreach ( $product->get_children() as $child_id ) {
 					$child = wc_get_product( $child_id );

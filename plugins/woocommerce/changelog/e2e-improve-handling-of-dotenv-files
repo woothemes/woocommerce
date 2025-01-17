@@ -1,4 +1,0 @@
-Significance: minor
-Type: dev
-
-E2E tests: improve handling of dotenv files stored in env directories

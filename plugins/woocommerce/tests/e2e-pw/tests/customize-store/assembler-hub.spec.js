@@ -18,7 +18,7 @@ const test = base.extend( {
 
 test.describe(
 	'Store owner can view Assembler Hub for store customization',
-	{ tag: tags.GUTENBERG },
+	{ tag: [ tags.GUTENBERG, tags.NOT_E2E ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

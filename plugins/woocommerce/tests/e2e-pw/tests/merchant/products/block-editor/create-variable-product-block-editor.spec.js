@@ -388,22 +388,76 @@ test.describe( 'Variations tab', { tag: tags.GUTENBERG }, () => {
 			).toEqual( 5 );
 		} );
 
-		test( 'can see variations warning and click the CTA', async ( {
-			page,
-		} ) => {
-			await page.goto(
-				`wp-admin/admin.php?page=wc-admin&path=/product/${ productId_deleteVariations }`
-			);
+		test(
+			'can see variations warning and click the CTA',
+			{ tag: tags.COULD_BE_LOWER_LEVEL_TEST },
+			async ( { page } ) => {
+				await page.goto(
+					`wp-admin/admin.php?page=wc-admin&path=/product/${ productId_deleteVariations }`
+				);
 
-			for ( const tab of tabs ) {
-				const { name: tabName, noteText } = tab;
-				await clickOnTab( tabName, page );
+				for ( const tab of tabs ) {
+					const { name: tabName, noteText } = tab;
+					await clickOnTab( tabName, page );
 
-				const notices = page.locator(
-					'p.woocommerce-product-notice__content'
+					const notices = page.locator(
+						'p.woocommerce-product-notice__content'
+					);
+
+					const noticeCount = await notices.count();
+
+					for ( let i = 0; i < noticeCount; i++ ) {
+						const notice = notices.nth( i );
+						if ( await notice.isVisible() ) {
+							await expect( notice ).toHaveText( noteText );
+						}
+					}
+
+					await page
+						.locator( '.woocommerce-product-notice__content' )
+						.getByRole( 'button', { name: 'Go to Variations' } )
+						.click();
+
+					await expect(
+						page.getByRole( 'heading', {
+							name: 'Variation options',
+						} )
+					).toBeVisible();
+				}
+			}
+		);
+
+		test(
+			'can see single variation warning and click the CTA',
+			{ tag: tags.COULD_BE_LOWER_LEVEL_TEST },
+			async ( { page } ) => {
+				await page.goto(
+					`wp-admin/admin.php?page=wc-admin&path=/product/${ productId_singleVariation }&tab=variations`
+				);
+
+				await page
+					.getByRole( 'button', { name: 'Generate from options' } )
+					.click();
+
+				await expect(
+					page.getByText(
+						'variations do not have prices. Variations that do not have prices will not be visible to customers.Set prices'
+					)
+				).toBeVisible();
+
+				await page
+					.getByRole( 'link', { name: 'Edit', exact: true } )
+					.first()
+					.click();
+
+				const notices = page.getByText(
+					'You’re editing details specific to this variation.'
 				);
 
 				const noticeCount = await notices.count();
+
+				const noteText =
+					'You’re editing details specific to this variation.';
 
 				for ( let i = 0; i < noticeCount; i++ ) {
 					const notice = notices.nth( i );
@@ -413,8 +467,8 @@ test.describe( 'Variations tab', { tag: tags.GUTENBERG }, () => {
 				}
 
 				await page
-					.locator( '.woocommerce-product-notice__content' )
-					.getByRole( 'button', { name: 'Go to Variations' } )
+					.locator( '.woocommerce-product-notice__content > a' )
+					.first()
 					.click();
 
 				await expect(
@@ -423,56 +477,6 @@ test.describe( 'Variations tab', { tag: tags.GUTENBERG }, () => {
 					} )
 				).toBeVisible();
 			}
-		} );
-
-		test( 'can see single variation warning and click the CTA', async ( {
-			page,
-		} ) => {
-			await page.goto(
-				`wp-admin/admin.php?page=wc-admin&path=/product/${ productId_singleVariation }&tab=variations`
-			);
-
-			await page
-				.getByRole( 'button', { name: 'Generate from options' } )
-				.click();
-
-			await expect(
-				page.getByText(
-					'variations do not have prices. Variations that do not have prices will not be visible to customers.Set prices'
-				)
-			).toBeVisible();
-
-			await page
-				.getByRole( 'link', { name: 'Edit', exact: true } )
-				.first()
-				.click();
-
-			const notices = page.getByText(
-				'You’re editing details specific to this variation.'
-			);
-
-			const noticeCount = await notices.count();
-
-			const noteText =
-				'You’re editing details specific to this variation.';
-
-			for ( let i = 0; i < noticeCount; i++ ) {
-				const notice = notices.nth( i );
-				if ( await notice.isVisible() ) {
-					await expect( notice ).toHaveText( noteText );
-				}
-			}
-
-			await page
-				.locator( '.woocommerce-product-notice__content > a' )
-				.first()
-				.click();
-
-			await expect(
-				page.getByRole( 'heading', {
-					name: 'Variation options',
-				} )
-			).toBeVisible();
-		} );
+		);
 	} );
 } );

@@ -1,5 +1,7 @@
 .settings-payment-gateways__list {
 	border-top: 1px solid $gray-200;
+	// Without this, the window.innerWidth is not calculated correctly when elements are pushed outside the container.
+	overflow: hidden;
 
 	.woocommerce-list__item {
 		padding: 0 48px;
@@ -40,11 +42,18 @@
 		}
 
 		&-before {
-			img {
-				max-width: 96px;
-				height: 40px;
-				border-radius: 4px;
+			margin-right: $gap;
+			align-items: center;
+
+			.drag-handle {
+				min-height: 40px;
 			}
+		}
+
+		&-image {
+			max-width: 40px;
+			max-height: 40px;
+			border-radius: 4px;
 		}
 
 		&-title {
@@ -54,7 +63,11 @@
 			font-weight: 600;
 			display: inline-flex;
 			gap: 10px;
-			align-items: center;
+			align-items: start;
+		}
+
+		&-text {
+			margin-right: $gap;
 		}
 
 		&-content {

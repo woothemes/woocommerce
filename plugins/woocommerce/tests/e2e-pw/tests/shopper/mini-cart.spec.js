@@ -13,7 +13,7 @@ import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { random } = require( '../../utils/helpers' );
-
+const { setComingSoon } = require( '../../utils/coming-soon' );
 const miniCartPageTitle = `Mini Cart ${ random() }`;
 const miniCartPageSlug = miniCartPageTitle.replace( / /gi, '-' ).toLowerCase();
 const miniCartButton = 'main .wc-block-mini-cart__button';
@@ -34,6 +34,7 @@ test.describe(
 		test.use( { storageState: process.env.ADMINSTATE } );
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,
@@ -352,6 +353,9 @@ test.describe(
 			await expect(
 				page.locator( '.wc-block-components-totals-item__value' )
 			).toContainText( `$${ totalInclusiveTax }` );
+			await expect(
+				page.getByRole( 'link', { name: simpleProductName } )
+			).toBeVisible();
 			await page
 				.getByRole( 'button' )
 				.filter( { hasText: 'Remove item' } )
