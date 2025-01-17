@@ -26,6 +26,7 @@ import {
 	EnableGatewayButton,
 	SettingsButton,
 } from '~/settings-payments/components/buttons';
+import { ReactivateLivePaymentsButton } from '~/settings-payments/components/buttons/reactivate-live-payments-button';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
@@ -47,7 +48,7 @@ export const PaymentGatewayListItem = ( {
 	const gatewayHasRecommendedPaymentMethods =
 		( gateway.onboarding.recommended_payment_methods ?? [] ).length > 0;
 
-	// If the account is not connected or the onboarding is not started, or not completed then the gateway needs setup.
+	// If the account is not connected or the onboarding is not started, or not completed then the gateway needs onboarding.
 	const gatewayNeedsOnboarding =
 		! gateway.state.account_connected ||
 		( gateway.state.account_connected &&
@@ -61,6 +62,11 @@ export const PaymentGatewayListItem = ( {
 			return 'needs_setup';
 		}
 		if ( gateway.state.enabled ) {
+			// A test account also implies test mode.
+			if ( gateway.onboarding.state.test_mode ) {
+				return 'test_account';
+			}
+
 			if ( gateway.state.test_mode ) {
 				return 'test_mode';
 			}
@@ -200,6 +206,20 @@ export const PaymentGatewayListItem = ( {
 									acceptIncentive={ acceptIncentive }
 									installingPlugin={ installingPlugin }
 									incentive={ incentive }
+								/>
+							) }
+
+						{ isWooPayments( gateway.id ) &&
+							// There are no live payments in dev mode or test accounts, so no point in reactivating them.
+							! gateway.state.dev_mode &&
+							gateway.state.account_connected &&
+							gateway.onboarding.state.completed &&
+							! gateway.onboarding.state.test_mode &&
+							gateway.state.test_mode && (
+								<ReactivateLivePaymentsButton
+									settingsHref={
+										gateway.management._links.settings.href
+									}
 								/>
 							) }
 					</div>
