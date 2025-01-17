@@ -975,6 +975,17 @@ class WC_Countries {
 							'hidden'   => true,
 						),
 					),
+					'BW' => array(
+						'postcode' => array(
+							'required' => false,
+							'hidden'   => true,
+						),
+						'state'    => array(
+							'required' => false,
+							'hidden'   => true,
+							'label'    => __( 'District', 'woocommerce' ),
+						),
+					),
 					'BZ' => array(
 						'postcode' => array(
 							'required' => false,
