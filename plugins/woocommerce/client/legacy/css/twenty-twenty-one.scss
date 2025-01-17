@@ -64,7 +64,7 @@ body {
 
 	.show-password-input {
 		background-color: transparent !important;
-		color: var(--global--color-primary) !important;
+		color: var(--form--color-text) !important;
 		display: inherit;
 		outline-offset: 0;
 	}
@@ -1209,10 +1209,6 @@ a.reset_variations {
 				font-size: 1.5rem;
 				padding-top: 0.3rem;
 				padding-bottom: 0.3rem;
-			}
-
-			input {
-				border: 3px solid black;
 			}
 
 			.form-row {
