@@ -25,8 +25,7 @@ if ( 'twentytwentyfour' === $current_theme ) {
 ?>
 
 <!-- wp:woocommerce/coming-soon {"color":"#bea0f2","storeOnly":false,"className":"woocommerce-coming-soon-entire-site wp-block-woocommerce-background-color"} -->
-<div class="woocommerce-coming-soon-entire-site wp-block-woocommerce-coming-soon wp-block-woocommerce-background-color"><!-- wp:cover {"minHeight":100,"minHeightUnit":"vh","isDark":false,"className":"coming-soon-is-vertically-aligned-center coming-soon-cover","layout":{"type":"default"}} -->
-<div class="wp-block-cover is-light coming-soon-is-vertically-aligned-center coming-soon-cover" style="min-height:100vh"><span aria-hidden="true" class="wp-block-cover__background has-background-dim-100 has-background-dim" style=""></span><div class="wp-block-cover__inner-container"><!-- wp:group {"className":"woocommerce-coming-soon-banner-container","layout":{"type":"default"}} -->
+<div class="woocommerce-coming-soon-entire-site wp-block-woocommerce-coming-soon wp-block-woocommerce-background-color"><!-- wp:cover {"minHeight":100,"minHeightUnit":"vh","isDark":false,"className":"coming-soon-is-vertically-aligned-center coming-soon-cover","style":{"elements":{"link":{"color":{"text":"inherit"}}},"color":{"text":"inherit"}},"layout":{"type":"default"}} --><div class="wp-block-cover is-light coming-soon-is-vertically-aligned-center coming-soon-cover has-text-color has-link-color" style="min-height:100vh;color:inherit"><span aria-hidden="true" class="wp-block-cover__background has-background-dim-100 has-background-dim" style=""></span><div class="wp-block-cover__inner-container"><!-- wp:group {"className":"woocommerce-coming-soon-banner-container","layout":{"type":"default"}} -->
 <div class="wp-block-group woocommerce-coming-soon-banner-container"><!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"10px","bottom":"14px"}}},"className":"woocommerce-coming-soon-header","layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignwide woocommerce-coming-soon-header has-background" style="padding-top:10px;padding-bottom:14px"><!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
 <div class="wp-block-group alignwide"><!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|20"},"layout":{"selfStretch":"fit","flexSize":null}},"layout":{"type":"flex"}} -->
@@ -46,8 +45,8 @@ if ( 'twentytwentyfour' === $current_theme ) {
 <!-- /wp:group -->
 
 <!-- wp:group {"layout":{"type":"flex","orientation":"vertical","justifyContent":"center"}} -->
-<div class="wp-block-group"><!-- wp:heading {"textAlign":"center","level":1,"align":"wide","className":"woocommerce-coming-soon-banner","fontFamily":"<?php echo esc_html( $cardo_font_family ); ?>"} -->
-<h1 class="wp-block-heading alignwide has-text-align-center woocommerce-coming-soon-banner has-<?php echo esc_html( $cardo_font_family ); ?>-font-family"><?php echo esc_html__( "Pardon our dust! We're working on something amazing — check back soon!", 'woocommerce' ); ?></h1>
+<div class="wp-block-group"><!-- wp:heading {"textAlign":"center","level":1,"align":"wide","className":"woocommerce-coming-soon-banner","style":{"typography":{"fontSize":"48px","lineHeight":"1.23"},"spacing":{"margin":{"top":"0px","bottom":"0px"}}},"fontFamily":"<?php echo esc_html( $cardo_font_family ); ?>"} -->
+<h1 class="wp-block-heading alignwide has-text-align-center woocommerce-coming-soon-banner has-<?php echo esc_html( $cardo_font_family ); ?>-font-family" style="margin-top:0px;margin-bottom:0px;font-size:48px;line-height:1.23"><?php echo esc_html__( "Pardon our dust! We're working on something amazing — check back soon!", 'woocommerce' ); ?></h1>
 <!-- /wp:heading --></div>
 <!-- /wp:group -->
 
