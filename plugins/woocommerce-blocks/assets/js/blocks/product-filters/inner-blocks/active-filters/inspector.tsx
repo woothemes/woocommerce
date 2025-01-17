@@ -32,10 +32,7 @@ export const Inspector = ( {
 
 		if ( clearButtonBlock && ! clearButton ) {
 			dispatch( 'core/block-editor' ).updateBlockAttributes(
-				clearButtonBlock.clientId,
-				{
-					lock: {},
-				}
+				clearButtonBlock.clientId
 			);
 
 			dispatch( 'core/block-editor' ).removeBlock(
@@ -48,7 +45,6 @@ export const Inspector = ( {
 		} else if ( ! clearButtonBlock && clearButton ) {
 			dispatch( 'core/block-editor' ).insertBlock(
 				createBlock( 'woocommerce/product-filter-clear-button', {
-					lock: { move: false, remove: true },
 					clearType: 'all',
 				} ),
 				1,

@@ -70,23 +70,12 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 						clearButton
 							? [
 									'woocommerce/product-filter-clear-button',
-									{
-										lock: {
-											remove: true,
-											move: false,
-										},
-									},
 							  ]
 							: null,
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
 				[
 					'woocommerce/product-filter-checkbox-list',
-					{
-						lock: {
-							remove: true,
-						},
-					},
 				],
 			],
 		}
