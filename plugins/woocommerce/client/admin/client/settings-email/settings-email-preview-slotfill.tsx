@@ -33,12 +33,15 @@ type EmailPreviewFillProps = {
 	settingsIds: string[];
 };
 
+const wpMenuWidth = document.getElementById( 'adminmenu' )?.clientWidth || 160;
+// Calculation: WP menu + email settings + email preview + padding
+const FLOATING_PREVIEW_WIDTH_LIMIT = wpMenuWidth + 666 + 684 + 40;
+
 const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 	emailTypes,
 	previewUrl,
 	settingsIds,
 } ) => {
-	const FLOATING_PREVIEW_WIDTH_LIMIT = 1550;
 	const [ deviceType, setDeviceType ] =
 		useState< string >( DEVICE_TYPE_DESKTOP );
 	const isSingleEmail = emailTypes.length === 1;
