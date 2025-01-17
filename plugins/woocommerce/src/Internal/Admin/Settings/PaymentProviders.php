@@ -289,7 +289,10 @@ class PaymentProviders {
 					continue;
 				}
 
-				if ( empty( $preferred_apm ) && ExtensionSuggestions::TYPE_APM === $extension['_type'] ) {
+				// In the preferred APM slot we might surface APMs but also Express Checkouts (PayPal Wallet).
+				if ( empty( $preferred_apm ) &&
+					in_array( $extension['_type'], array( ExtensionSuggestions::TYPE_APM, ExtensionSuggestions::TYPE_EXPRESS_CHECKOUT ) ) ) {
+
 					$preferred_apm = $extension;
 					continue;
 				}
