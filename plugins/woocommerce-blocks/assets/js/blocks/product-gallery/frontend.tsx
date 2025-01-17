@@ -56,10 +56,14 @@ const disableArrows = (
 
 const selectImage = (
 	context: ProductGalleryContext,
-	type: 'prev' | 'next' | 'current'
+	type: 'prev' | 'next' | 'current' | 'first'
 ) => {
 	const { selectedImageIndex, imageId, dialogVisibleImagesIds } = context;
 	let newImageIndex = 1;
+
+	if ( type === 'first' ) {
+		newImageIndex = 1;
+	}
 
 	if ( type === 'current' ) {
 		newImageIndex = getImageIndex( context, imageId ) + 1;
@@ -88,9 +92,7 @@ const closeDialog = ( context: ProductGalleryContext ) => {
 		context.elementThatTriggeredDialogOpening = null;
 	}
 
-	// Recalculate images and arrows. Image in dialog may be last
-	// or not be available in on-page gallery.
-	selectImage( context, 'current' );
+	selectImage( context, 'first' );
 };
 
 const productGallery = {
@@ -151,24 +153,19 @@ const productGallery = {
 			}, 100 );
 		},
 		selectImage: () => {
-			const context = getContext();
-			const nextImageIndex = getImageIndex( context, context.imageId );
-			context.selectedImageIndex = nextImageIndex + 1;
-			disableArrows( context, nextImageIndex );
+			selectImage( getContext(), 'current' );
 		},
 		selectNextImage: ( event?: MouseEvent ) => {
 			if ( event ) {
 				event.stopPropagation();
 			}
-			const context = getContext();
-			selectImage( context, 'next' );
+			selectImage( getContext(), 'next' );
 		},
 		selectPreviousImage: ( event?: MouseEvent ) => {
 			if ( event ) {
 				event.stopPropagation();
 			}
-			const context = getContext();
-			selectImage( context, 'prev' );
+			selectImage( getContext(), 'prev' );
 		},
 		onThumbnailKeyDown: ( event: KeyboardEvent ) => {
 			if (
@@ -256,7 +253,7 @@ const productGallery = {
 			);
 
 			const selectFirstImage = () => {
-				context.selectedImageIndex = 1;
+				selectImage( context, 'first' );
 			};
 
 			if ( clearVariationsLink ) {
