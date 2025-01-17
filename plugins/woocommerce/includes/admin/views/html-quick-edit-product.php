@@ -44,8 +44,10 @@ defined( 'ABSPATH' ) || exit;
 				</span>
 			</label>
 			<br class="clear" />
+		</div>
 
-			<?php if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) : ?>
+		<?php if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) : ?>
+			<div class="cost_fields">
 				<label>
 					<span class="title"><?php esc_html_e( 'Cost', 'woocommerce' ); ?></span>
 					<span class="input-text-wrap">
@@ -53,8 +55,8 @@ defined( 'ABSPATH' ) || exit;
 					</span>
 				</label>
 				<br class="clear" />
-			<?php endif; ?>
-		</div>
+			</div>
+		<?php endif; ?>
 
 		<?php if ( wc_tax_enabled() ) : ?>
 			<label class="alignleft">
