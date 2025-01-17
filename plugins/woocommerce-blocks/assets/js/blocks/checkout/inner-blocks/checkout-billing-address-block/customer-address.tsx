@@ -27,24 +27,21 @@ const CustomerAddress = () => {
 	const { dispatchCheckoutEvent } = useStoreEvents();
 
 	// Forces editing state if store has errors.
-	const { hasValidationErrors, invalidProps } = useSelect(
-		( select ) => {
-			const store = select( validationStore );
-			return {
-				hasValidationErrors: store.hasValidationErrors(),
-				invalidProps: Object.keys( billingAddress )
-					.filter( ( key ) => {
-						return (
-							key !== 'email' &&
-							store.getValidationError( 'billing_' + key ) !==
-								undefined
-						);
-					} )
-					.filter( Boolean ),
-			};
-		},
-		[ billingAddress ]
-	);
+	const { hasValidationErrors, invalidProps } = useSelect( ( select ) => {
+		const store = select( validationStore );
+		return {
+			hasValidationErrors: store.hasValidationErrors(),
+			invalidProps: Object.keys( billingAddress )
+				.filter( ( key ) => {
+					return (
+						key !== 'email' &&
+						store.getValidationError( 'billing_' + key ) !==
+							undefined
+					);
+				} )
+				.filter( Boolean ),
+		};
+	} );
 
 	useEffect( () => {
 		if ( invalidProps.length > 0 && editing === false ) {

@@ -38,8 +38,7 @@ const ShippingCalculatorAddress = ( {
 				isCustomerDataUpdating:
 					select( CART_STORE_KEY ).isCustomerDataUpdating(),
 			};
-		},
-		[]
+		}
 	);
 
 	const validateSubmit = () => {

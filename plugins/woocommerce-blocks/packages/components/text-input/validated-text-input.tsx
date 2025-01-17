@@ -100,8 +100,7 @@ const ValidatedTextInput = forwardRef<
 					validationErrorId:
 						store.getValidationErrorId( errorIdString ),
 				};
-			},
-			[ errorIdString ]
+			}
 		);
 
 		const validateInput = useCallback(

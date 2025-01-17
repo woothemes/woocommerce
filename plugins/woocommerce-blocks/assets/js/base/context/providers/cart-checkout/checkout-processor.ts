@@ -82,8 +82,7 @@ const CheckoutProcessor = () => {
 		useDispatch( CHECKOUT_STORE_KEY );
 
 	const hasValidationErrors = useSelect(
-		( select ) => select( validationStore ).hasValidationErrors,
-		[]
+		( select ) => select( validationStore ).hasValidationErrors
 	);
 	const { shippingErrorStatus } = useShippingDataContext();
 

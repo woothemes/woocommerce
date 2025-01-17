@@ -49,15 +49,12 @@ export const TotalsCoupon = ( {
 	const [ isCouponFormVisible, setIsCouponFormVisible ] =
 		useState( displayCouponForm );
 	const textInputId = `wc-block-components-totals-coupon__input-${ instanceId }`;
-	const { validationErrorId } = useSelect(
-		( select ) => {
-			const store = select( validationStore );
-			return {
-				validationErrorId: store.getValidationErrorId( instanceId ),
-			};
-		},
-		[ instanceId ]
-	);
+	const { validationErrorId } = useSelect( ( select ) => {
+		const store = select( validationStore );
+		return {
+			validationErrorId: store.getValidationErrorId( instanceId ),
+		};
+	} );
 	const inputRef = useRef< ValidatedTextInputHandle >( null );
 
 	const handleCouponSubmit: MouseEventHandler< HTMLButtonElement > = (

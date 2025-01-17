@@ -39,7 +39,7 @@ export const useStoreCartCoupons = ( context = '' ): StoreCartCoupon => {
 				isApplyingCoupon: store.isApplyingCoupon(),
 				isRemovingCoupon: store.isRemovingCoupon(),
 			};
-		}, [] );
+		} );
 
 	const { applyCoupon, removeCoupon } = useDispatch( CART_STORE_KEY );
 	const orderId = useSelect( ( select ) =>

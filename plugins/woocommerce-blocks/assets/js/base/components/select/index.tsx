@@ -86,16 +86,13 @@ export const Select = ( props: SelectProps ) => {
 	const { setValidationErrors, clearValidationError } =
 		useDispatch( validationStore );
 
-	const { error, validationErrorId } = useSelect(
-		( select ) => {
-			const store = select( validationStore );
-			return {
-				error: store.getValidationError( errorId ),
-				validationErrorId: store.getValidationErrorId( errorId ),
-			};
-		},
-		[ errorId ]
-	);
+	const { error, validationErrorId } = useSelect( ( select ) => {
+		const store = select( validationStore );
+		return {
+			error: store.getValidationError( errorId ),
+			validationErrorId: store.getValidationErrorId( errorId ),
+		};
+	} );
 
 	useEffect( () => {
 		if ( ! required || value ) {
@@ -120,17 +117,14 @@ export const Select = ( props: SelectProps ) => {
 		setValidationErrors,
 	] );
 
-	const validationError = useSelect(
-		( select ) => {
-			const store = select( validationStore );
-			return (
-				store.getValidationError( errorId || '' ) || {
-					hidden: true,
-				}
-			);
-		},
-		[ errorId ]
-	);
+	const validationError = useSelect( ( select ) => {
+		const store = select( validationStore );
+		return (
+			store.getValidationError( errorId || '' ) || {
+				hidden: true,
+			}
+		);
+	} );
 
 	return (
 		<div

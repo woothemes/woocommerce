@@ -28,8 +28,7 @@ export const useValidation = (): ValidationData => {
 						`${ prefix }-${ validationErrorId }`
 					),
 			};
-		},
-		[]
+		}
 	);
 
 	return {

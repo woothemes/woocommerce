@@ -104,7 +104,7 @@ const ScrollOnError = ( {
 		return {
 			hasValidationErrors: store.hasValidationErrors(),
 		};
-	}, [] );
+	} );
 	const { showAllValidationErrors } = useDispatch( validationStore );
 
 	const hasErrorsToDisplay =

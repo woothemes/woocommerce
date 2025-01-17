@@ -21,16 +21,13 @@ export const ValidationInputError = ( {
 	propertyName = '',
 	elementId = '',
 }: ValidationInputErrorProps ): JSX.Element | null => {
-	const { validationError, validationErrorId } = useSelect(
-		( select ) => {
-			const store = select( validationStore );
-			return {
-				validationError: store.getValidationError( propertyName ),
-				validationErrorId: store.getValidationErrorId( elementId ),
-			};
-		},
-		[ elementId, propertyName ]
-	);
+	const { validationError, validationErrorId } = useSelect( ( select ) => {
+		const store = select( validationStore );
+		return {
+			validationError: store.getValidationError( propertyName ),
+			validationErrorId: store.getValidationErrorId( elementId ),
+		};
+	} );
 
 	if ( ! errorMessage || typeof errorMessage !== 'string' ) {
 		if ( validationError?.message && ! validationError?.hidden ) {
