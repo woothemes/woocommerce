@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
+import clsx from 'clsx';
 import {
 	PaymentProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
@@ -76,13 +77,18 @@ export const PaymentGateways = ( {
 			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 	}, [] );
 
+	const isBaseCountryDiffrent = storeCountryCode !== businessRegistrationCountry;
+	const selectContainerClass  = clsx( 'settings-payment-gateways__header-select-container', {
+			'has-alert': isBaseCountryDiffrent,
+		} );
+
 	return (
 		<div className="settings-payment-gateways">
 			<div className="settings-payment-gateways__header">
 				<div className="settings-payment-gateways__header-title">
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
-				<div className="settings-payment-gateways__header-select-container">
+				<div className={ selectContainerClass }>
 					<CountrySelector
 						className="woocommerce-select-control__country"
 						label={ __( 'Business location :', 'woocommerce' ) }
@@ -110,7 +116,7 @@ export const PaymentGateways = ( {
 							} );
 						} }
 					/>
-					{ storeCountryCode !== businessRegistrationCountry && (
+					{ isBaseCountryDiffrent && (
 						<div
 							className="settings-payment-gateways__header-select-container--indicator"
 							onClick={ () =>

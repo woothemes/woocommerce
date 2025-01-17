@@ -69,6 +69,12 @@
 				}
 			}
 
+			&.has-alert {
+				.components-country-select-control__menu {
+					width: 310px;
+				}
+			}
+
 			@media screen and ( max-width: 782px ) {
 				margin-top: $gap-smaller;
 			}

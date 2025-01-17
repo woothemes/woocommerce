@@ -73,13 +73,13 @@
 	}
 
 	&__menu {
-		margin: -3px 1px;
+		margin: -3px -1px;
 		background-color: #fff;
 		border: 1px solid $gray-300;
 		border-top: none;
 		border-radius: 2px;
 		max-height: 450px;
-		width: calc(100% - 2px);
+		width: 100%;
 		outline: none;
 		overflow: hidden;
 		padding: 0;
