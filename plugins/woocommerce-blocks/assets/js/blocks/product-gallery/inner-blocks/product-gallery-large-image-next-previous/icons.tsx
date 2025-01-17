@@ -20,7 +20,7 @@ export const Icon = () => (
 	</svg>
 );
 
-export const NextButtonInsideImage = () => (
+export const NextButton = () => (
 	<SVG
 		xmlns="http://www.w3.org/2000/svg"
 		width="49"
@@ -71,7 +71,7 @@ export const NextButtonInsideImage = () => (
 	</SVG>
 );
 
-export const PrevButtonInsideImage = () => (
+export const PrevButton = () => (
 	<SVG
 		xmlns="http://www.w3.org/2000/svg"
 		width="49"

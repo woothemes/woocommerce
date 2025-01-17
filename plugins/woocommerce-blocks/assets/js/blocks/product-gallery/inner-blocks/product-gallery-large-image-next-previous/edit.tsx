@@ -8,7 +8,7 @@ import clsx from 'clsx';
  * Internal dependencies
  */
 import './editor.scss';
-import { PrevButtonInsideImage, NextButtonInsideImage } from './icons';
+import { PrevButton, NextButton } from './icons';
 
 export const Edit = (): JSX.Element => {
 	const blockProps = useBlockProps( {
@@ -29,8 +29,8 @@ export const Edit = (): JSX.Element => {
 					'wc-block-product-gallery-large-image-next-previous-container'
 				) }
 			>
-				<PrevButtonInsideImage />
-				<NextButtonInsideImage />
+				<PrevButton />
+				<NextButton />
 			</div>
 		</div>
 	);
