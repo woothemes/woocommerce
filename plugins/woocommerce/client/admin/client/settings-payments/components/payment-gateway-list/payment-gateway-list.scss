@@ -38,6 +38,7 @@
 
 			@media screen and ( max-width: 782px ) {
 				display: grid;
+				// Configuring the grid layout to three columns, resulting in the buttons shifting to a new row.
 				grid-template-columns: 30px minmax(200px, 1fr) 40px;
 			}
 		}
@@ -114,7 +115,7 @@
 			margin-left: auto;
 
 			@media screen and ( max-width: 782px ) {
-				order: 4;
+				order: 4; /* Position the column in the 4th spot to ensure the buttons appear on a new row */
 				grid-column: 2; /* Start below the 2nd column */
 				grid-row: 2; /* Move to the second row */
 				margin-left: 0;
@@ -135,7 +136,7 @@
 			margin-left: $gap;
 
 			@media screen and ( max-width: 782px ) {
-				order: 3;
+				order: 3; /* Position the column in the 3rd spot to ensure the dots appear on the first row */
 			}
 
 			&.centered {

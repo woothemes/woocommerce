@@ -250,7 +250,7 @@
 			}
 
 			.list-placeholder__content {
-				width: 80%;
+				width: 80%; /* Set the width of the content to 80% to prevent overflowing */
 			}
 
 			.woocommerce-list__item-after {

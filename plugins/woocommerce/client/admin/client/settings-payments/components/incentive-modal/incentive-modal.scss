@@ -38,6 +38,11 @@
 			@media screen and ( max-width: 1024px ) {
 				font-size: 20px;
 			}
+
+			@media screen and ( max-width: 782px ) {
+				font-size: 15px;
+				line-height: 20px;
+			}
 		}
 		& > p {
 			font-size: 16px;
@@ -45,6 +50,11 @@
 
 			@media screen and ( max-width: 1024px ) {
 				font-size: 15px;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				font-size: 13px;
+				line-height: 20px;
 			}
 		}
 
