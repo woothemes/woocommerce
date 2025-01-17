@@ -180,7 +180,7 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 		get_inline_data( $post );
 
 		$cogs_value_html = wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ?
-				'<div class="cogs_value">' . esc_html( $this->object->get_cogs_value() ) . '</div>' :
+				'<div class="cogs_value">' . esc_html( $this->object->get_cogs_value() ?? '0' ) . '</div>' :
 				'';
 
 		/* Custom inline data for woocommerce. */
