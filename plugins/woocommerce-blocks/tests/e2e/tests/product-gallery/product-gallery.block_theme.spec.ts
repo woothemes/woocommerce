@@ -256,14 +256,14 @@ test.describe( `${ blockData.name }`, () => {
 				page: 'frontend',
 			} );
 
-			await expect( pagerBlock ).toHaveText( '1 / 3' );
+			await expect( pagerBlock ).toHaveText( '1/3' );
 
 			const nextButton = page.getByRole( 'button', {
 				name: 'Next image',
 			} );
 			await nextButton.click();
 
-			await expect( pagerBlock ).toHaveText( '2 / 3' );
+			await expect( pagerBlock ).toHaveText( '2/3' );
 
 			const thumbnailsLocator = await pageObject.getThumbnailsBlock( {
 				page: 'frontend',
@@ -271,7 +271,7 @@ test.describe( `${ blockData.name }`, () => {
 			const firstThumbnail = thumbnailsLocator.locator( 'img' ).nth( 0 );
 			await firstThumbnail.click();
 
-			await expect( pagerBlock ).toHaveText( '1 / 3' );
+			await expect( pagerBlock ).toHaveText( '1/3' );
 		} );
 	} );
 

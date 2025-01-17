@@ -47,7 +47,7 @@ test.describe( `${ blockData.name }`, () => {
 			page: 'editor',
 		} );
 
-		await expect( block ).toHaveText( '3 / 7' );
+		await expect( block ).toHaveText( '3/7' );
 
 		await editor.saveSiteEditorEntities( {
 			isOnlyCurrentEntityDirty: true,
@@ -59,6 +59,6 @@ test.describe( `${ blockData.name }`, () => {
 			page: 'frontend',
 		} );
 
-		await expect( blockFrontend ).toHaveText( '1 / 3' );
+		await expect( blockFrontend ).toHaveText( '1/3' );
 	} );
 } );
