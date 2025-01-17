@@ -5,9 +5,6 @@ import { defineConfig, devices } from '@playwright/test';
 
 require( 'dotenv' ).config( { path: __dirname + '/.env' } );
 
-const testsRootPath = __dirname;
-const testsResultsPath = `${ testsRootPath }/test-results`;
-
 if ( ! process.env.BASE_URL ) {
 	console.log( 'BASE_URL is not set. Using default.' );
 	process.env.BASE_URL = 'http://localhost:8086';
@@ -22,7 +19,9 @@ const {
 	REPEAT_EACH,
 } = process.env;
 
-export const STORAGE_DIR_PATH = `${ testsRootPath }/.state/`;
+export const TESTS_ROOT_PATH = __dirname;
+export const TESTS_RESULTS_PATH = `${ TESTS_ROOT_PATH }/test-results`;
+export const STORAGE_DIR_PATH = `${ TESTS_ROOT_PATH }/.state/`;
 export const ADMIN_STATE_PATH = `${ STORAGE_DIR_PATH }/admin.json`;
 export const CUSTOMER_STATE_PATH = `${ STORAGE_DIR_PATH }/customer.json`;
 export const CONSUMER_KEY = { name: '', key: '', secret: '' };
@@ -34,7 +33,7 @@ const reporter = [
 		{
 			outputFolder:
 				ALLURE_RESULTS_DIR ??
-				`${ testsRootPath }/test-results/allure-results`,
+				`${ TESTS_ROOT_PATH }/test-results/allure-results`,
 			detail: true,
 			suiteTitle: true,
 		},
@@ -42,27 +41,27 @@ const reporter = [
 	[
 		'json',
 		{
-			outputFile: `${ testsRootPath }/test-results/test-results-${ Date.now() }.json`,
+			outputFile: `${ TESTS_ROOT_PATH }/test-results/test-results-${ Date.now() }.json`,
 		},
 	],
 	[
-		`${ testsRootPath }/reporters/environment-reporter.js`,
-		{ outputFolder: `${ testsRootPath }/test-results/allure-results` },
+		`${ TESTS_ROOT_PATH }/reporters/environment-reporter.js`,
+		{ outputFolder: `${ TESTS_ROOT_PATH }/test-results/allure-results` },
 	],
 	[
-		`${ testsRootPath }/reporters/flaky-tests-reporter.js`,
-		{ outputFolder: `${ testsRootPath }/test-results/flaky-tests` },
+		`${ TESTS_ROOT_PATH }/reporters/flaky-tests-reporter.js`,
+		{ outputFolder: `${ TESTS_ROOT_PATH }/test-results/flaky-tests` },
 	],
 ];
 
 if ( process.env.CI ) {
 	reporter.push( [ 'buildkite-test-collector/playwright/reporter' ] );
-	reporter.push( [ `${ testsRootPath }/reporters/skipped-tests.js` ] );
+	reporter.push( [ `${ TESTS_ROOT_PATH }/reporters/skipped-tests.js` ] );
 } else {
 	reporter.push( [
 		'html',
 		{
-			outputFolder: `${ testsRootPath }/playwright-report`,
+			outputFolder: `${ TESTS_ROOT_PATH }/playwright-report`,
 			open: 'on-failure',
 		},
 	] );
@@ -73,8 +72,8 @@ export default defineConfig( {
 		? Number( DEFAULT_TIMEOUT_OVERRIDE )
 		: 120 * 1000,
 	expect: { timeout: 20 * 1000 },
-	outputDir: testsResultsPath,
-	testDir: `${ testsRootPath }/tests`,
+	outputDir: TESTS_RESULTS_PATH,
+	testDir: `${ TESTS_ROOT_PATH }/tests`,
 	retries: CI ? 1 : 0,
 	repeatEach: REPEAT_EACH ? Number( REPEAT_EACH ) : 1,
 	workers: 1,
@@ -99,26 +98,32 @@ export default defineConfig( {
 	projects: [
 		{
 			name: 'global authentication',
-			testDir: `${ testsRootPath }/fixtures`,
+			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
 			testMatch: 'auth.setup.js',
 		},
 		{
 			name: 'consumer token setup',
-			testDir: `${ testsRootPath }/fixtures`,
+			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
 			testMatch: 'token.setup.js',
 			teardown: 'consumer token teardown',
 			dependencies: [ 'global authentication' ],
 		},
 		{
 			name: 'consumer token teardown',
-			testDir: `${ testsRootPath }/fixtures`,
+			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
 			testMatch: `token.teardown.js`,
 		},
 		{
 			name: 'site setup',
-			testDir: `${ testsRootPath }/fixtures`,
+			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
 			testMatch: `site.setup.js`,
 			dependencies: [ 'consumer token setup' ],
+		},
+		{
+			name: 'reset',
+			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
+			testMatch: 'reset.setup.js',
+			dependencies: [ 'site setup' ],
 		},
 		{
 			name: 'ui',

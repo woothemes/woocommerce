@@ -23,7 +23,6 @@ import { admin, customer } from '../../test-data/data';
 import { logIn } from '../../utils/login';
 import { clearFilters, setFilterValue } from '../../utils/filters';
 import { setOption } from '../../utils/options';
-import { setComingSoon } from '../../utils/coming-soon';
 
 const guestEmail = 'checkout-guest@example.com';
 const newAccountEmail = `marge-${ new Date()
@@ -68,8 +67,6 @@ test.describe(
 	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS, tags.SKIP_ON_WPCOM ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
-
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

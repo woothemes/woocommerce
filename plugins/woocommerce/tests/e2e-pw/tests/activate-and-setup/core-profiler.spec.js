@@ -20,12 +20,6 @@ test.describe(
 				await setOption(
 					request,
 					baseURL,
-					'woocommerce_coming_soon',
-					'no'
-				);
-				await setOption(
-					request,
-					baseURL,
 					'woocommerce_remote_variant_assignment',
 					'60'
 				);
@@ -474,19 +468,6 @@ test.describe(
 	'Store owner can skip the core profiler',
 	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
-		test.beforeAll( async ( { baseURL } ) => {
-			try {
-				await setOption(
-					request,
-					baseURL,
-					'woocommerce_coming_soon',
-					'no'
-				);
-			} catch ( error ) {
-				console.log( error );
-			}
-		} );
-
 		test( 'Can click skip guided setup', async ( { page } ) => {
 			await page.goto(
 				'wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard'

@@ -1,5 +1,4 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
 const { CUSTOMER_STATE_PATH } = require( '../../playwright.config' );
 const test = baseTest.extend( {
 	storageState: CUSTOMER_STATE_PATH,
@@ -10,8 +9,7 @@ test(
 	{
 		tag: [ tags.WP_CORE, tags.SKIP_ON_WPCOM ],
 	},
-	async ( { baseURL, page } ) => {
-		await setComingSoon( { baseURL, enabled: 'no' } );
+	async ( { page } ) => {
 		await page.goto( 'hello-world/' );
 		await expect(
 			page.getByRole( 'heading', { name: 'Hello world!', exact: true } )

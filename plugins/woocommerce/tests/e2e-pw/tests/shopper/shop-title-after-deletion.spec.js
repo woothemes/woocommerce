@@ -1,5 +1,4 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
 const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 // test case for bug https://github.com/woocommerce/woocommerce/pull/46429
 const test = baseTest.extend( {
@@ -33,8 +32,7 @@ const test = baseTest.extend( {
 test(
 	'Check the title of the shop page after the page has been deleted',
 	{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
-	async ( { baseURL, page } ) => {
-		await setComingSoon( { baseURL, enabled: 'no' } );
+	async ( { page } ) => {
 		await page.goto( 'shop/' );
 		expect( await page.title() ).toBe(
 			'Shop – WooCommerce Core E2E Test Suite'

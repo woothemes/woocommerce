@@ -13,7 +13,6 @@ import { ADMIN_STATE_PATH } from '../../playwright.config';
 const { test, expect } = require( '@playwright/test' );
 const { customer, storeDetails } = require( '../../test-data/data' );
 const { api } = require( '../../utils' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
 
 let productId, orderId, zoneId;
 
@@ -38,8 +37,7 @@ test.describe(
 	() => {
 		test.use( { storageState: ADMIN_STATE_PATH } );
 
-		test.beforeAll( async ( { baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
+		test.beforeAll( async () => {
 			productId = await api.create.product( product );
 			await api.update.enableCashOnDelivery();
 

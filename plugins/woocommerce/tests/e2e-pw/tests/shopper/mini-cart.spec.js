@@ -14,7 +14,6 @@ import { ADMIN_STATE_PATH } from '../../playwright.config';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { random } = require( '../../utils/helpers' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
 const miniCartPageTitle = `Mini Cart ${ random() }`;
 const miniCartPageSlug = miniCartPageTitle.replace( / /gi, '-' ).toLowerCase();
 const miniCartButton = 'main .wc-block-mini-cart__button';
@@ -35,7 +34,6 @@ test.describe(
 		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

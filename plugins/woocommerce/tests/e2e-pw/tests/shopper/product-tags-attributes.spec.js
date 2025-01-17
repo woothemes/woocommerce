@@ -11,7 +11,6 @@ const { test, expect, request } = require( '@playwright/test' );
 const { admin } = require( '../../test-data/data' );
 const pageTitle = 'Product Showcase';
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { setComingSoon } = require( '../../utils/coming-soon' );
 const singleProductPrice1 = '5.00';
 const singleProductPrice2 = '10.00';
 const singleProductPrice3 = '15.00';
@@ -40,7 +39,6 @@ test.describe(
 		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,
