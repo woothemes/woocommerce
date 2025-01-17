@@ -423,17 +423,18 @@
 			position: absolute;
 			right: 0.7em;
 			text-decoration: none;
-			top: 0.7em;
+			top: 50%;
+			transform: translateY( -50% );
 			-moz-osx-font-smoothing: inherit;
 			-webkit-appearance: none;
 			-webkit-font-smoothing: inherit;
 		}
 
 		.show-password-input::after {
-
 			@include iconafter( "\e010" ); 	// Icon styles and glyph
-
 			margin-left: 0; /* reset the left margin from iconafter mixin */
+			margin-top: -2px; /* Manual vertical alignment adjustment */
+			vertical-align: middle;
 		}
 
 		.show-password-input.display-password::after {
