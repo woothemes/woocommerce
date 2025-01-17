@@ -7,7 +7,6 @@ import fs from 'fs';
 /**
  * Internal dependencies
  */
-import { logIn } from '../utils/login';
 const { admin, customer } = require( '../test-data/data' );
 import {
 	ADMIN_STATE_PATH,
@@ -15,10 +14,14 @@ import {
 	STORAGE_DIR_PATH,
 } from '../playwright.config';
 
-async function authenticate( page, user, storagePath ) {
-	await page.goto( './wp-admin' );
-	await logIn( page, user.username, user.password, false );
-	await page.context().storageState( { path: storagePath } );
+async function authenticate( request, user, storagePath ) {
+	await request.post( './wp-login.php', {
+		form: {
+			log: user.username,
+			pwd: user.password,
+		},
+	} );
+	await request.storageState( { path: storagePath } );
 }
 
 setup.beforeAll( 'clear existing state', async () => {
@@ -29,10 +32,10 @@ setup.beforeAll( 'clear existing state', async () => {
 	} );
 } );
 
-setup( 'authenticate admin', async ( { page } ) => {
-	await authenticate( page, admin, ADMIN_STATE_PATH );
+setup( 'authenticate admin', async ( { request } ) => {
+	await authenticate( request, admin, ADMIN_STATE_PATH );
 } );
 
-setup( 'authenticate customer', async ( { page } ) => {
-	await authenticate( page, customer, CUSTOMER_STATE_PATH );
+setup( 'authenticate customer', async ( { request } ) => {
+	await authenticate( request, customer, CUSTOMER_STATE_PATH );
 } );
