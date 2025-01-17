@@ -2803,6 +2803,7 @@ class WC_AJAX {
 		self::bulk_set_cogs_value( $variations, $cost_value );
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	/**
 	 * Bulk action - Unset cost values.
 	 *
@@ -2814,6 +2815,7 @@ class WC_AJAX {
 	private static function variation_bulk_action_variable_unset_cogs_value( $variations, $data ) {
 		self::bulk_set_cogs_value( $variations, null );
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 	/**
 	 * Common method to set and unset cost values.
@@ -3699,17 +3701,17 @@ class WC_AJAX {
 		return wc_get_container()->get( Automattic\WooCommerce\Internal\Admin\Orders\EditLock::class )->check_locked_orders_ajax( $response, $data );
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	/**
 	 * Render a variation editor.
 	 *
 	 * NOTE! Do NOT remove the apparently unused function arguments.
 	 * These are actually used inside the included html-variation-admin template.
 	 *
-	 * @param WC_Product $product_object
-	 * @param WC_Product $variation_object
-	 * @param $loop
-	 * @param float|null $base_cost
-	 * @return void
+	 * @param WC_Product $product_object PArent product of the variation being edited.
+	 * @param WC_Product $variation_object Variation being edited.
+	 * @param int        $loop Index of the variation being rendered.
+	 * @param float|null $base_cost Default cost for variations, null if the Cost of Goods Sold feature is disabled.
 	 */
 	private static function render_variation_html( WC_Product $product_object, WC_Product $variation_object, $loop, ?float $base_cost ) {
 		$variation_id   = $variation_object->save();
@@ -3717,6 +3719,7 @@ class WC_AJAX {
 		$variation_data = array_merge( get_post_custom( $variation_id ), wc_get_product_variation_attributes( $variation_id ) ); // kept for BW compatibility.
 		include __DIR__ . '/admin/meta-boxes/views/html-variation-admin.php';
 	}
+	// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 	/**
 	 * Get the Cost of Goods Sold value for a product (0 if it's null), return null if the Cost of Goods Sold feature is disabled.

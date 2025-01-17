@@ -186,6 +186,7 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 				'<div class="cogs_value">' . esc_html( $this->object->get_cogs_value() ?? '0' ) . '</div>' :
 				'';
 
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- the COGS value is already escaped.
 		/* Custom inline data for woocommerce. */
 		echo '
 			<div class="hidden" id="woocommerce_inline_' . absint( $this->object->get_id() ) . '">
@@ -211,6 +212,7 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 				<div class="low_stock_amount">' . esc_html( $this->object->get_low_stock_amount() ) . '</div>'
 				. $cogs_value_html .
 			'</div>';
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
