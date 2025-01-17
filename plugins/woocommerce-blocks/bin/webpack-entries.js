@@ -30,6 +30,15 @@ const blocks = {
 		customDir: 'add-to-cart-with-options/variation-selector',
 		isExperimental: true,
 	},
+	'add-to-cart-with-options-grouped-product-selector': {
+		customDir: 'add-to-cart-with-options/grouped-product-selector',
+		isExperimental: true,
+	},
+	'add-to-cart-with-options-grouped-product-selector-product-item-template': {
+		customDir:
+			'add-to-cart-with-options/grouped-product-selector/product-item-template',
+		isExperimental: true,
+	},
 	'all-products': {
 		customDir: 'products/all-products',
 	},
