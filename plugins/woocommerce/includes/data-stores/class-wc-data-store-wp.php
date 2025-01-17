@@ -81,19 +81,25 @@ class WC_Data_Store_WP {
 	 * @return array
 	 */
 	public function read_meta( &$object ) {
-		global $wpdb;
-		$db_info       = $this->get_db_info();
-		$raw_meta_data = $wpdb->get_results(
-			$wpdb->prepare(
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT {$db_info['meta_id_field']} as meta_id, meta_key, meta_value
-				FROM {$db_info['table']}
-				WHERE {$db_info['object_id_field']} = %d
-				ORDER BY {$db_info['meta_id_field']}",
-				// phpcs:enable
-				$object->get_id()
-			)
-		);
+		$raw_meta_data = wp_cache_get( $object->get_id(), $this->meta_type . '_wc_meta' );
+
+		if ( empty( $raw_meta_data ) ) {
+			global $wpdb;
+			$db_info       = $this->get_db_info();
+			$raw_meta_data = $wpdb->get_results(
+				$wpdb->prepare(
+					// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					"SELECT {$db_info['meta_id_field']} as meta_id, meta_key, meta_value
+					FROM {$db_info['table']}
+					WHERE {$db_info['object_id_field']} = %d
+					ORDER BY {$db_info['meta_id_field']}",
+					// phpcs:enable
+					$object->get_id()
+				)
+			);
+			wp_cache_set( $object->get_id(), $raw_meta_data, $this->meta_type . '_wc_meta' );
+		}
+
 		return $this->filter_raw_meta_data( $object, $raw_meta_data );
 	}
 
@@ -129,6 +135,7 @@ class WC_Data_Store_WP {
 	 * @param  stdClass $meta (containing at least ->id).
 	 */
 	public function delete_meta( &$object, $meta ) {
+		wp_cache_delete( $object->get_id(), $this->meta_type . '_wc_meta' );
 		delete_metadata_by_mid( $this->meta_type, $meta->id );
 	}
 
@@ -141,6 +148,7 @@ class WC_Data_Store_WP {
 	 * @return int meta ID
 	 */
 	public function add_meta( &$object, $meta ) {
+		wp_cache_delete( $object->get_id(), $this->meta_type . '_wc_meta' );
 		return add_metadata( $this->meta_type, $object->get_id(), wp_slash( $meta->key ), is_string( $meta->value ) ? wp_slash( $meta->value ) : $meta->value, false );
 	}
 
@@ -152,6 +160,7 @@ class WC_Data_Store_WP {
 	 * @param  stdClass $meta (containing ->id, ->key and ->value).
 	 */
 	public function update_meta( &$object, $meta ) {
+		wp_cache_delete( $object->get_id(), $this->meta_type . '_wc_meta' );
 		update_metadata_by_mid( $this->meta_type, $meta->id, $meta->value, $meta->key );
 	}
 
