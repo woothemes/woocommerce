@@ -7,7 +7,7 @@
 	}
 
 	&__media {
-		@media screen and ( max-width: 782px ) {
+		@media screen and ( max-width: 1024px ) {
 			width: 100%;
 		}
 
@@ -22,7 +22,7 @@
 		display: flex;
 		align-items: center;
 
-		@media screen and ( max-width: 782px ) {
+		@media screen and ( max-width: 1024px ) {
 			flex-direction: column;
 		}
 	}
@@ -34,10 +34,18 @@
 			font-weight: 400;
 			font-size: 24px;
 			line-height: 32px;
+
+			@media screen and ( max-width: 1024px ) {
+				font-size: 20px;
+			}
 		}
 		& > p {
 			font-size: 16px;
 			line-height: 24px;
+
+			@media screen and ( max-width: 1024px ) {
+				font-size: 15px;
+			}
 		}
 
 		& > p.woocommerce-incentive-modal__terms {
@@ -47,6 +55,10 @@
 
 		& > .woocommerce-incentive-model__actions {
 			margin-top: 32px;
+
+			@media screen and ( max-width: 1024px ) {
+				text-align: right;
+			}
 		}
 	}
 
@@ -54,14 +66,20 @@
 		width: 280px;
 		padding: 76px 40px;
 
+		@media screen and ( max-width: 1024px ) {
+			max-height: 220px;
+			padding: 0;
+		}
+
 		@media screen and ( max-width: 782px ) {
 			max-height: 220px;
 			padding: 0;
 		}
 	}
 
-	@media screen and ( max-width: 840px ) {
-		margin: auto $gap-large;
+	@media screen and ( max-width: 1024px ) {
+		margin: auto;
+		max-width: 500px;
 	}
 
 	@media screen and ( max-width: 782px ) {
