@@ -258,7 +258,9 @@ test.describe( `${ blockData.name }`, () => {
 
 			await expect( pagerBlock ).toHaveText( '1 / 3' );
 
-			const nextButton = page.getByLabel( 'Next image' );
+			const nextButton = page.getByRole( 'button', {
+				name: 'Next image',
+			} );
 			await nextButton.click();
 
 			await expect( pagerBlock ).toHaveText( '2 / 3' );
