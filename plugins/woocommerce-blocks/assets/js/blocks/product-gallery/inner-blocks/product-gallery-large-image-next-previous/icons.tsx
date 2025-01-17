@@ -27,7 +27,7 @@ export const NextButtonInsideImage = () => (
 		height="48"
 		viewBox="0 0 49 48"
 		fill="none"
-		className={ `wc-block-product-gallery-large-image-next-previous-right--inside-image` }
+		className={ `wc-block-product-gallery-large-image-next-previous-right` }
 	>
 		<g filter="url(#filter0_b_397_11354)">
 			<rect
@@ -78,7 +78,7 @@ export const PrevButtonInsideImage = () => (
 		height="48"
 		viewBox="0 0 49 48"
 		fill="none"
-		className={ `wc-block-product-gallery-large-image-next-previous-left--inside-image` }
+		className={ `wc-block-product-gallery-large-image-next-previous-left` }
 	>
 		<g filter="url(#filter0_b_397_11356)">
 			<rect
