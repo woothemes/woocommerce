@@ -219,6 +219,20 @@ class PaymentExtensionSuggestions {
 				),
 			),
 		),
+		'AL' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
+		),
+		'AD' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
+		),
 		'AT' => array(
 			self::WOOPAYMENTS,
 			self::PAYPAL_FULL_STACK,
@@ -264,6 +278,13 @@ class PaymentExtensionSuggestions {
 							'url'   => 'https://www.klarna.com/be/fr/conditions-generales/',
 						),
 					),
+				),
+			),
+		),
+		'BA' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 		),
@@ -408,6 +429,13 @@ class PaymentExtensionSuggestions {
 				),
 			),
 		),
+		'PF' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
+		),
 		'GI' => array(
 			self::STRIPE => array(
 				'_append' => array(
@@ -487,6 +515,18 @@ class PaymentExtensionSuggestions {
 							'url'   => 'https://www.klarna.com/hu/jogi-informaciok/',
 						),
 					),
+				),
+			),
+		),
+		'IS' => array(
+			self::MOLLIE        => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
 				),
 			),
 		),
@@ -597,6 +637,13 @@ class PaymentExtensionSuggestions {
 		'MD' => array(
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
+		),
+		'MC' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
 		),
 		'NL' => array(
 			self::WOOPAYMENTS,
@@ -715,6 +762,13 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
+		'RS' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
+		),
 		'SK' => array(
 			self::WOOPAYMENTS,
 			self::PAYPAL_FULL_STACK,
@@ -735,6 +789,13 @@ class PaymentExtensionSuggestions {
 					),
 				),
 			),
+		),
+		'SI' => array(
+			self::WOOPAYMENTS,
+			self::PAYPAL_FULL_STACK,
+			self::STRIPE,
+			self::MOLLIE,
+			self::PAYPAL_WALLET,
 		),
 		'ES' => array(
 			self::WOOPAYMENTS,
@@ -1315,6 +1376,13 @@ class PaymentExtensionSuggestions {
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
 		),
+		'TW' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
+		),
 		'TH' => array(
 			self::STRIPE => array(
 				'_append' => array(
@@ -1465,9 +1533,17 @@ class PaymentExtensionSuggestions {
 		'ZW' => array(),
 
 		// Middle East.
+		'AF' => array(),
 		'BH' => array(
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
+		),
+		'GE' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
 		),
 		'IQ' => array(),
 		'IL' => array(
@@ -1480,6 +1556,13 @@ class PaymentExtensionSuggestions {
 		'JO' => array(
 			self::PAYPAL_FULL_STACK,
 			self::PAYPAL_WALLET,
+		),
+		'KZ' => array(
+			self::PAYPAL_WALLET => array(
+				'_append' => array(
+					'tags' => array( self::TAG_PREFERRED ),
+				),
+			),
 		),
 		'KW' => array(
 			self::PAYPAL_FULL_STACK,
