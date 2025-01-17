@@ -139,6 +139,10 @@
 			border: none;
 		}
 	}
+
+	@media screen and ( max-width: 782px ) {
+		max-width: 280px;
+	}
 }
 
 .components-button.components-country-select-control__button {
