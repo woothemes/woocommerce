@@ -231,6 +231,9 @@ class OrderActionsRestController extends RestApiControllerBase {
 		 *
 		 * Note that the email class must also exist in WC_Emails::$emails.
 		 *
+		 * When adding a custom email template to this list, a callback must also be added to trigger the sending
+		 * of the email. See the `woocommerce_rest_order_actions_email_send` action hook.
+		 *
 		 * @since 9.8.0
 		 *
 		 * @param string[] $valid_template_classes Array of email template class names that are valid for a given order.
@@ -344,39 +347,50 @@ class OrderActionsRestController extends RestApiControllerBase {
 		}
 
 		switch ( $template_id ) {
+			// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingSinceComment
 			case 'customer_completed_order':
-				// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingSinceComment
-				/** This action is documented in  */
+				/** This action is documented in includes/class-wc-emails.php */
 				do_action( 'woocommerce_order_status_completed_notification', $order->get_id(), $order );
 				break;
 			case 'customer_failed_order':
-
+				/** This action is documented in includes/class-wc-emails.php */
 				do_action( 'woocommerce_order_status_failed_notification', $order->get_id(), $order );
 				break;
 			case 'customer_on_hold_order':
-
-				do_action( 'woocommerce_order_status_pending_to_on-hold_notification', $order->get_id(), $order );
+				/** This action is documented in includes/class-wc-emails.php */
+				do_action( 'woocommerce_order_status_pending_to_on-hold_notification', $order->get_id(), $order ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 				break;
 			case 'customer_processing_order':
-
+				/** This action is documented in includes/class-wc-emails.php */
 				do_action( 'woocommerce_order_status_pending_to_processing_notification', $order->get_id(), $order );
 				break;
 			case 'customer_refunded_order':
 				if ( $this->order_is_partially_refunded( $order ) ) {
-
+					/** This action is documented in includes/class-wc-emails.php */
 					do_action( 'woocommerce_order_partially_refunded_notification', $order->get_id() );
 				} else {
-
+					/** This action is documented in includes/class-wc-emails.php */
 					do_action( 'woocommerce_order_fully_refunded_notification', $order->get_id() );
 				}
 				break;
+			// phpcs:enable WooCommerce.Commenting.CommentHooks.MissingSinceComment
 
 			case 'customer_invoice':
 				return $this->send_order_details( $request );
 
 			default:
-
-				do_action( '', $order->get_id(), $order );
+				/**
+				 * Action to trigger sending a custom order email template from a REST API request.
+				 *
+				 * The email template must first be made available for the associated order.
+				 * See the `woocommerce_rest_order_actions_email_valid_template_classes` filter hook.
+				 *
+				 * @since 9.8.0
+				 *
+				 * @param int    $order_id    The ID of the order.
+				 * @param string $template_id The ID of the template specified in the API request.
+				 */
+				do_action( 'woocommerce_rest_order_actions_email_send', $order->get_id(), $template_id );
 				break;
 		}
 
