@@ -72,7 +72,7 @@
 			background-color: var(--wc-form-color-background, #fff);
 			border: var(--wc-form-border-width) solid var(--wc-form-border-color);
 			border-radius: var(--wc-form-border-radius);
-			color: var(--wc-form-color-text);
+			color: var(--wc-form-color-text, #000);
 			box-sizing: border-box;
 			width: 100%;
 			margin: 0;
