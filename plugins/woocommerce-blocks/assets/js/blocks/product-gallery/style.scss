@@ -274,17 +274,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-// Pager
-.wc-block-product-gallery-pager__pager {
-	display: flex;
-	justify-content: center;
-	list-style: none;
-	gap: $gap-small;
-	margin-top: 0;
-	margin-bottom: 0;
-	padding: 0;
-}
-
 // Thumbnails
 #{$thumbnails} {
 	display: flex;
