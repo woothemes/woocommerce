@@ -1931,6 +1931,37 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	}
 
 	/**
+	 * Returns the Cost of Goods Sold value in html format.
+	 *
+	 * @return string
+	 */
+	public function get_cogs_value_html() {
+		$value = $this->get_cogs_total_value();
+		$html  = 0.0 === $value ?
+			/**
+			 * Filter to customize how an empty Cost of Goods Sold value for a product gets rendered to HTML.
+			 *
+			 * @param string $html The rendered HTML.
+			 * @param WC_Product $product The product for which the cost is rendered.
+			 *
+			 * @since 9.7.0
+			 */
+			apply_filters( 'woocommerce_empty_cogs_html', '', $this ) :
+			wc_price( $value ) . $this->get_price_suffix();
+
+		/**
+		 * Filter to customize how the Cost of Goods Sold value for a product gets rendered to HTML.
+		 *
+		 * @param string $html The rendered HTML.
+		 * @param float $value The cost value that is being rendered.
+		 * @param WC_Product $product The product for which the cost is rendered.
+		 *
+		 * @since 9.7.0
+		 */
+		return apply_filters( 'woocommerce_get_cogs_html', $html, $value, $this );
+	}
+
+	/**
 	 * Get product name with SKU or ID. Used within admin.
 	 *
 	 * @return string Formatted product name

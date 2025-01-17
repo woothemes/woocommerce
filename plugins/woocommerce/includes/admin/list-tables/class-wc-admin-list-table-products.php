@@ -128,7 +128,10 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 			$show_columns['is_in_stock'] = __( 'Stock', 'woocommerce' );
 		}
 
-		$show_columns['price']       = __( 'Price', 'woocommerce' );
+		$show_columns['price'] = __( 'Price', 'woocommerce' );
+		if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+			$show_columns['cogs_value'] = __( 'Cost', 'woocommerce' );
+		}
 		$show_columns['product_cat'] = __( 'Categories', 'woocommerce' );
 		$show_columns['product_tag'] = __( 'Tags', 'woocommerce' );
 		$show_columns['featured']    = '<span class="wc-featured parent-tips" data-tip="' . esc_attr__( 'Featured', 'woocommerce' ) . '">' . __( 'Featured', 'woocommerce' ) . '</span>';
@@ -221,7 +224,16 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 	 * Render column: price.
 	 */
 	protected function render_price_column() {
-		echo $this->object->get_price_html() ? wp_kses_post( $this->object->get_price_html() ) : '<span class="na">&ndash;</span>';
+		$html = $this->object->get_price_html();
+		echo $html ? wp_kses_post( $html ) : '<span class="na">&ndash;</span>';
+	}
+
+	/**
+	 * Render column: cost.
+	 */
+	protected function render_cogs_value_column() {
+		$html = $this->object->get_cogs_value_html();
+		echo $html ? wp_kses_post( $html ) : '<span class="na">&ndash;</span>';
 	}
 
 	/**
