@@ -60,6 +60,10 @@
 		}
 	}
 
+	@media screen and ( max-width: 840px ) {
+		margin: auto $gap-large;
+	}
+
 	@media screen and ( max-width: 782px ) {
 		margin: auto $gap;
 	}
