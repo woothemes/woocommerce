@@ -12,6 +12,7 @@ use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Utilities\HtmlSanitizer;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -3567,10 +3568,13 @@ if ( ! function_exists( 'wc_get_email_order_items' ) ) {
 	function wc_get_email_order_items( $order, $args = array() ) {
 		ob_start();
 
+		$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+		$image_size                 = $email_improvements_enabled ? 48 : 32;
+
 		$defaults = array(
 			'show_sku'      => false,
-			'show_image'    => false,
-			'image_size'    => array( 32, 32 ),
+			'show_image'    => $email_improvements_enabled,
+			'image_size'    => array( $image_size, $image_size ),
 			'plain_text'    => false,
 			'sent_to_admin' => false,
 		);
