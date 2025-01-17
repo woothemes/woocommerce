@@ -4,6 +4,8 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Pill } from '@woocommerce/components';
+import { Tooltip } from '@wordpress/components';
+import { Icon, info } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -26,9 +28,14 @@ interface StatusBadgeProps {
 	 * Override the default status message to display a custom one. Optional.
 	 */
 	message?: string;
+	tooltipText?: string;
 }
 
-export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
+export const StatusBadge = ( {
+	status,
+	message,
+	tooltipText,
+}: StatusBadgeProps ) => {
 	const getStatusClass = () => {
 		switch ( status ) {
 			case 'active':
@@ -65,6 +72,11 @@ export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 	return (
 		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
 			{ message || getStatusMessage() }
+			{ tooltipText && (
+				<Tooltip text={ tooltipText }>
+					<Icon icon={ info } />
+				</Tooltip>
+			) }
 		</Pill>
 	);
 };

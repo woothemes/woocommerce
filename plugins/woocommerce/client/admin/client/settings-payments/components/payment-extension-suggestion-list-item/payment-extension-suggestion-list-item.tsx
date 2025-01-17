@@ -61,6 +61,9 @@ export const PaymentExtensionSuggestionListItem = ( {
 							<StatusBadge
 								status="has_incentive"
 								message={ extension._incentive.badge }
+								tooltipText={
+									extension._incentive.title
+								}
 							/>
 						) }
 					</span>
