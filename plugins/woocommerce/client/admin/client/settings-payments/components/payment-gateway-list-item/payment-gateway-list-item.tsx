@@ -59,6 +59,11 @@ export const PaymentGatewayListItem = ( {
 			return 'needs_setup';
 		}
 		if ( gateway.state.enabled ) {
+			// A test account also implies test mode.
+			if ( gateway.onboarding.state.test_mode ) {
+				return 'test_account';
+			}
+
 			if ( gateway.state.test_mode ) {
 				return 'test_mode';
 			}
