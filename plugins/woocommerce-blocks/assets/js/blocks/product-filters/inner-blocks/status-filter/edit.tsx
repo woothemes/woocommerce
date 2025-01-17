@@ -20,7 +20,7 @@ import { Inspector } from './inspector';
 import type { EditProps } from './types';
 
 const Edit = ( props: EditProps ) => {
-	const { showCounts, hideEmpty, clearButton } = props.attributes;
+	const { showCounts, hideEmpty } = props.attributes;
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
 		{
@@ -49,9 +49,7 @@ const Edit = ( props: EditProps ) => {
 								content: __( 'Status', 'woocommerce' ),
 							},
 						],
-						clearButton
-							? [ 'woocommerce/product-filter-clear-button' ]
-							: null,
+						[ 'woocommerce/product-filter-clear-button' ],
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
 				[ 'woocommerce/product-filter-checkbox-list' ],
