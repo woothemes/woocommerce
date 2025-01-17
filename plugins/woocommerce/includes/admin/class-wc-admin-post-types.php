@@ -998,8 +998,8 @@ class WC_Admin_Post_Types {
 			return;
 		}
 
-		$cogs_value = wc_clean( wp_unslash( $request_data['_cogs_value'] ?? '0' ) );
-		$product->set_cogs_value( $cogs_value );
+		$cogs_value = wc_clean( wp_unslash( $request_data['_cogs_value'] ?? '' ) );
+		$product->set_cogs_value( '' === $cogs_value ? null : (float) $cogs_value );
 	}
 }
 
