@@ -77,10 +77,14 @@ export const PaymentGateways = ( {
 			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 	}, [] );
 
-	const isBaseCountryDiffrent = storeCountryCode !== businessRegistrationCountry;
-	const selectContainerClass  = clsx( 'settings-payment-gateways__header-select-container', {
+	const isBaseCountryDiffrent =
+		storeCountryCode !== businessRegistrationCountry;
+	const selectContainerClass = clsx(
+		'settings-payment-gateways__header-select-container',
+		{
 			'has-alert': isBaseCountryDiffrent,
-		} );
+		}
+	);
 
 	return (
 		<div className="settings-payment-gateways">
