@@ -1187,7 +1187,7 @@ class PaymentProvidersTest extends WC_Unit_Test_Case {
 
 		// Assert.
 		$this->assertIsArray( $categories );
-		$this->assertCount( 3, $categories );
+		$this->assertCount( 4, $categories );
 	}
 
 	/**
