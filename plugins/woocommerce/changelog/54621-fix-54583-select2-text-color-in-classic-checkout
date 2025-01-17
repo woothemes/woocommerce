@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Set font color of select2 input fields to `black` to ensure that the values remain visible when using a dark mode theme.
