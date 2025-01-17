@@ -58,9 +58,10 @@ export const PaymentGateways = ( {
 }: PaymentGatewaysProps ) => {
 	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
-	const storeCountryCode =
+	const storeCountryCode = (
 		window.wcSettings?.admin?.preloadSettings?.general
-			?.woocommerce_default_country || false;
+			?.woocommerce_default_country || 'US'
+	).split( ':' )[ 0 ]; // Retrieve the default store country code, by removing the state code if present.
 
 	/**
 	 * Generates a list of country options from the WooCommerce settings.
