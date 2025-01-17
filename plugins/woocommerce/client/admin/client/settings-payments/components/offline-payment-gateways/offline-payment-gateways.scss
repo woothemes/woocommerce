@@ -24,7 +24,7 @@
 			@media screen and ( max-width: 782px ) {
 				display: grid;
 				// Configuring the grid layout to two columns, resulting in the buttons shifting to a new row.
-				grid-template-columns: 30px minmax(200px, 1fr); 
+				grid-template-columns: 30px minmax(200px, 1fr);
 			}
 		}
 
