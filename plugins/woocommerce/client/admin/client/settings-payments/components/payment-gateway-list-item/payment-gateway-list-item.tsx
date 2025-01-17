@@ -26,6 +26,7 @@ import {
 	EnableGatewayButton,
 	SettingsButton,
 } from '~/settings-payments/components/buttons';
+import { ReactivateLivePaymentsButton } from '~/settings-payments/components/buttons/reactivate-live-payments-button';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
@@ -199,6 +200,20 @@ export const PaymentGatewayListItem = ( {
 								<ActivatePaymentsButton
 									acceptIncentive={ acceptIncentive }
 									incentive={ incentive }
+								/>
+							) }
+
+						{ isWooPayments( gateway.id ) &&
+							// There are no live payments in dev mode or test accounts, so no point in reactivating them.
+							! gateway.state.dev_mode &&
+							gateway.state.account_connected &&
+							gateway.onboarding.state.completed &&
+							! gateway.onboarding.state.test_mode &&
+							gateway.state.test_mode && (
+								<ReactivateLivePaymentsButton
+									settingsHref={
+										gateway.management._links.settings.href
+									}
 								/>
 							) }
 
