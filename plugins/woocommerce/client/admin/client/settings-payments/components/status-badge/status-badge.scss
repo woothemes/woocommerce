@@ -17,4 +17,8 @@
 		background: var(--Alias-bg-bg-surface-secondary, #f5f5f5);
 		color: var(--Alias-text-text, #070707);
 	}
+
+	& > .woocommerce-status-badge-tooltip {
+		margin-left: 2px;
+	}
 }

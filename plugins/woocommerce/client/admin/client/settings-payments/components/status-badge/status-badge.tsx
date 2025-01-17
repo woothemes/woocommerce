@@ -52,7 +52,11 @@ interface StatusBadgeProps {
  * // Render a status badge which displays a tooltip.
  * <StatusBadge status="active" message="Active" tooltipText="This is an active status badge" />
  */
-export const StatusBadge = ( { status, message, tooltipText }: StatusBadgeProps ) => {
+export const StatusBadge = ( {
+	status,
+	message,
+	tooltipText,
+}: StatusBadgeProps ) => {
 	/**
 	 * Get the appropriate CSS class for the badge based on the status.
 	 */
@@ -94,14 +98,15 @@ export const StatusBadge = ( { status, message, tooltipText }: StatusBadgeProps 
 
 	return (
 		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
-			{ tooltipText ? (
-				<Tooltip text={ tooltipText }>
-					<>
-						{ message || getStatusMessage() } <Icon icon={ info } />
-					</>
+			{ message || getStatusMessage() }
+			{ tooltipText && (
+				<Tooltip text={ tooltipText } position={ 'top right' }>
+					<Icon
+						className={ 'woocommerce-status-badge-tooltip' }
+						size={ 14 }
+						icon={ info }
+					/>
 				</Tooltip>
-			) : (
-				message || getStatusMessage()
 			) }
 		</Pill>
 	);
