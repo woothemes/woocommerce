@@ -148,7 +148,7 @@ export const EnableGatewayButton = ( {
 						);
 					}
 				}
-				// If no redirect occured, the data needs to be refreshed.
+				// If no redirect occurred, the data needs to be refreshed.
 				invalidateResolutionForStoreSelector(
 					isOffline
 						? 'getOfflinePaymentGateways'
