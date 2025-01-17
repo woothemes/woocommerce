@@ -96,7 +96,9 @@ export const StatusBadge = ( { status, message, tooltipText }: StatusBadgeProps 
 		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
 			{ tooltipText ? (
 				<Tooltip text={ tooltipText }>
-					{ message || getStatusMessage() } <Icon icon={ info } />
+					<>
+						{ message || getStatusMessage() } <Icon icon={ info } />
+					</>
 				</Tooltip>
 			) : (
 				message || getStatusMessage()
