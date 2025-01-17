@@ -21,6 +21,10 @@
 	&__content {
 		display: flex;
 		align-items: center;
+
+		@media screen and ( max-width: 782px ) {
+			flex-direction: column;
+		}
 	}
 
 	&__body {
@@ -49,9 +53,14 @@
 	&__content img {
 		width: 280px;
 		padding: 76px 40px;
+
+		@media screen and ( max-width: 782px ) {
+			max-height: 220px;
+			padding: 0;
+		}
 	}
 
 	@media screen and ( max-width: 782px ) {
-		margin: 0 $gap;
+		margin: auto $gap;
 	}
 }
