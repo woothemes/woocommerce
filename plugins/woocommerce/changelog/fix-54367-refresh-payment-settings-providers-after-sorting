@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix incorrect button state in Payments Settings NOX when enabling offline payment method / payment gateway after reordering

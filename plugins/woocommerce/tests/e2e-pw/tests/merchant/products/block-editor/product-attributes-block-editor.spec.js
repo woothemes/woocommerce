@@ -372,14 +372,6 @@ test(
 			// See https://github.com/woocommerce/woocommerce/issues/44925
 			await expect(
 				async () => {
-					await page.reload();
-					// Waiting for the "Block: Product attributes" will ensure
-					// that test will pass against the Pressable environment
-					await expect(
-						page.locator(
-							`[aria-label="Block: Product attributes"]`
-						)
-					).toBeVisible();
 					await page.getByRole( 'button', { name: 'Edit' } ).click();
 					await expect(
 						page.locator(

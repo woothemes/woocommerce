@@ -23,18 +23,44 @@ import { PaymentGatewayListItem } from '~/settings-payments/components/payment-g
 import './payment-gateway-list.scss';
 
 interface PaymentGatewayListProps {
+	/**
+	 * List of payment providers to display.
+	 */
 	providers: PaymentProvider[];
+	/**
+	 * Array of slugs for installed plugins.
+	 */
 	installedPluginSlugs: string[];
+	/**
+	 * The ID of the plugin currently being installed, or `null` if none.
+	 */
 	installingPlugin: string | null;
+	/**
+	 * Callback to handle the setup of a plugin. Receives the plugin ID, slug, and onboarding URL (if available).
+	 */
 	setupPlugin: (
 		id: string,
 		slug: string,
 		onboardingUrl: string | null
 	) => void;
+	/**
+	 * Callback to handle accepting an incentive. Receives the incentive ID as a parameter.
+	 */
 	acceptIncentive: ( id: string ) => void;
+	/**
+	 * Callback to update the ordering of payment providers after sorting.
+	 */
 	updateOrdering: ( providers: PaymentProvider[] ) => void;
 }
 
+/**
+ * A component that renders a sortable list of payment providers. Depending on the provider type, it displays
+ * different components such as `PaymentExtensionSuggestionListItem`, `PaymentGatewayListItem`, or a custom
+ * clickable item for offline payment groups.
+ *
+ * The list supports drag-and-drop reordering and dynamic actions like installing plugins, enabling gateways,
+ * and handling incentives.
+ */
 export const PaymentGatewayList = ( {
 	providers,
 	installedPluginSlugs,
@@ -51,6 +77,7 @@ export const PaymentGatewayList = ( {
 		>
 			{ providers.map( ( provider: PaymentProvider ) => {
 				switch ( provider._type ) {
+					// Return different components wrapped into SortableItem depending on the provider type.
 					case PaymentProviderType.Suggestion:
 						const suggestion =
 							provider as PaymentExtensionSuggestionProvider;
@@ -85,6 +112,7 @@ export const PaymentGatewayList = ( {
 							</SortableItem>
 						);
 					case PaymentProviderType.OfflinePmsGroup:
+						// Offline payments item logic is described below.
 						const offlinePmsGroup =
 							provider as OfflinePmsGroupProvider;
 						return (
@@ -118,12 +146,13 @@ export const PaymentGatewayList = ( {
 											</span>
 											<span
 												className="woocommerce-list__item-content"
+												// eslint-disable-next-line react/no-danger -- This string is sanitized by the PaymentGateway class.
 												dangerouslySetInnerHTML={ {
 													__html: offlinePmsGroup.description,
 												} }
 											/>
 										</div>
-										<div className="woocommerce-list__item-after centered">
+										<div className="woocommerce-list__item-after centered no-buttons">
 											<div className="woocommerce-list__item-after__actions">
 												<a
 													href={

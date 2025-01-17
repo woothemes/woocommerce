@@ -74,7 +74,7 @@ async function getProductsBySearchValue(
 	searchValue = '',
 	excludedIds: number[] = []
 ): Promise< Product[] > {
-	return resolveSelect( PRODUCTS_STORE_NAME ).getProducts< Product[] >( {
+	return resolveSelect( PRODUCTS_STORE_NAME ).getProducts( {
 		search: searchValue,
 		orderby: 'title',
 		order: 'asc',

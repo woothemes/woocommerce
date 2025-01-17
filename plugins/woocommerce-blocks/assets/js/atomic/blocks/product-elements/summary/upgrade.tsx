@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
-import { Notice, Button } from '@wordpress/components';
 import {
 	store as blockEditorStore,
 	InspectorControls,
@@ -21,6 +20,7 @@ import {
 import { type EditorBlock } from '@woocommerce/types';
 import { VARIATION_NAME as PQ_PRODUCT_SUMMARY_VARIATION_NAME } from '@woocommerce/blocks/product-query/variations/elements/product-summary';
 import { VARIATION_NAME as PC_PRODUCT_SUMMARY_VARIATION_NAME } from '@woocommerce/blocks/product-collection/variations/elements/product-summary';
+import { UpgradeDowngradeNotice } from '@woocommerce/editor-components/upgrade-downgrade-notice';
 
 const CORE_NAME = 'core/post-excerpt';
 
@@ -81,14 +81,13 @@ const UpgradeNotice = ( { clientId }: { clientId: string } ) => {
 	};
 
 	return (
-		<Notice isDismissible={ false }>
-			<>{ notice }</>
-			<br />
-			<br />
-			<Button variant="link" onClick={ handleClick }>
-				{ buttonLabel }
-			</Button>
-		</Notice>
+		<UpgradeDowngradeNotice
+			isDismissible={ false }
+			actionLabel={ buttonLabel }
+			onActionClick={ handleClick }
+		>
+			{ notice }
+		</UpgradeDowngradeNotice>
 	);
 };
 

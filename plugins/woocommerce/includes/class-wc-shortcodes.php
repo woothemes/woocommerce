@@ -6,6 +6,7 @@
  * @version 3.2.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 defined( 'ABSPATH' ) || exit;
@@ -516,7 +517,7 @@ class WC_Shortcodes {
 			$product_id = wc_get_product_id_by_sku( $atts['sku'] );
 		}
 
-		$product_status = empty( $atts['status'] ) ? 'publish' : $atts['status'];
+		$product_status = empty( $atts['status'] ) ? ProductStatus::PUBLISH : $atts['status'];
 		/**
 		 * Filters the list of invalid statuses for the `product_page` shortcode.
 		 *
@@ -525,7 +526,7 @@ class WC_Shortcodes {
 		 * @param int   $product_id       Product ID.
 		 * @return array
 		 */
-		$invalid_statuses = apply_filters( 'woocommerce_shortcode_product_page_invalid_statuses', array( 'trash' ), $product_id );
+		$invalid_statuses = apply_filters( 'woocommerce_shortcode_product_page_invalid_statuses', array( ProductStatus::TRASH ), $product_id );
 		if ( in_array( $product_status, $invalid_statuses, true ) ) {
 			return '';
 		}
@@ -577,7 +578,7 @@ class WC_Shortcodes {
 		if (
 			! isset( $force_rendering ) &&
 			$single_product->have_posts() &&
-			'publish' !== $single_product->post->post_status &&
+			ProductStatus::PUBLISH !== $single_product->post->post_status &&
 			! current_user_can( 'read_product', $single_product->post->ID )
 		) {
 			return '';
@@ -598,7 +599,7 @@ class WC_Shortcodes {
 			$args = array(
 				'posts_per_page'      => 1,
 				'post_type'           => 'product',
-				'post_status'         => 'publish',
+				'post_status'         => ProductStatus::PUBLISH,
 				'ignore_sticky_posts' => 1,
 				'no_found_rows'       => 1,
 				'p'                   => $single_product->post->post_parent,

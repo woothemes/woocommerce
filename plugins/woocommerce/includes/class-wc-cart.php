@@ -9,6 +9,7 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\DiscountsUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
@@ -631,6 +632,8 @@ class WC_Cart extends WC_Legacy_Cart {
 	/**
 	 * Empties the cart and optionally the persistent cart too.
 	 *
+	 * @since 9.7.0 Also clears shipping methods and packages since the items they are linked to are cleared.
+	 *
 	 * @param bool $clear_persistent_cart Should the persistent cart be cleared too. Defaults to true.
 	 */
 	public function empty_cart( $clear_persistent_cart = true ) {
@@ -650,6 +653,7 @@ class WC_Cart extends WC_Legacy_Cart {
 		}
 
 		$this->fees_api->remove_all_fees();
+		WC()->shipping()->reset_shipping();
 
 		do_action( 'woocommerce_cart_emptied', $clear_persistent_cart );
 	}
@@ -744,7 +748,7 @@ class WC_Cart extends WC_Legacy_Cart {
 		foreach ( $this->get_cart() as $cart_item_key => $values ) {
 			$product = $values['data'];
 
-			if ( ! $product || ! $product->exists() || 'trash' === $product->get_status() ) {
+			if ( ! $product || ! $product->exists() || ProductStatus::TRASH === $product->get_status() ) {
 				$this->set_quantity( $cart_item_key, 0 );
 				$return = new WP_Error( 'invalid', __( 'An item which is no longer available was removed from your cart.', 'woocommerce' ) );
 			}
@@ -1037,7 +1041,7 @@ class WC_Cart extends WC_Legacy_Cart {
 			$product_data = wc_get_product( $variation_id ? $variation_id : $product_id );
 			$quantity     = apply_filters( 'woocommerce_add_to_cart_quantity', $quantity, $product_id );
 
-			if ( $quantity <= 0 || ! $product_data || 'trash' === $product_data->get_status() ) {
+			if ( $quantity <= 0 || ! $product_data || ProductStatus::TRASH === $product_data->get_status() ) {
 				return false;
 			}
 

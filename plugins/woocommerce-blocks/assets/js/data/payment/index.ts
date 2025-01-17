@@ -12,7 +12,6 @@ import { STORE_KEY } from './constants';
 import * as actions from './actions';
 import { controls as sharedControls } from '../shared-controls';
 import * as selectors from './selectors';
-import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export const config = {
 	reducer,
@@ -23,18 +22,7 @@ export const config = {
 	__experimentalUseThunks: true,
 };
 
-const store = createReduxStore( STORE_KEY, config );
+export const store = createReduxStore( STORE_KEY, config );
 register( store );
-
-declare module '@wordpress/data' {
-	function dispatch(
-		key: typeof STORE_KEY
-	): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap<
-		typeof selectors
-	> & {
-		hasFinishedResolution: ( selector: string ) => boolean;
-	};
-}
 
 export const PAYMENT_STORE_KEY = STORE_KEY;

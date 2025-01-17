@@ -260,11 +260,30 @@ class Plugins extends \WC_REST_Data_Controller {
 
 		$data = PluginsHelper::install_plugins( $plugins );
 
+		// Gather some plugin details for each installed plugin.
+		$plugin_details = array();
+		if ( is_array( $data['installed'] ) ) {
+			foreach ( $data['installed'] as $plugin_slug ) {
+				$plugin_data = PluginsHelper::get_plugin_data( $plugin_slug );
+				if ( empty( $plugin_data ) ) {
+					continue;
+				}
+
+				$plugin_details[ $plugin_slug ] = array(
+					'name'        => $plugin_data['Name'],
+					'description' => $plugin_data['Description'],
+					'uri'         => $plugin_data['PluginURI'],
+					'version'     => $plugin_data['Version'],
+				);
+			}
+		}
+
 		return array(
 			'data'    => array(
-				'installed'    => $data['installed'],
-				'results'      => $data['results'],
-				'install_time' => $data['time'],
+				'installed'      => $data['installed'],
+				'results'        => $data['results'],
+				'install_time'   => $data['time'],
+				'plugin_details' => $plugin_details,
 			),
 			'errors'  => $data['errors'],
 			'success' => count( $data['errors']->errors ) === 0,
@@ -355,10 +374,29 @@ class Plugins extends \WC_REST_Data_Controller {
 
 		$data = PluginsHelper::activate_plugins( $plugins );
 
-		return( array(
+		// Gather some plugin details for each activated plugin.
+		$plugin_details = array();
+		if ( is_array( $data['activated'] ) ) {
+			foreach ( $data['activated'] as $plugin_slug ) {
+				$plugin_data = PluginsHelper::get_plugin_data( $plugin_slug );
+				if ( empty( $plugin_data ) ) {
+					continue;
+				}
+
+				$plugin_details[ $plugin_slug ] = array(
+					'name'        => $plugin_data['Name'],
+					'description' => $plugin_data['Description'],
+					'uri'         => $plugin_data['PluginURI'],
+					'version'     => $plugin_data['Version'],
+				);
+			}
+		}
+
+		return ( array(
 			'data'    => array(
-				'activated' => $data['activated'],
-				'active'    => $data['active'],
+				'activated'      => $data['activated'],
+				'active'         => $data['active'],
+				'plugin_details' => $plugin_details,
 			),
 			'errors'  => $data['errors'],
 			'success' => count( $data['errors']->errors ) === 0,

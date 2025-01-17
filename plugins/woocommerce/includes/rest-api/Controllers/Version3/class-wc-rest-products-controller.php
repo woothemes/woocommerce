@@ -8,6 +8,7 @@
  * @since   2.6.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
@@ -613,7 +614,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		// Post status.
 		if ( isset( $request['status'] ) ) {
-			$product->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : 'draft' );
+			$product->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : ProductStatus::DRAFT );
 		}
 
 		// Post slug.
@@ -1081,8 +1082,8 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'status'                => array(
 					'description' => __( 'Product status (post status).', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'publish',
-					'enum'        => array_merge( array_keys( get_post_statuses() ), array( 'future', 'auto-draft', 'trash' ) ),
+					'default'     => ProductStatus::PUBLISH,
+					'enum'        => array_merge( array_keys( get_post_statuses() ), array( ProductStatus::FUTURE, ProductStatus::AUTO_DRAFT, ProductStatus::TRASH ) ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'featured'              => array(
@@ -1701,7 +1702,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
-				'enum' => array_merge( array( 'any', 'future', 'trash' ), array_keys( get_post_statuses() ) ),
+				'enum' => array_merge( array( 'any', ProductStatus::FUTURE, ProductStatus::TRASH ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
@@ -1712,7 +1713,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
-				'enum' => array_merge( array( 'future', 'trash' ), array_keys( get_post_statuses() ) ),
+				'enum' => array_merge( array( ProductStatus::FUTURE, ProductStatus::TRASH ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',

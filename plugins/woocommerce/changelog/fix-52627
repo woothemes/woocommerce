@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix the customer account and mini cart blocks to fit the default size of the navigation block

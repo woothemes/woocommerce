@@ -11,11 +11,12 @@ import * as selectors from './selectors';
 import * as actions from './actions';
 import reducer from './reducers';
 
-const store = createReduxStore( STORE_KEY, {
+const config = {
 	reducer,
 	actions,
 	selectors,
-} );
+};
+export const store = createReduxStore( STORE_KEY, config );
 
 register( store );
 

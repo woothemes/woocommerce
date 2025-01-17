@@ -1,0 +1,5 @@
+Significance: patch
+Type: fix
+Comment: Move Product Type template state store to its own folder and rename some constants
+
+
