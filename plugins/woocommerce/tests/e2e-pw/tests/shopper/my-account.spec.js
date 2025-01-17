@@ -4,10 +4,11 @@
 const { test, expect } = require( '@playwright/test' );
 const { customer } = require( '../../test-data/data' );
 const { setComingSoon } = require( '../../utils/coming-soon' );
+const { CUSTOMER_STATE_PATH } = require( '../../playwright.config' );
 const pages = [ 'Orders', 'Downloads', 'Addresses', 'Account details' ];
 
 test.describe( 'My account page', () => {
-	test.use( { storageState: process.env.CUSTOMERSTATE } );
+	test.use( { storageState: CUSTOMER_STATE_PATH } );
 
 	test.beforeAll( async ( { baseURL } ) => {
 		await setComingSoon( { baseURL, enabled: 'no' } );

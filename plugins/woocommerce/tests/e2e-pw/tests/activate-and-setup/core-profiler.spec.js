@@ -1,6 +1,7 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const getPluginLocator = ( page, slug ) => {
 	return page.locator(
@@ -8,12 +9,12 @@ const getPluginLocator = ( page, slug ) => {
 	);
 };
 
+test.use( { storageState: ADMIN_STATE_PATH } );
+
 test.describe(
 	'Store owner can complete the core profiler',
 	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
 		test.beforeAll( async ( { baseURL } ) => {
 			try {
 				await setOption(
@@ -473,8 +474,6 @@ test.describe(
 	'Store owner can skip the core profiler',
 	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
 		test.beforeAll( async ( { baseURL } ) => {
 			try {
 				await setOption(

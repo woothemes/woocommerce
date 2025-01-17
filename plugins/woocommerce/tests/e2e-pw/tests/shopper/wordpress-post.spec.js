@@ -1,7 +1,8 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { setComingSoon } = require( '../../utils/coming-soon' );
+const { CUSTOMER_STATE_PATH } = require( '../../playwright.config' );
 const test = baseTest.extend( {
-	storageState: process.env.CUSTOMERSTATE,
+	storageState: CUSTOMER_STATE_PATH,
 } );
 
 test(

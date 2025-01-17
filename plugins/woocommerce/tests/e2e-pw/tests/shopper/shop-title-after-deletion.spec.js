@@ -1,8 +1,9 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { setComingSoon } = require( '../../utils/coming-soon' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 // test case for bug https://github.com/woocommerce/woocommerce/pull/46429
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	page: async ( { page, wpApi }, use ) => {
 		const response = await wpApi.get( `./wp-json/wp/v2/pages?slug=shop`, {
 			data: {

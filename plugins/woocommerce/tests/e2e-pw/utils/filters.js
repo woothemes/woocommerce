@@ -10,11 +10,6 @@ const testURL = new URL( defaultConfig.use.baseURL );
  * 'Under the hood', this is done by communicating to a server-side plugin via cookies. Therefore, for the server-side
  * code to observe the requested filter, you may need to `page.reload()` prior to writing assertions that rely on your
  * filter.
- *
- * @param page
- * @param hook
- * @param value
- * @param priority
  */
 export async function setFilterValue( page, hook, value, priority = 10 ) {
 	const context = page.context();
@@ -49,7 +44,6 @@ export async function setFilterValue( page, hook, value, priority = 10 ) {
  * As with its sister function, this mechanism relies on cookies and therefore a call to `page.reload()` may be required
  * before performing further assertions.
  *
- * @param page
  */
 export async function clearFilters( page ) {
 	await page.context().addCookies( [

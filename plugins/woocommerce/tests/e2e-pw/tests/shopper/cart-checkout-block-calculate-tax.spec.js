@@ -12,6 +12,7 @@ import {
  * Internal dependencies
  */
 import { tags } from '../../fixtures/fixtures';
+import { ADMIN_STATE_PATH } from '../../playwright.config';
 const { setComingSoon } = require( '../../utils/coming-soon' );
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
@@ -56,7 +57,7 @@ test.describe(
 		],
 	},
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 		test.beforeAll( async ( { baseURL } ) => {
 			await setComingSoon( { baseURL, enabled: 'no' } );
 

@@ -1,6 +1,3 @@
-const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle } = require( '../../utils/editor' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
 /**
  * External dependencies
  */
@@ -10,6 +7,15 @@ import {
 	goToPageEditor,
 	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
 const simpleProductName = 'Cart Coupons Product';
 const singleProductFullPrice = '110.00';
@@ -39,7 +45,7 @@ const customerBilling = {
 let productId, orderId, limitedCouponId;
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Cart Block',
 	page: async ( { context, page, testPage }, use ) => {
 		await goToPageEditor( { page } );

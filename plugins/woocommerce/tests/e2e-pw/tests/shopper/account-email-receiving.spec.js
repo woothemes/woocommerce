@@ -3,11 +3,12 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { admin, customer } = require( '../../test-data/data' );
 const { setComingSoon } = require( '../../utils/coming-soon' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const emailContent = '#wp-mail-logging-modal-content-body-content';
 const emailContentHtml = '#wp-mail-logging-modal-format-html';
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	user: async ( { api }, use ) => {
 		const now = Date.now();
 		const user = {

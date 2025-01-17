@@ -51,7 +51,7 @@ const throwCustomError = (
 
 const update = {
 	storeDetails: async ( store ) => {
-		const res = await api.post( 'settings/general/batch', {
+		await api.post( 'settings/general/batch', {
 			update: [
 				{
 					id: 'woocommerce_store_address',
@@ -88,7 +88,7 @@ const get = {
 	coupons: async ( params ) => {
 		const response = await api
 			.get( 'coupons', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -110,7 +110,7 @@ const get = {
 	orders: async ( params ) => {
 		const response = await api
 			.get( 'orders', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -123,7 +123,7 @@ const get = {
 	products: async ( params ) => {
 		const response = await api
 			.get( 'products', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -136,7 +136,7 @@ const get = {
 	productAttributes: async ( params ) => {
 		const response = await api
 			.get( 'products/attributes', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -149,7 +149,7 @@ const get = {
 	productCategories: async ( params ) => {
 		const response = await api
 			.get( 'products/categories', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -162,7 +162,7 @@ const get = {
 	productTags: async ( params ) => {
 		const response = await api
 			.get( 'products/tags', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -175,7 +175,7 @@ const get = {
 	shippingClasses: async ( params ) => {
 		const response = await api
 			.get( 'products/shipping_classes', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -189,7 +189,7 @@ const get = {
 	shippingZones: async ( params ) => {
 		const response = await api
 			.get( 'shipping/zones', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -202,7 +202,7 @@ const get = {
 	shippingZoneMethods: async ( shippingZoneId ) => {
 		const response = await api
 			.get( `shipping/zones/${ shippingZoneId }/methods` )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -215,7 +215,7 @@ const get = {
 	taxClasses: async () => {
 		const response = await api
 			.get( 'taxes/classes' )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -228,7 +228,7 @@ const get = {
 	taxRates: async ( params ) => {
 		const response = await api
 			.get( 'taxes', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,

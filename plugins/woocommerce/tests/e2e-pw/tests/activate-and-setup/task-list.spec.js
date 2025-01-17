@@ -1,9 +1,10 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
 const { exec } = require( 'child_process' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 test.describe( 'WC Home Task List >', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeAll( async ( {} ) => {
 		return new Promise( ( resolve, reject ) => {

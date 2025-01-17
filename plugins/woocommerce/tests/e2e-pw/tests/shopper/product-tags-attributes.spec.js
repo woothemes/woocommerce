@@ -6,6 +6,7 @@ import { getCanvas, goToPageEditor } from '@woocommerce/e2e-utils-playwright';
  * Internal dependencies
  */
 import { tags } from '../../fixtures/fixtures';
+import { ADMIN_STATE_PATH } from '../../playwright.config';
 const { test, expect, request } = require( '@playwright/test' );
 const { admin } = require( '../../test-data/data' );
 const pageTitle = 'Product Showcase';
@@ -36,7 +37,7 @@ test.describe(
 	'Browse product tags and attributes from the product page',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			await setComingSoon( { baseURL, enabled: 'no' } );

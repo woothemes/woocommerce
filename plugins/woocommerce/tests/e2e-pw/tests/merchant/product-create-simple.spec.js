@@ -1,5 +1,6 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { setComingSoon } = require( '../../utils/coming-soon' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const productData = {
 	virtual: {
 		name: `Virtual product ${ Date.now() }`,
@@ -36,7 +37,7 @@ const productData = {
 };
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	product: async ( { api }, use ) => {
 		const product = {};
 		await use( product );

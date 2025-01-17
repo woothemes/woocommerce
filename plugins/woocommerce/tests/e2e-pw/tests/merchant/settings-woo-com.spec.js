@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
@@ -8,7 +9,7 @@ test.describe(
 		tag: [ tags.SERVICES, tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ],
 	},
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			// make sure the analytics connection is disabled

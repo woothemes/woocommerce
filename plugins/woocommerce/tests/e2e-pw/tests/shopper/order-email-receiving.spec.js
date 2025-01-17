@@ -9,6 +9,7 @@ import {
  * Internal dependencies
  */
 import { tags } from '../../fixtures/fixtures';
+import { ADMIN_STATE_PATH } from '../../playwright.config';
 const { test, expect } = require( '@playwright/test' );
 const { customer, storeDetails } = require( '../../test-data/data' );
 const { api } = require( '../../utils' );
@@ -35,7 +36,7 @@ test.describe(
 	'Shopper Order Email Receiving',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS, tags.NOT_E2E ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			await setComingSoon( { baseURL, enabled: 'no' } );

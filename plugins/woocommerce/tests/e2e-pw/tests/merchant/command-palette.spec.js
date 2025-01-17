@@ -1,9 +1,13 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-
 /**
  * External dependencies
  */
 import { disableWelcomeModal } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+import { expect, test as baseTest } from '../../fixtures/fixtures';
 
 // need to figure out whether tests are being run on a mac
 const macOS = process.platform === 'darwin';
@@ -30,7 +34,7 @@ const clickOnCommandPaletteOption = async ( { page, optionName } ) => {
 };
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	product: async ( { api }, use ) => {
 		let product = {
 			id: 0,
