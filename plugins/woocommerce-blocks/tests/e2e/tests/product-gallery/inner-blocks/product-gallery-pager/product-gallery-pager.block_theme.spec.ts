@@ -59,6 +59,6 @@ test.describe( `${ blockData.name }`, () => {
 			page: 'frontend',
 		} );
 
-		await expect( blockFrontend ).toHaveText( '1 / 2' );
+		await expect( blockFrontend ).toHaveText( '1 / 3' );
 	} );
 } );
