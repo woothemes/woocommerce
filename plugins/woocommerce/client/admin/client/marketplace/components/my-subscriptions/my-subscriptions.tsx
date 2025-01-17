@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useContext } from '@wordpress/element';
 import { Icon, external } from '@wordpress/icons';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import { RefreshButton } from './table/actions/refresh-button';
 import Notices from './notices';
 import InstallModal from './table/actions/install-modal';
 import { connectUrl } from '../../utils/functions';
+import Notice from '../notice/notice';
 
 export default function MySubscriptions(): JSX.Element {
 	const { subscriptions, isLoading } = useContext( SubscriptionsContext );
@@ -58,6 +60,22 @@ export default function MySubscriptions(): JSX.Element {
 			! subscription.maxed // no more connections allowed for the subscription so it's no longer "available to use"
 	);
 
+	const handleConnectedNoticeClose = () => {
+		const data = {
+			notice_id: 'woo-connected-notice',
+			dismiss_notice_nonce: wccomSettings?.dismissNoticeNonce || '',
+		};
+		apiFetch( {
+			path: `/wc-admin/notice/dismiss`,
+			method: 'POST',
+			data,
+		} );
+		localStorage.setItem(
+			'wc-marketplaceNoticeClosed-woo-connected-notice',
+			'false'
+		);
+	};
+
 	if ( ! wccomSettings?.isConnected ) {
 		const connectMessage = __(
 			"Connect your store to WooCommerce.com using the WooCommerce.com Update Manager. Once connected, you'll be able to manage your subscriptions, receive product updates, and access streamlined support from this screen.",
@@ -82,55 +100,69 @@ export default function MySubscriptions(): JSX.Element {
 	}
 
 	return (
-		<div className="woocommerce-marketplace__my-subscriptions">
-			<InstallModal />
-			<section className="woocommerce-marketplace__my-subscriptions__notices">
-				<Notices />
-			</section>
-			<section className="woocommerce-marketplace__my-subscriptions-section woocommerce-marketplace__my-subscriptions__installed">
-				<header className="woocommerce-marketplace__my-subscriptions__header">
-					<div className="woocommerce-marketplace__my-subscriptions__header-content">
-						<h2 className="woocommerce-marketplace__my-subscriptions__heading">
-							{ __( 'Installed on this store', 'woocommerce' ) }
-						</h2>
-						<p className="woocommerce-marketplace__my-subscriptions__table-description">
-							{ installedTableDescription }
-						</p>
-					</div>
-					<div className="woocommerce-marketplace__my-subscriptions__header-refresh">
-						<RefreshButton />
-					</div>
-				</header>
-				<div className="woocommerce-marketplace__my-subscriptions__table-wrapper">
-					<InstalledSubscriptionsTable
-						isLoading={ isLoading }
-						rows={ subscriptionsInstalled.map( ( item ) => {
-							return subscriptionRow( item, 'installed' );
-						} ) }
-					/>
-				</div>
-			</section>
-			{ subscriptionsAvailable.length > 0 && (
-				<section className="woocommerce-marketplace__my-subscriptions-section woocommerce-marketplace__my-subscriptions__available">
-					<h2 className="woocommerce-marketplace__my-subscriptions__heading">
-						{ __( 'Available to use', 'woocommerce' ) }
-					</h2>
-					<p className="woocommerce-marketplace__my-subscriptions__table-description">
-						{ __(
-							"WooCommerce.com subscriptions you haven't used yet.",
-							'woocommerce'
-						) }
-					</p>
+		<>
+			{ wccomSettings?.connectedNotice && (
+				<Notice
+					id={ 'woo-connected-notice' }
+					description={ wccomSettings?.connectedNotice }
+					isDismissible={ true }
+					variant="success"
+					onClose={ handleConnectedNoticeClose }
+				/>
+			) }
+			<div className="woocommerce-marketplace__my-subscriptions">
+				<InstallModal />
+				<section className="woocommerce-marketplace__my-subscriptions__notices">
+					<Notices />
+				</section>
+				<section className="woocommerce-marketplace__my-subscriptions-section woocommerce-marketplace__my-subscriptions__installed">
+					<header className="woocommerce-marketplace__my-subscriptions__header">
+						<div className="woocommerce-marketplace__my-subscriptions__header-content">
+							<h2 className="woocommerce-marketplace__my-subscriptions__heading">
+								{ __(
+									'Installed on this store',
+									'woocommerce'
+								) }
+							</h2>
+							<p className="woocommerce-marketplace__my-subscriptions__table-description">
+								{ installedTableDescription }
+							</p>
+						</div>
+						<div className="woocommerce-marketplace__my-subscriptions__header-refresh">
+							<RefreshButton />
+						</div>
+					</header>
 					<div className="woocommerce-marketplace__my-subscriptions__table-wrapper">
-						<AvailableSubscriptionsTable
+						<InstalledSubscriptionsTable
 							isLoading={ isLoading }
-							rows={ subscriptionsAvailable.map( ( item ) => {
-								return subscriptionRow( item, 'available' );
+							rows={ subscriptionsInstalled.map( ( item ) => {
+								return subscriptionRow( item, 'installed' );
 							} ) }
 						/>
 					</div>
 				</section>
-			) }
-		</div>
+				{ subscriptionsAvailable.length > 0 && (
+					<section className="woocommerce-marketplace__my-subscriptions-section woocommerce-marketplace__my-subscriptions__available">
+						<h2 className="woocommerce-marketplace__my-subscriptions__heading">
+							{ __( 'Available to use', 'woocommerce' ) }
+						</h2>
+						<p className="woocommerce-marketplace__my-subscriptions__table-description">
+							{ __(
+								"WooCommerce.com subscriptions you haven't used yet.",
+								'woocommerce'
+							) }
+						</p>
+						<div className="woocommerce-marketplace__my-subscriptions__table-wrapper">
+							<AvailableSubscriptionsTable
+								isLoading={ isLoading }
+								rows={ subscriptionsAvailable.map( ( item ) => {
+									return subscriptionRow( item, 'available' );
+								} ) }
+							/>
+						</div>
+					</section>
+				) }
+			</div>
+		</>
 	);
 }
