@@ -37,8 +37,7 @@
 			max-width: 313px;
 			background-color: #fff;
 			border: 1px solid $gray-300;
-			display: flex;
-			align-items: center;
+			display: inline-block;
 			border-radius: 2px;
 
 			.components-input-control__prefix {
@@ -75,8 +74,15 @@
 			}
 
 			&.has-alert {
+				display: flex;
+				align-items: center;
+
 				.components-country-select-control__menu {
 					width: 310px;
+
+					@media screen and ( max-width: 782px ) {
+						width: 313px;
+					}
 				}
 			}
 
