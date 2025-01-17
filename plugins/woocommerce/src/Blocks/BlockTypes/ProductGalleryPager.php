@@ -60,12 +60,16 @@ class ProductGalleryPager extends AbstractBlock {
 				return '';
 			}
 
-			$current_image = 1;
+			$styles_and_classes = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
+			$classes            = $styles_and_classes['classes'] ?? '';
+			$styles             = $styles_and_classes['styles'] ?? '';
 
 			return sprintf(
-				'<div class="wc-block-product-gallery-pager">
-					<span data-wc-text="context.selectedImageIndex"></span> / %1$s
+				'<div class="wc-block-product-gallery-pager %1$s" style="%2$s">
+					<span class="wc-block-product-gallery-pager__current-index" data-wc-text="context.selectedImageIndex"></span> / <span class="wc-block-product-gallery-pager__total-images">%3$s</span>
 				</div>',
+				$classes,
+				$styles,
 				$total_images,
 			);
 		}
