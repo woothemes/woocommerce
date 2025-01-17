@@ -8,5 +8,5 @@ export const Edit = (): JSX.Element => {
 		className: 'wc-block-product-gallery-pager',
 	} );
 
-	return <div { ...blockProps }>3 / 7</div>;
+	return <div { ...blockProps }>3/7</div>;
 };

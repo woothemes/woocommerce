@@ -66,7 +66,7 @@ class ProductGalleryPager extends AbstractBlock {
 
 			return sprintf(
 				'<div class="wc-block-product-gallery-pager %1$s" style="%2$s">
-					<span class="wc-block-product-gallery-pager__current-index" data-wc-text="context.selectedImageIndex"></span> / <span class="wc-block-product-gallery-pager__total-images">%3$s</span>
+					<span class="wc-block-product-gallery-pager__current-index" data-wc-text="context.selectedImageIndex"></span>/<span class="wc-block-product-gallery-pager__total-images">%3$s</span>
 				</div>',
 				$classes,
 				$styles,
