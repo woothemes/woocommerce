@@ -586,7 +586,7 @@ class Checkout extends AbstractCartRoute {
 					$this->additional_fields_controller->persist_field_for_customer( $key, $request['additional_fields'][ $key ], $customer );
 				}
 			}
-		wc_log_order_step( '[Store API #4 update_customer_from_request] Persisted contact fields' );
+			wc_log_order_step( '[Store API #4 update_customer_from_request] Persisted contact fields' );
 		}
 
 		/**

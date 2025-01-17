@@ -25,7 +25,7 @@ defined( 'ABSPATH' ) || exit;
  */
 function wc_log_order_step( string $message, ?array $context = null, bool $final_step = false, bool $first_step = false ): void {
 
-	if ( empty ( $message ) ) {
+	if ( empty( $message ) ) {
 		return; // Nothing to log.
 	}
 
@@ -50,7 +50,7 @@ function wc_log_order_step( string $message, ?array $context = null, bool $final
 
 	$context['order_uid'] = $order_uid;
 	$context['source']    = 'place-order-debug-' . $order_uid_short; // Source is segmented per order unique id.
-	$context['backtrace'] = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 ); // Ignoring args to avoid logging sensitive data.
+	$context['backtrace'] = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 
 	if ( ! is_null( error_get_last() ) ) {
 		$context['last_error'] = error_get_last();
