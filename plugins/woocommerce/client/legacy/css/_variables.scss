@@ -37,6 +37,6 @@ $subtext:           #767676 !default;                                  // small,
 	--wc-subtext: #{$subtext};
 	--wc-form-border-color: rgba(32, 7, 7, 0.8);
 	--wc-form-border-radius: 4px;
-	--wc-form-color-text: inherit;
+	--wc-form-color-text: unset;
 	--wc-form-border-width: 1px;
 }
