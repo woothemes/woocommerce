@@ -435,6 +435,7 @@
 			margin-left: 0; /* reset the left margin from iconafter mixin */
 			margin-top: -2px; /* Manual vertical alignment adjustment */
 			vertical-align: middle;
+			display: inline-block;
 		}
 
 		.show-password-input.display-password::after {
