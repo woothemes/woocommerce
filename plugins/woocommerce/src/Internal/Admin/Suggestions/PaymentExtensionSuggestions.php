@@ -2761,7 +2761,7 @@ class PaymentExtensionSuggestions {
 					),
 				),
 			),
-			self::HELIOPAY            => array(
+			self::HELIOPAY          => array(
 				'_type'       => self::TYPE_CRYPTO,
 				'title'       => esc_html__( 'Helio Pay', 'woocommerce' ),
 				'description' => esc_html__( 'Effortlessly accept cryptocurrency payments in your WooCommerce store with Helio Pay.', 'woocommerce' ),
