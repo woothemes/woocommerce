@@ -35,17 +35,13 @@
 	}
 
 	&__button {
-		width: 100%;
-		background-color: #fff;
+		width: 277px;
 		margin: 0 1px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		padding: 6px 8px;
-		min-width: 240px;
-		max-width: 280px;
 		text-overflow: ellipsis;
-		border: 1px solid $gray-300;
 
 		&:hover {
 			color: initial;
@@ -77,13 +73,13 @@
 	}
 
 	&__menu {
-		margin: -3px 1px;
+		margin: -3px -1px;
 		background-color: #fff;
 		border: 1px solid $gray-300;
 		border-top: none;
 		border-radius: 2px;
 		max-height: 450px;
-		width: calc(100% - 2px);
+		width: 100%;
 		outline: none;
 		overflow: hidden;
 		padding: 0;

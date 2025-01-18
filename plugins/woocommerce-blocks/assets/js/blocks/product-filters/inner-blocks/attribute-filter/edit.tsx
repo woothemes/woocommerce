@@ -164,26 +164,11 @@ const Edit = ( props: EditProps ) => {
 							},
 						],
 						clearButton
-							? [
-									'woocommerce/product-filter-clear-button',
-									{
-										lock: {
-											remove: true,
-											move: false,
-										},
-									},
-							  ]
+							? [ 'woocommerce/product-filter-clear-button' ]
 							: null,
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
-				[
-					displayStyle,
-					{
-						lock: {
-							remove: true,
-						},
-					},
-				],
+				[ displayStyle ],
 			],
 		}
 	);
