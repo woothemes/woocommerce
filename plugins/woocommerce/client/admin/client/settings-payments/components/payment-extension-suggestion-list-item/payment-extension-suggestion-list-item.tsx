@@ -121,8 +121,8 @@ export const PaymentExtensionSuggestionListItem = ( {
 						/>
 					) }
 				</div>
-				<div className="woocommerce-list__item-after">
-					<div className="woocommerce-list__item-after__actions">
+				<div className="woocommerce-list__item-buttons">
+					<div className="woocommerce-list__item-buttons__actions">
 						<Button
 							variant="primary"
 							onClick={ () => {
@@ -144,7 +144,10 @@ export const PaymentExtensionSuggestionListItem = ( {
 								? __( 'Enable', 'woocommerce' )
 								: __( 'Install', 'woocommerce' ) }
 						</Button>
-
+					</div>
+				</div>
+				<div className="woocommerce-list__item-after">
+					<div className="woocommerce-list__item-after__actions">
 						<EllipsisMenu
 							label={ __(
 								'Payment Provider Options',
