@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import React from 'react';
 import { decodeEntities } from '@wordpress/html-entities';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -22,9 +22,6 @@ import {
 } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
-import { createInterpolateElement } from '@wordpress/element';
-import { Link } from '@woocommerce/components';
-import React from 'react';
 import { IncentiveStatusBadge } from '~/settings-payments/components/incentive-status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
