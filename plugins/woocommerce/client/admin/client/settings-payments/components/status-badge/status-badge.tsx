@@ -4,7 +4,9 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Pill } from '@woocommerce/components';
-import { Tooltip } from '@wordpress/components';
+import { Popover } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+
 import { Icon, info } from '@wordpress/icons';
 
 /**
@@ -29,10 +31,10 @@ interface StatusBadgeProps {
 	 */
 	message?: string;
 	/**
-	 * Optionally pass in tooltip text. If this is passed in,
-	 * the badge will be wrapped in a Tooltip component.
+	 * Optionally pass in popover content (as a React element). If this is passed in,
+	 * an info icon will be displayed which will show the popover content on hover.
 	 */
-	tooltipText?: string;
+	popoverContent?: React.ReactElement;
 }
 
 /**
@@ -49,14 +51,16 @@ interface StatusBadgeProps {
  * <StatusBadge status="inactive" message="Not in use" />
  *
  * @example
- * // Render a status badge which displays a tooltip.
- * <StatusBadge status="active" message="Active" tooltipText="This is an active status badge" />
+ * // Render a status badge which displays a popover.
+ * <StatusBadge status="active" message="Active" popoverContent={ <p>This is an active status badge</p> } />
  */
 export const StatusBadge = ( {
 	status,
 	message,
-	tooltipText,
+	popoverContent,
 }: StatusBadgeProps ) => {
+	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
+
 	/**
 	 * Get the appropriate CSS class for the badge based on the status.
 	 */
@@ -99,14 +103,40 @@ export const StatusBadge = ( {
 	return (
 		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
 			{ message || getStatusMessage() }
-			{ tooltipText && (
-				<Tooltip text={ tooltipText } position={ 'top right' }>
+			{ popoverContent && (
+				<span className="woocommerce-status-badge__icon-container">
 					<Icon
-						className={ 'woocommerce-status-badge-tooltip' }
+						onClick={ () => {
+							setPopoverVisible( ! isPopoverVisible );
+						} }
+						onKeyDown={ ( event ) => {
+							if ( event.key === 'Enter' || event.key === ' ' ) {
+								setPopoverVisible( ! isPopoverVisible );
+							}
+						} }
+						tabIndex={ 0 }
+						role="button"
+						className={ 'woocommerce-status-badge-icon' }
 						size={ 14 }
 						icon={ info }
 					/>
-				</Tooltip>
+				</span>
+			) }
+			{ isPopoverVisible && (
+				<Popover
+					className={ 'woocommerce-status-badge-popover' }
+					position="top right"
+					noArrow={ true }
+					onClose={ () => setPopoverVisible( false ) }
+				>
+					<div
+						className={
+							'settings-payment-gateways__popover-container'
+						}
+					>
+						{ popoverContent }
+					</div>
+				</Popover>
 			) }
 		</Pill>
 	);

@@ -22,6 +22,10 @@ import {
 } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
+import { createInterpolateElement } from '@wordpress/element';
+import { Link } from '@woocommerce/components';
+import React from 'react';
+import { IncentiveStatusBadge } from '~/settings-payments/components/incentive-status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
 	/**
@@ -99,11 +103,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 								<StatusBadge status="recommended" />
 							) }
 						{ incentive && (
-							<StatusBadge
-								status="has_incentive"
-								message={ incentive.badge }
-								tooltipText={ incentive.title }
-							/>
+							<IncentiveStatusBadge incentive={ incentive } />
 						) }
 					</span>
 					<span
