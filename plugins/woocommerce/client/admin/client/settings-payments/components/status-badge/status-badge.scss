@@ -32,6 +32,11 @@
 .woocommerce-status-badge-popover {
 	.components-popover__content {
 		padding: 12px;
+
+		a {
+			text-decoration: underline;
+			outline: 0;
+		}
 	}
 
 	.settings-payment-gateways__popover-container {
