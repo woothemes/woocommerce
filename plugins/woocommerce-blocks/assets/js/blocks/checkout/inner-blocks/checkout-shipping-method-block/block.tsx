@@ -112,6 +112,7 @@ const ShippingSelector = ( {
 		} else {
 			clearValidationError( 'shipping-rates-error' );
 		}
+		return () => clearValidationError( 'shipping-rates-error' );
 	}, [
 		checked,
 		clearValidationError,
