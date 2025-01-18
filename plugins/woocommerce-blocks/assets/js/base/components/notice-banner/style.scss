@@ -156,6 +156,9 @@
 	&.is-info {
 		@extend %info;
 	}
+	&:focus {
+		outline: 0;
+	}
 	&:focus-visible {
 		outline: -webkit-focus-ring-color auto 1px;
 	}
