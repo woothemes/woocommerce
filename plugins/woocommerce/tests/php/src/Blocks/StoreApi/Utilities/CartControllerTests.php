@@ -12,6 +12,14 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class CartControllerTests extends TestCase {
 	/**
+	 * tearDown.
+	 */
+	public function tearDown(): void {
+		parent::tearDown();
+		WC()->cart->empty_cart();
+	}
+
+	/**
 	 * Test the normalize_cart method.
 	 */
 	public function test_normalize_cart() {

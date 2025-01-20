@@ -5,6 +5,7 @@ import { Cart, CartItem } from '@woocommerce/types';
 import { dispatch, select } from '@wordpress/data';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
+import { applyFilters } from '@wordpress/hooks';
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis, @woocommerce/dependency-group
 import { __unstableStripHTML as stripHTML } from '@wordpress/dom';
 
@@ -51,7 +52,12 @@ const notifyIfQuantityChanged = (
 		if ( cartItem.key === oldCartItem.key ) {
 			if (
 				cartItem.quantity !== oldCartItem.quantity &&
-				isWithinQuantityLimits( cartItem )
+				isWithinQuantityLimits( cartItem ) &&
+				applyFilters(
+					'woocommerce_show_cart_item_quantity_changed_notice',
+					true,
+					cartItem
+				)
 			) {
 				dispatch( 'core/notices' ).createInfoNotice(
 					sprintf(
@@ -97,7 +103,14 @@ const notifyIfRemoved = (
 			return item && item.key === oldCartItem.key;
 		} );
 
-		if ( ! newCartItem ) {
+		if (
+			! newCartItem &&
+			applyFilters(
+				'woocommerce_show_cart_item_removed_notice',
+				true,
+				oldCartItem
+			)
+		) {
 			dispatch( 'core/notices' ).createInfoNotice(
 				sprintf(
 					/* translators: %s is the name of the item. */

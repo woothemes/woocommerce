@@ -38,15 +38,9 @@ if ( 'twentytwentyfour' === $current_theme ) {
 <!-- /wp:group -->
 
 <!-- wp:group {"style":{"spacing":{"blockGap":"48px"}},"className":"woocommerce-coming-soon-social-login","layout":{"type":"flex","flexWrap":"nowrap"}} -->
-<div class="wp-block-group woocommerce-coming-soon-social-login"><!-- wp:social-links {"iconColor":"contrast","iconColorValue":"#111111","style":{"layout":{"selfStretch":"fit","flexSize":null},"spacing":{"blockGap":{"left":"18px"}}},"className":"is-style-logos-only"} -->
-<ul class="wp-block-social-links has-icon-color is-style-logos-only"><!-- wp:social-link {"url":"https://www.linkedin.com/","service":"linkedin"} /-->
-
-<!-- wp:social-link {"url":"https://www.instagram.com","service":"instagram"} /-->
-
-<!-- wp:social-link {"url":"https://www.facebook.com","service":"facebook"} /--></ul>
-<!-- /wp:social-links -->
-
-<!-- wp:loginout {"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
+<div class="wp-block-group woocommerce-coming-soon-social-login">
+<!-- wp:template-part {"slug":"coming-soon-social-links","theme":"woocommerce/woocommerce","tagName":"div"} /-->
+<!-- wp:loginout {"style":{"elements":{"link":{"color":{"text":"#ffffff"}}},"color":{"background":"#000000"}},"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
 <!-- /wp:group --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group -->

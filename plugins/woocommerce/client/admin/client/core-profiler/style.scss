@@ -27,6 +27,7 @@
 	.woocommerce-select-control__control-input,
 	.components-base-control__help {
 		cursor: pointer;
+		line-height: initial;
 	}
 }
 
@@ -267,6 +268,7 @@
 		.woocommerce-select-control__control-input {
 			margin: 0;
 			padding: 0;
+			padding-left: 1px;
 		}
 
 		.woocommerce-select-control.is-searchable
@@ -636,6 +638,7 @@
 		.woocommerce-select-control__control-input {
 			margin: 0;
 			padding: 0;
+			padding-left: 1px;
 		}
 
 		.woocommerce-select-control.is-searchable
@@ -703,16 +706,4 @@
 	html.wp-toolbar {
 		padding-top: 32px !important;
 	}
-}
-
-.woocommerce-profiler-builder-intro {
-	display: flex;
-	flex-direction: column;
-	padding: 30px;
-	gap: 20px;
-	align-items: center;
-}
-
-.woocommerce-profiler-builder-intro-file-input {
-	margin-left: 100px;
 }

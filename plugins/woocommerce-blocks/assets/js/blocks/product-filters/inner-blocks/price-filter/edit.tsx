@@ -29,7 +29,7 @@ const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 	const { clearButton } = attributes;
 	const blockProps = useBlockProps();
 
-	const { results, isLoading } = useCollectionData( {
+	const { data, isLoading } = useCollectionData( {
 		queryPrices: true,
 		queryState: {},
 		isEditor: true,
@@ -57,7 +57,7 @@ const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 				<BlockContextProvider
 					value={ {
 						filterData: {
-							price: getPriceFilterData( results ),
+							price: getPriceFilterData( data ),
 							isLoading,
 						},
 					} }
@@ -95,12 +95,6 @@ const Edit = ( props: BlockEditProps< BlockAttributes > ) => {
 									clearButton
 										? [
 												'woocommerce/product-filter-clear-button',
-												{
-													lock: {
-														remove: true,
-														move: false,
-													},
-												},
 										  ]
 										: null,
 								].filter( Boolean ) as unknown as TemplateArray,

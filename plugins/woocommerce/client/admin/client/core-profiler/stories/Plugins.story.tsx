@@ -54,6 +54,7 @@ export const Basic = () => (
 			pluginsAvailable: plugins,
 			pluginsSelected: [],
 			pluginsInstallationErrors: [],
+			pluginsTruncated: [],
 		} }
 	/>
 );
@@ -79,6 +80,7 @@ export const InstallationError = () => (
 					error: 'Installation failed',
 				},
 			],
+			pluginsTruncated: [],
 		} }
 	/>
 );
@@ -121,7 +123,7 @@ export const InstallationNoPermissionError = () => (
 );
 
 export default {
-	title: 'WooCommerce Admin/Application/Core Profiler/Plugins',
+	title: 'WooCommerce Admin/Core Profiler/Plugins',
 	component: Plugins,
 	decorators: [ WithSetupWizardLayout ],
 };

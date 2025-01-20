@@ -12,9 +12,11 @@ This document will outline the steps an extension should take to register some a
 
 Additional checkout fields can be registered in three different places:
 
-- Contact information
-- Addresses (Shipping **and** Billing)
-- Order information
+| Title                                | Identifier |
+| ------------------------------------ | ---------- |
+| Contact information                  | **`contact`**  |
+| Addresses (Shipping **and** Billing) | **`address`**  |
+| Order information                    | **`order`**    |
 
 A field can only be shown in one location, it is not possible to render the same field in multiple locations in the same registration.
 

@@ -248,7 +248,7 @@ const Edit = ( {
 				</div>
 				<div className="wp-block-woocommerce-classic-template__placeholder-copy">
 					<div className="wp-block-woocommerce-classic-template__placeholder-copy__icon-container">
-						<span className="woo-icon">
+						<span className="woo-icon-wrapper">
 							<Icon icon={ woo } />{ ' ' }
 							{ __( 'WooCommerce', 'woocommerce' ) }
 						</span>
@@ -384,10 +384,11 @@ const handleRegisterClassicTemplateBlock = ( {
 };
 
 subscribe( () => {
-	const editorStore = select( 'core/editor' );
 	// We use blockCount to know if we are editing a template or in the navigation.
-	const blockCount = editorStore?.getBlockCount() as number;
-	const templateSlug = editorStore?.getEditedPostSlug() as string | null;
+	const blockCount = select( blockEditorStore )?.getBlockCount() as number;
+	const templateSlug = select( 'core/editor' )?.getEditedPostSlug() as
+		| string
+		| null;
 	const editedTemplate = blockCount && blockCount > 0 ? templateSlug : null;
 
 	// Skip if we are in the same template, except if the block hasn't been registered yet.

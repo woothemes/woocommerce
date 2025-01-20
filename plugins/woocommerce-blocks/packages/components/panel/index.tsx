@@ -17,6 +17,7 @@ export interface PanelProps {
 	className?: string | undefined;
 	initialOpen?: boolean;
 	hasBorder?: boolean;
+	headingLevel?: 2 | 3 | 4 | 5 | 6;
 	title: ReactNode;
 	titleTag?: keyof JSX.IntrinsicElements;
 	state?: [ boolean, React.Dispatch< React.SetStateAction< boolean > > ];
@@ -27,6 +28,7 @@ const Panel = ( {
 	className,
 	initialOpen = false,
 	hasBorder = false,
+	headingLevel,
 	title,
 	/**
 	 * @deprecated The `titleTag` prop is deprecated and will be removed in a future version.
@@ -49,6 +51,8 @@ const Panel = ( {
 
 	return (
 		<div
+			role={ headingLevel ? 'heading' : undefined }
+			aria-level={ headingLevel ? headingLevel : undefined }
 			className={ clsx( className, 'wc-block-components-panel', {
 				'has-border': hasBorder,
 			} ) }

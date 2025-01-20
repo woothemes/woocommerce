@@ -11,6 +11,8 @@
  */
 
 use Automattic\WooCommerce\Caches\OrderCache;
+use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\Orders\PaymentInfo;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -406,8 +408,14 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 		$status = $this->get_prop( 'status', $context );
 
 		if ( empty( $status ) && 'view' === $context ) {
-			// In view context, return the default status if no status has been set.
-			$status = apply_filters( 'woocommerce_default_order_status', 'pending' );
+			/**
+			 * In view context, return the default status if no status has been set.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param string $status Default status.
+			 */
+			$status = apply_filters( 'woocommerce_default_order_status', OrderStatus::PENDING );
 		}
 		return $status;
 	}
@@ -644,18 +652,18 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 		$old_status = $this->get_status();
 		$new_status = OrderUtil::remove_status_prefix( $new_status );
 
-		$status_exceptions = array( 'auto-draft', 'trash' );
+		$status_exceptions = array( OrderStatus::AUTO_DRAFT, OrderStatus::TRASH );
 
 		// If setting the status, ensure it's set to a valid status.
 		if ( true === $this->object_read ) {
 			// Only allow valid new status.
 			if ( ! in_array( 'wc-' . $new_status, $this->get_valid_statuses(), true ) && ! in_array( $new_status, $status_exceptions, true ) ) {
-				$new_status = 'pending';
+				$new_status = OrderStatus::PENDING;
 			}
 
 			// If the old status is set but unknown (e.g. draft) assume its pending for action usage.
-			if ( $old_status && ( 'auto-draft' === $old_status || ( ! in_array( 'wc-' . $old_status, $this->get_valid_statuses(), true ) && ! in_array( $old_status, $status_exceptions, true ) ) ) ) {
-				$old_status = 'pending';
+			if ( $old_status && ( OrderStatus::AUTO_DRAFT === $old_status || ( ! in_array( 'wc-' . $old_status, $this->get_valid_statuses(), true ) && ! in_array( $old_status, $status_exceptions, true ) ) ) ) {
+				$old_status = OrderStatus::PENDING;
 			}
 		}
 
@@ -1571,9 +1579,9 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 			$default_args = array(
 				'name'         => $product->get_name(),
 				'tax_class'    => $product->get_tax_class(),
-				'product_id'   => $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id(),
-				'variation_id' => $product->is_type( 'variation' ) ? $product->get_id() : 0,
-				'variation'    => $product->is_type( 'variation' ) ? $product->get_attributes() : array(),
+				'product_id'   => $product->is_type( ProductType::VARIATION ) ? $product->get_parent_id() : $product->get_id(),
+				'variation_id' => $product->is_type( ProductType::VARIATION ) ? $product->get_id() : 0,
+				'variation'    => $product->is_type( ProductType::VARIATION ) ? $product->get_attributes() : array(),
 				'subtotal'     => $total,
 				'total'        => $total,
 				'quantity'     => $qty,
@@ -2277,6 +2285,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 
 		if ( $subtotal ) {
 			$total_rows['cart_subtotal'] = array(
+				'type'  => 'subtotal',
 				'label' => __( 'Subtotal:', 'woocommerce' ),
 				'value' => $subtotal,
 			);
@@ -2292,6 +2301,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 	protected function add_order_item_totals_discount_row( &$total_rows, $tax_display ) {
 		if ( $this->get_total_discount() > 0 ) {
 			$total_rows['discount'] = array(
+				'type'  => 'discount',
 				'label' => __( 'Discount:', 'woocommerce' ),
 				'value' => '-' . $this->get_discount_to_display( $tax_display ),
 			);
@@ -2307,8 +2317,10 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 	protected function add_order_item_totals_shipping_row( &$total_rows, $tax_display ) {
 		if ( $this->get_shipping_method() ) {
 			$total_rows['shipping'] = array(
+				'type'  => 'shipping',
 				'label' => __( 'Shipping:', 'woocommerce' ),
 				'value' => $this->get_shipping_to_display( $tax_display ),
+				'meta'  => $this->get_shipping_method(),
 			);
 		}
 	}
@@ -2328,6 +2340,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 					continue;
 				}
 				$total_rows[ 'fee_' . $fee->get_id() ] = array(
+					'type'  => 'fee',
 					'label' => $fee->get_name() . ':',
 					'value' => wc_price( 'excl' === $tax_display ? (float) $fee->get_total() : (float) $fee->get_total() + (float) $fee->get_total_tax(), array( 'currency' => $this->get_currency() ) ),
 				);
@@ -2347,12 +2360,14 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 			if ( 'itemized' === get_option( 'woocommerce_tax_total_display' ) ) {
 				foreach ( $this->get_tax_totals() as $code => $tax ) {
 					$total_rows[ sanitize_title( $code ) ] = array(
+						'type'  => 'tax',
 						'label' => $tax->label . ':',
 						'value' => $tax->formatted_amount,
 					);
 				}
 			} else {
 				$total_rows['tax'] = array(
+					'type'  => 'tax',
 					'label' => WC()->countries->tax_or_vat() . ':',
 					'value' => wc_price( $this->get_total_tax(), array( 'currency' => $this->get_currency() ) ),
 				);
@@ -2368,6 +2383,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 	 */
 	protected function add_order_item_totals_total_row( &$total_rows, $tax_display ) {
 		$total_rows['order_total'] = array(
+			'type'  => 'total',
 			'label' => __( 'Total:', 'woocommerce' ),
 			'value' => $this->get_formatted_order_total( $tax_display ),
 		);

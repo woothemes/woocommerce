@@ -1,0 +1,184 @@
+.settings-payment-gateways__list {
+	border-top: 1px solid $gray-200;
+	// Without this, the window.innerWidth is not calculated correctly when elements are pushed outside the container.
+	overflow: hidden;
+
+	.woocommerce-list__item {
+		padding: 0 48px;
+		border-bottom: 1px solid $gray-200;
+
+		&.clickable-list-item:hover {
+			background-color: rgba(0, 0, 0, 0.02); /* Light overlay effect */
+			cursor: pointer;
+		}
+
+		&.has-incentive {
+			background-color: $studio-woocommerce-purple-0;
+
+			&:hover {
+				background-color: $studio-woocommerce-purple-0 !important;
+			}
+
+			.woocommerce-list__item-inner {
+				padding: $gap-largest 0;
+			}
+		}
+
+		&:hover {
+			background-color: $white;
+
+			.woocommerce-list__item-title {
+				color: $gray-900;
+			}
+		}
+
+		&-inner {
+			padding: $gap-large 0;
+			align-items: flex-start;
+
+			@media screen and ( max-width: 782px ) {
+				display: grid;
+				// Configuring the grid layout to three columns, resulting in the buttons shifting to a new row.
+				grid-template-columns: 30px minmax(200px, 1fr) 40px;
+			}
+		}
+
+		&-inner:focus {
+			box-shadow: none;
+		}
+
+		&-before {
+			margin-right: $gap;
+			align-items: center;
+
+			.drag-handle {
+				min-height: 40px;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				margin-right: 0;
+
+				.drag-handle {
+					min-height: 25px;
+					padding-bottom: 15px;
+				}
+			}
+		}
+
+		&-image {
+			max-width: 40px;
+			max-height: 40px;
+			border-radius: 4px;
+		}
+
+		&-title {
+			font-size: 16px;
+			line-height: 24px;
+			color: $gray-900;
+			font-weight: 600;
+			display: inline-flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			align-items: start;
+
+			@media screen and ( max-width: 782px ) {
+				font-size: 15px;
+				font-weight: 500;
+
+				.woocommerce-status-badge {
+					white-space: nowrap;
+				}
+			}
+		}
+
+		&-text {
+			margin-right: $gap;
+		}
+
+		&-content {
+			font-size: 13px;
+			font-weight: 400;
+			line-height: 20px;
+			color: $gray-700;
+
+			.woocommerce-woopayments-payment-methods-logos {
+				flex-wrap: wrap;
+				padding: $gap-small 0 0 0; /* Top, Right, Bottom, Left */
+			}
+
+			@media screen and ( max-width: 782px ) {
+				margin-top: $gap-small;
+			}
+		}
+
+		&-buttons {
+			margin-left: auto;
+
+			@media screen and ( max-width: 782px ) {
+				order: 4; /* Position the column in the 4th spot to ensure the buttons appear on a new row */
+				grid-column: 2; /* Start below the 2nd column */
+				grid-row: 2; /* Move to the second row */
+				margin-left: 0;
+				margin-top: $gap;
+			}
+
+			&__actions {
+				display: flex;
+				gap: $gap;
+
+				@media screen and ( min-width: 782px ) and ( max-width: 1024px ) {
+					flex-wrap: wrap;
+					justify-content: flex-end;
+				}
+
+				.components-button {
+					height: 32px;
+				}
+			}
+		}
+
+		&-after {
+			margin-left: $gap;
+
+			@media screen and ( max-width: 782px ) {
+				order: 3; /* Position the column in the 3rd spot to ensure the dots appear on the first row */
+			}
+
+			&.centered {
+				align-self: center;
+			}
+
+			&__actions {
+				display: flex;
+				gap: $gap;
+			}
+		}
+
+		&-after.no-buttons {
+			margin-left: auto;
+		}
+	}
+}
+
+@media screen and ( max-width: 1024px ) {
+	.settings-payment-gateways__list {
+		.woocommerce-list__item {
+			padding: 0 $gap-large;
+		}
+	}
+}
+
+@media screen and ( max-width: 782px ) {
+	.settings-payment-gateways__list {
+		.woocommerce-list__item {
+			padding: 0 $gap;
+
+			&-before {
+				&-image,
+				img {
+					display: none;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Validate transient data before setting it

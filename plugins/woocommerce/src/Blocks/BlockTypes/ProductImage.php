@@ -20,7 +20,7 @@ class ProductImage extends AbstractBlock {
 	 *
 	 * @var string
 	 */
-	protected $api_version = '2';
+	protected $api_version = '3';
 
 	/**
 	 * Get block supports. Shared with the frontend.
@@ -102,13 +102,14 @@ class ProductImage extends AbstractBlock {
 			'
 		<div class="wc-block-components-product-sale-badge wc-block-components-product-sale-badge--align-%s wc-block-grid__product-onsale %s" style="%s">
 			<span aria-hidden="true">%s</span>
-			<span class="screen-reader-text">Product on sale</span>
+			<span class="screen-reader-text">%s</span>
 		</div>
 	',
 			esc_attr( $attributes['saleBadgeAlign'] ),
 			isset( $font_size['class'] ) ? esc_attr( $font_size['class'] ) : '',
 			isset( $font_size['style'] ) ? esc_attr( $font_size['style'] ) : '',
-			esc_html__( 'Sale', 'woocommerce' )
+			esc_html__( 'Sale', 'woocommerce' ),
+			esc_html__( 'Product on sale', 'woocommerce' )
 		);
 		return $on_sale_badge;
 	}
@@ -166,13 +167,20 @@ class ProductImage extends AbstractBlock {
 		}
 
 		$image_id = $product->get_image_id();
+		$alt_text = '';
+		$title    = '';
+		if ( $image_id ) {
+			$alt_text = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+			$title    = get_the_title( $image_id );
+		}
 
 		return $product->get_image(
 			$image_size,
 			array(
+				'alt'         => empty( $alt_text ) ? $product->get_title() : $alt_text,
 				'data-testid' => 'product-image',
 				'style'       => $image_style,
-				'title'       => $image_id ? get_the_title( $image_id ) : '',
+				'title'       => $title,
 			)
 		);
 	}

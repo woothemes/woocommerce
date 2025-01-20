@@ -4,12 +4,9 @@
 import { useCallback, useEffect } from '@wordpress/element';
 import { Form } from '@woocommerce/base-components/cart-checkout';
 import { useCheckoutAddress, useStoreEvents } from '@woocommerce/base-context';
-import type {
-	AddressFormValues,
-	FormFieldsConfig,
-} from '@woocommerce/settings';
+import type { AddressFormValues } from '@woocommerce/settings';
 import { useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 
 /**
@@ -18,11 +15,7 @@ import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 import AddressWrapper from '../../address-wrapper';
 import AddressCard from '../../address-card';
 
-const CustomerAddress = ( {
-	addressFieldsConfig,
-}: {
-	addressFieldsConfig: FormFieldsConfig;
-} ) => {
+const CustomerAddress = () => {
 	const {
 		billingAddress,
 		setShippingAddress,
@@ -35,7 +28,7 @@ const CustomerAddress = ( {
 
 	// Forces editing state if store has errors.
 	const { hasValidationErrors, invalidProps } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
+		const store = select( validationStore );
 		return {
 			hasValidationErrors: store.hasValidationErrors(),
 			invalidProps: Object.keys( billingAddress )
@@ -81,11 +74,10 @@ const CustomerAddress = ( {
 				onEdit={ () => {
 					setEditing( true );
 				} }
-				fieldConfig={ addressFieldsConfig }
 				isExpanded={ editing }
 			/>
 		),
-		[ billingAddress, addressFieldsConfig, editing, setEditing ]
+		[ billingAddress, editing, setEditing ]
 	);
 
 	const renderAddressFormComponent = useCallback(
@@ -97,12 +89,11 @@ const CustomerAddress = ( {
 					onChange={ onChangeAddress }
 					values={ billingAddress }
 					fields={ ADDRESS_FORM_KEYS }
-					fieldConfig={ addressFieldsConfig }
 					isEditing={ editing }
 				/>
 			</>
 		),
-		[ addressFieldsConfig, billingAddress, onChangeAddress, editing ]
+		[ billingAddress, onChangeAddress, editing ]
 	);
 
 	return (

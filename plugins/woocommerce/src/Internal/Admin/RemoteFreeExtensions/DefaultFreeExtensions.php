@@ -3,9 +3,11 @@
  * Gets a list of fallback methods if remote fetching is disabled.
  */
 
+declare( strict_types=1 );
 namespace Automattic\WooCommerce\Internal\Admin\RemoteFreeExtensions;
 
 use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\DefaultPaymentGateways;
+use Automattic\WooCommerce\Internal\BrandingController;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,6 +16,17 @@ defined( 'ABSPATH' ) || exit;
  * Default Free Extensions
  */
 class DefaultFreeExtensions {
+
+	/**
+	 * Get Woo logo path.
+	 *
+	 * @return string
+	 */
+	private static function get_woo_logo() {
+		return BrandingController::use_new_branding() ?
+			plugins_url( '/assets/images/core-profiler/woo-rebrand-2.svg', WC_PLUGIN_FILE ) :
+			plugins_url( '/assets/images/onboarding/woo.svg', WC_PLUGIN_FILE );
+	}
 
 	/**
 	 * Get default specs.
@@ -72,6 +85,7 @@ class DefaultFreeExtensions {
 						self::get_plugin( 'pinterest-for-woocommerce' ),
 						self::get_plugin( 'kliken-ads-pixel-for-meta' ),
 						self::get_plugin( 'mailpoet' ),
+						self::get_plugin( 'klaviyo' ),
 						self::get_plugin( 'google-listings-and-ads' ),
 						self::get_plugin( 'woocommerce-services:tax' ),
 						self::get_plugin( 'tiktok-for-business' ),
@@ -168,6 +182,15 @@ class DefaultFreeExtensions {
 				'description'    => __( 'Create and send purchase follow-up emails, newsletters, and promotional campaigns straight from your dashboard.', 'woocommerce' ),
 				'image_url'      => plugins_url( '/assets/images/onboarding/mailpoet.png', WC_PLUGIN_FILE ),
 				'manage_url'     => 'admin.php?page=mailpoet-newsletters',
+				'is_visible'     => array(
+					array(
+						'type'        => 'option',
+						'option_name' => 'woocommerce_remote_variant_assignment',
+						'value'       => array( 1, 84 ), // 70% segment with klaviyo
+						'default'     => false,
+						'operation'   => 'range',
+					),
+				),
 				'is_built_by_wc' => true,
 			),
 			// Shared 50% segment with pinterest-for-woocommerce.
@@ -195,9 +218,18 @@ class DefaultFreeExtensions {
 			),
 			'klaviyo'                       => array(
 				'name'           => __( 'Klaviyo', 'woocommerce' ),
-				'description'    => __( 'Grow and retain customers with intelligent, impactful email and SMS marketing automation and a consolidated view of customer interactions.', 'woocommerce' ),
+				'description'    => __( 'Grow and retain customers with email, SMS, automations, and a consolidated view of customer interactions.', 'woocommerce' ),
 				'image_url'      => plugins_url( '/assets/images/onboarding/klaviyo.png', WC_PLUGIN_FILE ),
 				'manage_url'     => 'admin.php?page=klaviyo_settings',
+				'is_visible'     => array(
+					array(
+						'type'        => 'option',
+						'option_name' => 'woocommerce_remote_variant_assignment',
+						'value'       => array( 85, 120 ), // 30% segment with mailpoet
+						'default'     => false,
+						'operation'   => 'range',
+					),
+				),
 				'is_built_by_wc' => false,
 			),
 			'woocommerce-payments'          => array(
@@ -262,7 +294,7 @@ class DefaultFreeExtensions {
 			),
 			'woocommerce-services:shipping' => array(
 				'name'           => __( 'WooCommerce Shipping', 'woocommerce' ),
-				'image_url'      => plugins_url( '/assets/images/onboarding/woo.svg', WC_PLUGIN_FILE ),
+				'image_url'      => self::get_woo_logo(),
 				'description'    => sprintf(
 				/* translators: 1: opening product link tag. 2: closing link tag */
 					__( 'Print shipping labels with %1$sWooCommerce Shipping%2$s', 'woocommerce' ),
@@ -349,7 +381,7 @@ class DefaultFreeExtensions {
 			),
 			'woocommerce-services:tax'      => array(
 				'name'           => __( 'WooCommerce Tax', 'woocommerce' ),
-				'image_url'      => plugins_url( '/assets/images/onboarding/woo.svg', WC_PLUGIN_FILE ),
+				'image_url'      => self::get_woo_logo(),
 				'description'    => sprintf(
 					/* translators: 1: opening product link tag. 2: closing link tag */
 					__( 'Get automated sales tax with %1$sWooCommerce Tax%2$s', 'woocommerce' ),
@@ -410,29 +442,6 @@ class DefaultFreeExtensions {
 				),
 				'is_built_by_wc' => false,
 				'min_wp_version' => '6.0',
-			),
-			'mailpoet'                      => array(
-				'name'           => __( 'MailPoet', 'woocommerce' ),
-				'image_url'      => plugins_url( '/assets/images/onboarding/mailpoet.png', WC_PLUGIN_FILE ),
-				'description'    => sprintf(
-					/* translators: 1: opening product link tag. 2: closing link tag */
-					__( 'Level up your email marketing with %1$sMailPoet%2$s', 'woocommerce' ),
-					'<a href="https://woocommerce.com/products/mailpoet" target="_blank">',
-					'</a>'
-				),
-				'manage_url'     => 'admin.php?page=mailpoet-newsletters',
-				'is_visible'     => array(
-					array(
-						'type'    => 'not',
-						'operand' => array(
-							array(
-								'type'    => 'plugins_activated',
-								'plugins' => array( 'mailpoet' ),
-							),
-						),
-					),
-				),
-				'is_built_by_wc' => true,
 			),
 			'mailpoet:alt'                  => array(
 				'name'           => __( 'MailPoet', 'woocommerce' ),
@@ -533,14 +542,15 @@ class DefaultFreeExtensions {
 		$_plugins = array(
 			'woocommerce-payments'          => array(
 				'label'            => __( 'Get paid with WooPayments', 'woocommerce' ),
-				'image_url'        => plugins_url( '/assets/images/core-profiler/logo-woo.svg', WC_PLUGIN_FILE ),
+				'image_url'        => self::get_woo_logo(),
 				'description'      => __( "Securely accept payments and manage payment activity straight from your store's dashboard", 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/products/woocommerce-payments?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 5,
+				'requires_jpc'     => true,
 			),
 			'woocommerce-services:shipping' => array(
 				'label'            => __( 'Print shipping labels with WooCommerce Shipping', 'woocommerce' ),
-				'image_url'        => plugins_url( '/assets/images/core-profiler/logo-woo.svg', WC_PLUGIN_FILE ),
+				'image_url'        => self::get_woo_logo(),
 				'description'      => __( 'Print USPS and DHL labels directly from your dashboard and save on shipping.', 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/woocommerce-shipping?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 3,
@@ -551,6 +561,7 @@ class DefaultFreeExtensions {
 				'description'      => __( 'Save time on content creation — unlock high-quality blog posts and pages using AI.', 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/products/jetpack?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 8,
+				'requires_jpc'     => true,
 			),
 			'pinterest-for-woocommerce'     => array(
 				'label'            => __( 'Showcase your products with Pinterest', 'woocommerce' ),
@@ -573,6 +584,13 @@ class DefaultFreeExtensions {
 				'learn_more_link'  => 'https://woocommerce.com/products/mailpoet?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 7,
 			),
+			'klaviyo'                       => array(
+				'label'            => __( 'Klaviyo', 'woocommerce' ),
+				'image_url'        => plugins_url( '/assets/images/onboarding/klaviyo.png', WC_PLUGIN_FILE ),
+				'description'      => __( 'Grow and retain customers with email, SMS, automations, and a consolidated view of customer interactions.', 'woocommerce' ),
+				'learn_more_link'  => 'https://woocommerce.com/products/klaviyo-for-woocommerce?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
+				'install_priority' => 7,
+			),
 			'tiktok-for-business'           => array(
 				'label'            => __( 'Create ad campaigns with TikTok', 'woocommerce' ),
 				'image_url'        => plugins_url( '/assets/images/core-profiler/logo-tiktok.png', WC_PLUGIN_FILE ),
@@ -589,7 +607,7 @@ class DefaultFreeExtensions {
 			),
 			'woocommerce-services:tax'      => array(
 				'label'            => __( 'Get automated tax rates with WooCommerce Tax', 'woocommerce' ),
-				'image_url'        => plugins_url( '/assets/images/core-profiler/logo-woo.svg', WC_PLUGIN_FILE ),
+				'image_url'        => self::get_woo_logo(),
 				'description'      => __( 'Automatically calculate how much sales tax should be collected – by city, country, or state.', 'woocommerce' ),
 				'learn_more_link'  => 'https://woocommerce.com/products/tax?utm_source=storeprofiler&utm_medium=product&utm_campaign=freefeatures',
 				'install_priority' => 4,

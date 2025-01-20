@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fixes the issue with product specific blocks being unavailable when using the command palette to switch between templates

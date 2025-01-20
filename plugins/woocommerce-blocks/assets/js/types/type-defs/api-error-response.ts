@@ -25,5 +25,5 @@ export type ApiErrorResponseDataDetails = {
 	code: string;
 	message: string;
 	data: ApiErrorResponseData;
-	additional_errors: ApiErrorResponse[];
+	additional_errors?: ApiErrorResponse[];
 };

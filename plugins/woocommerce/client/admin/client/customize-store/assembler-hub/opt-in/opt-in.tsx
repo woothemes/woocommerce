@@ -5,8 +5,6 @@ import { OPTIONS_STORE_NAME } from '@woocommerce/data';
 import apiFetch from '@wordpress/api-fetch';
 import { dispatch, resolveSelect, select, useSelect } from '@wordpress/data';
 import { useContext, useEffect } from '@wordpress/element';
-// @ts-expect-error No types for this exist yet.
-// eslint-disable-next-line @woocommerce/dependency-group
 import { store as coreStore } from '@wordpress/core-data';
 // @ts-expect-error No types for this exist yet.
 // eslint-disable-next-line @woocommerce/dependency-group
@@ -48,12 +46,10 @@ async function installFonts(
 	await installFontFamilies();
 
 	const globalStylesId =
-		// @ts-expect-error No types for this exist yet.
 		select( coreStore ).__experimentalGetCurrentGlobalStylesId();
 
 	const installedFontFamilies = ( await resolveSelect(
 		coreStore
-		// @ts-expect-error No types for this exist yet.
 	).getEntityRecords( 'postType', 'wp_font_family', {
 		_embed: true,
 		per_page: -1,
@@ -100,14 +96,16 @@ async function installFonts(
 		[] as Array< FontFamily >
 	);
 
-	const {
-		// @ts-expect-error No types for this exist yet.
-		__experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits,
-	} = dispatch( coreStore );
+	const { __experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits } =
+		dispatch( coreStore );
 
-	saveSpecifiedEntityEdits( 'root', 'globalStyles', globalStylesId, [
-		'settings.typography.fontFamilies',
-	] );
+	saveSpecifiedEntityEdits(
+		'root',
+		'globalStyles',
+		globalStylesId,
+		[ 'settings.typography.fontFamilies' ],
+		undefined
+	);
 
 	return {
 		...enabledFontFamilies,
@@ -127,9 +125,11 @@ export const OptInSubscribe = () => {
 	] = useGlobalSetting( 'typography.fontFamilies' );
 
 	const isOptedIn = useSelect( ( selectStore ) => {
-		const allowTracking = selectStore( OPTIONS_STORE_NAME ).getOption(
-			'woocommerce_allow_tracking'
-		);
+		const allowTracking =
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			selectStore( OPTIONS_STORE_NAME ).getOption(
+				'woocommerce_allow_tracking'
+			);
 		return allowTracking === 'yes';
 	}, [] );
 

@@ -11,6 +11,7 @@ import type { HTMLAttributes } from 'react';
 import { useStyleProps } from '@woocommerce/base-hooks';
 import { RichText } from '@wordpress/block-editor';
 import type { BlockEditProps } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -38,21 +39,23 @@ const Preview = ( {
 	suffix?: string;
 } ) => (
 	<div
-		className={ clsx( className, {
+		className={ clsx( className, 'wp-block-post-terms', {
 			[ `${ parentClassName }__product-sku` ]: parentClassName,
 		} ) }
 		style={ style }
 	>
 		<RichText
+			className="wc-block-components-product-sku__prefix"
 			tagName="span"
-			placeholder="Prefix"
+			placeholder={ __( 'Prefix', 'woocommerce' ) }
 			value={ prefix }
 			onChange={ ( value ) => setAttributes( { prefix: value } ) }
 		/>
-		<strong>{ sku }</strong>
+		<span> { sku }</span>
 		<RichText
+			className="wc-block-components-product-sku__suffix"
 			tagName="span"
-			placeholder="Suffix"
+			placeholder={ ' ' + __( 'Suffix', 'woocommerce' ) }
 			value={ suffix }
 			onChange={ ( value ) => setAttributes( { suffix: value } ) }
 		/>
@@ -72,7 +75,7 @@ const Block = ( props: Props ): JSX.Element | null => {
 				setAttributes={ props.setAttributes }
 				parentClassName={ parentClassName }
 				className={ className }
-				sku={ 'Product SKU' }
+				sku={ __( 'Product SKU', 'woocommerce' ) }
 				prefix={ props.prefix }
 				suffix={ props.suffix }
 			/>

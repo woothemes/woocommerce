@@ -7,7 +7,9 @@ type ShippingCalculatorContextType = {
 	shippingCalculatorID: string;
 	showCalculator: boolean;
 	isShippingCalculatorOpen: boolean;
-	setIsShippingCalculatorOpen: ( value: boolean ) => void;
+	setIsShippingCalculatorOpen: React.Dispatch<
+		React.SetStateAction< boolean >
+	>;
 };
 
 export const ShippingCalculatorContext =

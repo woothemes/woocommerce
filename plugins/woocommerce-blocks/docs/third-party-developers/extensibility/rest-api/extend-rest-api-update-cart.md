@@ -1,4 +1,4 @@
-# Updating the cart with the Store API <!-- omit in toc -->
+# Updating the cart on-demand with the Store API <!-- omit in toc -->
 
 ## Table of Contents <!-- omit in toc -->
 

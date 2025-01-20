@@ -10,7 +10,6 @@ import { useCollectionData } from '@woocommerce/base-context/hooks';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from '@wordpress/element';
 import { getSetting } from '@woocommerce/settings';
-import type { WCStoreV1ProductsCollectionProps } from '@woocommerce/blocks/product-collection/types';
 import type { TemplateArray } from '@wordpress/blocks';
 
 /**
@@ -51,26 +50,11 @@ const Edit = ( props: EditProps ) => {
 							},
 						],
 						clearButton
-							? [
-									'woocommerce/product-filter-clear-button',
-									{
-										lock: {
-											remove: true,
-											move: false,
-										},
-									},
-							  ]
+							? [ 'woocommerce/product-filter-clear-button' ]
 							: null,
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
-				[
-					'woocommerce/product-filter-checkbox-list',
-					{
-						lock: {
-							remove: true,
-						},
-					},
-				],
+				[ 'woocommerce/product-filter-checkbox-list' ],
 			],
 		}
 	);
@@ -80,16 +64,15 @@ const Edit = ( props: EditProps ) => {
 		{}
 	);
 
-	const { results: filteredCounts, isLoading } =
-		useCollectionData< WCStoreV1ProductsCollectionProps >( {
-			queryStock: true,
-			queryState: {},
-			isEditor: true,
-		} );
+	const { data: filteredCounts, isLoading } = useCollectionData( {
+		queryStock: true,
+		queryState: {},
+		isEditor: true,
+	} );
 
 	const items = useMemo( () => {
 		return Object.entries( stockStatusOptions )
-			.map( ( [ key, value ] ) => {
+			.map( ( [ key, value ], index ) => {
 				const count =
 					filteredCounts?.stock_status_counts?.find(
 						( item ) => item.status === key
@@ -101,6 +84,7 @@ const Edit = ( props: EditProps ) => {
 						? `${ value } (${ count.toString() })`
 						: value,
 					count,
+					selected: index === 0,
 				};
 			} )
 			.filter( ( item ) => ! hideEmpty || item.count > 0 );

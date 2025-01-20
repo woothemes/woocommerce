@@ -60,7 +60,7 @@ const Edit = ( props: EditProps ) => {
 		useState< boolean >( true );
 
 	const { results: attributeTerms, isLoading: isTermsLoading } =
-		useCollection< AttributeTerm[] >( {
+		useCollection< AttributeTerm >( {
 			namespace: '/wc/store/v1',
 			resourceName: 'products/attributes/terms',
 			resourceValues: [ attributeObject?.id || 0 ],
@@ -68,7 +68,7 @@ const Edit = ( props: EditProps ) => {
 			query: { orderby: 'menu_order', hide_empty: hideEmpty },
 		} );
 
-	const { results: filteredCounts, isLoading: isFilterCountsLoading } =
+	const { data: filteredCounts, isLoading: isFilterCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',
@@ -115,7 +115,7 @@ const Edit = ( props: EditProps ) => {
 							? `${ term.name } (${ term.count })`
 							: term.name,
 						value: term.id.toString(),
-						selected: index === 1,
+						selected: index === 0,
 						rawData: term,
 					} ) )
 			);
@@ -164,26 +164,11 @@ const Edit = ( props: EditProps ) => {
 							},
 						],
 						clearButton
-							? [
-									'woocommerce/product-filter-clear-button',
-									{
-										lock: {
-											remove: true,
-											move: false,
-										},
-									},
-							  ]
+							? [ 'woocommerce/product-filter-clear-button' ]
 							: null,
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
-				[
-					displayStyle,
-					{
-						lock: {
-							remove: true,
-						},
-					},
-				],
+				[ displayStyle ],
 			],
 		}
 	);

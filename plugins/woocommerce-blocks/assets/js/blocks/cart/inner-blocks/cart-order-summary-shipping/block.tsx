@@ -3,11 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
-import {
-	TotalsShipping,
-	ShippingCalculatorButton,
-	ShippingCalculator,
-} from '@woocommerce/base-components/cart-checkout';
+import { TotalsShipping } from '@woocommerce/base-components/cart-checkout';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout/shipping-calculator/context';
 import { useEditorContext, useStoreCart } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-checkout';
@@ -62,30 +58,18 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 							: __( 'Delivery', 'woocommerce' )
 					}
 					placeholder={
-						showCalculator ? (
-							<ShippingCalculatorButton
-								label={ __(
-									'Enter address to check delivery options',
-									'woocommerce'
-								) }
-							/>
-						) : (
+						! showCalculator ? (
 							<span className="wc-block-components-shipping-placeholder__value">
 								{ __(
-									'Calculated on checkout',
+									'Calculated at checkout',
 									'woocommerce'
 								) }
 							</span>
-						)
+						) : null
 					}
 					collaterals={
 						<>
-							{ isShippingCalculatorOpen && (
-								<ShippingCalculator />
-							) }
-							{ ! isShippingCalculatorOpen && (
-								<ShippingRateSelector />
-							) }
+							<ShippingRateSelector />
 							{ ! showCalculator &&
 								allRatesAreCollectable( shippingRates ) && (
 									<div className="wc-block-components-totals-shipping__delivery-options-notice">

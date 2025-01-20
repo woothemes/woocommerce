@@ -19,7 +19,7 @@ if ( 'twentytwentyfour' === $current_theme ) {
 
 ?>
 
-<!-- wp:woocommerce/coming-soon {"storeOnly":true, "className":"woocommerce-coming-soon-store-only"} -->
+<!-- wp:woocommerce/coming-soon {"comingSoonPatternId":"page-coming-soon-with-header-footer","className":"woocommerce-coming-soon-store-only"} -->
 <div class="wp-block-woocommerce-coming-soon woocommerce-coming-soon-store-only">
 
 <?php

@@ -19,8 +19,9 @@ type WooOnboardingTaskListHeaderProps = {
 export const WooOnboardingTaskListHeader = ( {
 	id,
 	...props
-}: WooOnboardingTaskListHeaderProps & Slot.Props ) => (
+}: WooOnboardingTaskListHeaderProps & React.ComponentProps< typeof Fill > ) => (
 	<Fill
+		// @ts-expect-error -- TODO: react-18-upgrade - examine why the type is inferred to have a name property and ts thinks that it will always override the name prop
 		name={ 'woocommerce_onboarding_task_list_header_' + id }
 		{ ...props }
 	/>
@@ -29,7 +30,7 @@ export const WooOnboardingTaskListHeader = ( {
 WooOnboardingTaskListHeader.Slot = ( {
 	id,
 	fillProps,
-}: WooOnboardingTaskListHeaderProps & Slot.Props ) => (
+}: WooOnboardingTaskListHeaderProps & React.ComponentProps< typeof Slot > ) => (
 	<Slot
 		name={ 'woocommerce_onboarding_task_list_header_' + id }
 		fillProps={ fillProps }
