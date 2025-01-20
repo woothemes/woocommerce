@@ -13,13 +13,13 @@
 	font-size: 0.875em;
 	cursor: pointer;
 
-	.has-chip-text & {
+	.has-chip-text-color & {
 		color: var(--wc-product-filter-chips-text);
 	}
-	.has-chip-background & {
+	.has-chip-background-color & {
 		background: var(--wc-product-filter-chips-background);
 	}
-	.has-chip-border & {
+	.has-chip-border-color & {
 		border-color: var(--wc-product-filter-chips-border);
 	}
 }
@@ -27,19 +27,19 @@
 :where(.wc-block-product-filter-chips__item[aria-checked="true"]) {
 	background: currentColor;
 
-	.has-selected-chip-text & {
+	.has-selected-chip-text-color & {
 		color: var(--wc-product-filter-chips-selected-text);
 	}
-	.has-selected-chip-background & {
+	.has-selected-chip-background-color & {
 		background: var(--wc-product-filter-chips-selected-background);
 	}
-	.has-selected-chip-border & {
+	.has-selected-chip-border-color & {
 		border-color: var(--wc-product-filter-chips-selected-border);
 	}
 }
 
 :where(
-.wc-block-product-filter-chips:not(.has-selected-chip-text)
+.wc-block-product-filter-chips:not(.has-selected-chip-text-color)
 .wc-block-product-filter-chips__item[aria-checked="true"]
 > .wc-block-product-filter-chips__label
 ) {

@@ -29,8 +29,63 @@ final class ProductFilterPrice extends AbstractBlock {
 	protected function initialize() {
 		parent::initialize();
 
-		add_filter( 'collection_filter_query_param_keys', array( $this, 'get_filter_query_param_keys' ), 10, 2 );
-		add_filter( 'collection_active_filters_data', array( $this, 'register_active_filters_data' ), 10, 2 );
+		add_filter( 'woocommerce_blocks_product_filters_param_keys', array( $this, 'get_filter_query_param_keys' ), 10, 2 );
+		add_filter( 'woocommerce_blocks_product_filters_selected_items', array( $this, 'prepare_selected_filters' ), 10, 2 );
+	}
+
+	/**
+	 * Prepare the active filter items.
+	 *
+	 * @param array $items  The active filter items.
+	 * @param array $params The query param parsed from the URL.
+	 * @return array Active filters items.
+	 */
+	public function prepare_selected_filters( $items, $params ) {
+		$min_price           = intval( $params[ self::MIN_PRICE_QUERY_VAR ] ?? 0 );
+		$max_price           = intval( $params[ self::MAX_PRICE_QUERY_VAR ] ?? 0 );
+		$formatted_min_price = $min_price ? html_entity_decode( wp_strip_all_tags( wc_price( $min_price, array( 'decimals' => 0 ) ) ) ) : null;
+		$formatted_max_price = $max_price ? html_entity_decode( wp_strip_all_tags( wc_price( $max_price, array( 'decimals' => 0 ) ) ) ) : null;
+
+		if ( ! $formatted_min_price && ! $formatted_max_price ) {
+			return $items;
+		}
+
+		$item = array(
+			'type'  => 'price',
+			'value' => "{$min_price}-{$max_price}",
+			'price' => array(),
+		);
+
+		if ( $min_price ) {
+			$item['price']['min'] = $min_price;
+		}
+
+		if ( $max_price ) {
+			$item['price']['max'] = $max_price;
+		}
+
+		if ( $formatted_min_price && $formatted_max_price ) {
+			$item['label'] = sprintf(
+				/* translators: %1$s and %2$s are the formatted minimum and maximum prices respectively. */
+				__( 'Price: %1$s - %2$s', 'woocommerce' ),
+				$formatted_min_price,
+				$formatted_max_price
+			);
+		}
+
+		if ( ! $formatted_min_price ) {
+			/* translators: %s is the formatted maximum price. */
+			$item['label'] = sprintf( __( 'Price: Up to %s', 'woocommerce' ), $formatted_max_price );
+		}
+
+		if ( ! $formatted_max_price ) {
+			/* translators: %s is the formatted minimum price. */
+			$item['label'] = sprintf( __( 'Price: From %s', 'woocommerce' ), $formatted_min_price );
+		}
+
+		$items[] = $item;
+
+		return $items;
 	}
 
 	/**
@@ -56,57 +111,6 @@ final class ProductFilterPrice extends AbstractBlock {
 	}
 
 	/**
-	 * Register the active filters data.
-	 *
-	 * @param array $data   The active filters data.
-	 * @param array $params The query param parsed from the URL.
-	 * @return array Active filters data.
-	 */
-	public function register_active_filters_data( $data, $params ) {
-		$min_price           = intval( $params[ self::MIN_PRICE_QUERY_VAR ] ?? 0 );
-		$max_price           = intval( $params[ self::MAX_PRICE_QUERY_VAR ] ?? 0 );
-		$formatted_min_price = $min_price ? wp_strip_all_tags( wc_price( $min_price, array( 'decimals' => 0 ) ) ) : null;
-		$formatted_max_price = $max_price ? wp_strip_all_tags( wc_price( $max_price, array( 'decimals' => 0 ) ) ) : null;
-
-		if ( ! $formatted_min_price && ! $formatted_max_price ) {
-			return $data;
-		}
-
-		if ( $formatted_min_price && $formatted_max_price ) {
-			$title = sprintf(
-				/* translators: %1$s and %2$s are the formatted minimum and maximum prices respectively. */
-				__( 'Between %1$s and %2$s', 'woocommerce' ),
-				$formatted_min_price,
-				$formatted_max_price
-			);
-		}
-
-		if ( ! $formatted_min_price ) {
-			/* translators: %s is the formatted maximum price. */
-			$title = sprintf( __( 'Up to %s', 'woocommerce' ), $formatted_max_price );
-		}
-
-		if ( ! $formatted_max_price ) {
-			/* translators: %s is the formatted minimum price. */
-			$title = sprintf( __( 'From %s', 'woocommerce' ), $formatted_min_price );
-		}
-
-		$data['price'] = array(
-			'type'  => __( 'Price', 'woocommerce' ),
-			'items' => array(
-				array(
-					'title'      => $title,
-					'attributes' => array(
-						'data-wc-on--click' => "{$this->get_full_block_name()}::actions.clearFilters",
-					),
-				),
-			),
-		);
-
-		return $data;
-	}
-
-	/**
 	 * Render the block.
 	 *
 	 * @param array    $attributes Block attributes.
@@ -128,15 +132,13 @@ final class ProductFilterPrice extends AbstractBlock {
 		$max_price     = intval( $filter_params[ self::MAX_PRICE_QUERY_VAR ] ?? $max_range );
 
 		$filter_context = array(
-			'price'   => array(
+			'price'  => array(
 				'minPrice' => $min_price,
 				'maxPrice' => $max_price,
 				'minRange' => $min_range,
 				'maxRange' => $max_range,
 			),
-			'actions' => array(
-				'setPrices' => "{$this->get_full_block_name()}::actions.setPrices",
-			),
+			'parent' => $this->get_full_block_name(),
 		);
 
 		$wrapper_attributes = array(
@@ -148,12 +150,17 @@ final class ProductFilterPrice extends AbstractBlock {
 			),
 			'data-wc-context'      => wp_json_encode(
 				array(
-					'minPrice'           => $min_price,
-					'maxPrice'           => $max_price,
-					'minRange'           => $min_range,
-					'maxRange'           => $max_range,
-					'hasFilterOptions'   => $min_range < $max_range && $min_price < $max_price,
-					'hasSelectedFilters' => $min_price !== $min_range || $max_price !== $max_range,
+					'minRange'             => $min_range,
+					'maxRange'             => $max_range,
+					'hasFilterOptions'     => $min_range < $max_range && $min_price < $max_price,
+					'activeLabelTemplates' => array(
+						/* translators: {{min}} and {{max}} are the formatted minimum and maximum prices respectively. */
+						'minAndMax' => __( 'Price: {{min}} - {{max}}', 'woocommerce' ),
+						/* translators: {{max}} is the formatted maximum price. */
+						'maxOnly'   => __( 'Price: Up to {{max}}', 'woocommerce' ),
+						/* translators: {{min}} is the formatted minimum price. */
+						'minOnly'   => __( 'Price: From {{min}}', 'woocommerce' ),
+					),
 				),
 				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP,
 			),
