@@ -20,7 +20,8 @@ type StoreNoticesState = {
 export type StoreNoticesStore = {
 	state: StoreNoticesState;
 	actions: {
-		addNotice: ( notice: Notice ) => void;
+		addNotice: ( notice: Notice ) => string;
+		removeNotice: ( noticeId: string ) => void;
 	};
 	callbacks: {
 		dismissNotice: () => void;
@@ -42,19 +43,35 @@ const ICON_PATHS = {
 	notice: ALERT_ICON_PATH,
 };
 
+const generateNoticeId = () => {
+	// semi-random with low collision probability.
+	return `${ Date.now() }-${ Math.random()
+		.toString( 36 )
+		.substring( 2, 15 ) }`;
+};
+
 const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 	state: {
 		notices: [],
 	},
 	actions: {
 		addNotice: ( notice: Notice ) => {
+			const noticeId = generateNoticeId();
 			state.notices = [
 				...state.notices,
 				{
 					...notice,
-					id: `${ notice.type }-${ state.notices.length }`,
+					id: noticeId,
 				},
 			];
+
+			return noticeId;
+		},
+
+		removeNotice: ( noticeId: string ) => {
+			state.notices = state.notices.filter(
+				( notice ) => notice.id !== noticeId
+			);
 		},
 	},
 	callbacks: {

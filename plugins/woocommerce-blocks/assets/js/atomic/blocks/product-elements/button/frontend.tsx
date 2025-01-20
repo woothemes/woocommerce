@@ -38,6 +38,7 @@ interface Store {
 		slideOutAnimation: boolean;
 		addToCartText: string;
 		displayViewCart: boolean;
+		noticeId: string;
 	};
 	actions: {
 		addToCart: () => void;
@@ -131,17 +132,22 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 					'woocommerce/store-notices'
 				);
 
-				// First check if the error is already in the notices store.
-				const existingNotice = noticesStore.state.notices.find(
-					( notice ) => notice.notice === decodeEntities( message )
-				);
+				// If the user deleted the hooked store notice block, the store won't be present
+				// and we should not add a notice.
+				if ( noticesStore ) {
+					// The old implementation always overwrites the last notice, so
+					// we remove the last notice before adding a new one.
+					if ( state.noticeId !== '' ) {
+						noticesStore.actions.removeNotice( state.noticeId );
+					}
 
-				if ( ! existingNotice ) {
-					noticesStore.actions.addNotice( {
+					const noticeId = noticesStore.actions.addNotice( {
 						notice: decodeEntities( message ),
 						type: 'error',
 						dismissible: true,
 					} );
+
+					state.noticeId = noticeId;
 				}
 
 				// We don't care about errors blocking execution, but will
