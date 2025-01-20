@@ -450,17 +450,44 @@ a.added_to_cart {
 * My account - Login form
 */
 .woocommerce-page {
-	.woocommerce-form-login,
-	.woocommerce-form-register {
-		 .woocommerce-form-row {
-			.input-text {
-				// Ensure inputs are well spaced.
-				font-size: var(--wp--preset--font-size--medium);
-			}
+	// For block themes we increase the padding of the input fields across classic checkout and my account pages.
+	form .form-row {
+		select,
+		.input-text {
+			// Ensure inputs are well spaced.
+			font-size: var(--wp--preset--font-size--small);
+			padding: 0.9rem 1.1rem;
+		}
 
-			label {
-				margin-bottom: 0.7em;
+		select {
+			background-position: calc(100% - 1.1rem) 50%;
+		}
+
+		label {
+			margin-bottom: 0.7em;
+		}
+
+		// Ensure dropdowns are visually consistent with other form fields.
+		.select2-container {
+			.select2-selection--single .select2-selection__rendered {
+				padding: 0.9rem 1.1rem;
 			}
+			.select2-selection--single .select2-selection__arrow {
+				right: 1.1em;
+			}
+		}
+	}
+
+	.select2-container {
+		.select2-search--dropdown {
+			padding: 0 1.1rem 0.5rem;
+		}
+		.select2-search--dropdown .select2-search__field {
+			padding: 0.5rem;
+			font-size: var(--wp--preset--font-size--small);
+		}
+		.select2-results__option {
+			padding:  0.5rem 1.1rem;
 		}
 	}
 }
