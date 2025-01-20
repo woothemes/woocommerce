@@ -60,7 +60,10 @@ final class NumberUtil {
 	public static function sanitize_cost_in_current_locale( $value ): string {
 		$value = is_null( $value ) ? '' : $value;
 		$value = wp_kses_post( trim( wp_unslash( $value ) ) );
-		$value = str_replace( array( get_woocommerce_currency_symbol(), html_entity_decode( get_woocommerce_currency_symbol() ) ), '', $value );
+		$currency_symbol_encoded = get_woocommerce_currency_symbol();
+		$currency_symbol_variations = array( $currency_symbol_encoded, wp_kses_normalize_entities( $currency_symbol_encoded ), html_entity_decode( $currency_symbol_encoded ) );
+		
+		$value = str_replace( $currency_symbol_variations, '', $value );
 
 		$allowed_characters_regex = sprintf(
 			'/^[0-9\%s\%s]*$/',
@@ -69,14 +72,21 @@ final class NumberUtil {
 		);
 
 		if ( 1 !== preg_match( $allowed_characters_regex, $value ) ) {
-			throw new \InvalidArgumentException( __( 'Please enter a valid number', 'woocommerce' ) );
+			throw new \InvalidArgumentException( sprintf( __( '%s is not a valid numeric value. Allowed characters: %s', 'woocommerce' ), $value, $allowed_characters_regex ) );
 		}
+
+		/**
+		 * For context, as of 2025
+		 * The full set of thousands separators is PERIOD, COMMA, SPACE, APOSTROPHE.
+		 * And the full set of decimal separators is PERIOD, COMMA.
+		 * There are no locales that use the same thousands and decimal separators.
+		 */
 
 		$value = str_replace( wc_get_price_thousand_separator(), '', $value );
 		$value = str_replace( wc_get_price_decimal_separator(), '.', $value );
 
 		if ( $value && ! is_numeric( $value ) ) {
-			throw new \InvalidArgumentException( __( 'Please enter a valid number', 'woocommerce' ) );
+			throw new \InvalidArgumentException( sprintf( __( '%s is not a valid numeric value', 'woocommerce' ), $value ) );
 		}
 
 		return $value;

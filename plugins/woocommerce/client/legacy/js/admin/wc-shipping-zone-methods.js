@@ -351,7 +351,7 @@
 
 					$( document.body ).trigger( 'init_tooltips' );
 				},
-				// Cost values need to be stripped of thier thousandth separators and made sure
+				// Cost values need to be stripped of their thousandth separators and made sure
 				// the decimal separator is a ".".
 				unformatShippingMethodNumericValues: function( data ) {
 					if ( ! window.wc.wcSettings.CURRENCY ) {
@@ -499,12 +499,12 @@
 					return htmlContent.prop( 'outerHTML' );
 				},
 				addCurrencySymbol: function( html ) {
-					if ( ! window.wc.ShippingCurrencyContext || ! window.wc.ShippingCurrencyNumberFormat ) {
+					if ( ! window.wc.wcSettings.CURRENCY || ! window.wc.currency.localiseMonetaryValue ) {
 						return html;
 					}
 					const htmlContent = $( html );
 					const priceInputs = htmlContent.find( '.wc-shipping-modal-price' );
-					const config = window.wc.ShippingCurrencyContext.getCurrencyConfig();
+					const config = window.wc.wcSettings.CURRENCY;
 					const { symbol, symbolPosition } = config;
 
 					priceInputs.addClass( `wc-shipping-currency-size-${ symbol.length }` );
@@ -516,7 +516,7 @@
 					priceInputs.each( ( i ) => {
 						const priceInput = $( priceInputs[ i ] );
 						const value = priceInput.attr( 'value' );
-						const formattedValue = window.wc.ShippingCurrencyNumberFormat( config, value );
+						const formattedValue = window.wc.currency.localiseMonetaryValue( config, value );
 						priceInput.attr( 'value', formattedValue );
 					} );
 

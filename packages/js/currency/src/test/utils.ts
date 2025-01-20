@@ -6,7 +6,7 @@ import { numberFormat } from '@woocommerce/number';
 /**
  * Internal dependencies
  */
-import { safeNumberFormat } from '../currency-context';
+import { localiseMonetaryValue } from '../utils';
 
 const config = {
 	code: 'USD',
@@ -18,15 +18,15 @@ const config = {
 	precision: 2,
 };
 
-describe( 'CurrencyContext', () => {
+describe( 'numericStringToNumber', () => {
 	it( 'should format a number input correctly', () => {
-		expect( safeNumberFormat( config, 1234 ) ).toBe(
+		expect( localiseMonetaryValue( config, 1234 ) ).toBe(
 			numberFormat( config, 1234 )
 		);
 	} );
 
 	it( 'should format string numbers correctly', () => {
-		expect( safeNumberFormat( config, '123456789' ) ).toBe(
+		expect( localiseMonetaryValue( config, '123456789' ) ).toBe(
 			'123,456,789.00'
 		);
 	} );
@@ -37,7 +37,7 @@ describe( 'CurrencyContext', () => {
 			decimalSeparator: ',',
 			thousandSeparator: '.',
 		};
-		expect( safeNumberFormat( customConfig, '123.456.789' ) ).toBe(
+		expect( localiseMonetaryValue( customConfig, '123.456.789' ) ).toBe(
 			'123.456.789,00'
 		);
 	} );
@@ -48,7 +48,7 @@ describe( 'CurrencyContext', () => {
 			decimalSeparator: ',',
 			thousandSeparator: '.',
 		};
-		expect( safeNumberFormat( customConfig, '7.5' ) ).toBe( '7.5' );
+		expect( localiseMonetaryValue( customConfig, '7.5' ) ).toBe( '7.5' );
 	} );
 
 	it( 'should format number according to precision', () => {
@@ -56,25 +56,31 @@ describe( 'CurrencyContext', () => {
 			...config,
 			precision: 5,
 		};
-		expect( safeNumberFormat( customConfig, '123.4' ) ).toBe( '123.40000' );
+		expect( localiseMonetaryValue( customConfig, '123.4' ) ).toBe(
+			'123.40000'
+		);
 	} );
 
 	it( 'should format number and trim leading and trailing spaces', () => {
-		expect( safeNumberFormat( config, ' 1234 ' ) ).toBe( '1,234.00' );
+		expect( localiseMonetaryValue( config, ' 1234 ' ) ).toBe(
+			'1,234.00'
+		);
 	} );
 
 	it( 'should not format numbers when text is included', () => {
-		expect( safeNumberFormat( config, 'Value 1234' ) ).toBe( 'Value 1234' );
+		expect( localiseMonetaryValue( config, 'Value 1234' ) ).toBe(
+			'Value 1234'
+		);
 	} );
 
 	it( 'should not format when formula is included', () => {
 		expect(
-			safeNumberFormat( config, '50 + (([qty]*2+1)(5*10))(1)' )
+			localiseMonetaryValue( config, '50 + (([qty]*2+1)(5*10))(1)' )
 		).toBe( '50 + (([qty]*2+1)(5*10))(1)' );
 	} );
 
 	it( 'should return the original input for non-string, non-number inputs', () => {
 		const input = { some: 'object' };
-		expect( safeNumberFormat( config, input ) ).toBe( input );
+		expect( localiseMonetaryValue( config, input ) ).toBe( input );
 	} );
 } );
