@@ -11,8 +11,6 @@ import metadata from './block.json';
 import AddToCartWithOptionsGroupedProductSelectorEdit from './edit';
 import AddToCartWithOptionsGroupedProductSelectorSave from './save';
 import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '..';
-import './style.scss';
-import './editor.scss';
 
 if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 	registerBlockType( metadata, {
