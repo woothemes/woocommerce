@@ -21,6 +21,13 @@ class ComingSoonRequestHandler {
 	private $coming_soon_helper = null;
 
 	/**
+	 * Whether the coming soon screen should be shown. Cache the result to avoid multiple calls to the helper.
+	 *
+	 * @var bool
+	 */
+	private static $show_coming_soon = false;
+
+	/**
 	 * Sets up the hook.
 	 *
 	 * @internal
@@ -40,7 +47,6 @@ class ComingSoonRequestHandler {
 	 */
 	public function possibly_init_block_templates() {
 		global $wp;
-
 		if ( ! $this->should_show_coming_soon( $wp ) ) {
 			return;
 		}
@@ -121,6 +127,11 @@ class ComingSoonRequestHandler {
 	 * @return bool
 	 */
 	private function should_show_coming_soon( \WP &$wp ) {
+		// Early exit if already determined that the coming soon screen should be shown.
+		if ( self::$show_coming_soon ) {
+			return true;
+		}
+
 		// Early exit if LYS feature is disabled.
 		if ( ! Features::is_enabled( 'launch-your-store' ) ) {
 			return false;
@@ -166,6 +177,8 @@ class ComingSoonRequestHandler {
 				return false;
 			}
 		}
+
+		self::$show_coming_soon = true;
 		return true;
 	}
 
