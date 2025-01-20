@@ -180,7 +180,6 @@ class ProductButton extends AbstractBlock {
 			$div_directives = '
 				data-wc-interactive=\'' . wp_json_encode( $interactive, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
 				data-wc-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
-				data-wc-init="woocommerce::actions.updateCart"
 			';
 
 			$button_directives = 'data-wc-on--click="actions.addToCart"';

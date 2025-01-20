@@ -5,7 +5,7 @@ import { store } from '@woocommerce/interactivity';
 // Todo: remove once we import from `@wordpress/interactivity`.
 import type { store as StoreType } from '@wordpress/interactivity';
 
-interface Store {
+export interface Store {
 	state: {
 		restUrl: string;
 		nonce: string;

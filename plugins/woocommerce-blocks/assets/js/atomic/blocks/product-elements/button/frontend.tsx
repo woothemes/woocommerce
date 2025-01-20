@@ -5,12 +5,7 @@ import { store, getContext as getContextFn } from '@woocommerce/interactivity';
 // Todo: remove once we import from `@wordpress/interactivity`.
 // Todo: if we ever release this, make sure we are not bundling the `@wordpress/interactivity` package.
 import type { store as StoreType } from '@wordpress/interactivity';
-
-// Todo: move the addToCart store to its own module.
-import {
-	state as wooState,
-	actions as wooActions,
-} from '../../../../base/stores/add-to-cart';
+import type { Store as WooStore } from '../../../../base/stores/add-to-cart';
 
 interface Context {
 	addToCartText: string;
@@ -48,6 +43,8 @@ interface Store {
 		syncTempQuantityOnLoad: () => void;
 	};
 }
+
+const { state: wooState } = store< WooStore >( 'woocommerce' );
 
 // Todo: Remove the type cast once we import from `@wordpress/interactivity`.
 const { state } = ( store as typeof StoreType )< Store >(
@@ -101,10 +98,18 @@ const { state } = ( store as typeof StoreType )< Store >(
 			},
 		},
 		actions: {
-			addToCart() {
+			*addToCart() {
 				const context = getContext();
 				const { productId, quantityToAdd } = context;
-				wooActions.addToCart(
+
+				// Todo: move the addToCart store to its own module.
+				const {
+					actions: { addToCart },
+				} = ( yield import(
+					'../../../../base/stores/add-to-cart'
+				) ) as WooStore;
+
+				addToCart(
 					productId,
 					// Question: is quantityToAdd available in the cart or we need to pass it down?
 					state.quantity + quantityToAdd
