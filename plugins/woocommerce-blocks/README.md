@@ -42,79 +42,111 @@ WooCommerce Blocks are the easiest, most flexible way to build your store's user
 
 ## Integration tests
 
-The integration tests are organized under the directory `/tests/integration` and each file must be named following the next pattern:
+All integration tests are located in the `/tests/integration` directory and must follow this naming convention:
 
-`[name-of-the-integration-test-suite].spec.ts`
+```typescript
+[name-of-the-integration-test-suite].spec.ts
+```
 
-### How to run the tests?
+### Running Tests
 
-Single run mode: `pnpm --filter=@woocommerce/block-library run test:integration:js`
+There are two ways to run the integration tests:
 
-Watch mode: `pnpm --filter=@woocommerce/block-library run test:integration:js --watch`
+```bash
+# Run tests once
+pnpm --filter=@woocommerce/block-library run test:integration:js
 
-### How to write a test?
+# Run tests in watch mode (automatically re-runs on file changes)
+pnpm --filter=@woocommerce/block-library run test:integration:js --watch
+```
 
-It is important to import all the blocks that are going to be tested together
-for them to be registered before testing.
+### Test Utilities
+
+The integration tests use several utility functions from `tests/utils/integration/editor.tsx`:
+- `selectBlock(name)`: Selects a block by its aria-label
+- `initializeEditor(testBlocks, useCoreBlocks, settings)`: Sets up the test environment with specified blocks
+- `Editor`: A component that provides the test environment
+
+### Writing Integration Tests
+
+#### 1. Block Registration
+
+First, import and register all blocks that will be tested:
 
 ```javascript
 import '../../assets/js/blocks/active-filters';
-import '..';
+import '../../assets/js/blocks/attribute-filter';
+// ... other block imports
 ```
 
-Once the blocks are all included and registered then the Block Editor must be setup.
-The following function prepare the Editor and tell it what are the blocks it has to
-create.
+#### 2. Test Setup
+
+Create a setup function that initializes the test environment:
 
 ```javascript
 async function setup() {
-	const testBlocks = [
-        { name: 'woocommerce/active-filters', attributes: { ... } },
-        { name: '...', attributes: { ... } },
+    // Define blocks to test with their attributes
+    const testBlocks = [
+        {
+            name: 'woocommerce/active-filters',
+            attributes: {
+                displayStyle: 'list',
+                // ... other attributes
+            }
+        }
     ];
-	return initializeEditor( testBlocks );
+
+    // Initialize editor with blocks and optional settings
+    return initializeEditor(
+        testBlocks,
+        true, // Use core blocks
+        {} // Additional editor settings
+    );
 }
 ```
 
-Then the `setup` function can be called in each test with the Editor and the blocks
-already initialized.
+#### 3. Writing Test Cases
+
+Example test patterns:
 
 ```javascript
-test( 'should change the display style', async () => {
-	await setup();
+describe('Active Filters Block', () => {
+    test('should change the display style', async () => {
+        await setup();
 
-	const activeFiltersBlock = within(
-		screen.getByLabelText( /Block: Active Filters/i )
-	);
+        const activeFiltersBlock = within(
+            screen.getByLabelText(/Block: Active Filters/i)
+        );
 
-	expect(
-		activeFiltersBlock.queryByRole( 'button', {
-			name: /Clear All Filters/i,
-		} )
-	).toBeInTheDocument();
+        expect(
+            activeFiltersBlock.queryByRole('button', {
+                name: /Clear All Filters/i,
+            })
+        ).toBeInTheDocument();
 
-	const filterList = activeFiltersBlock.getByRole( 'list' );
+        const filterList = activeFiltersBlock.getByRole('list');
 
-	expect( filterList.classList ).toContain( 'wc-block-active-filters__list' );
-	expect( filterList.classList ).not.toContain(
-		'wc-block-active-filters__list--chips'
-	);
+        expect(filterList.classList).toContain('wc-block-active-filters__list');
+        expect(filterList.classList).not.toContain(
+            'wc-block-active-filters__list--chips'
+        );
 
-	await selectBlock( /Block: Active Filters/i );
+        await selectBlock(/Block: Active Filters/i);
 
-	const displaySettings = screen.getByRole( 'button', {
-		name: /Display Settings/i,
-	} );
+        const displaySettings = screen.getByRole('button', {
+            name: /Display Settings/i,
+        });
 
-	if ( displaySettings.getAttribute( 'aria-expanded' ) !== 'true' ) {
-		fireEvent.click( displaySettings );
-	}
+        if (displaySettings.getAttribute('aria-expanded') !== 'true') {
+            fireEvent.click(displaySettings);
+        }
 
-	fireEvent.click( screen.getByRole( 'radio', { name: /Chips/i } ) );
+        fireEvent.click(screen.getByRole('radio', { name: /Chips/i }));
 
-	expect( filterList.classList ).toContain( 'wc-block-active-filters__list' );
-	expect( filterList.classList ).toContain(
-		'wc-block-active-filters__list--chips'
-	);
-} );
+        expect(filterList.classList).toContain('wc-block-active-filters__list');
+        expect(filterList.classList).toContain(
+            'wc-block-active-filters__list--chips'
+        );
+    });
+});
 ```
