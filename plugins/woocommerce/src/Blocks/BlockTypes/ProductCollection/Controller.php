@@ -84,7 +84,8 @@ class Controller extends AbstractBlock {
 	}
 
 	/**
-	 * Hook the store notices block to ensure woocommerce/product-button can add error notices client-side.
+	 * Hook the store notices block to post-content/before to ensure that error notices can be shown
+	 * client-side even when the store notices block is not present as part of the template.
 	 *
 	 * @param array  $hooked_blocks The array of hooked blocks.
 	 * @param string $position The position of the block.
