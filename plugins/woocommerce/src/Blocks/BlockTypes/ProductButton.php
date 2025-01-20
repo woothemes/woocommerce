@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
+use Automattic\WooCommerce\Blocks\Interactivity\Store;
 
 /**
  * ProductButton class.
@@ -82,18 +83,8 @@ class ProductButton extends AbstractBlock {
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$product = wc_get_product( $post_id );
 
-		// Todo: move this to a general function so it's only triggered once.
-		$cart = rest_do_request( new \WP_REST_Request( 'GET', '/wc/store/v1/cart' ) );
-		wc_initial_state(
-			'woocommerce',
-			array(
-				'cart' => $cart->data,
-				'nonce' => $cart->headers['Nonce'],
-
-				// Todo: move this to wp_interactivity_config() instead of state.
-				'restUrl' => get_rest_url(),
-			)
-		);
+		// Initialize the "Add To Cart" store part.
+		$state = Store::add_to_cart();
 
 		wc_initial_state(
 			'woocommerce/product-button',
@@ -189,6 +180,7 @@ class ProductButton extends AbstractBlock {
 			$div_directives = '
 				data-wc-interactive=\'' . wp_json_encode( $interactive, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
 				data-wc-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
+				data-wc-init="woocommerce::actions.updateCart"
 			';
 
 			$button_directives = 'data-wc-on--click="actions.addToCart"';
