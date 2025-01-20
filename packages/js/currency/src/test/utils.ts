@@ -18,7 +18,7 @@ const config = {
 	precision: 2,
 };
 
-describe( 'numericStringToNumber', () => {
+describe( 'localiseMonetaryValue', () => {
 	it( 'should format a number input correctly', () => {
 		expect( localiseMonetaryValue( config, 1234 ) ).toBe(
 			numberFormat( config, 1234 )
@@ -62,9 +62,7 @@ describe( 'numericStringToNumber', () => {
 	} );
 
 	it( 'should format number and trim leading and trailing spaces', () => {
-		expect( localiseMonetaryValue( config, ' 1234 ' ) ).toBe(
-			'1,234.00'
-		);
+		expect( localiseMonetaryValue( config, ' 1234 ' ) ).toBe( '1,234.00' );
 	} );
 
 	it( 'should not format numbers when text is included', () => {
