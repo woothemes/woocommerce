@@ -5,7 +5,7 @@
  * @package WooCommerce\Tests\Product
  */
 
-use Automattic\WooCommerce\Enums\ProductVisibility;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 /**
@@ -40,7 +40,7 @@ class WC_Tests_Product_Data extends WC_Unit_Test_Case {
 			'name'               => 'Test',
 			'slug'               => 'test',
 			'status'             => 'publish',
-			'catalog_visibility' => ProductVisibility::SEARCH,
+			'catalog_visibility' => CatalogVisibility::SEARCH,
 			'featured'           => false,
 			'description'        => 'Hello world',
 			'short_description'  => 'hello',

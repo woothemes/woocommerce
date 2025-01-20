@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
 use Automattic\WooCommerce\Enums\ProductType;
-use Automattic\WooCommerce\Enums\ProductVisibility;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\StoreApi\Utilities\Pagination;
 use Automattic\WooCommerce\StoreApi\Utilities\ProductQuery;
 
@@ -425,7 +425,7 @@ class Products extends AbstractRoute {
 		$params['catalog_visibility'] = array(
 			'description'       => __( 'Determines if hidden or visible catalog products are shown.', 'woocommerce' ),
 			'type'              => 'string',
-			'enum'              => array( 'any', ProductVisibility::VISIBLE, ProductVisibility::CATALOG, ProductVisibility::SEARCH, ProductVisibility::HIDDEN ),
+			'enum'              => array( 'any', CatalogVisibility::VISIBLE, CatalogVisibility::CATALOG, CatalogVisibility::SEARCH, CatalogVisibility::HIDDEN ),
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',
 		);

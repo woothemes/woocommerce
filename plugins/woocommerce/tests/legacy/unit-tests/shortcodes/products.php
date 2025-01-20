@@ -6,7 +6,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
-use Automattic\WooCommerce\Enums\ProductVisibility;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 
 /**
  * Class WC_Test_Shortcode_Products.
@@ -32,7 +32,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 			'terms_operator' => 'IN',
 			'tag'            => '',
 			'tag_operator'   => 'IN',
-			'visibility'     => ProductVisibility::VISIBLE,
+			'visibility'     => CatalogVisibility::VISIBLE,
 			'class'          => '',
 			'rows'           => '',
 			'page'           => 1,
@@ -62,7 +62,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 			'terms_operator' => 'IN',
 			'tag'            => '',
 			'tag_operator'   => 'IN',
-			'visibility'     => ProductVisibility::VISIBLE,
+			'visibility'     => CatalogVisibility::VISIBLE,
 			'class'          => '',
 			'rows'           => '',
 			'page'           => 1,
@@ -460,7 +460,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		// Check for visibility shortcode.
 		$shortcode12 = new WC_Shortcode_Products(
 			array(
-				'visibility' => ProductVisibility::HIDDEN,
+				'visibility' => CatalogVisibility::HIDDEN,
 			)
 		);
 		$expected12  = array(
@@ -488,7 +488,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 
 		$shortcode13 = new WC_Shortcode_Products(
 			array(
-				'visibility' => ProductVisibility::CATALOG,
+				'visibility' => CatalogVisibility::CATALOG,
 			)
 		);
 		$expected13  = array(
@@ -523,7 +523,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 
 		$shortcode14 = new WC_Shortcode_Products(
 			array(
-				'visibility' => ProductVisibility::SEARCH,
+				'visibility' => CatalogVisibility::SEARCH,
 			)
 		);
 		$expected14  = array(
@@ -652,7 +652,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 
 		$shortcode2 = new WC_Shortcode_Products(
 			array(
-				'visibility' => ProductVisibility::HIDDEN,
+				'visibility' => CatalogVisibility::HIDDEN,
 			)
 		);
 		$this->assertTrue( $shortcode2->set_product_as_visible( false ) );

@@ -5,9 +5,9 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Enums;
 
 /**
- * Enum class for all the product visibility.
+ * Enum class for all the catalog visibility values.
  */
-class ProductVisibility {
+class CatalogVisibility {
 	/**
 	 * Visible product.
 	 *

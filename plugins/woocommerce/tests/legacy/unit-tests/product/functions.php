@@ -7,7 +7,7 @@
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
-use Automattic\WooCommerce\Enums\ProductVisibility;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 
 /**
  * WC_Tests_Product_Functions class.
@@ -571,35 +571,35 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 	 */
 	public function test_wc_get_products_visibility() {
 		$product_1 = new WC_Product_Simple();
-		$product_1->set_catalog_visibility( ProductVisibility::VISIBLE );
+		$product_1->set_catalog_visibility( CatalogVisibility::VISIBLE );
 		$product_1->save();
 
 		$product_2 = new WC_Product_Simple();
-		$product_2->set_catalog_visibility( ProductVisibility::HIDDEN );
+		$product_2->set_catalog_visibility( CatalogVisibility::HIDDEN );
 		$product_2->save();
 
 		$product_3 = new WC_Product_Simple();
-		$product_3->set_catalog_visibility( ProductVisibility::SEARCH );
+		$product_3->set_catalog_visibility( CatalogVisibility::SEARCH );
 		$product_3->save();
 
 		$products = wc_get_products(
 			array(
 				'return'     => 'ids',
-				'visibility' => ProductVisibility::VISIBLE,
+				'visibility' => CatalogVisibility::VISIBLE,
 			)
 		);
 		$this->assertEquals( array( $product_1->get_id() ), $products );
 		$products = wc_get_products(
 			array(
 				'return'     => 'ids',
-				'visibility' => ProductVisibility::HIDDEN,
+				'visibility' => CatalogVisibility::HIDDEN,
 			)
 		);
 		$this->assertEquals( array( $product_2->get_id() ), $products );
 		$products = wc_get_products(
 			array(
 				'return'     => 'ids',
-				'visibility' => ProductVisibility::SEARCH,
+				'visibility' => CatalogVisibility::SEARCH,
 			)
 		);
 		sort( $products );

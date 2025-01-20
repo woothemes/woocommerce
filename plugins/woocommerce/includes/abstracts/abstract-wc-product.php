@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
-use Automattic\WooCommerce\Enums\ProductVisibility;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 
@@ -65,7 +65,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		'date_modified'      => null,
 		'status'             => false,
 		'featured'           => false,
-		'catalog_visibility' => ProductVisibility::VISIBLE,
+		'catalog_visibility' => CatalogVisibility::VISIBLE,
 		'description'        => '',
 		'short_description'  => '',
 		'sku'                => '',
@@ -1632,7 +1632,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	protected function is_visible_core() {
-		$visible = ProductVisibility::VISIBLE === $this->get_catalog_visibility() || ( is_search() && ProductVisibility::SEARCH === $this->get_catalog_visibility() ) || ( ! is_search() && ProductVisibility::CATALOG === $this->get_catalog_visibility() );
+		$visible = CatalogVisibility::VISIBLE === $this->get_catalog_visibility() || ( is_search() && CatalogVisibility::SEARCH === $this->get_catalog_visibility() ) || ( ! is_search() && CatalogVisibility::CATALOG === $this->get_catalog_visibility() );
 
 		if ( ProductStatus::TRASH === $this->get_status() ) {
 			$visible = false;

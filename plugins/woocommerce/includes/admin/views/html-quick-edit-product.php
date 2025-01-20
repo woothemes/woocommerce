@@ -5,7 +5,7 @@
  * @package WooCommerce\Admin\Notices
  */
 
-use Automattic\WooCommerce\Enums\ProductVisibility;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 
 defined( 'ABSPATH' ) || exit;
 ?>
@@ -144,10 +144,10 @@ defined( 'ABSPATH' ) || exit;
 						$options = apply_filters(
 							'woocommerce_product_visibility_options',
 							array(
-								ProductVisibility::VISIBLE => __( 'Catalog &amp; search', 'woocommerce' ),
-								ProductVisibility::CATALOG => __( 'Catalog', 'woocommerce' ),
-								ProductVisibility::SEARCH  => __( 'Search', 'woocommerce' ),
-								ProductVisibility::HIDDEN  => __( 'Hidden', 'woocommerce' ),
+								CatalogVisibility::VISIBLE => __( 'Catalog &amp; search', 'woocommerce' ),
+								CatalogVisibility::CATALOG => __( 'Catalog', 'woocommerce' ),
+								CatalogVisibility::SEARCH  => __( 'Search', 'woocommerce' ),
+								CatalogVisibility::HIDDEN  => __( 'Hidden', 'woocommerce' ),
 							)
 						);
 						foreach ( $options as $key => $value ) {

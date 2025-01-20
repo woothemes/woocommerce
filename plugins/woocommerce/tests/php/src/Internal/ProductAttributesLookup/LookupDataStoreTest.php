@@ -5,7 +5,7 @@
 
 namespace Automattic\WooCommerce\Tests\Internal\ProductAttributesLookup;
 
-use Automattic\WooCommerce\Enums\ProductVisibility;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\DataRegenerator;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore;
@@ -830,19 +830,19 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				'update',
 			),
 			array(
-				array( 'catalog_visibility' => ProductVisibility::VISIBLE ),
+				array( 'catalog_visibility' => CatalogVisibility::VISIBLE ),
 				'creation',
 			),
 			array(
-				array( 'catalog_visibility' => ProductVisibility::CATALOG ),
+				array( 'catalog_visibility' => CatalogVisibility::CATALOG ),
 				'creation',
 			),
 			array(
-				array( 'catalog_visibility' => ProductVisibility::SEARCH ),
+				array( 'catalog_visibility' => CatalogVisibility::SEARCH ),
 				'deletion',
 			),
 			array(
-				array( 'catalog_visibility' => ProductVisibility::HIDDEN ),
+				array( 'catalog_visibility' => CatalogVisibility::HIDDEN ),
 				'deletion',
 			),
 			array(
