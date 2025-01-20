@@ -17,35 +17,6 @@ class ProductButton extends AbstractBlock {
 	 */
 	protected $block_name = 'product-button';
 
-	/**
-	 * Initialize the block.
-	 */
-	protected function initialize() {
-		parent::initialize();
-
-		add_filter( 'hooked_block_types', [ $this, 'block_hook_fallback_store_notice' ], 1, 4 );
-	}
-
-	/**
-	 * Hook the fallback store notice after the post content
-	 *
-	 * @param array  $hooked_blocks The array of hooked blocks.
-	 * @param string $position The position of the block.
-	 * @param string $anchor_block The anchor block.
-	 * @return array The array of hooked blocks.
-	 */
-	public function block_hook_fallback_store_notice( $hooked_blocks, $position, $anchor_block ) {
-		// We have to hook on post-content/before for a couple of reasons:
-
-		// 1. In the product collection each product has a post-title so we can't hook there
-		// 2. We can't hook into first_child of post-content because right now post-content does not support it (the old client-side code was originally putting the React notice as first child of post-content)
-		if ( 'core/post-content' === $anchor_block && 'before' === $position ) {
-			$hooked_blocks[] = 'woocommerce/store-notices';
-		}
-
-		return $hooked_blocks;
-	}
-
 
 	/**
 	 * Get the frontend script handle for this block type.

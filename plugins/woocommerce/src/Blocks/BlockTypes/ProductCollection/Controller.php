@@ -77,7 +77,26 @@ class Controller extends AbstractBlock {
 		// Disable client-side-navigation if incompatible blocks are detected.
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
+		// Hook the store notices block to ensure woocommerce/product-button can add error notices client-side.
+		add_filter( 'hooked_block_types', [ $this, 'block_hook_fallback_store_notice' ], 1, 4 );
+
 		$this->register_core_collections_and_set_handler_store();
+	}
+
+	/**
+	 * Hook the store notices block to ensure woocommerce/product-button can add error notices client-side.
+	 *
+	 * @param array  $hooked_blocks The array of hooked blocks.
+	 * @param string $position The position of the block.
+	 * @param string $anchor_block The anchor block.
+	 * @return array The array of hooked blocks.
+	 */
+	public function block_hook_fallback_store_notice( $hooked_blocks, $position, $anchor_block ) {
+		if ( 'core/post-content' === $anchor_block && 'before' === $position ) {
+			$hooked_blocks[] = 'woocommerce/store-notices';
+		}
+
+		return $hooked_blocks;
 	}
 
 	/**
