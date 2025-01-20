@@ -18,7 +18,7 @@ import { useDispatch, useSelect, select as selectStore } from '@wordpress/data';
 import {
 	CHECKOUT_STORE_KEY,
 	PAYMENT_STORE_KEY,
-	VALIDATION_STORE_KEY,
+	validationStore,
 	CART_STORE_KEY,
 	processErrorResponse,
 } from '@woocommerce/block-data';
@@ -82,7 +82,7 @@ const CheckoutProcessor = () => {
 		useDispatch( CHECKOUT_STORE_KEY );
 
 	const hasValidationErrors = useSelect(
-		( select ) => select( VALIDATION_STORE_KEY ).hasValidationErrors
+		( select ) => select( validationStore ).hasValidationErrors
 	);
 	const { shippingErrorStatus } = useShippingDataContext();
 
@@ -168,7 +168,7 @@ const CheckoutProcessor = () => {
 		if ( hasValidationErrors() ) {
 			// If there is a shipping rates validation error, return the error message to be displayed.
 			if (
-				selectStore( VALIDATION_STORE_KEY ).getValidationError(
+				selectStore( validationStore ).getValidationError(
 					'shipping-rates-error'
 				) !== undefined
 			) {
