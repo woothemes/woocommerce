@@ -105,18 +105,13 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 		global $product;
-
-		$post_id = $block->context['postId'];
-
-		if ( ! isset( $post_id ) ) {
-			return '';
-		}
-
 		$previous_product = $product;
-		$product          = wc_get_product( $post_id );
-		if ( ! $product instanceof \WC_Product ) {
-			$product = $previous_product;
 
+		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
+		$post    = $post_id ? wc_get_product( $post_id ) : null;
+		if ( $post instanceof \WC_Product ) {
+			$product = $post;
+		} elseif ( ! $product instanceof \WC_Product ) {
 			return '';
 		}
 

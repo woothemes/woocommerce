@@ -79,8 +79,16 @@ class ProductButton extends AbstractBlock {
 		// For more details, see https://github.com/woocommerce/woocommerce/pull/53052.
 		( new \WP_Block( array( 'blockName' => 'core/button' ) ) )->render();
 
+		global $product;
+		$previous_product = $product;
+
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
-		$product = wc_get_product( $post_id );
+		$post    = $post_id ? wc_get_product( $post_id ) : null;
+		if ( $post instanceof \WC_Product ) {
+			$product = $post;
+		} elseif ( ! $product instanceof \WC_Product ) {
+			return '';
+		}
 
 		wc_initial_state(
 			'woocommerce/product-button',
@@ -92,8 +100,7 @@ class ProductButton extends AbstractBlock {
 				),
 			)
 		);
-
-		if ( $product ) {
+		if ( $product instanceof \WC_Product ) {
 			$number_of_items_in_cart = $this->get_cart_item_quantities_by_product_id( $product->get_id() );
 			$more_than_one_item      = $number_of_items_in_cart > 0;
 			$initial_product_text    = $more_than_one_item ? sprintf(
@@ -217,7 +224,7 @@ class ProductButton extends AbstractBlock {
 			 *
 			 * @param string $class The class.
 			 */
-			return apply_filters(
+			$html = apply_filters(
 				'woocommerce_loop_add_to_cart_link',
 				strtr(
 					'<div {wrapper_attributes}
@@ -251,7 +258,14 @@ class ProductButton extends AbstractBlock {
 				$product,
 				$args
 			);
+
+			$product = $previous_product;
+
+			return $html;
 		}
+		$product = $previous_product;
+
+		return '';
 	}
 
 	/**
