@@ -73,8 +73,8 @@
 }
 
 .select2-dropdown {
-	background-color: white;
-	color: black;
+	background-color: var(--wc-form-color-background, #fff);
+	color: var(--wc-form-color-text, #000);
 	border: 1px solid #aaa;
 	border-radius: 4px;
 	box-sizing: border-box;
