@@ -7,7 +7,12 @@ import { CART_STORE_KEY } from '@woocommerce/block-data';
 import { select } from '@wordpress/data';
 
 // List of core block types to allow in inner block areas.
-const coreBlockTypes = [ 'core/paragraph', 'core/image', 'core/separator' ];
+const coreBlockTypes = [
+	'core/paragraph',
+	'core/image',
+	'core/separator',
+	'woocommerce/product-collection',
+];
 
 /**
  * Gets a list of allowed blocks types under a specific parent block type.

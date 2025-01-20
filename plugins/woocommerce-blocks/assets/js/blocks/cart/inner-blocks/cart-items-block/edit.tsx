@@ -22,7 +22,13 @@ export const Edit = ( { clientId }: Props ): JSX.Element => {
 	const allowedBlocks = getAllowedBlocks( innerBlockAreas.CART_ITEMS );
 	const defaultTemplate = [
 		[ 'woocommerce/cart-line-items-block', {}, [] ],
-		[ 'woocommerce/cart-cross-sells-block', {}, [] ],
+		[
+			'woocommerce/product-collection',
+			{
+				collection: 'woocommerce/product-collection/cross-sells',
+			},
+			[],
+		],
 	] as unknown as TemplateArray;
 
 	useForcedLayout( {
