@@ -2,6 +2,8 @@
 
 declare( strict_types = 1 );
 
+namespace Automattic\WooCommerce\Tests\Blocks\BlockTypes;
+
 use Automattic\WooCommerce\Tests\Blocks\Utils\WC_Product_Custom;
 
 /**
