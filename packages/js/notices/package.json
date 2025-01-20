@@ -134,9 +134,9 @@
 		"dependencyOutputs": {
 			"allowUsuallyExcludedPaths": true,
 			"files": [
-				"node_modules/@woocommerce/eslint-plugin/configs",
-				"node_modules/@woocommerce/eslint-plugin/rules",
-				"node_modules/@woocommerce/eslint-plugin/index.js",
+				"node_modules\\@woocommerce\\eslint-plugin/configs",
+				"node_modules\\@woocommerce\\eslint-plugin/rules",
+				"node_modules\\@woocommerce\\eslint-plugin/index.js",
 				"package.json"
 			]
 		}
