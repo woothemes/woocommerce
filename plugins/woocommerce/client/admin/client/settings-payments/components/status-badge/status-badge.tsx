@@ -20,6 +20,7 @@ interface StatusBadgeProps {
 		| 'inactive'
 		| 'needs_setup'
 		| 'test_mode'
+		| 'test_account'
 		| 'recommended'
 		| 'has_incentive';
 	/**
@@ -51,6 +52,7 @@ export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 				return 'woocommerce-status-badge--success';
 			case 'needs_setup':
 			case 'test_mode':
+			case 'test_account':
 				return 'woocommerce-status-badge--warning';
 			case 'recommended':
 			case 'inactive':
@@ -73,6 +75,8 @@ export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 				return __( 'Action needed', 'woocommerce' );
 			case 'test_mode':
 				return __( 'Test mode', 'woocommerce' );
+			case 'test_account':
+				return __( 'Test account', 'woocommerce' );
 			case 'recommended':
 				return __( 'Recommended', 'woocommerce' );
 			default:

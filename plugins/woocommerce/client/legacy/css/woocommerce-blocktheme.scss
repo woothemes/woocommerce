@@ -450,21 +450,17 @@ a.added_to_cart {
 * My account - Login form
 */
 .woocommerce-page {
-	.woocommerce-form-login {
-		.input-text {
-			// Ensure inputs are well spaced.
-			font-size: var(--wp--preset--font-size--small);
-			padding: 0.9em 1.1em;
-		}
+	.woocommerce-form-login,
+	.woocommerce-form-register {
+		 .woocommerce-form-row {
+			.input-text {
+				// Ensure inputs are well spaced.
+				font-size: var(--wp--preset--font-size--medium);
+			}
 
-		label {
-			margin-bottom: 0.7em;
-		}
-
-		.show-password-input {
-			// Adjust password field icon position.
-			top: 0.8em;
-			right: 1.2em;
+			label {
+				margin-bottom: 0.7em;
+			}
 		}
 	}
 }
