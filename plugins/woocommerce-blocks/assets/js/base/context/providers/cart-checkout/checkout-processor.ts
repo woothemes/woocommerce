@@ -17,7 +17,7 @@ import {
 import { useDispatch, useSelect, select as selectStore } from '@wordpress/data';
 import {
 	checkoutStore,
-	PAYMENT_STORE_KEY,
+	paymentStore,
 	validationStore,
 	CART_STORE_KEY,
 	processErrorResponse,
@@ -101,7 +101,7 @@ const CheckoutProcessor = () => {
 		isPaymentReady,
 		shouldSavePayment,
 	} = useSelect( ( select ) => {
-		const store = select( PAYMENT_STORE_KEY );
+		const store = select( paymentStore );
 
 		return {
 			activePaymentMethod: store.getActivePaymentMethod(),
