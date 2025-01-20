@@ -78,7 +78,8 @@ class Controller extends AbstractBlock {
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
 		// Hook the store notices block to ensure woocommerce/product-button can add error notices client-side.
-		add_filter( 'hooked_block_types', [ $this, 'block_hook_fallback_store_notice' ], 1, 4 );
+		add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback_store_notice' ), 1, 4 );
+		add_filter( 'hooked_block_woocommerce/store-notices', array( $this, 'augment_hooked_store_notices_block' ), 10, 5 );
 
 		$this->register_core_collections_and_set_handler_store();
 	}
@@ -98,6 +99,24 @@ class Controller extends AbstractBlock {
 		}
 
 		return $hooked_blocks;
+	}
+
+	/**
+	 * Augment the hooked store notices block.
+	 *
+	 * @param array|null                      $parsed_hooked_block The parsed block array for the given hooked block type, or null to suppress the block.
+	 * @param string                          $hooked_block_type   The hooked block type name.
+	 * @param string                          $relative_position   The relative position of the hooked block.
+	 * @param array                           $parsed_anchor_block The anchor block, in parsed block array format.
+	 * @param WP_Block_Template|WP_Post|array $context             The block template, template part, `wp_navigation` post type,
+	 *                                                             or pattern that the anchor block belongs to.
+	 * @return array|null
+	 */
+	public function augment_hooked_store_notices_block( $parsed_hooked_block, $hooked_block_type, $relative_position, $parsed_anchor_block, $context ) {
+		// Do not default to wide, as it will break the layout for this fallback block.
+		$parsed_hooked_block['attrs']['align'] = '';
+
+		return $parsed_hooked_block;
 	}
 
 	/**
