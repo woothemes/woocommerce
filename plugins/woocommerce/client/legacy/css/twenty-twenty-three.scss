@@ -134,6 +134,10 @@
 		margin-top: 0;
 	}
 
+	.woocommerce-ordering > label {
+		margin-right: 0.25rem;
+	}
+
 	// The 'order by' dropdown on the Shop page is rather tiny unless the font size is increased.
 	select.orderby {
 		font-size: var(--wp--preset--font-size--medium);
@@ -320,7 +324,7 @@
 
 		}
 
-		button.reset_variations {
+		a.reset_variations {
 			margin-left: 0.5em;
 		}
 

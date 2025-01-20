@@ -19,6 +19,9 @@
 		"woocommerce/product-filter-status",
 		"woocommerce/product-filter-active"
 	],
+	"usesContext": [
+		"filterData"
+	],
 	"attributes": {
 		"clearType": {
 			"type": "string",

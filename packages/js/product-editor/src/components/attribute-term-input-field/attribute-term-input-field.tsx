@@ -83,17 +83,17 @@ export const AttributeTermInputField: React.FC<
 			return resolveSelect(
 				EXPERIMENTAL_PRODUCT_ATTRIBUTE_TERMS_STORE_NAME
 			)
-				.getProductAttributeTerms< ProductAttributeTerm[] >( {
+				.getProductAttributeTerms( {
 					search: searchString || '',
 					attribute_id: attributeId,
 				} )
 				.then(
-					( attributeTerms ) => {
+					( attributeTerms: ProductAttributeTerm[] ) => {
 						setFetchedItems( attributeTerms );
 						setIsFetching( false );
 						return attributeTerms;
 					},
-					( error ) => {
+					( error: string ) => {
 						setIsFetching( false );
 						return error;
 					}
@@ -311,6 +311,7 @@ export const AttributeTermInputField: React.FC<
 												<CheckboxControl
 													onChange={ () => null }
 													checked={ isSelected }
+													// @ts-expect-error The label prop can be a string, however, the final consumer of this prop accepts ReactNode.
 													label={
 														<span>
 															{ item.name }

@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Add check to "wc_get_price_excluding_tax" to verify the product variable is an actual product to avoid fatal errors.

@@ -30,9 +30,11 @@ export const useIntroductionBanner = (): UseIntroductionBanner => {
 			select( OPTIONS_STORE_NAME );
 
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			loading: ! hasFinishedResolution( 'getOption', [
 				OPTION_NAME_BANNER_DISMISSED,
 			] ),
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			data: getOption( OPTION_NAME_BANNER_DISMISSED ),
 		};
 	}, [] );

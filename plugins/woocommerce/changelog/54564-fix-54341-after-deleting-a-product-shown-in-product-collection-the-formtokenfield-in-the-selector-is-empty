@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Fix: Empty FormTokenField display in "Hand-Picked Products" collection when selected hand-picked products are deleted.

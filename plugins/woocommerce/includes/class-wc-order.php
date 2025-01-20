@@ -7,6 +7,7 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -2356,6 +2357,7 @@ class WC_Order extends WC_Abstract_Order {
 			}
 
 			$total_rows['payment_method'] = array(
+				'type'  => 'payment_method',
 				'label' => __( 'Payment method:', 'woocommerce' ),
 				'value' => $value,
 			);
@@ -2379,6 +2381,7 @@ class WC_Order extends WC_Abstract_Order {
 				}
 
 				$total_rows[ 'refund_' . $id ] = array(
+					'type'  => 'refund',
 					'label' => __( 'Refund', 'woocommerce' ) . ':',
 					'value' => wc_price( '-' . $refund->get_amount(), array( 'currency' => $this->get_currency() ) ) . $reason,
 				);
@@ -2396,14 +2399,21 @@ class WC_Order extends WC_Abstract_Order {
 		$tax_display = $tax_display ? $tax_display : get_option( 'woocommerce_tax_display_cart' );
 		$total_rows  = array();
 
+		$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+
 		$this->add_order_item_totals_subtotal_row( $total_rows, $tax_display );
 		$this->add_order_item_totals_discount_row( $total_rows, $tax_display );
 		$this->add_order_item_totals_shipping_row( $total_rows, $tax_display );
 		$this->add_order_item_totals_fee_rows( $total_rows, $tax_display );
 		$this->add_order_item_totals_tax_rows( $total_rows, $tax_display );
-		$this->add_order_item_totals_payment_method_row( $total_rows, $tax_display );
+		if ( ! $email_improvements_enabled ) {
+			$this->add_order_item_totals_payment_method_row( $total_rows, $tax_display );
+		}
 		$this->add_order_item_totals_refund_rows( $total_rows, $tax_display );
 		$this->add_order_item_totals_total_row( $total_rows, $tax_display );
+		if ( $email_improvements_enabled ) {
+			$this->add_order_item_totals_payment_method_row( $total_rows, $tax_display );
+		}
 
 		return apply_filters( 'woocommerce_get_order_item_totals', $total_rows, $this, $tax_display );
 	}
