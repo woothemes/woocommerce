@@ -20,17 +20,9 @@ When this has completed, go to your WordPress plugins page and activate the plug
 
 Add some items to your cart and visit the Checkout block, notice there is additional data on the block that this template has added.
 
-### Installing `wp-prettier` (optional)
+### Linting
 
-WooCommerce Blocks uses `wp-prettier` to format the JS files. If you want to use `wp-prettier`, you will need to run the following command:
-
-```sh
-npm i --D "prettier@npm:wp-prettier@latest" && npm i --D eslint-plugin-prettier
-```
-
-It is important to chain these commands as `eslint-plugin-prettier` will error if it is not installed _after_ `prettier@npm:wp-prettier@latest`.
-
-You can then lint the project by running `npm run lint:js`
+You can lint the project according to the [WordPress coding standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/) by running `npm run lint:js`. The configuration is ultimately read from the [WooCommerce recommended eslint config](https://github.com/woocommerce/woocommerce/blob/trunk/packages/js/eslint-plugin/configs/recommended.js). To modify the rules edit the `.estintrc.js` file.
 
 ### Installing `wp-env` (optional)
 
