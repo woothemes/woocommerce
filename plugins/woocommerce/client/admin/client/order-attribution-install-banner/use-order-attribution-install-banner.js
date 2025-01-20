@@ -125,9 +125,9 @@ export const useOrderAttributionInstallBanner = () => {
 				select( STORE_KEY );
 
 			return {
-				loadingRecommendations: ! hasFinishedResolution(
-					'getMiscRecommendations'
-				),
+				loadingRecommendations:
+					! canUserInstallPlugins ||
+					! hasFinishedResolution( 'getMiscRecommendations' ),
 				recommendations: canUserInstallPlugins
 					? getMiscRecommendations()
 					: [],
