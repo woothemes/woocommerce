@@ -187,6 +187,16 @@ const blocks = {
 	},
 };
 
+/**
+ * Blocks that are generic and will likely be pushed up to Gutenberg or a public block registry.
+ */
+const genericBlocks = {
+	'accordion-group': {},
+	'accordion-header': {},
+	'accordion-item': {},
+	'accordion-panel': {},
+};
+
 // Intentional separation of cart and checkout entry points to allow for better code splitting.
 const cartAndCheckoutBlocks = {
 	cart: {},
@@ -235,6 +245,7 @@ const entries = {
 			'./assets/js/atomic/blocks/product-elements/product-details/index.tsx',
 		...getBlockEntries( '{index,block,frontend}.{t,j}s{,x}', {
 			...blocks,
+			...genericBlocks,
 			...cartAndCheckoutBlocks,
 		} ),
 
@@ -271,6 +282,7 @@ const entries = {
 		// Blocks
 		...getBlockEntries( 'index.{t,j}s{,x}', {
 			...blocks,
+			...genericBlocks,
 			...cartAndCheckoutBlocks,
 		} ),
 	},
@@ -315,4 +327,5 @@ const getEntryConfig = ( type = 'main', exclude = [] ) => {
 
 module.exports = {
 	getEntryConfig,
+	genericBlocks,
 };
