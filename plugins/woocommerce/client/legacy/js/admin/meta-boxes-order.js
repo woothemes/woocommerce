@@ -488,6 +488,13 @@ jQuery( function ( $ ) {
 						if ( response.success ) {
 							$( '#woocommerce-order-items' ).find( '.inside' ).empty();
 							$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
+
+							// Update notes.
+							if ( response.data.notes_html ) {
+								$( 'ul.order_notes' ).empty();
+								$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+							}
+
 							wc_meta_boxes_order_items.reloaded_items();
 							wc_meta_boxes_order_items.unblock();
 						} else {
@@ -524,6 +531,13 @@ jQuery( function ( $ ) {
 				if ( response.success ) {
 					$( '#woocommerce-order-items' ).find( '.inside' ).empty();
 					$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
+
+					// Update notes.
+					if ( response.data.notes_html ) {
+						$( 'ul.order_notes' ).empty();
+						$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+					}
+
 					wc_meta_boxes_order_items.reloaded_items();
 					wc_meta_boxes_order_items.unblock();
 				} else {
@@ -622,6 +636,7 @@ jQuery( function ( $ ) {
 					} else {
 						window.alert( response.data.error );
 					}
+					wc_meta_boxes_order.init_tiptip();
 					wc_meta_boxes_order_items.unblock();
 				});
 			}
@@ -650,6 +665,7 @@ jQuery( function ( $ ) {
 				} else {
 					window.alert( response.data.error );
 				}
+				wc_meta_boxes_order.init_tiptip();
 				wc_meta_boxes_order_items.unblock();
 			});
 
@@ -1029,15 +1045,19 @@ jQuery( function ( $ ) {
 			},
 
 			input_changed: function() {
-				var refund_amount = 0;
-				var $items        = $( '.woocommerce_order_items' ).find( 'tr.item, tr.fee, tr.shipping' );
+				var refund_amount     = 0;
+				var $items            = $( '.woocommerce_order_items' ).find( 'tr.item, tr.fee, tr.shipping' );
+				var round_at_subtotal = 'yes' === woocommerce_admin_meta_boxes.round_at_subtotal;
 
 				$items.each(function() {
 					var $row               = $( this );
 					var refund_cost_fields = $row.find( '.refund input:not(.refund_order_item_qty)' );
 
 					refund_cost_fields.each(function( index, el ) {
-						refund_amount += parseFloat( accounting.unformat( $( el ).val() || 0, woocommerce_admin.mon_decimal_point ) );
+						var field_amount = accounting.unformat( $( el ).val() || 0, woocommerce_admin.mon_decimal_point );
+						refund_amount += parseFloat( round_at_subtotal ?
+							field_amount :
+							accounting.formatNumber( field_amount, woocommerce_admin_meta_boxes.currency_format_num_decimals, '' ) );
 					});
 				});
 
@@ -1417,12 +1437,18 @@ jQuery( function ( $ ) {
 				.on( 'click', '#copy-download-link', this.copy_link )
 				.on( 'aftercopy', '#copy-download-link', this.copy_success )
 				.on( 'aftercopyfailure', '#copy-download-link', this.copy_fail );
+
+			// Work around WP's callback for '.handlediv' hiding the containing WP metabox instead of just the WC one.
+			$( '.order_download_permissions .wc-metabox .handlediv' ).on( 'click', function( e ) {
+				e.stopImmediatePropagation();
+				$( this ).closest( 'h3' ).trigger( 'click' );
+			} );
 		},
 
 		grant_access: function() {
 			var products = $( '#grant_access_id' ).val();
 
-			if ( ! products ) {
+			if ( ! products || 0 === products.length ) {
 				return;
 			}
 
@@ -1444,7 +1470,7 @@ jQuery( function ( $ ) {
 
 			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
 
-				if ( response ) {
+				if ( response && -1 !== parseInt( response ) ) {
 					$( '.order_download_permissions .wc-metaboxes' ).append( response );
 				} else {
 					window.alert( woocommerce_admin_meta_boxes.i18n_download_permission_fail );

@@ -1,8 +1,12 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
-	"composite": true,
-	"rootDir": "src",
-			"outDir": "build"
-	}
+		"rootDir": "src",
+		"outDir": "build",
+		"typeRoots": [ "./typings", "./node_modules/@types" ]
+	},
+	"include": [
+		"typings/**/*",
+		"src/**/*",
+	]
 }

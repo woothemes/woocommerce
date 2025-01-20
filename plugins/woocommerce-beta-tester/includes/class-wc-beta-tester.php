@@ -20,19 +20,33 @@ class WC_Beta_Tester {
 	private $plugin_config;
 
 	/**
+	 * Plugin name.
+	 *
+	 * @var string
+	 */
+	private $plugin_name;
+
+	/**
 	 * Plugin instance.
 	 *
 	 * @var WC_Beta_Tester
 	 */
-	protected static $_instance = null;
+	protected static $instance = null;
+
+	/**
+	 * WP.org data
+	 *
+	 * @var object
+	 */
+	private $wporg_data;
 
 	/**
 	 * Main Instance.
 	 */
 	public static function instance() {
-		self::$_instance = is_null( self::$_instance ) ? new self() : self::$_instance;
+		self::$instance = is_null( self::$instance ) ? new self() : self::$instance;
 
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
@@ -78,7 +92,7 @@ class WC_Beta_Tester {
 	public function __construct() {
 		$this->plugin_name   = plugin_basename( WC_BETA_TESTER_FILE );
 		$this->plugin_config = array(
-			'plugin_file'        => 'woocommerce/woocommerce.php',
+			'plugin_file'        => WC_PLUGIN_BASENAME,
 			'slug'               => 'woocommerce',
 			'proper_folder_name' => 'woocommerce',
 			'api_url'            => 'https://api.wordpress.org/plugins/info/1.0/woocommerce.json',
@@ -286,6 +300,8 @@ class WC_Beta_Tester {
 		if ( version_compare( $response->version, $new_version, '=' ) ) {
 			return $response;
 		}
+
+		$warning = '';
 
 		if ( $this->is_beta_version( $new_version ) ) {
 			$warning = __( '<h1><span>&#9888;</span>This is a beta release<span>&#9888;</span></h1>', 'woocommerce-beta-tester' );

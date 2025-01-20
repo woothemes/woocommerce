@@ -84,70 +84,78 @@ export function ordersAPI() {
 		);
 		check( response, {
 			'status is 201': ( r ) => r.status === 201,
-			"body contains: 'Pending' Status": ( response ) =>
-				response.body.includes( '"status":"pending"' ),
+			"body contains: 'Pending' Status": ( r ) =>
+				r.body.includes( '"status":"pending"' ),
 		} );
 
 		post_id = findBetween( response.body, '{"id":', ',' );
 	} );
 
 	group( 'API Retrieve Order', function () {
-		response = http.get(
-			`${ base_url }/wp-json/wc/v3/orders/${ post_id }`,
-			{
-				headers: requestHeaders,
-				tags: { name: 'API - Retrieve Order' },
-			}
-		);
-		check( response, {
-			'status is 200': ( r ) => r.status === 200,
-			'body contains: Order ID': ( response ) =>
-				response.body.includes( `"id":${ post_id }` ),
-		} );
+		if ( post_id ) {
+			response = http.get(
+				`${ base_url }/wp-json/wc/v3/orders/${ post_id }`,
+				{
+					headers: requestHeaders,
+					tags: { name: 'API - Retrieve Order' },
+				}
+			);
+			check( response, {
+				'status is 200': ( r ) => r.status === 200,
+				'body contains: Order ID': ( r ) =>
+					r.body.includes( `"id":${ post_id }` ),
+			} );
+		}
 	} );
 
 	group( 'API List Orders', function () {
-		response = http.get( `${ base_url }/wp-json/wc/v3/orders`, {
-			headers: requestHeaders,
-			tags: { name: 'API - List Orders' },
-		} );
-		check( response, {
-			'status is 200': ( r ) => r.status === 200,
-			'body contains: Order ID': ( response ) =>
-				response.body.includes( '[{"id":' ),
-		} );
+		if ( post_id ) {
+			response = http.get( `${ base_url }/wp-json/wc/v3/orders`, {
+				headers: requestHeaders,
+				tags: { name: 'API - List Orders' },
+			} );
+			check( response, {
+				'status is 200': ( r ) => r.status === 200,
+				'body contains: Order ID': ( r ) =>
+					r.body.includes( '[{"id":' ),
+			} );
+		}
 	} );
 
 	group( 'API Update Order', function () {
-		response = http.put(
-			`${ base_url }/wp-json/wc/v3/orders/${ post_id }`,
-			JSON.stringify( updateData ),
-			{
-				headers: requestHeaders,
-				tags: { name: 'API - Update Order (Status)' },
-			}
-		);
-		check( response, {
-			'status is 200': ( r ) => r.status === 200,
-			"body contains: 'Completed' Status": ( response ) =>
-				response.body.includes( '"status":"completed"' ),
-		} );
+		if ( post_id ) {
+			response = http.put(
+				`${ base_url }/wp-json/wc/v3/orders/${ post_id }`,
+				JSON.stringify( updateData ),
+				{
+					headers: requestHeaders,
+					tags: { name: 'API - Update Order (Status)' },
+				}
+			);
+			check( response, {
+				'status is 200': ( r ) => r.status === 200,
+				"body contains: 'Completed' Status": ( r ) =>
+					r.body.includes( '"status":"completed"' ),
+			} );
+		}
 	} );
 
 	group( 'API Delete Order', function () {
-		response = http.del(
-			`${ base_url }/wp-json/wc/v3/orders/${ post_id }`,
-			JSON.stringify( { force: true } ),
-			{
-				headers: requestHeaders,
-				tags: { name: 'API - Delete Order' },
-			}
-		);
-		check( response, {
-			'status is 200': ( r ) => r.status === 200,
-			'body contains: Order ID': ( response ) =>
-				response.body.includes( `"id":${ post_id }` ),
-		} );
+		if ( post_id ) {
+			response = http.del(
+				`${ base_url }/wp-json/wc/v3/orders/${ post_id }`,
+				JSON.stringify( { force: true } ),
+				{
+					headers: requestHeaders,
+					tags: { name: 'API - Delete Order' },
+				}
+			);
+			check( response, {
+				'status is 200': ( r ) => r.status === 200,
+				'body contains: Order ID': ( r ) =>
+					r.body.includes( `"id":${ post_id }` ),
+			} );
+		}
 	} );
 
 	group( 'API Batch Create Orders', function () {
@@ -168,8 +176,8 @@ export function ordersAPI() {
 		);
 		check( response, {
 			'status is 200': ( r ) => r.status === 200,
-			'body contains: Create batch prefix': ( response ) =>
-				response.body.includes( 'create":[{"id"' ),
+			'body contains: Create batch prefix': ( r ) =>
+				r.body.includes( 'create":[{"id"' ),
 		} );
 
 		post_ids = findBetween( response.body, '{"id":', ',"parent_id', true );
@@ -177,6 +185,10 @@ export function ordersAPI() {
 
 	group( 'API Batch Update Orders', function () {
 		let updateBatchItem;
+
+		if ( ! post_ids ) {
+			return;
+		}
 
 		for ( let index = 0; index < batchSize; index++ ) {
 			updateBatchItem = {
@@ -201,8 +213,8 @@ export function ordersAPI() {
 		);
 		check( response, {
 			'status is 200': ( r ) => r.status === 200,
-			'body contains: Update batch prefix': ( response ) =>
-				response.body.includes( 'update":[{"id"' ),
+			'body contains: Update batch prefix': ( r ) =>
+				r.body.includes( 'update":[{"id"' ),
 		} );
 	} );
 }

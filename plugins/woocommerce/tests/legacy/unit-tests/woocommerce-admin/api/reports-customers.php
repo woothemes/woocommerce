@@ -6,7 +6,10 @@
  * @since 3.5.0
  */
 
-use \Automattic\WooCommerce\Admin\API\Reports\Customers\DataStore as CustomersDataStore;
+// phpcs:disable Squiz.Classes.ClassFileName.NoMatch, Squiz.Classes.ValidClassName.NotCamelCaps
+
+use Automattic\WooCommerce\Admin\API\Reports\Customers\DataStore as CustomersDataStore;
+use Automattic\WooCommerce\Enums\OrderStatus;
 
 /**
  * Reports Customers REST API Test Class
@@ -143,11 +146,11 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		$product->save();
 
 		$order = WC_Helper_Order::create_order( $admin_id, $product );
-		$order->set_status( 'processing' );
+		$order->set_status( OrderStatus::PROCESSING );
 		$order->set_total( 100 );
 		$order->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$request = new WP_REST_Request( 'GET', $this->endpoint );
 		$request->set_query_params( array( 'per_page' => 10 ) );
@@ -162,7 +165,7 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		// Creating a customer should show up regardless of orders.
 		$customer = WC_Helper_Customer::create_customer( 'customer', 'password', 'customer@example.com' );
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$request = new WP_REST_Request( 'GET', $this->endpoint );
 		$request->set_query_params(
@@ -215,11 +218,11 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 
 		// Place an order for the first test customer.
 		$order = WC_Helper_Order::create_order( $test_customers[0]->get_id(), $product );
-		$order->set_status( 'processing' );
+		$order->set_status( OrderStatus::PROCESSING );
 		$order->set_total( 100 );
 		$order->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$request = new WP_REST_Request( 'GET', $this->endpoint );
 		$request->set_query_params(
@@ -244,57 +247,6 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( 1, $reports[0]['orders_count'] );
 		$this->assertEquals( 100, $reports[0]['total_spend'] );
 		$this->assert_report_item_schema( $reports[0] );
-
-		// Test name parameter (case with no matches).
-		$request->set_query_params(
-			array(
-				'search' => 'Nota Customername',
-			)
-		);
-		$response = $this->server->dispatch( $request );
-		$reports  = $response->get_data();
-
-		$this->assertEquals( 200, $response->get_status() );
-		$this->assertCount( 0, $reports );
-
-		// Test name parameter (partial match).
-		$request->set_query_params(
-			array(
-				'search' => 're',
-			)
-		);
-		$response = $this->server->dispatch( $request );
-		$reports  = $response->get_data();
-
-		$this->assertEquals( 200, $response->get_status() );
-		$this->assertCount( 2, $reports );
-
-		// Test email search.
-		$request->set_query_params(
-			array(
-				'search'   => 'customer+justin',
-				'searchby' => 'email',
-			)
-		);
-		$response = $this->server->dispatch( $request );
-		$reports  = $response->get_data();
-
-		$this->assertEquals( 200, $response->get_status() );
-		$this->assertCount( 1, $reports );
-
-		// Test username search.
-		$request->set_query_params(
-			array(
-				'search'   => 'customer1',
-				'searchby' => 'username',
-			)
-		);
-		$response = $this->server->dispatch( $request );
-		$reports  = $response->get_data();
-
-		$this->assertEquals( 200, $response->get_status() );
-		// customer1 and customer10.
-		$this->assertCount( 2, $reports );
 
 		// Test name and last_order parameters.
 		$request->set_query_params(
@@ -335,6 +287,196 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 	}
 
 	/**
+	 * @testdox Test the search and searchby parameters.
+	 */
+	public function test_customer_search() {
+		wp_set_current_user( $this->user );
+
+		$customer = WC_Helper_Customer::create_customer( 'onlyatest', 'password', 'onlyatest@example.com' );
+		$customer->set_first_name( 'Jay' );
+		$customer->set_last_name( 'Ramathorn' );
+		$customer->save();
+
+		$customer = WC_Helper_Customer::create_customer( 'jaytest', 'password', 'justatest@example.com' );
+		$customer->set_first_name( 'Jason' );
+		$customer->set_last_name( 'Roto' );
+		$customer->save();
+
+		$customer = WC_Helper_Customer::create_customer( 'womack2001', 'password', 'mac@jaybird.local' );
+		$customer->set_first_name( 'Steve' );
+		$customer->set_last_name( 'Letme' );
+		$customer->save();
+
+		$customer = WC_Helper_Customer::create_customer( 'sotero', 'password', 'bananas@example.com' );
+		$customer->set_first_name( 'Carl' );
+		$customer->set_last_name( 'Foster' );
+		$customer->save();
+
+		$order = WC_Helper_Order::create_order( 0 ); // Order with guest customer (no account).
+		$order->set_billing_email( 'rjayfarva@ramrod.local' );
+		$order->set_billing_last_name( 'Arjay' );
+		$order->save();
+
+		// Ensure order customer data is synced to lookup table.
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		$query_params = array(
+			'force_cache_refresh' => true,
+			'order'               => 'asc',
+			'orderby'             => 'name',
+			'order_before'        => '',
+			'order_after'         => '',
+		);
+
+		$request = new WP_REST_Request( 'GET', $this->endpoint );
+		$request->set_query_params( $query_params );
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 5, $reports ); // No search string, so all customers should return.
+
+		$query_params['search']   = 'Jay';
+		$query_params['searchby'] = 'name';
+		$request->set_query_params( $query_params );
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 2, $reports );
+
+		$query_params['searchby'] = 'username';
+		$request->set_query_params( $query_params );
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 1, $reports );
+
+		$query_params['searchby'] = 'email';
+		$request->set_query_params( $query_params );
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 2, $reports );
+
+		$query_params['searchby'] = 'all';
+		$request->set_query_params( $query_params );
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 4, $reports );
+
+		$query_params['search'] = 'Not A Customer';
+		$request->set_query_params( $query_params );
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 0, $reports );
+	}
+
+	/**
+	 * Test getting reports with filter_empty parameter
+	 */
+	public function test_get_reports_with_filter_empty() {
+		wp_set_current_user( $this->user );
+		WC_Helper_Reports::reset_stats_dbs();
+
+		// Test empty reports.
+		$request = new WP_REST_Request( 'GET', $this->endpoint );
+
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 0, $reports );
+
+		// Test filter_empty param by name.
+		$request->set_query_params(
+			array(
+				'filter_empty' => array( 'name' ),
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertCount( 0, $reports );
+
+		$customer = WC_Helper_Customer::create_customer( 'customer_1', 'password', 'customer_1@example.com' );
+		$customer->set_billing_city( '' );
+		$customer->set_first_name( 'customer_andrei_1' );
+		$customer->save();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		$request->set_query_params(
+			array(
+				'filter_empty' => array( 'city', 'email' ),
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertCount( 0, $reports );
+
+		$request->set_query_params(
+			array(
+				'filter_empty' => array( 'email' ),
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertCount( 1, $reports );
+
+		// Test filter_empty param by email and search.
+		$request->set_query_params(
+			array(
+				'filter_empty' => array( 'email' ),
+				'search'       => 'andrei',
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertCount( 1, $reports );
+
+		// Test filter_empty param by state and postcode non empty.
+		$customer = WC_Helper_Customer::create_customer( 'customer_2', 'password', 'customer_2@example.com' );
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
+
+		$request->set_query_params(
+			array(
+				'filter_empty' => array( 'email', 'state' ),
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertCount( 2, $reports );
+
+		// Test filter_empty param by country.
+		$request->set_query_params(
+			array(
+				'filter_empty' => array( 'country' ),
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertCount( 2, $reports );
+
+		// Test filter_empty param by city.
+		$request->set_query_params(
+			array(
+				'filter_empty' => array( 'city' ),
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertCount( 1, $reports );
+
+		// Test filter_empty param by state.
+		$request->set_query_params(
+			array(
+				'filter_empty' => array( 'state' ),
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$reports  = $response->get_data();
+		$this->assertCount( 2, $reports );
+	}
+
+	/**
 	 * Test customer user profile name priority.
 	 */
 	public function test_customer_user_profile_name() {
@@ -353,11 +495,11 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		$order = WC_Helper_Order::create_order( $customer );
 		$order->set_billing_first_name( 'Jon' );
 		$order->set_billing_last_name( 'Snow' );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_total( 100 );
 		$order->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$request  = new WP_REST_Request( 'GET', $this->endpoint );
 		$response = $this->server->dispatch( $request );
@@ -382,11 +524,11 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		$order->set_billing_last_name( 'Snow' );
 		$order->set_shipping_first_name( 'IgnoredFirstName' );
 		$order->set_shipping_last_name( 'IgnoredLastName' );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_total( 100 );
 		$order->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$request  = new WP_REST_Request( 'GET', $this->endpoint );
 		$response = $this->server->dispatch( $request );
@@ -410,11 +552,11 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		$order->set_billing_last_name( '' );
 		$order->set_shipping_first_name( 'Daenerys' );
 		$order->set_shipping_last_name( 'Targaryen' );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_total( 100 );
 		$order->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$request  = new WP_REST_Request( 'GET', $this->endpoint );
 		$response = $this->server->dispatch( $request );
@@ -443,7 +585,7 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		// Creating a customer should show up regardless of orders.
 		$customer = WC_Helper_Customer::create_customer( 'deleteme', 'password', 'deleteme@example.com' );
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$request = new WP_REST_Request( 'GET', $this->endpoint );
 		$request->set_query_params(
@@ -461,7 +603,7 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		// Delete the user associated with the customer.
 		wp_delete_user( $customer->get_id() );
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		// Verify they are gone.
 		$request = new WP_REST_Request( 'GET', $this->endpoint );
@@ -485,11 +627,11 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $this->user );
 
 		$order = WC_Helper_Order::create_order( 0 );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_total( 100 );
 		$order->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		// update order info.
 		$order->set_billing_city( 'Random' );
@@ -497,13 +639,14 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		$order->set_billing_postcode( '54321' );
 		$order->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$result = CustomersDataStore::sync_order_customer( $order->get_id() );
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
-		$this->assertTrue( $result );
+		$this->assertNotEquals( -1, $result );
+
 		$request  = new WP_REST_Request( 'GET', $this->endpoint );
 		$response = $this->server->dispatch( $request );
 		$reports  = $response->get_data();
@@ -521,15 +664,15 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $this->user );
 
 		$order = WC_Helper_Order::create_order( 0 );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_total( 100 );
 		$order->save();
 		$order2 = WC_Helper_Order::create_order( 0 );
-		$order2->set_status( 'completed' );
+		$order2->set_status( OrderStatus::COMPLETED );
 		$order2->set_total( 100 );
 		$order2->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$customer_id  = CustomersDataStore::get_existing_customer_id_from_order( $order );
 		$customer2_id = CustomersDataStore::get_existing_customer_id_from_order( $order2 );
@@ -540,11 +683,11 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		$order->set_billing_postcode( '54321' );
 		$order->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$result = CustomersDataStore::sync_order_customer( $order->get_id() );
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		// Didn't update anything.
 		$this->assertTrue( -1 === $result );
@@ -566,20 +709,20 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $this->user );
 
 		$order = WC_Helper_Order::create_order( 0 );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_total( 100 );
 		$order->save();
 		$order2 = WC_Helper_Order::create_order( 0 );
-		$order2->set_status( 'completed' );
+		$order2->set_status( OrderStatus::COMPLETED );
 		$order2->set_total( 100 );
 		$order2->save();
 		$order3 = WC_Helper_Order::create_order( 0 );
-		$order3->set_status( 'completed' );
+		$order3->set_status( OrderStatus::COMPLETED );
 		$order3->set_total( 100 );
 		$order3->set_billing_email( 'different@example.org' );
 		$order3->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$customer_id  = CustomersDataStore::get_existing_customer_id_from_order( $order );
 		$customer2_id = CustomersDataStore::get_existing_customer_id_from_order( $order2 );
@@ -592,14 +735,14 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		$order3->set_billing_postcode( '54321' );
 		$order3->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$result = CustomersDataStore::sync_order_customer( $order3->get_id() );
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		// Didn't update anything.
-		$this->assertTrue( $result );
+		$this->assertNotEquals( -1, $result );
 		$request  = new WP_REST_Request( 'GET', $this->endpoint );
 		$response = $this->server->dispatch( $request );
 		$reports  = $response->get_data();
@@ -626,19 +769,19 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 		wp_set_current_user( $this->user );
 
 		$order = WC_Helper_Order::create_order( 0 );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_total( 100 );
 		$order->save();
 		$order2 = WC_Helper_Order::create_order( 0 );
-		$order2->set_status( 'completed' );
+		$order2->set_status( OrderStatus::COMPLETED );
 		$order2->set_total( 100 );
 		$order2->save();
 		$order3 = WC_Helper_Order::create_order( 0 );
-		$order3->set_status( 'completed' );
+		$order3->set_status( OrderStatus::COMPLETED );
 		$order3->set_total( 100 );
 		$order3->save();
 
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$customer_id  = CustomersDataStore::get_existing_customer_id_from_order( $order );
 		$customer2_id = CustomersDataStore::get_existing_customer_id_from_order( $order2 );
@@ -652,7 +795,7 @@ class WC_Admin_Tests_API_Reports_Customers extends WC_REST_Unit_Test_Case {
 
 		$order->set_date_created( time() + 60 );
 		$order->save();
-		WC_Helper_Queue::run_all_pending();
+		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
 		$latest_order = CustomersDataStore::get_last_order( $customer_id );
 

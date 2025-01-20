@@ -29,6 +29,7 @@ class InstalledExtensions {
 		$google        = self::get_google_extension_data();
 		$amazon_ebay   = self::get_amazon_ebay_extension_data();
 		$mailpoet      = self::get_mailpoet_extension_data();
+		$klaviyo       = self::get_klaviyo_extension_data();
 		$creative_mail = self::get_creative_mail_extension_data();
 		$tiktok        = self::get_tiktok_extension_data();
 		$jetpack_crm   = self::get_jetpack_crm_extension_data();
@@ -71,6 +72,10 @@ class InstalledExtensions {
 
 		if ( $mailpoet ) {
 			$data[] = $mailpoet;
+		}
+
+		if ( $klaviyo ) {
+			$data[] = $klaviyo;
 		}
 
 		if ( $creative_mail ) {
@@ -241,7 +246,7 @@ class InstalledExtensions {
 		$data         = self::get_extension_base_data( $slug );
 		$data['icon'] = WC_ADMIN_IMAGES_FOLDER_URL . '/marketing/facebook-icon.svg';
 
-		if ( $data['status'] === 'activated' && function_exists( 'facebook_for_woocommerce' ) ) {
+		if ( 'activated' === $data['status'] && function_exists( 'facebook_for_woocommerce' ) ) {
 			$integration = facebook_for_woocommerce()->get_integration();
 
 			if ( $integration->is_configured() ) {
@@ -270,7 +275,6 @@ class InstalledExtensions {
 		$data         = self::get_extension_base_data( $slug );
 		$data['icon'] = WC_ADMIN_IMAGES_FOLDER_URL . '/marketing/pinterest.svg';
 
-		// TODO: Finalise docs url.
 		$data['docsUrl'] = 'https://woocommerce.com/document/pinterest-for-woocommerce/?utm_medium=product';
 
 		if ( 'activated' === $data['status'] && class_exists( 'Pinterest_For_Woocommerce' ) ) {
@@ -376,6 +380,33 @@ class InstalledExtensions {
 
 			$data['docsUrl']    = 'https://kb.mailpoet.com/';
 			$data['supportUrl'] = 'https://www.mailpoet.com/support/';
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get Klaviyo extension data.
+	 *
+	 * @return array|bool
+	 */
+	protected static function get_klaviyo_extension_data() {
+		$slug = 'klaviyo';
+
+		if ( ! PluginsHelper::is_plugin_installed( $slug ) ) {
+			return false;
+		}
+
+		$data         = self::get_extension_base_data( $slug );
+		$data['icon'] = plugins_url( 'assets/images/marketing/klaviyo.png', WC_PLUGIN_FILE );
+
+		if ( 'activated' === $data['status'] ) {
+			$klaviyo_options = get_option( 'klaviyo_settings' );
+			if ( isset( $klaviyo_options['klaviyo_public_api_key'] ) ) {
+				$data['status'] = 'configured';
+			}
+
+			$data['settingsUrl'] = admin_url( 'admin.php?page=klaviyo_settings' );
 		}
 
 		return $data;

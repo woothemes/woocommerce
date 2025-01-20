@@ -1,5 +1,4 @@
-TableCard
-===
+# TableCard
 
 This is an accessible, sortable, and scrollable table for displaying tabular data (like revenue and other analytics data).
 It accepts `headers` for column headers, and `rows` for the table content.
@@ -39,6 +38,8 @@ const summary = [
 	{ label: 'Shipping', value: '$50.00' },
 ];
 
+const [ showNotice, setShowNotice ] = useState( true );
+
 <TableCard
 	title="Revenue last week"
 	rows={ rows }
@@ -47,6 +48,17 @@ const summary = [
 	rowsPerPage={ 7 }
 	totalRows={ 10 }
 	summary={ summary }
+	tablePreface={
+    showNotice && (
+      <Notice
+        status="info"
+        isDismissible={ true }
+        onRemove={ () => setShowNotice( false ) }
+      >
+        This is an informative notice about the table.
+      </Notice>
+				)
+  }
 />
 ```
 
@@ -61,7 +73,7 @@ Name | Type | Default | Description
 `ids` | Array | `null` | A list of IDs, matching to the row list so that ids[ 0 ] contains the object ID for the object displayed in row[ 0 ]
 `isLoading` | Boolean | `false` | Defines if the table contents are loading. It will display `TablePlaceholder` component instead of `Table` if that's the case
 `onQueryChange` | Function | `noop` | A function which returns a callback function to update the query string for a given `param`
-`onColumnsChange` | Function | `noop` | A function which returns a callback function which is called upon the user changing the visiblity of columns
+`onColumnsChange` | Function | `noop` | A function which returns a callback function which is called upon the user changing the visibility of columns
 `onSearch` | Function | `noop` | A function which is called upon the user searching in the table header
 `onSort` | Function | `undefined` | A function which is called upon the user changing the sorting of the table
 `downloadable` | Boolean | `false` | Whether the table must be downloadable. If true, the download button will appear
@@ -77,6 +89,7 @@ Name | Type | Default | Description
 `totalRows` | Number | `null` | (required) The total number of rows (across all pages)
 `baseSearchQuery` | Object | `{}` | Pass in query parameters to be included in the path when onSearch creates a new url
 `rowKey` | Function(row, index): string | `null` | Function used for the row key.
+`tablePreface` | ReactNode | `null` | Content to be displayed before the table but after the header. Useful for notices or custom content.
 
 ### `labels` structure
 
@@ -84,25 +97,24 @@ Table header action labels object with properties:
 
 - `compareButton`: String - Compare button label
 - `downloadButton`: String - Download button label
-- `helpText`: String - 
-- `placeholder`: String - 
+- `helpText`: String -
+- `placeholder`: String -
 
 ### `summary` structure
 
 Array of summary items objects with properties:
 
 - `label`: ReactNode
-- `value`: One of type: string, number 
+- `value`: One of type: string, number
 
 
-EmptyTable
-===
+## EmptyTable
 
 `EmptyTable` displays a blank space with an optional message passed as a children node
 with the purpose of replacing a table with no rows.
 It mimics the same height a table would have according to the `numberOfRows` prop.
 
-## Usage
+### Usage
 
 ```jsx
 <EmptyTable>
@@ -117,12 +129,11 @@ Name | Type | Default | Description
 `numberOfRows` | Number | `5` | An integer with the number of rows the box should occupy
 
 
-TablePlaceholder
-===
+## TablePlaceholder
 
 `TablePlaceholder` behaves like `Table` but displays placeholder boxes instead of data. This can be used while loading.
 
-## Usage
+### Usage
 
 ```jsx
 const headers = [
@@ -147,12 +158,11 @@ Name | Type | Default | Description
 `numberOfRows` | Number | `5` | An integer with the number of rows to display
 
 
-TableSummary
-===
+## TableSummary
 
 A component to display summarized table data - the list of data passed in on a single line.
 
-## Usage
+### Usage
 
 ```jsx
 const summary = [
@@ -170,19 +180,17 @@ Name | Type | Default | Description
 --- | --- | --- | ---
 `data` | Array | `null` | An array of objects with `label` & `value` properties, which display on a single line
 
-TableSummaryPlaceholder
-===
+## TableSummaryPlaceholder
 
 A component to display a placeholder box for `TableSummary`. There is no prop for this component.
 
-## Usage
+### Usage
 
 ```jsx
 <TableSummaryPlaceholder />
 ```
 
-Table
-===
+## Table
 
 A table component, without the Card wrapper. This is a basic table display, sortable, but no default filtering.
 
@@ -211,13 +219,13 @@ const rows = [
 ]
 ```
 
-|   Month  | Orders | Revenue |
-| ---------|--------|---------|
-| January  |     10 | $530.00 |
-| February |     13 | $675.00 |
-| March    |      9 | $460.00 |
+ Month  | Orders | Revenue
+---------|--------|---------
+ January  |     10 | $530.00
+ February |     13 | $675.00
+ March    |      9 | $460.00
 
-## Usage
+### Usage
 
 ```jsx
 <Table
@@ -241,6 +249,7 @@ Name | Type | Default | Description
 `rows` | Array | `null` | (required) An array of arrays of display/value object pairs
 `rowHeader` | One of type: number, bool | `0` | Which column should be the row header, defaults to the first item (`0`) (but could be set to `1`, if the first col is checkboxes, for example). Set to false to disable row headers
 `rowKey` | Function(row, index): string | `null` | Function used to get the row key.
+`emptyMessage` | String | `undefined` | Customize the message to show when there are no rows in the table.
 
 ### `headers` structure
 
@@ -254,7 +263,7 @@ Array of column header objects with properties:
 - `key`: String - The API parameter name for this column, passed to `orderby` when sorting via API.
 - `label`: ReactNode - The display label for this column.
 - `required`: Boolean - Boolean, true if this column should always display in the table (not shown in toggle-able list).
-- `screenReaderLabel`: String - The label used for screen readers for this column. 
+- `screenReaderLabel`: String - The label used for screen readers for this column.
 
 ### `rows` structure
 

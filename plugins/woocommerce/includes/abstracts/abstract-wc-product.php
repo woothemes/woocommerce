@@ -9,8 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
-use Automattic\WooCommerce\Internal\ProductDownloads\ApprovedDirectories\Register as Download_Directories;
 
 /**
  * Legacy product contains all deprecated methods for this class and can be
@@ -27,6 +29,7 @@ require_once WC_ABSPATH . 'includes/legacy/abstract-wc-legacy-product.php';
  * @package WooCommerce\Abstracts
  */
 class WC_Product extends WC_Abstract_Legacy_Product {
+	use CogsAwareTrait;
 
 	/**
 	 * This is the name of this object type.
@@ -65,6 +68,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		'description'        => '',
 		'short_description'  => '',
 		'sku'                => '',
+		'global_unique_id'   => '',
 		'price'              => '',
 		'regular_price'      => '',
 		'sale_price'         => '',
@@ -105,6 +109,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		'rating_counts'      => array(),
 		'average_rating'     => 0,
 		'review_count'       => 0,
+		'cogs_value'         => null,
 	);
 
 	/**
@@ -148,7 +153,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return string
 	 */
 	public function get_type() {
-		return isset( $this->product_type ) ? $this->product_type : 'simple';
+		return isset( $this->product_type ) ? $this->product_type : ProductType::SIMPLE;
 	}
 
 	/**
@@ -251,13 +256,24 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	}
 
 	/**
-	 * Get SKU (Stock-keeping unit) - product unique ID.
+	 * Get SKU (Stock-keeping unit).
 	 *
 	 * @param  string $context What the value is for. Valid values are view and edit.
 	 * @return string
 	 */
 	public function get_sku( $context = 'view' ) {
 		return $this->get_prop( 'sku', $context );
+	}
+
+	/**
+	 * Get Unique ID.
+	 *
+	 * @since 9.1.0
+	 * @param  string $context What the value is for. Valid values are view and edit.
+	 * @return string
+	 */
+	public function get_global_unique_id( $context = 'view' ) {
+		return $this->get_prop( 'global_unique_id', $context );
 	}
 
 	/**
@@ -781,7 +797,9 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @param  string $visibility Options: 'hidden', 'visible', 'search' and 'catalog'.
 	 */
 	public function set_catalog_visibility( $visibility ) {
-		$options = array_keys( wc_get_product_visibility_options() );
+		$options    = array_keys( wc_get_product_visibility_options() );
+		$visibility = in_array( $visibility, $options, true ) ? $visibility : strtolower( $visibility );
+
 		if ( ! in_array( $visibility, $options, true ) ) {
 			$this->error( 'product_invalid_catalog_visibility', __( 'Invalid catalog visibility option.', 'woocommerce' ) );
 		}
@@ -820,9 +838,40 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		if ( $this->get_object_read() && ! empty( $sku ) && ! wc_product_has_unique_sku( $this->get_id(), $sku ) ) {
 			$sku_found = wc_get_product_id_by_sku( $sku );
 
-			$this->error( 'product_invalid_sku', __( 'Invalid or duplicated SKU.', 'woocommerce' ), 400, array( 'resource_id' => $sku_found ) );
+			$this->error(
+				'product_invalid_sku',
+				__( 'Invalid or duplicated SKU.', 'woocommerce' ),
+				400,
+				array(
+					'resource_id' => $sku_found,
+					'unique_sku'  => wc_product_generate_unique_sku( $this->get_id(), $sku ),
+				)
+			);
 		}
 		$this->set_prop( 'sku', $sku );
+	}
+
+	/**
+	 * Set global_unique_id
+	 *
+	 * @since 9.1.0
+	 * @param string $global_unique_id Unique ID.
+	 */
+	public function set_global_unique_id( $global_unique_id ) {
+		$global_unique_id = preg_replace( '/[^0-9\-]/', '', (string) $global_unique_id );
+		if ( $this->get_object_read() && ! empty( $global_unique_id ) && ! wc_product_has_global_unique_id( $this->get_id(), $global_unique_id ) ) {
+			$global_unique_id_found = wc_get_product_id_by_global_unique_id( $global_unique_id );
+
+			$this->error(
+				'product_invalid_global_unique_id',
+				__( 'Invalid or duplicated GTIN, UPC, EAN or ISBN.', 'woocommerce' ),
+				400,
+				array(
+					'resource_id' => $global_unique_id_found,
+				)
+			);
+		}
+		$this->set_prop( 'global_unique_id', $global_unique_id );
 	}
 
 	/**
@@ -902,6 +951,8 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		if ( empty( $status ) ) {
 			$status = 'taxable';
 		}
+
+		$status = strtolower( $status );
 
 		if ( ! in_array( $status, $options, true ) ) {
 			$this->error( 'product_invalid_tax_status', __( 'Invalid product tax status.', 'woocommerce' ) );
@@ -1102,7 +1153,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 *     position - integer sort order.
 	 *     visible - If visible on frontend.
 	 *     variation - If used for variations.
-	 * Indexed by unqiue key to allow clearing old ones after a set.
+	 * Indexed by unique key to allow clearing old ones after a set.
 	 *
 	 * @since 3.0.0
 	 * @param array $raw_attributes Array of WC_Product_Attribute objects.
@@ -1378,7 +1429,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 			return;
 		}
 
-		$stock_is_above_notification_threshold = ( $this->get_stock_quantity() > get_option( 'woocommerce_notify_no_stock_amount', 0 ) );
+		$stock_is_above_notification_threshold = ( (int) $this->get_stock_quantity() > absint( get_option( 'woocommerce_notify_no_stock_amount', 0 ) ) );
 		$backorders_are_allowed                = ( 'no' !== $this->get_backorders() );
 
 		if ( $stock_is_above_notification_threshold ) {
@@ -1582,16 +1633,16 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	protected function is_visible_core() {
 		$visible = 'visible' === $this->get_catalog_visibility() || ( is_search() && 'search' === $this->get_catalog_visibility() ) || ( ! is_search() && 'catalog' === $this->get_catalog_visibility() );
 
-		if ( 'trash' === $this->get_status() ) {
+		if ( ProductStatus::TRASH === $this->get_status() ) {
 			$visible = false;
-		} elseif ( 'publish' !== $this->get_status() && ! current_user_can( 'edit_post', $this->get_id() ) ) {
+		} elseif ( ProductStatus::PUBLISH !== $this->get_status() && ! current_user_can( 'edit_post', $this->get_id() ) ) {
 			$visible = false;
 		}
 
 		if ( $this->get_parent_id() ) {
 			$parent_product = wc_get_product( $this->get_parent_id() );
 
-			if ( $parent_product && 'publish' !== $parent_product->get_status() ) {
+			if ( $parent_product && ProductStatus::PUBLISH !== $parent_product->get_status() && ! current_user_can( 'edit_post', $parent_product->get_id() ) ) {
 				$visible = false;
 			}
 		}
@@ -1609,7 +1660,14 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_purchasable() {
-		return apply_filters( 'woocommerce_is_purchasable', $this->exists() && ( 'publish' === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
+		/**
+		 * Filters whether a product is purchasable.
+		 *
+		 * @since 2.7.0
+		 * @param bool          $purchasable Whether the product is purchasable.
+		 * @param WC_Product    $product     Product object.
+		 */
+		return apply_filters( 'woocommerce_is_purchasable', $this->exists() && ( ProductStatus::PUBLISH === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
 	}
 
 	/**
@@ -1925,6 +1983,23 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	}
 
 	/**
+	 * Get the aria-describedby description for the add to cart button.
+	 *
+	 * @return string
+	 */
+	public function add_to_cart_aria_describedby() {
+		/**
+		 * Filter the aria-describedby description for the add to cart button.
+		 *
+		 * @since 7.8.0
+		 *
+		 * @param string $var Text for the 'aria-describedby' attribute.
+		 * @param WC_Product $this Product object.
+		 */
+		return apply_filters( 'woocommerce_product_add_to_cart_aria_describedby', '', $this );
+	}
+
+	/**
 	 * Get the add to cart button text.
 	 *
 	 * @return string
@@ -2133,5 +2208,125 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 			$class = 'in-stock';
 		}
 		return apply_filters( 'woocommerce_get_availability_class', $class, $this );
+	}
+
+	/**
+	 * Set the defined value of the Cost of Goods Sold for this product.
+	 *
+	 * In this implementation the defined value is a monetary value, but in the future
+	 * (or in derived classes) it could be something different like e.g. a percent of the price;
+	 * see also get_cogs_effective_value and get_cogs_total_value.
+	 *
+	 * The defined value can be null. By default this is equivalent to a value of zero,
+	 * but again: in the future, or in derived classes, it can mean something different.
+	 * See also adjust_cogs_value_before_set.
+	 *
+	 * WARNING! If the Cost of Goods Sold feature is disabled this method will have no effect.
+	 *
+	 * @param float|null $value The value to set for this product.
+	 */
+	public function set_cogs_value( ?float $value ): void {
+		if ( $this->cogs_is_enabled( __METHOD__ ) ) {
+			$value = $this->adjust_cogs_value_before_set( $value );
+			$this->set_prop( 'cogs_value', $value );
+		}
+	}
+
+	/**
+	 * Adjust the value of the Cost of Goods Sold before actually setting it.
+	 *
+	 * To disable the conversion of zero into null in a derived class,
+	 * override this method with just "return $value;" in the body.
+	 *
+	 * @param float|null $value Cost value passed to the set_cogs_value method.
+	 * @return float|null The actual value that will be set for the cost property.
+	 */
+	protected function adjust_cogs_value_before_set( ?float $value ): ?float {
+		return 0.0 === $value ? null : $value;
+	}
+
+	/**
+	 * Get the defined value of the Cost of Goods Sold for this product.
+	 * See set_cogs_value.
+	 *
+	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return null.
+	 *
+	 * @return float The current value for this product.
+	 */
+	public function get_cogs_value(): ?float {
+		if ( ! $this->cogs_is_enabled( __METHOD__ ) ) {
+			return null;
+		}
+
+		$value = $this->get_prop( 'cogs_value' );
+		return is_null( $value ) ? null : (float) $value;
+	}
+
+	/**
+	 * Get the effective value of the Cost of Goods Sold for this product.
+	 *
+	 * The effective value is the defined value once converted to a monetary value;
+	 * in the current implementation both values are always equal, but this could change
+	 * in the future (or in derived classes). See also get_cogs_effective_value_core
+	 * and get_cogs_total_value.
+	 *
+	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return zero.
+	 *
+	 * @return float The effective value for this product.
+	 */
+	public function get_cogs_effective_value(): float {
+		return $this->cogs_is_enabled( __METHOD__ ) ? $this->get_cogs_effective_value_core() : 0;
+	}
+
+	/**
+	 * Core method to get the effective value of the Cost of Goods Sold for this product.
+	 * (the final, actual monetary value).
+	 *
+	 * Derived classes can override this method to provide an alternative way
+	 * of calculating the effective value from the defined value,
+	 * see for example the WC_Product_Variation class.
+	 *
+	 * @return float The effective value for this product.
+	 */
+	protected function get_cogs_effective_value_core(): float {
+		return $this->get_cogs_value() ?? 0;
+	}
+
+	/**
+	 * Get the effective total value of the Cost of Goods Sold for this product.
+	 * This is the monetary value that will be applied to orders and used for analytics purposes,
+	 * see also get_cogs_total_value_core.
+	 *
+	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return zero.
+	 *
+	 * @return float The effective total value for this product.
+	 */
+	public function get_cogs_total_value(): float {
+		if ( ! $this->cogs_is_enabled( __METHOD__ ) ) {
+			return 0;
+		}
+
+		/**
+		 * Filter to customize the total Cost of Goods Sold value that get_cogs_total_value returns for a given product.
+		 *
+		 * @since 9.5.0
+		 *
+		 * @param float $total_value The effective total value of the product.
+		 * @param WC_Product $product The product for which the total value is being retrieved.
+		 */
+		return apply_filters( 'woocommerce_get_product_cogs_total_value', $this->get_cogs_total_value_core(), $this );
+	}
+
+	/**
+	 * Core function to get the effective total value of the Cost of Goods Sold for this product.
+	 *
+	 * Derived classes can override this method to provide an alternative way
+	 * of calculating the total effective value from the single effective value
+	 * and/or the defined value.
+	 *
+	 * @return float The effective total value for this product.
+	 */
+	protected function get_cogs_total_value_core(): float {
+		return $this->get_cogs_effective_value();
 	}
 }

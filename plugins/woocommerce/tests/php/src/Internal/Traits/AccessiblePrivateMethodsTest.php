@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Tests\Internal\Traits;
 
@@ -6,7 +7,10 @@ use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Utilities\StringUtil;
 
 /**
- * Tests for the AccessiblePrivateMethods class.
+ * Tests for the AccessiblePrivateMethods trait.
+ *
+ * DON'T USE THE TRAIT. It will be removed in TWooCommerce 10.5.
+ * Instead, make the hook target methods public and mark them with an @internal annotation.
  */
 class AccessiblePrivateMethodsTest extends \WC_Unit_Test_Case {
 	/**
@@ -419,8 +423,8 @@ class AccessiblePrivateMethodsTest extends \WC_Unit_Test_Case {
 			use AccessiblePrivateMethods;
 		};
 
-		$method_name        = "add_${action_or_filter}";
-		$proper_method_name = "add_static_${action_or_filter}";
+		$method_name        = "add_{$action_or_filter}";
+		$proper_method_name = "add_static_{$action_or_filter}";
 
 		$this->expectException( \Error::class );
 		$this->expectExceptionMessage( get_class( $sut ) . '::' . "$method_name can't be called statically, did you mean '$proper_method_name'?" );
@@ -429,7 +433,7 @@ class AccessiblePrivateMethodsTest extends \WC_Unit_Test_Case {
 	}
 }
 
-//phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound, Squiz.Classes.ClassFileName.NoMatch
+//phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound, Squiz.Classes.ClassFileName.NoMatch, Suin.Classes.PSR4
 /**
  * Class used in the inherited __call method test.
  */
@@ -449,4 +453,4 @@ class BaseClass {
 	//phpcs:enable Squiz.Commenting.FunctionComment.Missing
 }
 
-//phpcs:enable Generic.Files.OneObjectStructurePerFile.MultipleFound, Squiz.Classes.ClassFileName.NoMatch
+//phpcs:enable Generic.Files.OneObjectStructurePerFile.MultipleFound, Squiz.Classes.ClassFileName.NoMatch, Suin.Classes.PSR4

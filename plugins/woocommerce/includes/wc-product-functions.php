@@ -9,9 +9,12 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
+use Automattic\WooCommerce\Internal\ProductImage\MatchImageBySKU;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -282,35 +285,45 @@ function wc_product_post_type_link( $permalink, $post ) {
 add_filter( 'post_type_link', 'wc_product_post_type_link', 10, 2 );
 
 /**
- * Filter to add upload tips under the product image thumbnail.
+ * Ensure that the product_cat value determined in `wc_product_post_type_link` is the canonical value.
  *
- * @param  string $content The HTML markup for the admin post thumbnail.
- * @return string
- */
-function wc_product_post_thumbnail_html( $content ) {
-	$suggestion  = '<div class="image-added-detail">';
-	$suggestion .= '<p>';
-	$suggestion .= '<span class="dashicons-info-outline dashicons"></span>';
-	/* translators: 1: formatted file size */
-	$suggestion .= esc_html( sprintf( __( 'Upload JPEG files that are 1000 x 1000 pixels or larger (max. %1$s).', 'woocommerce' ), size_format( wp_max_upload_size() ) ) );
-	$suggestion .= ' <a href="https://woocommerce.com/posts/fast-high-quality-product-photos/" target="_blank" rel="noopener noreferrer">' . esc_html__( 'How to prepare images?', 'woocommerce' ) . '<span class="dashicons-external dashicons"></span></a>';
-	$suggestion .= '</p>';
-	$suggestion .= '</div>';
-
-	return $content . $suggestion;
-}
-
-/**
- * Action to add the filter to add upload tips under the product image thumbnail.
+ * If other values are used in this part of the permalink, it will be redirected.
  *
- * @param WP_Screen $current_screen Current WP_Screen object.
+ * @return void
  */
-function wc_add_product_post_thumbnail_html_filter( $current_screen ) {
-	if ( 'product' === $current_screen->post_type && 'post' === $current_screen->base ) {
-		add_filter( 'admin_post_thumbnail_html', 'wc_product_post_thumbnail_html' );
+function wc_product_canonical_redirect(): void {
+	global $wp_rewrite;
+
+	if (
+		! did_action( 'woocommerce_init' )
+		|| ! is_product()
+		|| ! is_a( $wp_rewrite, WP_Rewrite::class )
+	) {
+		return;
 	}
+
+	// In the event we are dealing with ugly permalinks, this will be empty.
+	$specified_category_slug = get_query_var( 'product_cat' );
+
+	if ( ! is_string( $specified_category_slug ) || strlen( $specified_category_slug ) < 1 ) {
+		return;
+	}
+
+	// What category slug did we expect? Normally this maps back to the first assigned product_cat
+	// term. However, this is filterable so we use the relevant helper function to figure this out.
+	$expected_category_slug = wc_product_post_type_link( '%product_cat%', get_post( get_the_ID() ) );
+
+	if ( $specified_category_slug === $expected_category_slug ) {
+		return;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$query_vars = isset( $_GET ) && is_array( $_GET ) ? $_GET : array();
+
+	wp_safe_redirect( add_query_arg( $query_vars, wc_get_product( get_the_ID() )->get_permalink() ), 301 );
+	exit();
 }
-add_action( 'current_screen', 'wc_add_product_post_thumbnail_html_filter' );
+add_action( 'template_redirect', 'wc_product_canonical_redirect', 5 );
 
 /**
  * Get the placeholder image URL either from media, or use the fallback image.
@@ -370,10 +383,10 @@ function wc_placeholder_img( $size = 'woocommerce_thumbnail', $attr = '' ) {
 		$attributes = array();
 
 		foreach ( $attr as $name => $value ) {
-			$attribute[] = esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
+			$attributes[] = esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
 		}
 
-		$image_html = '<img src="' . esc_url( $image ) . '" ' . $hwstring . implode( ' ', $attribute ) . '/>';
+		$image_html = '<img src="' . esc_url( $image ) . '" ' . $hwstring . implode( ' ', $attributes ) . '/>';
 	}
 
 	return apply_filters( 'woocommerce_placeholder_img', $image_html, $size, $dimensions );
@@ -628,10 +641,10 @@ function wc_get_product_types() {
 	return (array) apply_filters(
 		'product_type_selector',
 		array(
-			'simple'   => __( 'Simple product', 'woocommerce' ),
-			'grouped'  => __( 'Grouped product', 'woocommerce' ),
-			'external' => __( 'External/Affiliate product', 'woocommerce' ),
-			'variable' => __( 'Variable product', 'woocommerce' ),
+			ProductType::SIMPLE   => __( 'Simple product', 'woocommerce' ),
+			ProductType::GROUPED  => __( 'Grouped product', 'woocommerce' ),
+			ProductType::EXTERNAL => __( 'External/Affiliate product', 'woocommerce' ),
+			ProductType::VARIABLE => __( 'Variable product', 'woocommerce' ),
 		)
 	);
 }
@@ -645,10 +658,70 @@ function wc_get_product_types() {
  * @return bool
  */
 function wc_product_has_unique_sku( $product_id, $sku ) {
+	/**
+	 * Gives plugins an opportunity to verify SKU uniqueness themselves.
+	 *
+	 * @since 9.0.0
+	 *
+	 * @param bool|null $has_unique_sku Set to a boolean value to short-circuit the default SKU check.
+	 * @param int $product_id The ID of the current product.
+	 * @param string $sku The SKU to check for uniqueness.
+	 */
+	$has_unique_sku = apply_filters( 'wc_product_pre_has_unique_sku', null, $product_id, $sku );
+	if ( ! is_null( $has_unique_sku ) ) {
+		return boolval( $has_unique_sku );
+	}
+
 	$data_store = WC_Data_Store::load( 'product' );
 	$sku_found  = $data_store->is_existing_sku( $product_id, $sku );
 
 	if ( apply_filters( 'wc_product_has_unique_sku', $sku_found, $product_id, $sku ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Check if product unique ID is unique.
+ *
+ * @since 9.1.0
+ * @param int    $product_id Product ID.
+ * @param string $global_unique_id Product Unique ID.
+ * @return bool
+ */
+function wc_product_has_global_unique_id( $product_id, $global_unique_id ) {
+	/**
+	 * Gives plugins an opportunity to verify Unique ID uniqueness themselves.
+	 *
+	 * @since 9.1.0
+	 *
+	 * @param bool|null $has_global_unique_id Set to a boolean value to short-circuit the default Unique ID check.
+	 * @param int $product_id The ID of the current product.
+	 * @param string $sku The Unique ID to check for uniqueness.
+	 */
+	$has_global_unique_id = apply_filters( 'wc_product_pre_has_global_unique_id', null, $product_id, $global_unique_id );
+	if ( ! is_null( $has_global_unique_id ) ) {
+		return boolval( $has_global_unique_id );
+	}
+
+	$data_store = WC_Data_Store::load( 'product' );
+	if ( $data_store->has_callable( 'is_existing_global_unique_id' ) ) {
+		$global_unique_id_found = $data_store->is_existing_global_unique_id( $product_id, $global_unique_id );
+	} else {
+		$logger = wc_get_logger();
+		$logger->error( 'The method is_existing_global_unique_id is not implemented in the data store.', array( 'source' => 'wc_product_has_global_unique_id' ) );
+	}
+	/**
+	 * Gives plugins an opportunity to verify Unique ID uniqueness themselves.
+	 *
+	 * @since 9.1.0
+	 *
+	 * @param boolean $global_unique_id_found Whether the Unique ID is found.
+	 * @param int $product_id The ID of the current product.
+	 * @param string $sku The Unique ID to check for uniqueness.
+	 */
+	if ( apply_filters( 'wc_product_has_global_unique_id', $global_unique_id_found, $product_id, $global_unique_id ) ) {
 		return false;
 	}
 
@@ -709,6 +782,24 @@ function wc_get_product_id_by_sku( $sku ) {
 }
 
 /**
+ * Get product ID by Unique ID.
+ *
+ * @since  9.1.0
+ * @param  string $global_unique_id Product Unique ID.
+ * @return int|null
+ */
+function wc_get_product_id_by_global_unique_id( $global_unique_id ) {
+	$data_store = WC_Data_Store::load( 'product' );
+	if ( $data_store->has_callable( 'get_product_id_by_global_unique_id' ) ) {
+		return $data_store->get_product_id_by_global_unique_id( $global_unique_id );
+	} else {
+		$logger = wc_get_logger();
+		$logger->error( 'The method get_product_id_by_global_unique_id is not implemented in the data store.', array( 'source' => 'wc_get_product_id_by_global_unique_id' ) );
+	}
+	return null;
+}
+
+/**
  * Get attributes/data for an individual variation from the database and maintain it's integrity.
  *
  * @since  2.4.0
@@ -717,7 +808,7 @@ function wc_get_product_id_by_sku( $sku ) {
  */
 function wc_get_product_variation_attributes( $variation_id ) {
 	// Build variation data from meta.
-	$all_meta                = get_post_meta( $variation_id );
+	$all_meta                = is_array( get_post_meta( $variation_id ) ) ? get_post_meta( $variation_id ) : array();
 	$parent_id               = wp_get_post_parent_id( $variation_id );
 	$parent_attributes       = array_filter( (array) get_post_meta( $parent_id, '_product_attributes', true ) );
 	$found_parent_attributes = array();
@@ -729,7 +820,7 @@ function wc_get_product_variation_attributes( $variation_id ) {
 			$attribute                 = 'attribute_' . sanitize_title( $attribute_name );
 			$found_parent_attributes[] = $attribute;
 			if ( ! array_key_exists( $attribute, $variation_attributes ) ) {
-				$variation_attributes[ $attribute ] = ''; // Add it - 'any' will be asumed.
+				$variation_attributes[ $attribute ] = ''; // Add it - 'any' will be assumed.
 			}
 		}
 	}
@@ -819,7 +910,7 @@ function wc_get_product_attachment_props( $attachment_id = null, $product = fals
 		}
 
 		$alt_text     = array_filter( $alt_text );
-		$props['alt'] = isset( $alt_text[0] ) ? $alt_text[0] : '';
+		$props['alt'] = $alt_text ? reset( $alt_text ) : '';
 
 		// Large version.
 		$full_size           = apply_filters( 'woocommerce_gallery_full_size', apply_filters( 'woocommerce_product_thumbnails_large_size', 'full' ) );
@@ -946,7 +1037,7 @@ function wc_get_related_products( $product_id, $limit = 5, $exclude_ids = array(
 	);
 
 	$transient     = get_transient( $transient_name );
-	$related_posts = $transient && isset( $transient[ $query_args ] ) ? $transient[ $query_args ] : false;
+	$related_posts = $transient && is_array( $transient ) && isset( $transient[ $query_args ] ) ? $transient[ $query_args ] : false;
 
 	// We want to query related posts if they are not cached, or we don't have enough.
 	if ( false === $related_posts || count( $related_posts ) < $limit ) {
@@ -962,7 +1053,7 @@ function wc_get_related_products( $product_id, $limit = 5, $exclude_ids = array(
 			$related_posts = $data_store->get_related_products( $cats_array, $tags_array, $exclude_ids, $limit + 10, $product_id );
 		}
 
-		if ( $transient ) {
+		if ( $transient && is_array( $transient ) ) {
 			$transient[ $query_args ] = $related_posts;
 		} else {
 			$transient = array( $query_args => $related_posts );
@@ -1021,9 +1112,7 @@ function wc_get_price_including_tax( $product, $args = array() ) {
 	$price = '' !== $args['price'] ? max( 0.0, (float) $args['price'] ) : (float) $product->get_price();
 	$qty   = '' !== $args['qty'] ? max( 0.0, (float) $args['qty'] ) : 1;
 
-	if ( '' === $price ) {
-		return '';
-	} elseif ( empty( $qty ) ) {
+	if ( empty( $qty ) ) {
 		return 0.0;
 	}
 
@@ -1032,13 +1121,18 @@ function wc_get_price_including_tax( $product, $args = array() ) {
 
 	if ( $product->is_taxable() ) {
 		if ( ! wc_prices_include_tax() ) {
-			$tax_rates = WC_Tax::get_rates( $product->get_tax_class() );
-			$taxes     = WC_Tax::calc_tax( $line_price, $tax_rates, false );
-
-			if ( 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ) ) {
-				$taxes_total = array_sum( $taxes );
+			// If the customer is exempt from VAT, set tax total to 0.
+			if ( ! empty( WC()->customer ) && WC()->customer->get_is_vat_exempt() ) {
+				$taxes_total = 0.00;
 			} else {
-				$taxes_total = array_sum( array_map( 'wc_round_tax_total', $taxes ) );
+				$tax_rates = WC_Tax::get_rates( $product->get_tax_class() );
+				$taxes     = WC_Tax::calc_tax( $line_price, $tax_rates, false );
+
+				if ( 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ) ) {
+					$taxes_total = array_sum( $taxes );
+				} else {
+					$taxes_total = array_sum( array_map( 'wc_round_tax_total', $taxes ) );
+				}
 			}
 
 			$return_price = NumberUtil::round( $line_price + $taxes_total, wc_get_price_decimals() );
@@ -1047,7 +1141,7 @@ function wc_get_price_including_tax( $product, $args = array() ) {
 			$base_tax_rates = WC_Tax::get_base_tax_rates( $product->get_tax_class( 'unfiltered' ) );
 
 			/**
-			 * If the customer is excempt from VAT, remove the taxes here.
+			 * If the customer is exempt from VAT, remove the taxes here.
 			 * Either remove the base or the user taxes depending on woocommerce_adjust_non_base_location_prices setting.
 			 */
 			if ( ! empty( WC()->customer ) && WC()->customer->get_is_vat_exempt() ) { // @codingStandardsIgnoreLine.
@@ -1094,6 +1188,10 @@ function wc_get_price_including_tax( $product, $args = array() ) {
  * @return float|string Price with tax excluded, or an empty string if price calculation failed.
  */
 function wc_get_price_excluding_tax( $product, $args = array() ) {
+	if ( ! ( $product instanceof WC_Product ) ) {
+		return '';
+	}
+
 	$args = wp_parse_args(
 		$args,
 		array(
@@ -1105,9 +1203,7 @@ function wc_get_price_excluding_tax( $product, $args = array() ) {
 	$price = '' !== $args['price'] ? max( 0.0, (float) $args['price'] ) : (float) $product->get_price();
 	$qty   = '' !== $args['qty'] ? max( 0.0, (float) $args['qty'] ) : 1;
 
-	if ( '' === $price ) {
-		return '';
-	} elseif ( empty( $qty ) ) {
+	if ( empty( $qty ) ) {
 		return 0.0;
 	}
 
@@ -1132,9 +1228,14 @@ function wc_get_price_excluding_tax( $product, $args = array() ) {
 }
 
 /**
- * Returns the price including or excluding tax, based on the 'woocommerce_tax_display_shop' setting.
+ * Returns the price including or excluding tax.
+ *
+ * By default it's based on the 'woocommerce_tax_display_shop' setting.
+ * Set `$arg['display_context']` to 'cart' to base on the 'woocommerce_tax_display_cart' setting instead.
  *
  * @since  3.0.0
+ * @since  7.6.0 Added `display_context` argument.
+ *
  * @param  WC_Product $product WC_Product object.
  * @param  array      $args Optional arguments to pass product quantity and price.
  * @return float
@@ -1143,15 +1244,19 @@ function wc_get_price_to_display( $product, $args = array() ) {
 	$args = wp_parse_args(
 		$args,
 		array(
-			'qty'   => 1,
-			'price' => $product->get_price(),
+			'qty'             => 1,
+			'price'           => $product->get_price(),
+			'display_context' => 'shop',
 		)
 	);
 
-	$price = $args['price'];
-	$qty   = $args['qty'];
+	$price       = $args['price'];
+	$qty         = $args['qty'];
+	$tax_display = get_option(
+		'cart' === $args['display_context'] ? 'woocommerce_tax_display_cart' : 'woocommerce_tax_display_shop'
+	);
 
-	return 'incl' === get_option( 'woocommerce_tax_display_shop' ) ?
+	return 'incl' === $tax_display ?
 		wc_get_price_including_tax(
 			$product,
 			array(
@@ -1213,7 +1318,7 @@ function wc_products_array_filter_visible( $product ) {
  * @return bool
  */
 function wc_products_array_filter_visible_grouped( $product ) {
-	return $product && is_a( $product, 'WC_Product' ) && ( 'publish' === $product->get_status() || current_user_can( 'edit_product', $product->get_id() ) );
+	return $product && is_a( $product, 'WC_Product' ) && ( ProductStatus::PUBLISH === $product->get_status() || current_user_can( 'edit_product', $product->get_id() ) );
 }
 
 /**
@@ -1427,6 +1532,7 @@ function wc_update_product_lookup_tables() {
 		'min_max_price',
 		'stock_quantity',
 		'sku',
+		'global_unique_id',
 		'stock_status',
 		'average_rating',
 		'total_sales',
@@ -1523,6 +1629,7 @@ function wc_update_product_lookup_tables_column( $column ) {
 			);
 			break;
 		case 'sku':
+		case 'global_unique_id':
 		case 'stock_status':
 		case 'average_rating':
 		case 'total_sales':
@@ -1582,13 +1689,17 @@ function wc_update_product_lookup_tables_column( $column ) {
 						{$wpdb->wc_product_meta_lookup} lookup_table
 						LEFT JOIN {$wpdb->postmeta} meta1 ON lookup_table.product_id = meta1.post_id AND meta1.meta_key = '_price'
 						LEFT JOIN {$wpdb->postmeta} meta2 ON lookup_table.product_id = meta2.post_id AND meta2.meta_key = '_sale_price'
+	  					LEFT JOIN {$wpdb->postmeta} meta3 ON lookup_table.product_id = meta3.post_id AND meta3.meta_key = '_regular_price'
 					SET
 						lookup_table.`{$column}` = IF (
 							CAST( meta1.meta_value AS DECIMAL ) >= 0
 							AND CAST( meta2.meta_value AS CHAR ) != ''
 							AND CAST( meta1.meta_value AS DECIMAL( 10, %d ) ) = CAST( meta2.meta_value AS DECIMAL( 10, %d ) )
+							AND CAST( meta3.meta_value AS DECIMAL( 10, %d ) ) > CAST( meta2.meta_value AS DECIMAL( 10, %d ) )
 						, 1, 0 )
 					",
+					$decimals,
+					$decimals,
 					$decimals,
 					$decimals
 				)
@@ -1674,3 +1785,48 @@ function wc_update_product_lookup_tables_rating_count_batch( $offset = 0, $limit
 	}
 }
 add_action( 'wc_update_product_lookup_tables_rating_count_batch', 'wc_update_product_lookup_tables_rating_count_batch', 10, 2 );
+
+/**
+ * Attach product featured image. Use image filename to match a product sku when product is not provided.
+ *
+ * @since 8.5.0
+ * @param int        $attachment_id Media attachment ID.
+ * @param WC_Product $product Optional product object.
+ * @param bool       $save_product If true, the changes in the product will be saved before the method returns.
+ * @return void
+ */
+function wc_product_attach_featured_image( $attachment_id, $product = null, $save_product = true ) {
+	$attachment_post = get_post( $attachment_id );
+	if ( ! $attachment_post ) {
+		return;
+	}
+
+	if ( null === $product && wc_get_container()->get( MatchImageBySKU::class )->is_enabled() ) {
+		// On upload the attachment post title is the uploaded file's filename.
+		$file_name = pathinfo( $attachment_post->post_title, PATHINFO_FILENAME );
+		if ( ! $file_name ) {
+			return;
+		}
+
+		$product_id = wc_get_product_id_by_sku( $file_name );
+		$product    = wc_get_product( $product_id );
+	}
+
+	if ( ! $product ) {
+		return;
+	}
+
+	$product->set_image_id( $attachment_id );
+	if ( $save_product ) {
+		$product->save();
+	}
+	if ( 0 === $attachment_post->post_parent ) {
+		wp_update_post(
+			array(
+				'ID'          => $attachment_id,
+				'post_parent' => $product->get_id(),
+			)
+		);
+	}
+}
+add_action( 'add_attachment', 'wc_product_attach_featured_image' );

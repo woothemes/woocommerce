@@ -7,6 +7,7 @@
 
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Testing\Tools\CodeHacking\CodeHacker;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 use PHPUnit\Framework\Constraint\IsType;
 
 /**
@@ -18,6 +19,8 @@ use PHPUnit\Framework\Constraint\IsType;
  * @since 2.2
  */
 class WC_Unit_Test_Case extends WP_HTTP_TestCase {
+
+	public const DEFAULT_FLOAT_COMPARISON_DELTA = 1e-10;
 
 	/**
 	 * Holds the WC_Unit_Test_Factory instance.
@@ -40,7 +43,7 @@ class WC_Unit_Test_Case extends WP_HTTP_TestCase {
 			CodeHacker::disable();
 			self::$code_hacker_temporary_disables_requested = 1;
 		} elseif ( self::$code_hacker_temporary_disables_requested > 0 ) {
-			self::$code_hacker_temporary_disables_requested++;
+			++self::$code_hacker_temporary_disables_requested;
 		}
 	}
 
@@ -50,7 +53,7 @@ class WC_Unit_Test_Case extends WP_HTTP_TestCase {
 	 */
 	protected static function reenable_code_hacker() {
 		if ( self::$code_hacker_temporary_disables_requested > 0 ) {
-			self::$code_hacker_temporary_disables_requested--;
+			--self::$code_hacker_temporary_disables_requested;
 			if ( 0 === self::$code_hacker_temporary_disables_requested ) {
 				CodeHacker::enable();
 			}
@@ -215,6 +218,15 @@ class WC_Unit_Test_Case extends WP_HTTP_TestCase {
 	}
 
 	/**
+	 * Reset all the class registration replacements in the dependency injection container,
+	 * so any further "get" will return an instance of the class originally registered.
+	 * For this to work with shared definitions 'reset_container_resolutions' is required too.
+	 */
+	public function reset_container_replacements() {
+		wc_get_container()->reset_all_replacements();
+	}
+
+	/**
 	 * Reset the mock legacy proxy class so that all the registered mocks are unregistered.
 	 */
 	public function reset_legacy_proxy_mocks() {
@@ -261,6 +273,15 @@ class WC_Unit_Test_Case extends WP_HTTP_TestCase {
 	 */
 	public function register_legacy_proxy_global_mocks( array $mocks ) {
 		wc_get_container()->get( LegacyProxy::class )->register_global_mocks( $mocks );
+	}
+
+	/**
+	 * Register a callback to be executed when the "exit" method is invoked.
+	 *
+	 * @param callable|null $mock The callback to be registered, or null to unregister it.
+	 */
+	public function register_exit_mock( ?callable $mock ) {
+		wc_get_container()->get( LegacyProxy::class )->register_exit_mock( $mock );
 	}
 
 	/**
@@ -370,6 +391,13 @@ class WC_Unit_Test_Case extends WP_HTTP_TestCase {
 	}
 
 	/**
+	 * Clear recorded tracks event.
+	 */
+	public function clear_tracks_events() {
+		$events = WC_Tracks_Footer_Pixel::clear_events();
+	}
+
+	/**
 	 * Assert that a valid tracks event has been recorded.
 	 *
 	 * @param string $event_name Event name.
@@ -387,5 +415,44 @@ class WC_Unit_Test_Case extends WP_HTTP_TestCase {
 	public function assertNotRecordedTracksEvent( $event_name ): void {
 		$events = self::get_tracks_events( $event_name );
 		$this->assertEmpty( $events );
+	}
+
+	/**
+	 * Test that render_tracking_pixels includes required timestamp parameters.
+	 *
+	 * @param string $event_name Event name.
+	 */
+	public function assertTracksEventHasRequestTimestampAndNoCache( $event_name ) {
+		ob_start();
+		WC_Tracks_Footer_Pixel::instance()->render_tracking_pixels();
+		$output = ob_get_clean();
+
+		// Verify request timestamp and no cache parameters are present.
+		$this->assertStringContainsString( $event_name, $output, 'Event name should be present in the output' );
+		$this->assertStringContainsString( '_rt=', $output, 'Pixel URL should contain request timestamp parameter' );
+		$this->assertStringContainsString( '_=', $output, 'Pixel URL should contain nocache parameter' );
+	}
+
+	/**
+	 * Assert that the difference between two floats is smaller than a given delta.
+	 *
+	 * @param float      $expected The expected value.
+	 * @param float      $actual The actual value.
+	 * @param float|null $delta The maximum allowed difference, defaults to DEFAULT_FLOAT_COMPARISON_DELTA.
+	 * @param string     $message An optional error message to use if the assertion fails.
+	 */
+	public function assertFloatEquals( $expected, $actual, ?float $delta = null, string $message = '' ) {
+		$this->assertEqualsWithDelta( $expected, $actual, $delta ?? self::DEFAULT_FLOAT_COMPARISON_DELTA, $message );
+	}
+
+	/**
+	 * Mark test skipped when HPOS is enabled.
+	 *
+	 * @param string $message Message to display when test is skipped.
+	 */
+	protected function skip_if_hpos_enabled( $message ) {
+		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			$this->markTestSkipped( $message );
+		}
 	}
 }

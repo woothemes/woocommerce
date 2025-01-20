@@ -30,6 +30,7 @@ export type Item = {
 export type ItemQuery = BaseQueryParams & {
 	[ key: string ]: unknown;
 	parent_id?: IdType;
+	order_by?: string;
 };
 
 export type Params = {
@@ -40,6 +41,11 @@ type WithRequiredProperty< Type, Key extends keyof Type > = Type & {
 	[ Property in Key ]-?: Type[ Property ];
 };
 
+export type CrudActionOptions = {
+	optimisticQueryUpdate?: ItemQuery;
+	optimisticUrlParameters?: IdType[];
+};
+
 export type CrudActions<
 	ResourceName,
 	ItemType,
@@ -47,7 +53,10 @@ export type CrudActions<
 	RequiredFields extends keyof MutableProperties | undefined = undefined
 > = MapActions<
 	{
-		create: ( query: Partial< ItemType > ) => Item;
+		create: (
+			query: Partial< ItemType >,
+			options?: CrudActionOptions
+		) => ItemType;
 		update: ( query: Partial< ItemType > ) => Item;
 	},
 	ResourceName,
@@ -76,7 +85,7 @@ export type CrudSelectors<
 		'': WPDataSelector< typeof getItem >;
 	},
 	ResourceName,
-	IdType,
+	IdQuery,
 	ItemType
 > &
 	MapSelectors<
@@ -86,7 +95,7 @@ export type CrudSelectors<
 			UpdateError: WPDataSelector< typeof getItemUpdateError >;
 		},
 		ResourceName,
-		IdType,
+		IdQuery,
 		unknown
 	> &
 	MapSelectors<

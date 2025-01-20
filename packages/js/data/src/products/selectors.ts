@@ -2,18 +2,22 @@
  * External dependencies
  */
 import createSelector from 'rememo';
-import { createRegistrySelector } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import {
+	createIdFromOptions,
 	getProductResourceName,
 	getTotalProductCountResourceName,
 } from './utils';
 import { WPDataSelector, WPDataSelectors } from '../types';
 import { ProductState } from './reducer';
-import { PartialProduct, ProductQuery } from './types';
+import {
+	GetSuggestedProductsOptions,
+	PartialProduct,
+	ProductQuery,
+} from './types';
 import { ActionDispatchers } from './actions';
 import { PERMALINK_PRODUCT_REGEX } from './constants';
 
@@ -34,9 +38,11 @@ export const getProducts = createSelector(
 		if ( ! ids ) {
 			return defaultValue;
 		}
-		if ( query._fields ) {
+		if ( query && typeof query._fields !== 'undefined' ) {
+			const fields = query._fields;
+
 			return ids.map( ( id ) => {
-				return query._fields.reduce(
+				return fields.reduce(
 					(
 						product: PartialProduct,
 						field: keyof PartialProduct
@@ -122,22 +128,10 @@ export const isPending = (
 	return false;
 };
 
-export const getPermalinkParts = createRegistrySelector(
-	( select ) => ( state: ProductState, productId: number ) => {
-		const product = select( 'core' ).getEntityRecord(
-			'postType',
-			'product',
-			productId,
-			// @ts-expect-error query object is not part of the @wordpress/core-data types yet.
-			{
-				_fields: [
-					'id',
-					'permalink_template',
-					'slug',
-					'generated_slug',
-				],
-			}
-		);
+export const getPermalinkParts = createSelector(
+	( state: ProductState, productId: number ) => {
+		const product = state.data[ productId ];
+
 		if ( product && product.permalink_template ) {
 			const postName = product.slug || product.generated_slug;
 
@@ -152,8 +146,56 @@ export const getPermalinkParts = createRegistrySelector(
 			};
 		}
 		return null;
+	},
+	( state, productId ) => {
+		return [ state.data[ productId ] ];
 	}
 );
+
+/**
+ * Returns an array of related products for a given product ID.
+ *
+ * @param {ProductState} state     - The current state.
+ * @param {number}       productId - The product ID.
+ * @return {PartialProduct[]}        The related products.
+ */
+export const getRelatedProducts = createSelector(
+	( state: ProductState, productId: number ): PartialProduct[] => {
+		const product = state.data[ productId ];
+		if ( ! product?.related_ids ) {
+			return [];
+		}
+
+		const relatedProducts = getProducts( state, {
+			include: product.related_ids,
+		} );
+
+		return relatedProducts || [];
+	},
+	( state, productId ) => {
+		return [ state.data[ productId ] ];
+	}
+);
+
+/**
+ * Return an array of suggested products the
+ * given options.
+ *
+ * @param {ProductState}                state   - The current state.
+ * @param {GetSuggestedProductsOptions} options - The options.
+ * @return {PartialProduct[]}                     The suggested products.
+ */
+export function getSuggestedProducts(
+	state: ProductState,
+	options: GetSuggestedProductsOptions
+): PartialProduct[] {
+	const key = createIdFromOptions( options );
+	if ( ! state.suggestedProducts[ key ] ) {
+		return [];
+	}
+
+	return state.suggestedProducts[ key ].items;
+}
 
 export type ProductsSelectors = {
 	getCreateProductError: WPDataSelector< typeof getCreateProductError >;
@@ -162,7 +204,7 @@ export type ProductsSelectors = {
 	getProductsTotalCount: WPDataSelector< typeof getProductsTotalCount >;
 	getProductsError: WPDataSelector< typeof getProductsError >;
 	isPending: WPDataSelector< typeof isPending >;
-	getPermalinkParts: (
-		productId: number
-	) => { prefix: string; postName: string; suffix: string } | null;
+	getPermalinkParts: WPDataSelector< typeof getPermalinkParts >;
+	getRelatedProducts: WPDataSelector< typeof getRelatedProducts >;
+	getSuggestedProducts: WPDataSelector< typeof getSuggestedProducts >;
 } & WPDataSelectors;

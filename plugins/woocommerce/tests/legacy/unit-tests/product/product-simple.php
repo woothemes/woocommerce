@@ -1,5 +1,7 @@
 <?php
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 /**
  * Class Product_Simple.
  * @package WooCommerce\Tests\Product
@@ -65,7 +67,7 @@ class WC_Tests_Product_Simple extends WC_Unit_Test_Case {
 	 * @since 2.3
 	 */
 	public function test_get_sku() {
-		$this->assertEquals( 'DUMMY SKU', $this->product->get_sku() );
+		$this->assertMatchesRegularExpression( '/^DUMMY SKU\d+$/', $this->product->get_sku() );
 	}
 
 	/**
@@ -87,10 +89,10 @@ class WC_Tests_Product_Simple extends WC_Unit_Test_Case {
 	 * @since 2.3
 	 */
 	public function test_is_type() {
-		$this->assertTrue( $this->product->is_type( 'simple' ) );
-		$this->assertFalse( $this->product->is_type( 'grouped' ) );
-		$this->assertFalse( $this->product->is_type( 'variable' ) );
-		$this->assertFalse( $this->product->is_type( 'external' ) );
+		$this->assertTrue( $this->product->is_type( ProductType::SIMPLE ) );
+		$this->assertFalse( $this->product->is_type( ProductType::GROUPED ) );
+		$this->assertFalse( $this->product->is_type( ProductType::VARIABLE ) );
+		$this->assertFalse( $this->product->is_type( ProductType::EXTERNAL ) );
 	}
 
 	/**

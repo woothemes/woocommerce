@@ -5,6 +5,9 @@
  * @since 2.3
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+
 /**
  * WC_Tests_Product_Functions class.
  */
@@ -49,7 +52,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$variation->save();
 
 		$draft = WC_Helper_Product::create_simple_product();
-		$draft->set_status( 'draft' );
+		$draft->set_status( ProductStatus::DRAFT );
 		$draft->save();
 
 		$this->assertCount( 9, wc_get_products( array( 'return' => 'ids' ) ) );
@@ -58,7 +61,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return' => 'ids',
-				'status' => 'draft',
+				'status' => ProductStatus::DRAFT,
 			)
 		);
 		$this->assertEquals( array( $draft->get_id() ), $products );
@@ -67,7 +70,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return' => 'ids',
-				'type'   => 'variation',
+				'type'   => ProductType::VARIATION,
 			)
 		);
 		$this->assertCount( 6, $products );
@@ -76,7 +79,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return' => 'ids',
-				'type'   => 'variation',
+				'type'   => ProductType::VARIATION,
 				'parent' => $variation->get_id(),
 			)
 		);
@@ -86,7 +89,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return'         => 'ids',
-				'type'           => 'variation',
+				'type'           => ProductType::VARIATION,
 				'parent_exclude' => array( $variation->get_id() ),
 			)
 		);
@@ -225,6 +228,108 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$grouped->delete( true );
 		$draft->delete( true );
 		$variation->delete( true );
+	}
+
+	/**
+	 * @testdox We can search for products by category slugs and category IDs.
+	 */
+	public function test_searching_products_by_category() {
+		$cat1      = wp_insert_term( 'Cat One', 'product_cat' );
+		$cat1_term = get_term_by( 'id', $cat1['term_id'], 'product_cat' );
+		$cat2      = wp_insert_term( 'Cat Two', 'product_cat' );
+		$cat3      = wp_insert_term( 'Cat Three', 'product_cat' );
+
+		$product1 = WC_Helper_Product::create_simple_product();
+		$product1->set_name( 'Product 1' );
+		$product1->set_category_ids( array( $cat1['term_id'] ) );
+		$product1->save();
+
+		$product2 = WC_Helper_Product::create_simple_product();
+		$product2->set_name( 'Product 2' );
+		$product2->set_category_ids( array( $cat2['term_id'], $cat3['term_id'] ) );
+		$product2->save();
+
+		$product3 = WC_Helper_Product::create_simple_product();
+		$product3->set_name( 'Product 3' );
+		$product3->save();
+
+		// Search by category slug.
+		$products = wc_get_products(
+			array(
+				'category' => $cat1_term->slug,
+			)
+		);
+		$this->assertCount( 1, $products );
+		$this->assertEquals( $product1->get_id(), $products[0]->get_id() );
+
+		// Search by category ID.
+		$products = wc_get_products(
+			array(
+				'product_category_id' => $cat2['term_id'],
+			)
+		);
+		$this->assertCount( 1, $products );
+		$this->assertEquals( $product2->get_id(), $products[0]->get_id() );
+
+		// Search by multiple category IDs.
+		$products = wc_get_products(
+			array(
+				'product_category_id' => array( $cat2['term_id'], $cat3['term_id'] ),
+			)
+		);
+		$this->assertCount( 1, $products );
+		$this->assertEquals( $product2->get_id(), $products[0]->get_id() );
+	}
+
+	/**
+	 * @testdox We can search for products by tag slugs and tag IDs.
+	 */
+	public function test_searching_products_by_tag() {
+		$tag1      = wp_insert_term( 'Tag One', 'product_tag' );
+		$tag1_term = get_term_by( 'id', $tag1['term_id'], 'product_tag' );
+		$tag2      = wp_insert_term( 'Tag Two', 'product_tag' );
+		$tag3      = wp_insert_term( 'Tag Three', 'product_tag' );
+
+		$product1 = WC_Helper_Product::create_simple_product();
+		$product1->set_name( 'Product 1' );
+		$product1->set_tag_ids( array( $tag1['term_id'] ) );
+		$product1->save();
+
+		$product2 = WC_Helper_Product::create_simple_product();
+		$product2->set_name( 'Product 2' );
+		$product2->set_tag_ids( array( $tag2['term_id'], $tag3['term_id'] ) );
+		$product2->save();
+
+		$product3 = WC_Helper_Product::create_simple_product();
+		$product3->set_name( 'Product 3' );
+		$product3->save();
+
+		// Search by tag slug.
+		$products = wc_get_products(
+			array(
+				'tag' => $tag1_term->slug,
+			)
+		);
+		$this->assertCount( 1, $products );
+		$this->assertEquals( $product1->get_id(), $products[0]->get_id() );
+
+		// Search by tag ID.
+		$products = wc_get_products(
+			array(
+				'product_tag_id' => $tag2['term_id'],
+			)
+		);
+		$this->assertCount( 1, $products );
+		$this->assertEquals( $product2->get_id(), $products[0]->get_id() );
+
+		// Search by multiple tag IDs.
+		$products = wc_get_products(
+			array(
+				'product_tag_id' => array( $tag2['term_id'], $tag3['term_id'] ),
+			)
+		);
+		$this->assertCount( 1, $products );
+		$this->assertEquals( $product2->get_id(), $products[0]->get_id() );
 	}
 
 	/**
@@ -746,11 +851,11 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 	 * @since 3.9.0
 	 */
 	public function test_wc_get_product_object() {
-		$this->assertInstanceOf( 'WC_Product_Simple', wc_get_product_object( 'simple' ) );
-		$this->assertInstanceOf( 'WC_Product_Grouped', wc_get_product_object( 'grouped' ) );
-		$this->assertInstanceOf( 'WC_Product_External', wc_get_product_object( 'external' ) );
-		$this->assertInstanceOf( 'WC_Product_Variable', wc_get_product_object( 'variable' ) );
-		$this->assertInstanceOf( 'WC_Product_Variation', wc_get_product_object( 'variation' ) );
+		$this->assertInstanceOf( 'WC_Product_Simple', wc_get_product_object( ProductType::SIMPLE ) );
+		$this->assertInstanceOf( 'WC_Product_Grouped', wc_get_product_object( ProductType::GROUPED ) );
+		$this->assertInstanceOf( 'WC_Product_External', wc_get_product_object( ProductType::EXTERNAL ) );
+		$this->assertInstanceOf( 'WC_Product_Variable', wc_get_product_object( ProductType::VARIABLE ) );
+		$this->assertInstanceOf( 'WC_Product_Variation', wc_get_product_object( ProductType::VARIATION ) );
 
 		// Test incorrect type.
 		$this->assertInstanceOf( 'WC_Product_Simple', wc_get_product_object( 'foo+bar' ) );
@@ -916,10 +1021,10 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$product_types = (array) apply_filters(
 			'product_type_selector',
 			array(
-				'simple'   => 'Simple product',
-				'grouped'  => 'Grouped product',
-				'external' => 'External/Affiliate product',
-				'variable' => 'Variable product',
+				ProductType::SIMPLE   => 'Simple product',
+				ProductType::GROUPED  => 'Grouped product',
+				ProductType::EXTERNAL => 'External/Affiliate product',
+				ProductType::VARIABLE => 'Variable product',
 			)
 		);
 
@@ -1077,5 +1182,136 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		);
 
 		$this->assertEquals( $status_options, wc_get_product_stock_status_options() );
+	}
+
+	/**
+	 * Tests `wc_get_price_to_display()` and its `display_context` argument.
+	 */
+	public function test_wc_get_price_to_display() {
+		// Enable taxes.
+		update_option( 'woocommerce_calc_taxes', 'yes' );
+		update_option( 'woocommerce_prices_include_tax', 'no' );
+
+		$customer_location = WC_Tax::get_tax_location();
+
+		$tax_rate = array(
+			'tax_rate_country'  => $customer_location[0],
+			'tax_rate_state'    => '',
+			'tax_rate'          => '20.0000',
+			'tax_rate_name'     => 'VAT',
+			'tax_rate_priority' => '1',
+			'tax_rate_compound' => '0',
+			'tax_rate_shipping' => '1',
+			'tax_rate_order'    => '1',
+			'tax_rate_class'    => '',
+		);
+
+		WC_Tax::_insert_tax_rate( $tax_rate );
+
+		$product = new WC_Product_Simple();
+
+		$product->set_regular_price( '100' );
+
+		// Display price included taxes at shop and cart.
+		update_option( 'woocommerce_tax_display_cart', 'incl' );
+		update_option( 'woocommerce_tax_display_shop', 'incl' );
+
+		$price_shop = wc_get_price_to_display(
+			$product,
+			array(
+				'price'           => 100,
+				'qty'             => 1,
+				'display_context' => 'shop',
+			)
+		);
+
+		$this->assertEquals( 120, $price_shop );
+
+		$price_shop = wc_get_price_to_display(
+			$product,
+			array(
+				'price'           => 100,
+				'qty'             => 1,
+				'display_context' => 'cart',
+			)
+		);
+
+		$this->assertEquals( 120, $price_shop );
+
+		// Display price included taxes only at shop.
+		update_option( 'woocommerce_tax_display_cart', 'excl' );
+		update_option( 'woocommerce_tax_display_shop', 'incl' );
+
+		$price_shop = wc_get_price_to_display(
+			$product,
+			array(
+				'price' => 100,
+				'qty'   => 1,
+			)
+		);
+
+		$this->assertEquals( 120, $price_shop );
+
+		$price_shop = wc_get_price_to_display(
+			$product,
+			array(
+				'price'           => 100,
+				'qty'             => 1,
+				'display_context' => 'cart',
+			)
+		);
+
+		$this->assertEquals( 100, $price_shop );
+
+		// Display price included taxes only at cart.
+		update_option( 'woocommerce_tax_display_cart', 'incl' );
+		update_option( 'woocommerce_tax_display_shop', 'excl' );
+
+		$price_shop = wc_get_price_to_display(
+			$product,
+			array(
+				'price'           => 100,
+				'qty'             => 1,
+				'display_context' => 'shop',
+			)
+		);
+
+		$this->assertEquals( 100, $price_shop );
+
+		$price_shop = wc_get_price_to_display(
+			$product,
+			array(
+				'price'           => 100,
+				'qty'             => 1,
+				'display_context' => 'cart',
+			)
+		);
+
+		$this->assertEquals( 120, $price_shop );
+
+		// Display price excluded taxes at shop and cart.
+		update_option( 'woocommerce_tax_display_cart', 'excl' );
+		update_option( 'woocommerce_tax_display_shop', 'excl' );
+
+		$price_shop = wc_get_price_to_display(
+			$product,
+			array(
+				'price' => 100,
+				'qty'   => 1,
+			)
+		);
+
+		$this->assertEquals( 100, $price_shop );
+
+		$price_shop = wc_get_price_to_display(
+			$product,
+			array(
+				'price'           => 100,
+				'qty'             => 1,
+				'display_context' => 'cart',
+			)
+		);
+
+		$this->assertEquals( 100, $price_shop );
 	}
 }

@@ -5,21 +5,21 @@
  * @package WooCommerce\Admin\Tests\API
  */
 
-use \Automattic\WooCommerce\Admin\API\OnboardingTasks;
+use Automattic\WooCommerce\Admin\API\OnboardingTasks;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\TaskLists;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Task;
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 
 require_once __DIR__ . '/../features/onboarding-tasks/test-task.php';
 
 // Wrokaround to suppress exif_read_data errors from
 // https://github.com/WordPress/WordPress/blob/master/wp-admin/includes/image.php#L835
-define('WP_RUN_CORE_TESTS', false);
+define( 'WP_RUN_CORE_TESTS', false );
 
 /**
  * WC Tests API Onboarding Tasks
- * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
- * @group run-in-separate-process
  */
 class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 
@@ -51,9 +51,7 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 
 		// Resetting task list options and lists.
 		update_option( Task::DISMISSED_OPTION, array() );
-		update_option( Task::SNOOZED_OPTION, array() );
 		TaskLists::clear_lists();
-
 	}
 
 	/**
@@ -61,19 +59,19 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
-		$this->remove_color_or_logo_attribute_taxonomy();
+		$this->cleanup_test_product_attributes();
 		TaskLists::clear_lists();
 		TaskLists::init_default_lists();
 	}
 
 	/**
-	 * Remove product attributes that where created in previous tests.
+	 * Clean up product attribute taxonomies created during tests.
 	 */
-	public function remove_color_or_logo_attribute_taxonomy() {
+	public function cleanup_test_product_attributes() {
 		$taxonomies = get_taxonomies();
 		foreach ( (array) $taxonomies as $taxonomy ) {
-			// pa - product attribute.
-			if ( 'pa_color' === $taxonomy || 'pa_logo' === $taxonomy ) {
+			// pa_ prefix indicates product attribute taxonomy.
+			if ( in_array( $taxonomy, array( 'pa_color', 'pa_logo', 'pa_size' ), true ) ) {
 				unregister_taxonomy( $taxonomy );
 			}
 		}
@@ -85,7 +83,29 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 	public function test_import_sample_products() {
 		wp_set_current_user( $this->user );
 
-		$this->remove_color_or_logo_attribute_taxonomy();
+		$this->cleanup_test_product_attributes();
+
+		// Downloading product images are slow and tests shouldn't rely on external resources so we mock the request.
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $parsed_args, $url ) {
+				if ( preg_match( '/\.(jpg|jpeg|png|gif|bmp|tiff|tif|ico|webp)$/i', $url ) ) {
+					// Create a fake image file.
+					$temp_file = $parsed_args['filename'];
+					$img       = imagecreatetruecolor( 1, 1 );
+					imagejpeg( $img, $temp_file );
+					imagedestroy( $img );
+
+					return array(
+						'response' => array( 'code' => 200 ),
+						'filename' => $temp_file,
+					);
+				}
+				return $preempt;
+			},
+			10,
+			3
+		);
 
 		$request  = new WP_REST_Request( 'POST', $this->endpoint . '/import_sample_products' );
 		$response = $this->server->dispatch( $request );
@@ -103,6 +123,8 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		}
 		$this->assertArrayHasKey( 'updated', $data );
 		$this->assertEquals( 0, count( $data['updated'] ) );
+
+		remove_all_filters( 'pre_http_request' );
 	}
 
 	/**
@@ -120,8 +142,8 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 
 		$this->assertArrayHasKey( 'id', $data );
 		$product = wc_get_product( $data['id'] );
-		$this->assertEquals( 'auto-draft', $product->get_status() );
-		$this->assertEquals( 'simple', $product->get_type() );
+		$this->assertEquals( ProductStatus::AUTO_DRAFT, $product->get_status() );
+		$this->assertEquals( ProductType::SIMPLE, $product->get_type() );
 
 		$request = new WP_REST_Request( 'POST', $this->endpoint . '/create_product_from_template' );
 		$request->set_param( 'template_name', 'digital' );
@@ -132,8 +154,34 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 
 		$this->assertArrayHasKey( 'id', $data );
 		$product = wc_get_product( $data['id'] );
-		$this->assertEquals( 'auto-draft', $product->get_status() );
-		$this->assertEquals( 'simple', $product->get_type() );
+		$this->assertEquals( ProductStatus::AUTO_DRAFT, $product->get_status() );
+		$this->assertEquals( ProductType::SIMPLE, $product->get_type() );
+	}
+
+	/**
+	 * Test creating a product from a template with 'en_US' locale since this is handled differently.
+	 */
+	public function test_create_product_from_template_locale() {
+		wp_set_current_user( $this->user );
+
+		// Get the current user's locale.
+		$user_locale = get_user_locale();
+		switch_to_locale( 'en_US', $this->user );
+
+		$request = new WP_REST_Request( 'POST', $this->endpoint . '/create_product_from_template' );
+		$request->set_param( 'template_name', 'variable' );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertEquals( 200, $response->get_status() );
+
+		$this->assertArrayHasKey( 'id', $data );
+		$product = wc_get_product( $data['id'] );
+		$this->assertEquals( ProductStatus::AUTO_DRAFT, $product->get_status() );
+		$this->assertEquals( ProductType::VARIABLE, $product->get_type() );
+
+		// Set to initial locale.
+		switch_to_locale( $user_locale, $this->user );
 	}
 
 	/**
@@ -183,185 +231,6 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		$data     = $response->get_data();
 
 		$this->assertSame( 'Custom post content', get_the_content( null, null, $data['post_id'] ) );
-	}
-
-
-	/**
-	 * Test that a task can be snoozed.
-	 * @group tasklist
-	 */
-	public function test_task_can_be_snoozed() {
-		wp_set_current_user( $this->user );
-
-		TaskLists::add_list(
-			array(
-				'id' => 'test-list',
-			)
-		);
-
-		TaskLists::add_task(
-			'test-list',
-			new TestTask(
-				TaskLists::get_list( 'test-list' ),
-				array(
-					'id'            => 'test-task',
-					'title'         => 'Test Task',
-					'is_snoozeable' => true,
-				)
-			)
-		);
-
-		$request = new WP_REST_Request( 'POST', $this->endpoint . '/test-task/snooze' );
-		$request->set_headers( array( 'content-type' => 'application/json' ) );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$task = TaskLists::get_task( 'test-task' );
-
-		$this->assertEquals( $data['isSnoozed'], true );
-		$this->assertEquals( isset( $data['snoozedUntil'] ), true );
-		$this->assertEquals( $task->is_snoozed(), true );
-		$this->assertNotNull( $task->get_snoozed_until() );
-
-	}
-
-	/**
-	 * Test that a task can be snoozed with determined list ID.
-	 * @group tasklist
-	 */
-	public function test_task_can_be_snoozed_with_list_id() {
-		wp_set_current_user( $this->user );
-
-		TaskLists::add_list(
-			array(
-				'id' => 'test-list',
-			)
-		);
-
-		TaskLists::add_task(
-			'test-list',
-			new TestTask(
-				TaskLists::get_list( 'test-list' ),
-				array(
-					'id'            => 'test-task',
-					'title'         => 'Test Task',
-					'is_snoozeable' => true,
-				)
-			)
-		);
-
-		$request = new WP_REST_Request( 'POST', $this->endpoint . '/test-task/snooze' );
-		$request->set_headers( array( 'content-type' => 'application/json' ) );
-		$request->set_body( wp_json_encode( array( 'task_list_id' => 'test-list' ) ) );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$task = TaskLists::get_task( 'test-task' );
-
-		$this->assertEquals( $data['isSnoozed'], true );
-		$this->assertEquals( isset( $data['snoozedUntil'] ), true );
-		$this->assertEquals( $task->is_snoozed(), true );
-		$this->assertNotNull( $task->get_snoozed_until() );
-	}
-
-	/**
-	 * Test that a task can be snoozed with determined duration.
-	 * @group tasklist
-	 */
-	public function test_task_can_be_snoozed_with_duration() {
-		wp_set_current_user( $this->user );
-
-		TaskLists::add_list(
-			array(
-				'id' => 'test-list',
-			)
-		);
-
-		TaskLists::add_task(
-			'test-list',
-			new TestTask(
-				TaskLists::get_list( 'test-list' ),
-				array(
-					'id'            => 'test-task',
-					'title'         => 'Test Task',
-					'is_snoozeable' => true,
-				)
-			)
-		);
-
-		$request = new WP_REST_Request( 'POST', $this->endpoint . '/test-task/snooze' );
-		$request->set_headers( array( 'content-type' => 'application/json' ) );
-		$request->set_body( wp_json_encode( array( 'duration' => 'week' ) ) );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$task = TaskLists::get_task( 'test-task' );
-
-		$week_in_ms = WEEK_IN_SECONDS * 1000;
-		// Taking off 1 minute as matching a week is very precise and we might run into some race conditions otherwise.
-		$week_in_ms -= MINUTE_IN_SECONDS * 1000;
-
-		$this->assertEquals( $data['snoozedUntil'] >= ( ( time() * 1000 ) + $week_in_ms ), true );
-
-	}
-
-	/**
-	 * Test that a snoozed task can be undone.
-	 * @group tasklist
-	 */
-	public function test_snoozed_task_can_be_undone() {
-		wp_set_current_user( $this->user );
-
-		TaskLists::add_list(
-			array(
-				'id' => 'test-list',
-			)
-		);
-
-		TaskLists::add_task(
-			'test-list',
-			new TestTask(
-				TaskLists::get_list( 'test-list' ),
-				array(
-					'id'            => 'test-task',
-					'title'         => 'Test Task',
-					'is_snoozeable' => true,
-				)
-			)
-		);
-
-		$task = TaskLists::get_task( 'test-task' );
-
-		$task->snooze();
-
-		$this->assertEquals( $task->is_snoozed(), true );
-
-		$request = new WP_REST_Request( 'POST', $this->endpoint . '/test-task/undo_snooze' );
-		$request->set_headers( array( 'content-type' => 'application/json' ) );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$task_after_request = TaskLists::get_task( 'test-task' );
-
-		$this->assertEquals( $task_after_request->is_snoozed(), false );
-
-	}
-
-	/**
-	 * Test that snooze endpoint returns error for invalid task.
-	 * @group tasklist
-	 */
-	public function test_snoozed_task_invalid() {
-		$this->markTestSkipped( 'Skipped temporarily due to change in endpoint behavior.' );
-		wp_set_current_user( $this->user );
-
-		$request = new WP_REST_Request( 'POST', $this->endpoint . '/test-task/snooze' );
-		$request->set_headers( array( 'content-type' => 'application/json' ) );
-		$response      = $this->server->dispatch( $request );
-		$response_data = $response->get_data();
-
-		$this->assertEquals( $response_data['data']['status'], 404 );
-		$this->assertEquals( $response_data['code'], 'woocommerce_rest_invalid_task' );
 	}
 
 	/**
@@ -554,5 +423,4 @@ class WC_Admin_Tests_API_Onboarding_Tasks extends WC_REST_Unit_Test_Case {
 		$this->assertEquals( $test_task['id'], 'test-task' );
 		$this->assertEquals( $test_task['isDismissable'], true );
 	}
-
 }

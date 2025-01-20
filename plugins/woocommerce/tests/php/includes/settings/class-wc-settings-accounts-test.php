@@ -22,7 +22,7 @@ class WC_Settings_Accounts_Test extends WC_Settings_Unit_Test_Case {
 
 		add_filter(
 			'woocommerce_account_settings',
-			function( $settings ) use ( &$actual_settings_via_filter ) {
+			function ( $settings ) use ( &$actual_settings_via_filter ) {
 				$actual_settings_via_filter = $settings;
 				return $settings;
 			},
@@ -88,14 +88,14 @@ class WC_Settings_Accounts_Test extends WC_Settings_Unit_Test_Case {
 			array(
 				true,
 				'5.2',
-				'When handling an <a href="http://example.org/wp-admin/tools.php?page=remove_personal_data">account erasure request</a>, should personal data within orders be retained or removed?',
-				'When handling an <a href="http://example.org/wp-admin/tools.php?page=remove_personal_data">account erasure request</a>, should access to downloadable files be revoked and download logs cleared?',
+				'When handling an <a href="http://' . WP_TESTS_DOMAIN . '/wp-admin/tools.php?page=remove_personal_data">account erasure request</a>, should personal data within orders be retained or removed?',
+				'When handling an <a href="http://' . WP_TESTS_DOMAIN . '/wp-admin/tools.php?page=remove_personal_data">account erasure request</a>, should access to downloadable files be revoked and download logs cleared?',
 			),
 			array(
 				true,
 				'5.3',
-				'When handling an <a href="http://example.org/wp-admin/erase-personal-data.php">account erasure request</a>, should personal data within orders be retained or removed?',
-				'When handling an <a href="http://example.org/wp-admin/erase-personal-data.php">account erasure request</a>, should access to downloadable files be revoked and download logs cleared?',
+				'When handling an <a href="http://' . WP_TESTS_DOMAIN . '/wp-admin/erase-personal-data.php">account erasure request</a>, should personal data within orders be retained or removed?',
+				'When handling an <a href="http://' . WP_TESTS_DOMAIN . '/wp-admin/erase-personal-data.php">account erasure request</a>, should access to downloadable files be revoked and download logs cleared?',
 			),
 		);
 	}
@@ -113,12 +113,12 @@ class WC_Settings_Accounts_Test extends WC_Settings_Unit_Test_Case {
 	public function test_linked_text_for_erasure_request_settings( $current_user_can_manage_privacy_options, $blog_version, $expected_order_erasure_text, $expected_downloads_erasure_text ) {
 		FunctionsMockerHack::add_function_mocks(
 			array(
-				'current_user_can' => function( $capability, ...$args ) use ( $current_user_can_manage_privacy_options ) {
+				'current_user_can' => function ( $capability, ...$args ) use ( $current_user_can_manage_privacy_options ) {
 					return 'manage_privacy_options' === $capability ?
 						$current_user_can_manage_privacy_options :
 						current_user_can( $capability, ...$args );
 				},
-				'get_bloginfo'     => function( $show = '', $filter = 'raw' ) use ( $blog_version ) {
+				'get_bloginfo'     => function ( $show = '', $filter = 'raw' ) use ( $blog_version ) {
 					return 'version' === $show ?
 						$blog_version :
 						get_bloginfo( $show, $filter );

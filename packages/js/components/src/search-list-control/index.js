@@ -30,6 +30,7 @@ import Tag from '../tag';
 const defaultMessages = {
 	clear: __( 'Clear all selected items', 'woocommerce' ),
 	noItems: __( 'No items found.', 'woocommerce' ),
+	/* translators: %s: search term */
 	noResults: __( 'No results for %s', 'woocommerce' ),
 	search: __( 'Search for items', 'woocommerce' ),
 	selected: ( n ) =>
@@ -82,20 +83,6 @@ export const SearchListControl = ( props ) => {
 		};
 	};
 
-	const onSelect = ( item ) => {
-		return () => {
-			if ( isSelected( item ) ) {
-				onRemove( item.id )();
-				return;
-			}
-			if ( isSingle ) {
-				onChange( [ item ] );
-			} else {
-				onChange( [ ...selected, item ] );
-			}
-		};
-	};
-
 	const isSelected = ( item ) =>
 		findIndex( selected, { id: item.id } ) !== -1;
 
@@ -112,6 +99,20 @@ export const SearchListControl = ( props ) => {
 		return isHierarchical
 			? buildTermsTree( filteredList, list )
 			: filteredList;
+	};
+
+	const onSelect = ( item ) => {
+		return () => {
+			if ( isSelected( item ) ) {
+				onRemove( item.id )();
+				return;
+			}
+			if ( isSingle ) {
+				onChange( [ item ] );
+			} else {
+				onChange( [ ...selected, item ] );
+			}
+		};
 	};
 
 	const defaultRenderItem = ( args ) => {

@@ -1,32 +1,26 @@
 /**
  * External dependencies
  */
-import {
-	createElement,
-	useState,
-	useEffect,
-	useLayoutEffect,
-} from '@wordpress/element';
+import { useState, useEffect, useLayoutEffect } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import { parse } from 'qs';
 import { pick } from 'lodash';
 import { applyFilters } from '@wordpress/hooks';
-import { Slot, Fill } from '@wordpress/components';
 import { getAdminLink } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
  */
 import { getHistory } from './history';
-import * as navUtils from './index';
-
-// For the above, import the module into itself. Functions consumed from this import can be mocked in tests.
 
 // Expose history so all uses get the same history object.
 export { getHistory };
 
 // Export all filter utilities
 export * from './filters';
+
+// Export all hooks
+export { useConfirmUnsavedChanges } from './hooks/use-confirm-unsaved-changes';
 
 const TIME_EXCLUDED_SCREENS_FILTER = 'woocommerce_admin_time_excluded_screens';
 
@@ -38,13 +32,48 @@ const TIME_EXCLUDED_SCREENS_FILTER = 'woocommerce_admin_time_excluded_screens';
 export const getPath = () => getHistory().location.pathname;
 
 /**
+ * Get the current query string, parsed into an object, from history.
+ *
+ * @return {Object}  Current query object, defaults to empty object.
+ */
+export function getQuery() {
+	const search = getHistory().location.search;
+	if ( search.length ) {
+		return parse( search.substring( 1 ) ) || {};
+	}
+	return {};
+}
+
+/**
+ * Return a URL with set query parameters.
+ *
+ * @param {Object} query        object of params to be updated.
+ * @param {string} path         Relative path (defaults to current path).
+ * @param {Object} currentQuery object of current query params (defaults to current querystring).
+ * @param {string} page         Page key (defaults to "wc-admin")
+ * @return {string}  Updated URL merging query params into existing params.
+ */
+export function getNewPath(
+	query,
+	path = getPath(),
+	currentQuery = getQuery(),
+	page = 'wc-admin'
+) {
+	const args = { page, ...currentQuery, ...query };
+	if ( path !== '/' ) {
+		args.path = path;
+	}
+	return addQueryArgs( 'admin.php', args );
+}
+
+/**
  * Gets query parameters that should persist between screens or updates
  * to reports, such as filtering.
  *
  * @param {Object} query Query containing the parameters.
  * @return {Object} Object containing the persisted queries.
  */
-export const getPersistedQuery = ( query = navUtils.getQuery() ) => {
+export const getPersistedQuery = ( query = getQuery() ) => {
 	/**
 	 * Filter persisted queries. These query parameters remain in the url when other parameters are updated.
 	 *
@@ -76,16 +105,6 @@ export const getQueryExcludedScreens = () =>
 	] );
 
 /**
- * Given a path, return whether it is an excluded screen
- *
- * @param {Object} path Path to check
- *
- * @return {boolean} Boolean representing whether path is excluded
- */
-export const pathIsExcluded = ( path ) =>
-	getQueryExcludedScreens().includes( getScreenFromPath( path ) );
-
-/**
  * Retrieve a string 'name' representing the current screen
  *
  * @param {Object} path Path to resolve, default to current
@@ -96,16 +115,6 @@ export const getScreenFromPath = ( path = getPath() ) => {
 		? 'homescreen'
 		: path.replace( '/analytics', '' ).replace( '/', '' );
 };
-
-/**
- * Get an array of IDs from a comma-separated query parameter.
- *
- * @param {string} [queryString=''] string value extracted from URL.
- * @return {Array<number>} List of IDs converted to an array of unique integers.
- */
-export function getIdsFromQuery( queryString = '' ) {
-	return [ ...getSetOfIdsFromQuery( queryString ) ];
-}
 
 /**
  * Get an array of IDs from a comma-separated query parameter.
@@ -123,12 +132,94 @@ export function getSetOfIdsFromQuery( queryString = '' ) {
 }
 
 /**
+ * Updates the query parameters of the current page.
+ *
+ * @param {Object} query        object of params to be updated.
+ * @param {string} path         Relative path (defaults to current path).
+ * @param {Object} currentQuery object of current query params (defaults to current querystring).
+ * @param {string} page         Page key (defaults to "wc-admin")
+ */
+export function updateQueryString(
+	query,
+	path = getPath(),
+	currentQuery = getQuery(),
+	page = 'wc-admin'
+) {
+	const newPath = getNewPath( query, path, currentQuery, page );
+	getHistory().push( newPath );
+}
+
+/**
+ * Adds a listener that runs on history change.
+ *
+ * @param {Function} listener Listener to add on history change.
+ * @return {Function} Function to remove listeners.
+ */
+export const addHistoryListener = ( listener ) => {
+	// Monkey patch pushState to allow trigger the pushstate event listener.
+
+	window.wcNavigation = window.wcNavigation ?? {};
+
+	if ( ! window.wcNavigation.historyPatched ) {
+		( ( history ) => {
+			const pushState = history.pushState;
+			const replaceState = history.replaceState;
+			history.pushState = function ( state ) {
+				const pushStateEvent = new CustomEvent( 'pushstate', {
+					state,
+				} );
+				window.dispatchEvent( pushStateEvent );
+				return pushState.apply( history, arguments );
+			};
+			history.replaceState = function ( state ) {
+				const replaceStateEvent = new CustomEvent( 'replacestate', {
+					state,
+				} );
+				window.dispatchEvent( replaceStateEvent );
+				return replaceState.apply( history, arguments );
+			};
+			window.wcNavigation.historyPatched = true;
+		} )( window.history );
+	}
+
+	window.addEventListener( 'popstate', listener );
+	window.addEventListener( 'pushstate', listener );
+	window.addEventListener( 'replacestate', listener );
+
+	return () => {
+		window.removeEventListener( 'popstate', listener );
+		window.removeEventListener( 'pushstate', listener );
+		window.removeEventListener( 'replacestate', listener );
+	};
+};
+
+/**
+ * Given a path, return whether it is an excluded screen
+ *
+ * @param {Object} path Path to check
+ *
+ * @return {boolean} Boolean representing whether path is excluded
+ */
+export const pathIsExcluded = ( path ) =>
+	getQueryExcludedScreens().includes( getScreenFromPath( path ) );
+
+/**
+ * Get an array of IDs from a comma-separated query parameter.
+ *
+ * @param {string} [queryString=''] string value extracted from URL.
+ * @return {Array<number>} List of IDs converted to an array of unique integers.
+ */
+export function getIdsFromQuery( queryString = '' ) {
+	return [ ...getSetOfIdsFromQuery( queryString ) ];
+}
+
+/**
  * Get an array of searched words given a query.
  *
  * @param {Object} query Query object.
  * @return {Array} List of search words.
  */
-export function getSearchWords( query = navUtils.getQuery() ) {
+export function getSearchWords( query = getQuery() ) {
 	if ( typeof query !== 'object' ) {
 		throw new Error(
 			'Invalid parameter passed to getSearchWords, it expects an object or no parameters.'
@@ -146,41 +237,6 @@ export function getSearchWords( query = navUtils.getQuery() ) {
 	return search
 		.split( ',' )
 		.map( ( searchWord ) => searchWord.replace( '%2C', ',' ) );
-}
-
-/**
- * Return a URL with set query parameters.
- *
- * @param {Object} query        object of params to be updated.
- * @param {string} path         Relative path (defaults to current path).
- * @param {Object} currentQuery object of current query params (defaults to current querystring).
- * @param {string} page         Page key (defaults to "wc-admin")
- * @return {string}  Updated URL merging query params into existing params.
- */
-export function getNewPath(
-	query,
-	path = getPath(),
-	currentQuery = getQuery(),
-	page = 'wc-admin'
-) {
-	const args = { page, ...currentQuery, ...query };
-	if ( path !== '/' ) {
-		args.path = path;
-	}
-	return addQueryArgs( 'admin.php', args );
-}
-
-/**
- * Get the current query string, parsed into an object, from history.
- *
- * @return {Object}  Current query object, defaults to empty object.
- */
-export function getQuery() {
-	const search = getHistory().location.search;
-	if ( search.length ) {
-		return parse( search.substring( 1 ) ) || {};
-	}
-	return {};
 }
 
 /**
@@ -238,69 +294,6 @@ export function onQueryChange( param, path = getPath(), query = getQuery() ) {
 }
 
 /**
- * Updates the query parameters of the current page.
- *
- * @param {Object} query        object of params to be updated.
- * @param {string} path         Relative path (defaults to current path).
- * @param {Object} currentQuery object of current query params (defaults to current querystring).
- * @param {string} page         Page key (defaults to "wc-admin")
- */
-export function updateQueryString(
-	query,
-	path = getPath(),
-	currentQuery = getQuery(),
-	page = 'wc-admin'
-) {
-	const newPath = getNewPath( query, path, currentQuery, page );
-	getHistory().push( newPath );
-}
-
-/**
- * Adds a listener that runs on history change.
- *
- * @param {Function} listener Listener to add on history change.
- * @return {Function} Function to remove listeners.
- */
-export const addHistoryListener = ( listener ) => {
-	// Monkey patch pushState to allow trigger the pushstate event listener.
-
-	window.wcNavigation = window.wcNavigation ?? {};
-
-	if ( ! window.wcNavigation.historyPatched ) {
-		( ( history ) => {
-			/* global CustomEvent */
-			const pushState = history.pushState;
-			const replaceState = history.replaceState;
-			history.pushState = function ( state ) {
-				const pushStateEvent = new CustomEvent( 'pushstate', {
-					state,
-				} );
-				window.dispatchEvent( pushStateEvent );
-				return pushState.apply( history, arguments );
-			};
-			history.replaceState = function ( state ) {
-				const replaceStateEvent = new CustomEvent( 'replacestate', {
-					state,
-				} );
-				window.dispatchEvent( replaceStateEvent );
-				return replaceState.apply( history, arguments );
-			};
-			window.wcNavigation.historyPatched = true;
-		} )( window.history );
-	}
-
-	window.addEventListener( 'popstate', listener );
-	window.addEventListener( 'pushstate', listener );
-	window.addEventListener( 'replacestate', listener );
-
-	return () => {
-		window.removeEventListener( 'popstate', listener );
-		window.removeEventListener( 'pushstate', listener );
-		window.removeEventListener( 'replacestate', listener );
-	};
-};
-
-/**
  * Determines if a URL is a WC admin url.
  *
  * @param {*} url - the url to test
@@ -314,7 +307,7 @@ export const isWCAdmin = ( url = window.location.href ) => {
  * Returns a parsed object for an absolute or relative admin URL.
  *
  * @param {*} url - the url to test.
- * @return {Object} - the URL object of the given url.
+ * @return {URL} - the URL object of the given url.
  */
 export const parseAdminUrl = ( url ) => {
 	if ( url.startsWith( 'http' ) ) {
@@ -344,19 +337,3 @@ export const navigateTo = ( { url } ) => {
 
 	window.location.href = String( parsedUrl );
 };
-
-/**
- * A Fill for extensions to add client facing custom Navigation Items.
- *
- * @slotFill WooNavigationItem
- * @scope woocommerce-navigation
- * @param {Object} props          React props.
- * @param {Array}  props.children Node children.
- * @param {string} props.item     Navigation item slug.
- */
-export const WooNavigationItem = ( { children, item } ) => {
-	return <Fill name={ 'woocommerce_navigation_' + item }>{ children }</Fill>;
-};
-WooNavigationItem.Slot = ( { name } ) => (
-	<Slot name={ 'woocommerce_navigation_' + name } />
-);

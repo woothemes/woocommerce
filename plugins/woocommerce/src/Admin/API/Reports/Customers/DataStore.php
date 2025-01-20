@@ -7,11 +7,12 @@ namespace Automattic\WooCommerce\Admin\API\Reports\Customers;
 
 defined( 'ABSPATH' ) || exit;
 
-use \Automattic\WooCommerce\Admin\API\Reports\DataStore as ReportsDataStore;
-use \Automattic\WooCommerce\Admin\API\Reports\DataStoreInterface;
-use \Automattic\WooCommerce\Admin\API\Reports\TimeInterval;
-use \Automattic\WooCommerce\Admin\API\Reports\SqlQuery;
-use \Automattic\WooCommerce\Admin\API\Reports\Cache as ReportsCache;
+use Automattic\WooCommerce\Admin\API\Reports\DataStore as ReportsDataStore;
+use Automattic\WooCommerce\Admin\API\Reports\DataStoreInterface;
+use Automattic\WooCommerce\Admin\API\Reports\TimeInterval;
+use Automattic\WooCommerce\Admin\API\Reports\SqlQuery;
+use Automattic\WooCommerce\Admin\API\Reports\Cache as ReportsCache;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**
  * Admin\API\Reports\Customers\DataStore.
@@ -21,6 +22,8 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	/**
 	 * Table used to get the data.
 	 *
+	 * @override ReportsDataStore::$table_name
+	 *
 	 * @var string
 	 */
 	protected static $table_name = 'wc_customer_lookup';
@@ -28,12 +31,16 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	/**
 	 * Cache identifier.
 	 *
+	 * @override ReportsDataStore::$cache_key
+	 *
 	 * @var string
 	 */
 	protected $cache_key = 'customers';
 
 	/**
 	 * Mapping columns to data type to return correct response types.
+	 *
+	 * @override ReportsDataStore::$column_types
 	 *
 	 * @var array
 	 */
@@ -48,12 +55,16 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	/**
 	 * Data store context used to pass to filters.
 	 *
+	 * @override ReportsDataStore::$context
+	 *
 	 * @var string
 	 */
 	protected $context = 'customers';
 
 	/**
 	 * Assign report columns once full table name has been assigned.
+	 *
+	 * @override ReportsDataStore::assign_report_columns()
 	 */
 	protected function assign_report_columns() {
 		global $wpdb;
@@ -64,7 +75,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			'id'               => "{$table_name}.customer_id as id",
 			'user_id'          => 'user_id',
 			'username'         => 'username',
-			'name'             => "CONCAT_WS( ' ', first_name, last_name ) as name", // @todo What does this mean for RTL?
+			'name'             => "CONCAT_WS( ' ', first_name, last_name ) as name", // @xxx: What does this mean for RTL?
 			'email'            => 'email',
 			'country'          => 'country',
 			'city'             => 'city',
@@ -83,7 +94,19 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	 * Set up all the hooks for maintaining and populating table data.
 	 */
 	public static function init() {
-		add_action( 'edit_user_profile_update', array( __CLASS__, 'update_registered_customer' ) );
+		add_action( 'woocommerce_new_customer', array( __CLASS__, 'update_registered_customer' ) );
+
+		add_action( 'woocommerce_update_customer', array( __CLASS__, 'update_registered_customer' ) );
+		add_action( 'profile_update', array( __CLASS__, 'update_registered_customer' ) );
+
+		add_action( 'added_user_meta', array( __CLASS__, 'update_registered_customer_via_last_active' ), 10, 3 );
+		add_action( 'updated_user_meta', array( __CLASS__, 'update_registered_customer_via_last_active' ), 10, 3 );
+
+		add_action( 'delete_user', array( __CLASS__, 'delete_customer_by_user_id' ) );
+		add_action( 'remove_user_from_blog', array( __CLASS__, 'delete_customer_by_user_id' ) );
+
+		add_action( 'woocommerce_privacy_remove_order_personal_data', array( __CLASS__, 'anonymize_customer' ) );
+
 		add_action( 'woocommerce_analytics_delete_order_stats', array( __CLASS__, 'sync_on_order_delete' ), 15, 2 );
 	}
 
@@ -122,7 +145,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	public static function sync_order_customer( $post_id ) {
 		global $wpdb;
 
-		if ( 'shop_order' !== get_post_type( $post_id ) && 'shop_order_refund' !== get_post_type( $post_id ) ) {
+		if ( ! OrderUtil::is_order( $post_id, array( 'shop_order', 'shop_order_refund' ) ) ) {
 			return -1;
 		}
 
@@ -155,6 +178,8 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	/**
 	 * Maps ordering specified by the user to columns in the database/fields in the data.
 	 *
+	 * @override ReportsDataStore::normalize_order_by()
+	 *
 	 * @param string $order_by Sorting criterion.
 	 * @return string
 	 */
@@ -168,6 +193,8 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 
 	/**
 	 * Fills WHERE clause of SQL request with date-related constraints.
+	 *
+	 * @override ReportsDataStore::add_time_period_sql_params()
 	 *
 	 * @param array  $query_args Parameters supplied by the user.
 	 * @param string $table_name Name of the db table relevant for the date constraint.
@@ -284,6 +311,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			'name',
 			'username',
 			'email',
+			'all',
 		);
 
 		if ( ! empty( $query_args['search'] ) ) {
@@ -291,11 +319,37 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 
 			if ( empty( $query_args['searchby'] ) || 'name' === $query_args['searchby'] || ! in_array( $query_args['searchby'], $search_params, true ) ) {
 				$searchby = "CONCAT_WS( ' ', first_name, last_name )";
+			} elseif ( 'all' === $query_args['searchby'] ) {
+				$searchby = "CONCAT_WS( ' ', first_name, last_name, username, email )";
 			} else {
 				$searchby = $query_args['searchby'];
 			}
 
 			$where_clauses[] = $wpdb->prepare( "{$searchby} LIKE %s", $name_like ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		}
+
+		$filter_empty_params = array(
+			'email',
+			'name',
+			'country',
+			'city',
+			'state',
+			'postcode',
+		);
+
+		if ( ! empty( $query_args['filter_empty'] ) ) {
+			$fields_to_filter_by = array_intersect( $query_args['filter_empty'], $filter_empty_params );
+			if ( in_array( 'name', $fields_to_filter_by, true ) ) {
+				$fields_to_filter_by   = array_diff( $fields_to_filter_by, array( 'name' ) );
+				$fields_to_filter_by[] = "CONCAT_WS( ' ', first_name, last_name )";
+			}
+			$fields_with_not_condition = array_map(
+				function ( $field ) {
+					return $field . ' <> \'\'';
+				},
+				$fields_to_filter_by
+			);
+			$where_clauses[]           = '(' . implode( ' AND ', $fields_with_not_condition ) . ')';
 		}
 
 		// Allow a list of customer IDs to be specified.
@@ -369,89 +423,20 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Returns the report data based on parameters supplied by the user.
+	 * Get the default query arguments to be used by get_data().
+	 * These defaults are only partially applied when used via REST API, as that has its own defaults.
 	 *
-	 * @param array $query_args  Query parameters.
-	 * @return stdClass|WP_Error Data.
+	 * @override ReportsDataStore::get_default_query_vars()
+	 *
+	 * @return array Query parameters.
 	 */
-	public function get_data( $query_args ) {
-		global $wpdb;
+	public function get_default_query_vars() {
+		$defaults                 = parent::get_default_query_vars();
+		$defaults['orderby']      = 'date_registered';
+		$defaults['order_before'] = TimeInterval::default_before();
+		$defaults['order_after']  = TimeInterval::default_after();
 
-		$customers_table_name   = self::get_db_table_name();
-		$order_stats_table_name = $wpdb->prefix . 'wc_order_stats';
-
-		// These defaults are only partially applied when used via REST API, as that has its own defaults.
-		$defaults   = array(
-			'per_page'     => get_option( 'posts_per_page' ),
-			'page'         => 1,
-			'order'        => 'DESC',
-			'orderby'      => 'date_registered',
-			'order_before' => TimeInterval::default_before(),
-			'order_after'  => TimeInterval::default_after(),
-			'fields'       => '*',
-		);
-		$query_args = wp_parse_args( $query_args, $defaults );
-		$this->normalize_timezones( $query_args, $defaults );
-
-		/*
-		 * We need to get the cache key here because
-		 * parent::update_intervals_sql_params() modifies $query_args.
-		 */
-		$cache_key = $this->get_cache_key( $query_args );
-		$data      = $this->get_cached_data( $cache_key );
-
-		if ( false === $data ) {
-			$this->initialize_queries();
-
-			$data = (object) array(
-				'data'    => array(),
-				'total'   => 0,
-				'pages'   => 0,
-				'page_no' => 0,
-			);
-
-			$selections       = $this->selected_columns( $query_args );
-			$sql_query_params = $this->add_sql_query_params( $query_args );
-			$count_query      = "SELECT COUNT(*) FROM (
-					{$this->subquery->get_query_statement()}
-				) as tt
-				";
-			$db_records_count = (int) $wpdb->get_var(
-				$count_query // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			);
-
-			$params      = $this->get_limit_params( $query_args );
-			$total_pages = (int) ceil( $db_records_count / $params['per_page'] );
-			if ( $query_args['page'] < 1 || $query_args['page'] > $total_pages ) {
-				return $data;
-			}
-
-			$this->subquery->clear_sql_clause( 'select' );
-			$this->subquery->add_sql_clause( 'select', $selections );
-			$this->subquery->add_sql_clause( 'order_by', $this->get_sql_clause( 'order_by' ) );
-			$this->subquery->add_sql_clause( 'limit', $this->get_sql_clause( 'limit' ) );
-
-			$customer_data = $wpdb->get_results(
-				$this->subquery->get_query_statement(), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				ARRAY_A
-			);
-
-			if ( null === $customer_data ) {
-				return $data;
-			}
-
-			$customer_data = array_map( array( $this, 'cast_numbers' ), $customer_data );
-			$data          = (object) array(
-				'data'    => $customer_data,
-				'total'   => $db_records_count,
-				'pages'   => $total_pages,
-				'page_no' => (int) $query_args['page'],
-			);
-
-			$this->set_cached_data( $cache_key, $data );
-		}
-
-		return $data;
+		return $defaults;
 	}
 
 	/**
@@ -491,6 +476,69 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 		} else {
 			return self::get_customer_id_by_user_id( $user_id );
 		}
+	}
+
+	/**
+	 * Returns the report data based on normalized parameters.
+	 * Will be called by `get_data` if there is no data in cache.
+	 *
+	 * @override ReportsDataStore::get_noncached_data()
+	 *
+	 * @see get_data
+	 * @param array $query_args Query parameters.
+	 * @return stdClass|WP_Error Data object `{ totals: *, intervals: array, total: int, pages: int, page_no: int }`, or error.
+	 */
+	public function get_noncached_data( $query_args ) {
+		global $wpdb;
+
+		$this->initialize_queries();
+
+		$data = (object) array(
+			'data'    => array(),
+			'total'   => 0,
+			'pages'   => 0,
+			'page_no' => 0,
+		);
+
+		$selections       = $this->selected_columns( $query_args );
+		$sql_query_params = $this->add_sql_query_params( $query_args );
+		$count_query      = "SELECT COUNT(*) FROM (
+				{$this->subquery->get_query_statement()}
+			) as tt
+			";
+		$db_records_count = (int) $wpdb->get_var(
+			$count_query // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		);
+
+		$params      = $this->get_limit_params( $query_args );
+		$total_pages = (int) ceil( $db_records_count / $params['per_page'] );
+		if ( $query_args['page'] < 1 || $query_args['page'] > $total_pages ) {
+			return $data;
+		}
+
+		$this->subquery->clear_sql_clause( 'select' );
+		$this->subquery->add_sql_clause( 'select', $selections );
+		$this->subquery->add_sql_clause( 'order_by', $this->get_sql_clause( 'order_by' ) );
+		$this->subquery->add_sql_clause( 'limit', $this->get_sql_clause( 'limit' ) );
+
+		$customer_data = $wpdb->get_results(
+			$this->subquery->get_query_statement(), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			ARRAY_A
+		);
+
+		if ( null === $customer_data ) {
+			return $data;
+		}
+
+		$customer_data = array_map( array( $this, 'cast_numbers' ), $customer_data );
+		$data          = (object) array(
+			'data'    => $customer_data,
+			'total'   => $db_records_count,
+			'pages'   => $total_pages,
+			'page_no' => (int) $query_args['page'],
+		);
+
+		return $data;
 	}
 
 	/**
@@ -567,6 +615,11 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			if ( is_null( $customer_user ) ) {
 				$customer_user = new \WC_Customer( $user_id );
 			}
+
+			// Set email as customer email instead of Order Billing Email if we have a customer.
+			$data['email'] = $customer_user->get_email( 'edit' );
+
+			// Adding other relevant customer data.
 			$data['user_id']         = $user_id;
 			$data['username']        = $customer_user->get_username( 'edit' );
 			$data['date_registered'] = $customer_user->get_date_created( 'edit' ) ? $customer_user->get_date_created( 'edit' )->date( TimeInterval::$sql_datetime_format ) : null;
@@ -734,7 +787,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			'state'            => $customer->get_billing_state( 'edit' ),
 			'postcode'         => $customer->get_billing_postcode( 'edit' ),
 			'country'          => $customer->get_billing_country( 'edit' ),
-			'date_registered'  => $customer->get_date_created( 'edit' )->date( TimeInterval::$sql_datetime_format ),
+			'date_registered'  => $customer->get_date_created( 'edit' ) ? $customer->get_date_created( 'edit' )->date( TimeInterval::$sql_datetime_format ) : null,
 			'date_last_active' => $last_active ? gmdate( 'Y-m-d H:i:s', $last_active ) : null,
 		);
 		$format      = array(
@@ -772,6 +825,20 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 		ReportsCache::invalidate();
 
 		return $results;
+	}
+
+	/**
+	 * Update the database if the "last active" meta value was changed.
+	 * Function expects to be hooked into the `added_user_meta` and `updated_user_meta` actions.
+	 *
+	 * @param int    $meta_id ID of updated metadata entry.
+	 * @param int    $user_id ID of the user being updated.
+	 * @param string $meta_key Meta key being updated.
+	 */
+	public static function update_registered_customer_via_last_active( $meta_id, $user_id, $meta_key ) {
+		if ( 'wc_last_active' === $meta_key ) {
+			self::update_registered_customer( $user_id );
+		}
 	}
 
 	/**
@@ -834,10 +901,72 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 	public static function delete_customer_by_user_id( $user_id ) {
 		global $wpdb;
 
+		if ( (int) $user_id < 1 || doing_action( 'wp_uninitialize_site' ) ) {
+			// Skip the deletion.
+			return;
+		}
+
 		$user_id     = (int) $user_id;
 		$num_deleted = $wpdb->delete( self::get_db_table_name(), array( 'user_id' => $user_id ) );
 
 		if ( $num_deleted ) {
+			ReportsCache::invalidate();
+		}
+	}
+
+	/**
+	 * Anonymize the customer data for a single order.
+	 *
+	 * @internal
+	 * @param int|WC_Order $order Order instance or ID.
+	 * @return void
+	 */
+	public static function anonymize_customer( $order ) {
+		global $wpdb;
+
+		if ( ! is_object( $order ) ) {
+			$order = wc_get_order( absint( $order ) );
+		}
+
+		$customer_id = $wpdb->get_var(
+			$wpdb->prepare( "SELECT customer_id FROM {$wpdb->prefix}wc_order_stats WHERE order_id = %d", $order->get_id() )
+		);
+
+		if ( ! $customer_id ) {
+			return;
+		}
+
+		// Long form query because $wpdb->update rejects [deleted].
+		$deleted_text = __( '[deleted]', 'woocommerce' );
+		$updated      = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->prefix}wc_customer_lookup
+					SET
+						user_id = NULL,
+						username = %s,
+						first_name = %s,
+						last_name = %s,
+						email = %s,
+						country = '',
+						postcode = %s,
+						city = %s,
+						state = %s
+					WHERE
+						customer_id = %d",
+				array(
+					$deleted_text,
+					$deleted_text,
+					$deleted_text,
+					'deleted@site.invalid',
+					$deleted_text,
+					$deleted_text,
+					$deleted_text,
+					$customer_id,
+				)
+			)
+		);
+		// If the customer row was anonymized, flush the cache.
+		if ( $updated ) {
 			ReportsCache::invalidate();
 		}
 	}

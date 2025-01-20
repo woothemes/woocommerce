@@ -6,6 +6,8 @@
  * @version  3.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -160,7 +162,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 			return 0;
 		}
 
-		return absint( min( NumberUtil::round( ( $this->file_position / $size ) * 100 ), 100 ) );
+		return absint( min( floor( ( $this->file_position / $size ) * 100 ), 100 ) );
 	}
 
 	/**
@@ -181,7 +183,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 
 			try {
 				// Prevent getting "variation_invalid_id" error message from Variation Data Store.
-				if ( 'variation' === $data['type'] ) {
+				if ( ProductType::VARIATION === $data['type'] ) {
 					$id = wp_update_post(
 						array(
 							'ID'        => $id,
@@ -209,7 +211,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 				);
 			}
 		} else {
-			$product = wc_get_product_object( 'simple', $id );
+			$product = wc_get_product_object( ProductType::SIMPLE, $id );
 		}
 
 		return apply_filters( 'woocommerce_product_import_get_product_object', $product, $data );
@@ -247,18 +249,19 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 				$updating = true;
 			}
 
-			if ( 'external' === $object->get_type() ) {
+			if ( ProductType::EXTERNAL === $object->get_type() ) {
 				unset( $data['manage_stock'], $data['stock_status'], $data['backorders'], $data['low_stock_amount'] );
 			}
-
-			if ( 'variation' === $object->get_type() ) {
+			$is_variation = false;
+			if ( ProductType::VARIATION === $object->get_type() ) {
 				if ( isset( $data['status'] ) && -1 === $data['status'] ) {
 					$data['status'] = 0; // Variations cannot be drafts - set to private.
 				}
+				$is_variation = true;
 			}
 
 			if ( 'importing' === $object->get_status() ) {
-				$object->set_status( 'publish' );
+				$object->set_status( ProductStatus::PUBLISH );
 				$object->set_slug( '' );
 			}
 
@@ -268,7 +271,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 				throw new Exception( $result->get_error_message() );
 			}
 
-			if ( 'variation' === $object->get_type() ) {
+			if ( ProductType::VARIATION === $object->get_type() ) {
 				$this->set_variation_data( $object, $data );
 			} else {
 				$this->set_product_data( $object, $data );
@@ -283,8 +286,9 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 			do_action( 'woocommerce_product_import_inserted_product_object', $object, $data );
 
 			return array(
-				'id'      => $object->get_id(),
-				'updated' => $updating,
+				'id'           => $object->get_id(),
+				'updated'      => $updating,
+				'is_variation' => $is_variation,
 			);
 		} catch ( Exception $e ) {
 			return new WP_Error( 'woocommerce_product_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
@@ -300,7 +304,9 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 	protected function set_image_data( &$product, $data ) {
 		// Image URLs need converting to IDs before inserting.
 		if ( isset( $data['raw_image_id'] ) ) {
-			$product->set_image_id( $this->get_attachment_id_from_url( $data['raw_image_id'], $product->get_id() ) );
+			$attachment_id = $this->get_attachment_id_from_url( $data['raw_image_id'], $product->get_id() );
+			$product->set_image_id( $attachment_id );
+			wc_product_attach_featured_image( $attachment_id, $product );
 		}
 
 		// Gallery image URLs need converting to IDs before inserting.
@@ -423,7 +429,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 			$product->set_attributes( $attributes );
 
 			// Set variable default attributes.
-			if ( $product->is_type( 'variable' ) ) {
+			if ( $product->is_type( ProductType::VARIABLE ) ) {
 				$product->set_default_attributes( $default_attributes );
 			}
 		}
@@ -455,7 +461,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 		}
 
 		// Stop if parent is a product variation.
-		if ( $parent->is_type( 'variation' ) ) {
+		if ( $parent->is_type( ProductType::VARIATION ) ) {
 			return new WP_Error( 'woocommerce_product_importer_parent_set_as_variation', __( 'Variation cannot be imported: Parent product cannot be a product variation', 'woocommerce' ), array( 'status' => 401 ) );
 		}
 
@@ -743,7 +749,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 			// Unlimited, set to 32GB.
 			$memory_limit = '32000M';
 		}
-		return intval( $memory_limit ) * 1024 * 1024;
+		return wp_convert_hr_to_bytes( $memory_limit );
 	}
 
 	/**

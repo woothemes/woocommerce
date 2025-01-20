@@ -100,100 +100,6 @@ class WC_Admin_Tests_OnboardingTasks_Task extends WC_Unit_Test_Case {
 
 
 	/**
-	 * Tests that a task can be snoozed.
-	 */
-	public function test_snooze() {
-		$task = new TestTask(
-			new TaskList( array( 'id' => 'setup' ) ),
-			array(
-				'id'            => 'wc-unit-test-snoozeable-task',
-				'is_snoozeable' => true,
-			)
-		);
-
-		$update  = $task->snooze();
-		$snoozed = get_option( Task::SNOOZED_OPTION, array() );
-		$this->assertEquals( true, $update );
-		$this->assertArrayHasKey( $task->get_id(), $snoozed );
-	}
-
-	/**
-	 * Tests that a task can be unsnoozed.
-	 */
-	public function test_undo_snooze() {
-		$task = new TestTask(
-			new TaskList( array( 'id' => 'setup' ) ),
-			array(
-				'id'            => 'wc-unit-test-snoozeable-task',
-				'is_snoozeable' => true,
-			)
-		);
-
-		$task->snooze();
-		$task->undo_snooze();
-		$snoozed = get_option( Task::SNOOZED_OPTION, array() );
-		$this->assertArrayNotHasKey( $task->get_id(), $snoozed );
-	}
-
-	/**
-	 * Tests that a task's snooze time is automatically added.
-	 */
-	public function test_snoozed_until() {
-		$time                         = time() * 1000;
-		$snoozed                      = get_option( Task::SNOOZED_OPTION, array() );
-		$snoozed['wc-unit-test-task'] = $time;
-		update_option( Task::SNOOZED_OPTION, $snoozed );
-
-		$task = new TestTask(
-			new TaskList( array( 'id' => 'setup' ) ),
-			array(
-				'id'            => 'wc-unit-test-task',
-				'is_snoozeable' => true,
-			)
-		);
-
-		$this->assertEquals( $time, $task->get_snoozed_until() );
-
-	}
-
-	/**
-	 * Tests that a non snoozeable task cannot be snoozed.
-	 */
-	public function test_not_snoozeable() {
-		$task = new TestTask(
-			new TaskList( array( 'id' => 'setup' ) ),
-			array(
-				'id'            => 'wc-unit-test-snoozeable-task',
-				'is_snoozeable' => false,
-			)
-		);
-
-		$task->snooze();
-		$this->assertEquals( false, $task->is_snoozed() );
-	}
-
-	/**
-	 * Tests that a task is no longer consider snoozed after the time has passed.
-	 */
-	public function test_snooze_time() {
-		$task = new TestTask(
-			new TaskList( array( 'id' => 'setup' ) ),
-			array(
-				'id'            => 'wc-unit-test-snoozeable-task',
-				'is_snoozeable' => true,
-			)
-		);
-
-		$time                                    = time() * 1000 - 1;
-		$snoozed                                 = get_option( Task::SNOOZED_OPTION, array() );
-		$snoozed['wc-unit-test-snoozeable-task'] = $time;
-		update_option( Task::SNOOZED_OPTION, $snoozed );
-
-		$this->assertEquals( false, $task->is_snoozed() );
-	}
-
-
-	/**
 	 * Tests that a task's properties are returned as JSON.
 	 */
 	public function test_json() {
@@ -390,7 +296,7 @@ class WC_Admin_Tests_OnboardingTasks_Task extends WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test that the parent list ID is retreived.
+	 * Test that the parent list ID is retrieved.
 	 */
 	public function test_get_list_id() {
 		$task = new TestTask(
@@ -416,5 +322,68 @@ class WC_Admin_Tests_OnboardingTasks_Task extends WC_Unit_Test_Case {
 
 		$this->assertEquals( 'extended_tasklist_test_event', $task->record_tracks_event( 'test_event' ) );
 	}
-}
 
+	/**
+	 * Test completion track when task is completed but not yet tracked and called via get_json.
+	 */
+	public function test_record_tracks_event_completion_success() {
+		$mock = $this->getMockBuilder( TestTask::class )
+			->onlyMethods( array( 'record_tracks_event', 'has_previously_completed' ) )
+			->setConstructorArgs(
+				array(
+					new TaskList( array( 'id' => 'extended' ) ),
+					array(
+						'id' => 'wc-unit-test-task',
+					),
+				)
+			)
+			->getMock();
+
+		$mock->method( 'has_previously_completed' )
+			->willReturn( false );
+		$mock->is_complete = true;
+
+		$mock->expects( $this->once() )
+			->method( 'record_tracks_event' );
+
+		$mock->get_json();
+	}
+
+	/**
+	 * Test completion track when task is not completed.
+	 */
+	public function test_record_tracks_event_completion_not_complete() {
+		$mock = $this->getMockBuilder( TestTask::class )
+			->onlyMethods( array( 'record_tracks_event', 'has_previously_completed' ) )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$mock->method( 'has_previously_completed' )
+			->willReturn( false );
+		$mock->is_complete = false;
+
+		$mock->expects( $this->never() )
+			->method( 'record_tracks_event' );
+
+		$mock->possibly_track_completion();
+	}
+
+	/**
+	 * Test completion track when task is completed but already tracked.
+	 */
+	public function test_record_tracks_event_completion_already_tracked() {
+		$mock = $this->getMockBuilder( TestTask::class )
+			->onlyMethods( array( 'record_tracks_event', 'has_previously_completed' ) )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$mock->method( 'has_previously_completed' )
+			->willReturn( true );
+		$mock->is_complete = false;
+
+		$mock->expects( $this->never() )
+			->method( 'record_tracks_event' );
+
+		$mock->possibly_track_completion();
+	}
+}

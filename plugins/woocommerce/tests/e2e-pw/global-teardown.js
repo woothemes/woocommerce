@@ -1,7 +1,6 @@
-const { chromium } = require( '@playwright/test' );
-const { ADMIN_USER, ADMIN_PASSWORD } = process.env;
-const adminUsername = ADMIN_USER ?? 'admin';
-const adminPassword = ADMIN_PASSWORD ?? 'password';
+const { chromium, expect } = require( '@playwright/test' );
+const { admin } = require( './test-data/data' );
+const { logIn } = require( './utils/login' );
 
 module.exports = async ( config ) => {
 	const { baseURL, userAgent } = config.projects[ 0 ].use;
@@ -17,27 +16,41 @@ module.exports = async ( config ) => {
 
 	// Clean up the consumer keys
 	const keysRetries = 5;
-	for ( let i = 0; i < keysRetries; i++ ) {
-		try {
-			console.log( 'Trying to clear consumer token... Try:' + i );
-			await adminPage.goto( `/wp-admin` );
-			await adminPage.fill( 'input[name="log"]', adminUsername );
-			await adminPage.fill( 'input[name="pwd"]', adminPassword );
-			await adminPage.click( 'text=Log In' );
-			await adminPage.goto(
-				`/wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys`
-			);
-			await adminPage.dispatchEvent( 'a.submitdelete', 'click' );
-			console.log( 'Cleared up consumer token successfully.' );
-			consumerTokenCleared = true;
-			break;
-		} catch ( e ) {
-			console.log( 'Failed to clear consumer token. Retrying...' );
+	if ( process.env.API_KEY_NAME ) {
+		for ( let i = 0; i < keysRetries; i++ ) {
+			try {
+				console.log(
+					`Trying to clear consumer token ${ process.env.API_KEY_NAME }... Try:` +
+						i
+				);
+				await adminPage.goto( `./wp-admin` );
+				await logIn( adminPage, admin.username, admin.password );
+				await adminPage.goto(
+					`./wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys`
+				);
+				await adminPage
+					.getByRole( 'cell', {
+						name: process.env.API_KEY_NAME,
+					} )
+					.getByRole( 'link', {
+						name: 'Revoke',
+						includeHidden: true,
+					} )
+					.dispatchEvent( 'click' );
+				consumerTokenCleared = true;
+				console.log(
+					`Cleared up consumer token  ${ process.env.API_KEY_NAME } successfully.`
+				);
+				break;
+			} catch ( e ) {
+				console.log(
+					`Failed to clear consumer token  ${ process.env.API_KEY_NAME }. Retrying...`
+				);
+				console.log( e );
+			}
 		}
-	}
-
-	if ( ! consumerTokenCleared ) {
-		console.error( 'Could not clear consumer token.' );
-		process.exit( 1 );
+		await expect( consumerTokenCleared ).toBe( true );
+	} else {
+		console.log( 'No consumer token to clear.' );
 	}
 };

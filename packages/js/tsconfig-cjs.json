@@ -1,12 +1,12 @@
 {
 	"extends": "./tsconfig",
 	"compilerOptions": {
-		"target": "es6",
+		"target": "es2019",
 		"module": "commonjs",
 		"declaration": false,
 		"declarationMap": false,
 		"declarationDir": null,
 		"outDir": "build",
-		"composite": false
+		"typeRoots": [ "./typings" ]
 	}
 }

@@ -1,7 +1,7 @@
 <?php
-/**
- * Tests for BatchProcessingController class.
- */
+declare( strict_types = 1 );
+
+namespace Automattic\WooCommerce\Tests\Internal\BatchProcessing;
 
 use Automattic\WooCommerce\Internal\BatchProcessing\BatchProcessingController;
 use Automattic\WooCommerce\Internal\BatchProcessing\BatchProcessorInterface;
@@ -10,7 +10,7 @@ use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 /**
  * Class BatchProcessingControllerTests.
  */
-class BatchProcessingControllerTests extends WC_Unit_Test_Case {
+class BatchProcessingControllerTests extends \WC_Unit_Test_Case {
 
 	/**
 	 * Instance of BatchProcessingController.
@@ -144,9 +144,8 @@ class BatchProcessingControllerTests extends WC_Unit_Test_Case {
 	 */
 	public function test_process_single_update_unfinished() {
 		$test_process_mock = $this->getMockBuilder( get_class( $this->test_process ) )->getMock();
-		$test_process_mock->expects( $this->once() )->method( 'process_batch' )->willReturn( true );
 		$test_process_mock->method( 'get_total_pending_count' )->willReturn( 10 );
-		$test_process_mock->expects( $this->once() )->method( 'get_next_batch_to_process' )->willReturn( array( 'dummy_id' ) );
+		$test_process_mock->expects( $this->exactly( 2 ) )->method( 'get_next_batch_to_process' )->willReturn( array( 'dummy_id' ) );
 
 		add_filter(
 			'woocommerce_get_batch_processor',
@@ -166,10 +165,15 @@ class BatchProcessingControllerTests extends WC_Unit_Test_Case {
 	 */
 	public function test_process_single_update_finished() {
 		$test_process_mock = $this->getMockBuilder( get_class( $this->test_process ) )->getMock();
-		$test_process_mock->expects( $this->once() )->method( 'process_batch' )->willReturn( true );
 		$test_process_mock->method( 'get_total_pending_count' )->willReturn( 0 );
-		$test_process_mock->expects( $this->once() )->method( 'get_next_batch_to_process' )->willReturn( array( 'dummy_id' ) );
-
+		$test_process_mock
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_next_batch_to_process' )
+			->willReturnCallback(
+				function ( $batch_size ) {
+					return 1 === $batch_size ? array() : array( 'dummy_id' );
+				}
+			);
 		add_filter(
 			'woocommerce_get_batch_processor',
 			function() use ( $test_process_mock ) {

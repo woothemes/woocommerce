@@ -9,8 +9,9 @@ namespace Automattic\WooCommerce\Internal\Admin\Notes;
 
 defined( 'ABSPATH' ) || exit;
 
-use \Automattic\WooCommerce\Admin\Notes\Note;
-use \Automattic\WooCommerce\Admin\Notes\NoteTraits;
+use Automattic\WooCommerce\Admin\Notes\Note;
+use Automattic\WooCommerce\Admin\Notes\NoteTraits;
+use Automattic\WooCommerce\Enums\ProductStatus;
 
 /**
  * Add_First_Product.
@@ -41,7 +42,7 @@ class AddFirstProduct {
 			array(
 				'limit'  => 1,
 				'return' => 'ids',
-				'status' => array( 'publish' ),
+				'status' => array( ProductStatus::PUBLISH ),
 			)
 		);
 		$products = $query->get_products();

@@ -70,9 +70,9 @@ if ( $verbose ) {
 	 */
 	function debug( ...$args ) {
 		if ( getenv( 'CI' ) ) {
-			$args[0] = "\e[34m${args[0]}\e[0m\n";
+			$args[0] = "\e[34m{$args[0]}\e[0m\n";
 		} else {
-			$args[0] = "\e[1;30m${args[0]}\e[0m\n";
+			$args[0] = "\e[1;30m{$args[0]}\e[0m\n";
 		}
 		fprintf( STDERR, ...$args );
 	}
@@ -121,16 +121,20 @@ foreach ( $composer_projects as $project_path ) {
 		continue;
 	}
 	$data  = isset( $data['extra']['changelogger'] ) ? $data['extra']['changelogger'] : array();
-	$data += array(
-		'changelog'   => $project_path . '/CHANGELOG.md',
-		'changes-dir' => $project_path . '/changelog',
-	);
+
+	if ( ! isset( $data[ 'changelog' ] ) ) {
+		$data['changelog'] = $project_path . '/CHANGELOG.md';
+	}
+	if ( ! isset( $data[ 'changes-dir' ] ) ) {
+		$data['changes-dir'] = $project_path . '/changelog';
+	}
+
 	$changelogger_projects[ $project_path ] = $data;
 }
 
 // Support centralizing the changelogs for multiple components and validating them together.
 $project_component_map = array(
-	'plugins/woocommerce-admin' => 'plugins/woocommerce',
+	'plugins/woocommerce-blocks' => 'plugins/woocommerce',
 );
 
 // Process the diff.
@@ -160,15 +164,10 @@ while ( ( $line = fgets( $pipes[1] ) ) ) {
 		}
 	}
 
-	// Also try to match to project components.
-	if ( false === $project_match ) {
-		foreach ( $project_component_map as $path => $project ) {
-			if ( substr( $line, 0, strlen( $path ) + 1 ) === $path . '/' ) {
-				debug( 'Mapping %s to project %s.', $line, $project );
-				$project_match = $project;
-				break;
-			}
-		}
+	// Support overriding the project when checking a component.
+	if ( isset( $project_component_map[ $project_match ] ) ) {
+		$project_match = $project_component_map[ $project_match ];
+		debug( 'Mapping %s to project %s.', $line, $project_match );
 	}
 
 	if ( false === $project_match ) {
@@ -191,6 +190,11 @@ while ( ( $line = fgets( $pipes[1] ) ) ) {
 			debug( 'PR touches file %s, marking %s as having a change file.', $line, $project_match );
 			$ok_projects[ $project_match ] = true;
 		}
+		continue;
+	}
+	// Ignore dot-files: those are development related, and it makes no sense to create a changelog entry for them.
+	if ( '.' === basename( $line )[0] ) {
+		debug( 'Ignoring changes dot-file %s.', $line );
 		continue;
 	}
 
@@ -216,10 +220,10 @@ foreach ( $touched_projects as $slug => $files ) {
 		} elseif ( getenv( 'CI' ) ) {
 			printf( "---\n" ); // Bracket message containing newlines for better visibility in GH's logs.
 			printf(
-				"::error::Project %s is being changed, but no change file in %s is touched!%%0A%%0AUse `pnpm --filter=%s run changelog add` to add a change file.\n",
+				"::error::Project %s is being changed, but no change file in %s is touched!\n\nUse `pnpm --filter='%s' changelog add` to add a change file.\n",
 				$slug,
 				"$slug/{$changelogger_projects[ $slug ]['changes-dir']}/",
-				$slug
+				json_decode( file_get_contents( sprintf( './%s/package.json', $slug ) ), true )['name'] ?? ( './' . $slug )
 			);
 			printf( "---\n" );
 			$exit = 1;
@@ -234,7 +238,7 @@ foreach ( $touched_projects as $slug => $files ) {
 	}
 }
 if ( $exit && ! getenv( 'CI' ) && ! $list ) {
-	printf( "\e[32mUse `pnpm --filter={project} run changelog add` to add a change file for each project.\e[0m\n" );
+	printf( "\e[32mUse `pnpm --filter={project} changelog add` to add a change file for each project.\e[0m\n" );
 }
 
 exit( $exit );

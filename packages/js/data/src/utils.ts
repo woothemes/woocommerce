@@ -2,21 +2,39 @@
  * External dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
-import { apiFetch } from '@wordpress/data-controls';
+import { apiFetch, select } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
 import { BaseQueryParams } from './types/query-params';
 import { fetchWithHeaders } from './controls';
+import { USER_STORE_NAME } from './user';
+import { WCUser } from './user/types';
+function replacer( _: string, value: unknown ) {
+	if ( value ) {
+		if ( Array.isArray( value ) ) {
+			return [ ...value ].sort();
+		}
+		if ( typeof value === 'object' ) {
+			return Object.entries( value )
+				.sort()
+				.reduce(
+					( current, [ propKey, propVal ] ) => ( {
+						...current,
+						[ propKey ]: propVal,
+					} ),
+					{}
+				);
+		}
+	}
+	return value;
+}
 
-export function getResourceName(
-	prefix: string,
-	identifier: Record< string, unknown > | string
-) {
-	const identifierString = JSON.stringify(
-		identifier,
-		Object.keys( identifier ).sort()
+export function getResourceName( prefix: string, ...identifier: unknown[] ) {
+	const identifierString = JSON.stringify( identifier, replacer ).replace(
+		/\\"/g,
+		'"'
 	);
 	return `${ prefix }:${ identifierString }`;
 }
@@ -35,7 +53,7 @@ export function getTotalCountResourceName(
 	prefix: string,
 	query: Record< string, unknown >
 ) {
-	const { _fields, page, per_page, ...totalsQuery } = query;
+	const { _fields, page, per_page, order, orderby, ...totalsQuery } = query;
 
 	return getResourceName( prefix, totalsQuery );
 }
@@ -71,7 +89,6 @@ export function* request< Query extends BaseQueryParams, DataType >(
 			path: url,
 			method: 'GET',
 		} );
-
 	if ( isUnboundedRequest && ! ( 'data' in response ) ) {
 		return { items: response, totalCount: response.length };
 	}
@@ -82,5 +99,22 @@ export function* request< Query extends BaseQueryParams, DataType >(
 		);
 
 		return { items: response.data, totalCount };
+	}
+}
+
+/**
+ * Utility function to check if the current user has a specific capability.
+ *
+ * @param {string} capability - The capability to check (e.g. 'manage_woocommerce').
+ * @throws {Error} If the user does not have the required capability.
+ */
+export function* checkUserCapability( capability: string ) {
+	const currentUser: WCUser< 'capabilities' > = yield select(
+		USER_STORE_NAME,
+		'getCurrentUser'
+	);
+
+	if ( ! currentUser.capabilities[ capability ] ) {
+		throw new Error( `User does not have ${ capability } capability.` );
 	}
 }

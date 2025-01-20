@@ -6,10 +6,14 @@
  * @since 3.5.0
  */
 
+use Automattic\WooCommerce\Utilities\ArrayUtil;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 /**
  * Class Settings.
  */
 class Settings extends WC_REST_Unit_Test_Case {
+	use ArraySubsetAsserts;
 
 	/**
 	 * Setup our test server, endpoints, and user info.
@@ -49,8 +53,17 @@ class Settings extends WC_REST_Unit_Test_Case {
 		$data     = $response->get_data();
 
 		$this->assertEquals( 200, $response->get_status() );
+		$matching_settings_data = current(
+			array_filter(
+				$data,
+				function ( $settings ) {
+					return 'test' === $settings['id'];
+				}
+			)
+		);
+		$this->assertIsArray( $matching_settings_data );
 
-		$this->assertContains(
+		$this->assertArraySubset(
 			array(
 				'id'          => 'test',
 				'label'       => 'Test extension',
@@ -65,10 +78,20 @@ class Settings extends WC_REST_Unit_Test_Case {
 					),
 				),
 			),
-			$data
+			$matching_settings_data
 		);
 
-		$this->assertContains(
+		$matching_settings_data = current(
+			array_filter(
+				$data,
+				function ( $settings ) {
+					return 'sub-test' === $settings['id'];
+				}
+			)
+		);
+		$this->assertIsArray( $matching_settings_data );
+
+		$this->assertArraySubset(
 			array(
 				'id'          => 'sub-test',
 				'label'       => 'Sub test',
@@ -83,7 +106,7 @@ class Settings extends WC_REST_Unit_Test_Case {
 					),
 				),
 			),
-			$data
+			$matching_settings_data
 		);
 	}
 
@@ -459,36 +482,49 @@ class Settings extends WC_REST_Unit_Test_Case {
 		$response = $this->server->dispatch( new WP_REST_Request( 'GET', '/wc/v3/settings/products' ) );
 		$data     = $response->get_data();
 		$this->assertTrue( is_array( $data ) );
-		$this->assertContains(
-			array(
-				'id'          => 'woocommerce_downloads_require_login',
-				'label'       => 'Access restriction',
-				'description' => 'Downloads require login',
-				'type'        => 'checkbox',
-				'default'     => 'no',
-				'tip'         => 'This setting does not apply to guest purchases.',
-				'value'       => 'no',
-				'_links'      => array(
-					'self'       => array(
-						array(
-							'href' => rest_url( '/wc/v3/settings/products/woocommerce_downloads_require_login' ),
+
+		$setting_downloads_required = null;
+		foreach ( $data as $setting ) {
+			if ( 'woocommerce_downloads_require_login' === $setting['id'] ) {
+				$setting_downloads_required = $setting;
+				break;
+			}
+		}
+
+		$this->assertNotEmpty( $setting_downloads_required );
+
+		$this->assertEmpty(
+			ArrayUtil::deep_assoc_array_diff(
+				array(
+					'id'          => 'woocommerce_downloads_require_login',
+					'label'       => 'Access restriction',
+					'description' => 'Downloads require login',
+					'type'        => 'checkbox',
+					'default'     => 'no',
+					'tip'         => 'This setting does not apply to guest purchases.',
+					'value'       => 'no',
+					'_links'      => array(
+						'self'       => array(
+							array(
+								'href' => rest_url( '/wc/v3/settings/products/woocommerce_downloads_require_login' ),
+							),
 						),
-					),
-					'collection' => array(
-						array(
-							'href' => rest_url( '/wc/v3/settings/products' ),
+						'collection' => array(
+							array(
+								'href' => rest_url( '/wc/v3/settings/products' ),
+							),
 						),
 					),
 				),
-			),
-			$data
+				$setting_downloads_required
+			)
 		);
 
 		// test get single.
 		$response = $this->server->dispatch( new WP_REST_Request( 'GET', '/wc/v3/settings/products/woocommerce_dimension_unit' ) );
 		$data     = $response->get_data();
 
-		$this->assertEquals( 'cm', $data['default'] );
+		$this->assertEquals( 'in', $data['default'] );
 
 		// test update.
 		$request = new WP_REST_Request( 'PUT', sprintf( '/wc/v3/settings/%s/%s', 'products', 'woocommerce_dimension_unit' ) );
@@ -517,29 +553,41 @@ class Settings extends WC_REST_Unit_Test_Case {
 
 		$this->assertEquals( 200, $response->get_status() );
 
-		$this->assertContains(
-			array(
-				'id'          => 'recipient',
-				'label'       => 'Recipient(s)',
-				'description' => 'Enter recipients (comma separated) for this email. Defaults to <code>admin@example.org</code>.',
-				'type'        => 'text',
-				'default'     => '',
-				'tip'         => 'Enter recipients (comma separated) for this email. Defaults to <code>admin@example.org</code>.',
-				'value'       => '',
-				'_links'      => array(
-					'self'       => array(
-						array(
-							'href' => rest_url( '/wc/v3/settings/email_new_order/recipient' ),
+		$recipient_setting = null;
+		foreach ( $settings as $setting ) {
+			if ( 'recipient' === $setting['id'] ) {
+				$recipient_setting = $setting;
+				break;
+			}
+		}
+
+		$this->assertNotEmpty( $recipient_setting );
+
+		$this->assertEmpty(
+			ArrayUtil::deep_assoc_array_diff(
+				array(
+					'id'          => 'recipient',
+					'label'       => 'Recipient(s)',
+					'description' => 'Enter recipients (comma separated) for this email. Defaults to <code>admin@example.org</code>.',
+					'type'        => 'text',
+					'default'     => '',
+					'tip'         => 'Enter recipients (comma separated) for this email. Defaults to <code>admin@example.org</code>.',
+					'value'       => '',
+					'_links'      => array(
+						'self'       => array(
+							array(
+								'href' => rest_url( '/wc/v3/settings/email_new_order/recipient' ),
+							),
 						),
-					),
-					'collection' => array(
-						array(
-							'href' => rest_url( '/wc/v3/settings/email_new_order' ),
+						'collection' => array(
+							array(
+								'href' => rest_url( '/wc/v3/settings/email_new_order' ),
+							),
 						),
 					),
 				),
-			),
-			$settings
+				$recipient_setting
+			)
 		);
 
 		// test get single.
@@ -550,10 +598,10 @@ class Settings extends WC_REST_Unit_Test_Case {
 			array(
 				'id'          => 'subject',
 				'label'       => 'Subject',
-				'description' => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+				'description' => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 				'type'        => 'text',
 				'default'     => '',
-				'tip'         => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+				'tip'         => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 				'value'       => '',
 				'group_id'    => 'email_new_order',
 			),
@@ -574,10 +622,10 @@ class Settings extends WC_REST_Unit_Test_Case {
 			array(
 				'id'          => 'subject',
 				'label'       => 'Subject',
-				'description' => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+				'description' => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 				'type'        => 'text',
 				'default'     => '',
-				'tip'         => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+				'tip'         => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 				'value'       => 'This is my subject',
 				'group_id'    => 'email_new_order',
 			),
@@ -711,7 +759,7 @@ class Settings extends WC_REST_Unit_Test_Case {
 
 		$response = $this->server->dispatch( new WP_REST_Request( 'GET', sprintf( '/wc/v3/settings/%s/%s', 'products', 'woocommerce_weight_unit' ) ) );
 		$setting  = $response->get_data();
-		$this->assertEquals( 'kg', $setting['value'] );
+		$this->assertEquals( 'lbs', $setting['value'] );
 
 		// invalid.
 		$request = new WP_REST_Request( 'PUT', sprintf( '/wc/v3/settings/%s/%s', 'products', 'woocommerce_weight_unit' ) );
@@ -727,12 +775,12 @@ class Settings extends WC_REST_Unit_Test_Case {
 		$request = new WP_REST_Request( 'PUT', sprintf( '/wc/v3/settings/%s/%s', 'products', 'woocommerce_weight_unit' ) );
 		$request->set_body_params(
 			array(
-				'value' => 'lbs', // invalid, should be lbs.
+				'value' => 'kg', // valid.
 			)
 		);
 		$response = $this->server->dispatch( $request );
 		$setting  = $response->get_data();
-		$this->assertEquals( 'lbs', $setting['value'] );
+		$this->assertEquals( 'kg', $setting['value'] );
 	}
 
 	/**

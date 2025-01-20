@@ -14,10 +14,11 @@ import * as actions from './actions';
 import * as resolvers from './resolvers';
 import reducer, { State } from './reducer';
 import { WPDataSelectors } from '../types';
+import { PromiseifySelectors } from '../types/promiseify-selectors';
 export * from './types';
 export type { State };
 
-registerStore< State >( STORE_NAME, {
+registerStore( STORE_NAME, {
 	reducer: reducer as Reducer< State, AnyAction >,
 	actions,
 	controls,
@@ -28,11 +29,13 @@ registerStore< State >( STORE_NAME, {
 export const COUNTRIES_STORE_NAME = STORE_NAME;
 
 declare module '@wordpress/data' {
-	// TODO: convert action.js to TS
 	function dispatch(
 		key: typeof STORE_NAME
 	): DispatchFromMap< typeof actions >;
 	function select(
 		key: typeof STORE_NAME
 	): SelectFromMap< typeof selectors > & WPDataSelectors;
+	function resolveSelect(
+		key: typeof STORE_NAME
+	): PromiseifySelectors< SelectFromMap< typeof selectors > >;
 }

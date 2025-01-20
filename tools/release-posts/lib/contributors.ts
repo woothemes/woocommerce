@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import { checkoutRef, sparseCheckoutRepo } from 'cli-core/src/git';
+import {
+	checkoutRef,
+	sparseCheckoutRepo,
+} from '@woocommerce/monorepo-utils/src/core/git';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import semver from 'semver';
@@ -12,13 +15,6 @@ import semver from 'semver';
 import { ContributorData, getContributorData } from './github-api';
 
 const OTHER_WATCHED_PACKAGES = [
-	{
-		displayName: 'WooCommerce Blocks',
-		packagist: 'woocommerce/woocommerce-blocks',
-		org: 'woocommerce',
-		repo: 'woocommerce-blocks',
-		versionPrefix: 'v',
-	},
 	{
 		displayName: 'ActionScheduler',
 		packagist: 'woocommerce/action-scheduler',

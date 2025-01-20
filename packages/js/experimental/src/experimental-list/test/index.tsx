@@ -13,10 +13,10 @@ import { ExperimentalListItem } from '../experimental-list-item';
 import { ExperimentalCollapsibleList } from '../collapsible-list';
 
 jest.mock( 'react-transition-group', () => {
-	const EmptyTransition: React.FC< { component?: string } > = ( {
-		children,
-		component,
-	} ) => {
+	const EmptyTransition: React.FC< {
+		component?: string;
+		children: JSX.Element;
+	} > = ( { children, component } ) => {
 		if ( component === 'ul' ) {
 			return <ul>{ children }</ul>;
 		}
@@ -163,7 +163,7 @@ describe( 'Experimental List', () => {
 	} );
 
 	describe( 'ExperimentalListItemCollapse', () => {
-		it( 'should not render its children intially, but an extra list footer with show text', () => {
+		it( 'should not render its children initially, but an extra list footer with show text', () => {
 			const { container } = render(
 				<ExperimentalCollapsibleList
 					collapseLabel="Show less"

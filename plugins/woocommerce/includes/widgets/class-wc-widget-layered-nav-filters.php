@@ -56,6 +56,16 @@ class WC_Widget_Layered_Nav_Filters extends WC_Widget {
 
 			echo '<ul>';
 
+			/**
+			 * Allow 3rd party developers to add their own filters to start the Layered Navigation Filters Widget.
+			 *
+			 * @since 7.6.0
+			 *
+			 * @param array $args     Arguments.
+			 * @param array $instance Widget instance.
+			 */
+			do_action( 'woocommerce_widget_layered_nav_filters_start', $args, $instance );
+
 			// Attributes.
 			if ( ! empty( $_chosen_attributes ) ) {
 				foreach ( $_chosen_attributes as $taxonomy => $data ) {
@@ -77,8 +87,17 @@ class WC_Widget_Layered_Nav_Filters extends WC_Widget {
 						}
 
 						$filter_classes = array( 'chosen', 'chosen-' . sanitize_html_class( str_replace( 'pa_', '', $taxonomy ) ), 'chosen-' . sanitize_html_class( str_replace( 'pa_', '', $taxonomy ) . '-' . $term_slug ) );
-
-						echo '<li class="' . esc_attr( implode( ' ', $filter_classes ) ) . '"><a rel="nofollow" aria-label="' . esc_attr__( 'Remove filter', 'woocommerce' ) . '" href="' . esc_url( $link ) . '">' . esc_html( $term->name ) . '</a></li>';
+						/**
+						 * Allows the attribute term name to be modified before being output.
+						 *
+						 * @param string $term_name The name of the term.
+						 * @param WP_Term $term The term object.
+						 * @param string $taxonomy The taxonomy name.
+						 *
+						 * @since 8.8.0
+						 */
+						$anchor_text = apply_filters( 'woocommerce_widget_layered_nav_term_anchor_text', $term->name, $term, $taxonomy );
+						echo '<li class="' . esc_attr( implode( ' ', $filter_classes ) ) . '"><a rel="nofollow" aria-label="' . esc_attr__( 'Remove filter', 'woocommerce' ) . '" href="' . esc_url( $link ) . '">' . esc_html( $anchor_text ) . '</a></li>';
 					}
 				}
 			}
@@ -104,6 +123,16 @@ class WC_Widget_Layered_Nav_Filters extends WC_Widget {
 					echo '<li class="chosen"><a rel="nofollow" aria-label="' . esc_attr__( 'Remove filter', 'woocommerce' ) . '" href="' . esc_url( $link ) . '">' . sprintf( esc_html__( 'Rated %s out of 5', 'woocommerce' ), esc_html( $rating ) ) . '</a></li>';
 				}
 			}
+
+			/**
+			 * Allow 3rd party developers to add their own filters to end the Layered Navigation Filters Widget.
+			 *
+			 * @since 7.6.0
+			 *
+			 * @param array $args     Arguments.
+			 * @param array $instance Widget instance.
+			 */
+			do_action( 'woocommerce_widget_layered_nav_filters_end', $args, $instance );
 
 			echo '</ul>';
 

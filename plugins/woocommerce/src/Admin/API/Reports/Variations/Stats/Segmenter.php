@@ -7,8 +7,8 @@ namespace Automattic\WooCommerce\Admin\API\Reports\Variations\Stats;
 
 defined( 'ABSPATH' ) || exit;
 
-use \Automattic\WooCommerce\Admin\API\Reports\Segmenter as ReportsSegmenter;
-use \Automattic\WooCommerce\Admin\API\Reports\ParameterException;
+use Automattic\WooCommerce\Admin\API\Reports\Segmenter as ReportsSegmenter;
+use Automattic\WooCommerce\Admin\API\Reports\ParameterException;
 
 /**
  * Date & time interval and numeric range handling class for Reporting API.
@@ -140,7 +140,7 @@ class Segmenter extends ReportsSegmenter {
 	 * @param array  $query_params SQL query parameter array.
 	 * @param string $table_name Name of main SQL table for the data store (used as basis for JOINS).
 	 *
-	 * @return array
+	 * @return array|null
 	 * @throws \Automattic\WooCommerce\Admin\API\Reports\ParameterException In case of segmenting by variations, when no parent product is specified.
 	 */
 	protected function get_segments( $type, $query_params, $table_name ) {
@@ -148,7 +148,7 @@ class Segmenter extends ReportsSegmenter {
 		if ( ! isset( $this->query_args['segmentby'] ) || '' === $this->query_args['segmentby'] ) {
 			return array();
 		}
-
+		$segments                 = null;
 		$product_segmenting_table = $wpdb->prefix . 'wc_order_product_lookup';
 		$unique_orders_table      = 'uniq_orders';
 		$segmenting_where         = '';

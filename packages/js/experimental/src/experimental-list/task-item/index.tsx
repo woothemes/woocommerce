@@ -39,12 +39,13 @@ type ActionArgs = {
 type TaskItemProps = {
 	title: string;
 	completed: boolean;
-	onClick: React.MouseEventHandler< HTMLElement >;
+	onClick?: React.MouseEventHandler< HTMLElement >;
 	onCollapse?: () => void;
 	onDelete?: () => void;
 	onDismiss?: () => void;
 	onSnooze?: () => void;
 	onExpand?: () => void;
+	badge?: string;
 	additionalInfo?: string;
 	time?: string;
 	content: string;
@@ -86,6 +87,7 @@ const OptionalTaskTooltip: React.FC< {
 const OptionalExpansionWrapper: React.FC< {
 	expandable: boolean;
 	expanded: boolean;
+	children: JSX.Element;
 } > = ( { children, expandable, expanded } ) => {
 	if ( ! expandable ) {
 		return expanded ? <>{ children }</> : null;
@@ -107,6 +109,7 @@ const OptionalExpansionWrapper: React.FC< {
 export const TaskItem: React.FC< TaskItemProps > = ( {
 	completed,
 	title,
+	badge,
 	onDelete,
 	onCollapse,
 	onDismiss,
@@ -185,6 +188,11 @@ export const TaskItem: React.FC< TaskItemProps > = ( {
 				>
 					<span className="woocommerce-task-list__item-title">
 						{ title }
+						{ badge && (
+							<span className="woocommerce-task-list__item-badge">
+								{ badge }
+							</span>
+						) }
 					</span>
 					<OptionalExpansionWrapper
 						expandable={ expandable }

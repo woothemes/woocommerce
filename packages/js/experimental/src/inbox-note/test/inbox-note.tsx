@@ -23,6 +23,8 @@ jest.mock( 'react-visibility-sensor', () =>
 	} )
 );
 
+window.open = jest.fn();
+
 describe( 'InboxNoteCard', () => {
 	const note = {
 		id: 1,
@@ -63,8 +65,79 @@ describe( 'InboxNoteCard', () => {
 		const { queryByText } = render(
 			<InboxNoteCard key={ note.id } note={ note } />
 		);
+
 		expect( queryByText( 'Connect' ) ).toBeInTheDocument();
 		expect( queryByText( 'Learn More' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render anchor when href is defined', () => {
+		const { queryByRole } = render(
+			<InboxNoteCard key={ note.id } note={ note } />
+		);
+		expect(
+			queryByRole( 'link', {
+				name: 'Connect',
+			} )
+		).toHaveAttribute( 'href', 'http://test.com' );
+
+		expect(
+			queryByRole( 'link', {
+				name: 'Learn More',
+			} )
+		).toHaveAttribute( 'href', 'http://test.com' );
+	} );
+
+	it( 'should render button when href is not defined', () => {
+		const noteWithoutHref = {
+			...note,
+			actions: [
+				{
+					id: 1,
+					name: 'connect',
+					label: 'Connect',
+					query: '',
+					status: 'unactioned',
+					primary: false,
+					url: '',
+				},
+				{
+					id: 2,
+					name: 'learnmore',
+					label: 'Learn More',
+					query: '',
+					status: 'unactioned',
+					primary: false,
+					url: '',
+				},
+			],
+		};
+
+		const { queryByRole } = render(
+			<InboxNoteCard key={ note.id } note={ noteWithoutHref } />
+		);
+		expect(
+			queryByRole( 'link', {
+				name: 'Connect',
+			} )
+		).not.toBeInTheDocument();
+
+		expect(
+			queryByRole( 'link', {
+				name: 'Learn More',
+			} )
+		).not.toBeInTheDocument();
+
+		expect(
+			queryByRole( 'button', {
+				name: 'Connect',
+			} )
+		).toBeInTheDocument();
+
+		expect(
+			queryByRole( 'button', {
+				name: 'Learn More',
+			} )
+		).toBeInTheDocument();
 	} );
 
 	it( 'should render a dismiss button', () => {
@@ -72,15 +145,6 @@ describe( 'InboxNoteCard', () => {
 			<InboxNoteCard key={ note.id } note={ note } />
 		);
 		expect( queryByText( 'Dismiss' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render a notification type banner', () => {
-		const bannerNote = { ...note, layout: 'banner' };
-		const { container } = render(
-			<InboxNoteCard key={ bannerNote.id } note={ bannerNote } />
-		);
-		const listNoteWithBanner = container.querySelector( '.banner' );
-		expect( listNoteWithBanner ).not.toBeNull();
 	} );
 
 	it( 'should render a notification type thumbnail', () => {
@@ -183,7 +247,7 @@ describe( 'InboxNoteCard', () => {
 			);
 		} );
 
-		it( 'should call onVisible when visiblity sensor calls it', () => {
+		it( 'should call onVisible when visibility sensor calls it', () => {
 			const onVisible = jest.fn();
 			const { getByText } = render(
 				<InboxNoteCard
@@ -197,7 +261,7 @@ describe( 'InboxNoteCard', () => {
 			expect( onVisible ).toHaveBeenCalledWith( note );
 		} );
 
-		it( 'should call onVisible when visiblity sensor calls it, but only once', () => {
+		it( 'should call onVisible when visibility sensor calls it, but only once', () => {
 			const onVisible = jest.fn();
 			const { getByText } = render(
 				<InboxNoteCard

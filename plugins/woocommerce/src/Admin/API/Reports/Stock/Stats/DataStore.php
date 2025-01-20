@@ -7,8 +7,8 @@ namespace Automattic\WooCommerce\Admin\API\Reports\Stock\Stats;
 
 defined( 'ABSPATH' ) || exit;
 
-use \Automattic\WooCommerce\Admin\API\Reports\DataStore as ReportsDataStore;
-use \Automattic\WooCommerce\Admin\API\Reports\DataStoreInterface;
+use Automattic\WooCommerce\Admin\API\Reports\DataStore as ReportsDataStore;
+use Automattic\WooCommerce\Admin\API\Reports\DataStoreInterface;
 
 /**
  * API\Reports\Stock\Stats\DataStore.
@@ -17,6 +17,8 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 
 	/**
 	 * Get stock counts for the whole store.
+	 *
+	 * @override ReportsDataStore::get_data()
 	 *
 	 * @param array $query Not used for the stock stats data store, but needed for the interface.
 	 * @return array Array of counts.

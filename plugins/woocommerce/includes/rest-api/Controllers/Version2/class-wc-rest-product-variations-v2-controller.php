@@ -8,6 +8,9 @@
  * @since   3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Utilities\I18nUtil;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -135,10 +138,48 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 	 *
 	 * @since  3.0.0
 	 * @param  int $id Object ID.
-	 * @return WC_Data
+	 * @return WC_Data|null
 	 */
 	protected function get_object( $id ) {
-		return wc_get_product( $id );
+		$object = wc_get_product( $id );
+		return ( $object && 0 !== $object->get_parent_id() ) ? $object : null;
+	}
+
+	/**
+	 * Checks that a variation belongs to the specified parent product.
+	 *
+	 * @param int $variation_id Variation ID.
+	 * @param int $parent_id    Parent product ID to check against.
+	 * @return bool TRUE if variation and parent product exist. FALSE otherwise.
+	 *
+	 * @since 9.2.0
+	 */
+	protected function check_variation_parent( int $variation_id, int $parent_id ): bool {
+		$variation = $this->get_object( $variation_id );
+		if ( ! $variation || $parent_id !== $variation->get_parent_id() ) {
+			return false;
+		}
+
+		$parent = wc_get_product( $variation->get_parent_id() );
+		if ( ! $parent ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check if a given request has access to read an item.
+	 *
+	 * @param  WP_REST_Request $request Full details about the request.
+	 * @return WP_Error|boolean
+	 */
+	public function get_item_permissions_check( $request ) {
+		if ( ! $this->check_variation_parent( (int) $request['id'], (int) $request['product_id'] ) ) {
+			return new WP_Error( "woocommerce_rest_{$this->post_type}_invalid_id", __( 'Invalid ID.', 'woocommerce' ), array( 'status' => 404 ) );
+		}
+
+		return parent::get_item_permissions_check( $request );
 	}
 
 	/**
@@ -148,18 +189,31 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 	 * @return WP_Error|boolean
 	 */
 	public function update_item_permissions_check( $request ) {
+		if ( ! $this->check_variation_parent( (int) $request['id'], (int) $request['product_id'] ) ) {
+			return new WP_Error( "woocommerce_rest_{$this->post_type}_invalid_id", __( 'Invalid ID.', 'woocommerce' ), array( 'status' => 404 ) );
+		}
+
 		$object = $this->get_object( (int) $request['id'] );
 
 		if ( $object && 0 !== $object->get_id() && ! wc_rest_check_post_permissions( $this->post_type, 'edit', $object->get_id() ) ) {
 			return new WP_Error( 'woocommerce_rest_cannot_edit', __( 'Sorry, you are not allowed to edit this resource.', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
-		// Check if variation belongs to the correct parent product.
-		if ( $object && 0 !== $object->get_parent_id() && absint( $request['product_id'] ) !== $object->get_parent_id() ) {
-			return new WP_Error( 'woocommerce_rest_cannot_edit', __( 'Parent product does not match current variation.', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
+		return true;
+	}
+
+	/**
+	 * Check if a given request has access to delete an item.
+	 *
+	 * @param  WP_REST_Request $request Full details about the request.
+	 * @return bool|WP_Error
+	 */
+	public function delete_item_permissions_check( $request ) {
+		if ( ! $this->check_variation_parent( (int) $request['id'], (int) $request['product_id'] ) ) {
+			return new WP_Error( "woocommerce_rest_{$this->post_type}_invalid_id", __( 'Invalid ID.', 'woocommerce' ), array( 'status' => 404 ) );
 		}
 
-		return true;
+		return parent::delete_item_permissions_check( $request );
 	}
 
 	/**
@@ -272,7 +326,7 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 
 		// Status.
 		if ( isset( $request['visible'] ) ) {
-			$variation->set_status( false === $request['visible'] ? 'private' : 'publish' );
+			$variation->set_status( false === $request['visible'] ? ProductStatus::PRIVATE : ProductStatus::PUBLISH );
 		}
 
 		// SKU.
@@ -593,11 +647,18 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 			if ( ! empty( $items[ $batch_type ] ) ) {
 				$injected_items = array();
 				foreach ( $items[ $batch_type ] as $item ) {
-					$injected_items[] = is_array( $item ) ? array_merge(
+					$injected_item = is_array( $item ) ? array_merge(
 						array(
 							'product_id' => $product_id,
 						), $item
 					) : $item;
+					if ( 'delete' === $batch_type && is_int( $item ) ) {
+						$injected_item = array(
+							'id'         => $item,
+							'product_id' => $product_id,
+						);
+					}
+					$injected_items[] = $injected_item;
 				}
 				$body_params[ $batch_type ] = $injected_items;
 			}
@@ -640,9 +701,9 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 	 * @return array
 	 */
 	public function get_item_schema() {
-		$weight_unit    = get_option( 'woocommerce_weight_unit' );
-		$dimension_unit = get_option( 'woocommerce_dimension_unit' );
-		$schema         = array(
+		$weight_unit_label    = I18nUtil::get_weight_unit_label( get_option( 'woocommerce_weight_unit', 'kg' ) );
+		$dimension_unit_label = I18nUtil::get_dimensions_unit_label( get_option( 'woocommerce_dimension_unit', 'cm' ) );
+		$schema               = array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
 			'title'      => $this->post_type,
 			'type'       => 'object',
@@ -835,7 +896,7 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 				),
 				'weight'                => array(
 					/* translators: %s: weight unit */
-					'description' => sprintf( __( 'Variation weight (%s).', 'woocommerce' ), $weight_unit ),
+					'description' => sprintf( __( 'Variation weight (%s).', 'woocommerce' ), $weight_unit_label ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
@@ -846,19 +907,19 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 					'properties'  => array(
 						'length' => array(
 							/* translators: %s: dimension unit */
-							'description' => sprintf( __( 'Variation length (%s).', 'woocommerce' ), $dimension_unit ),
+							'description' => sprintf( __( 'Variation length (%s).', 'woocommerce' ), $dimension_unit_label ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit' ),
 						),
 						'width'  => array(
 							/* translators: %s: dimension unit */
-							'description' => sprintf( __( 'Variation width (%s).', 'woocommerce' ), $dimension_unit ),
+							'description' => sprintf( __( 'Variation width (%s).', 'woocommerce' ), $dimension_unit_label ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit' ),
 						),
 						'height' => array(
 							/* translators: %s: dimension unit */
-							'description' => sprintf( __( 'Variation height (%s).', 'woocommerce' ), $dimension_unit ),
+							'description' => sprintf( __( 'Variation height (%s).', 'woocommerce' ), $dimension_unit_label ),
 							'type'        => 'string',
 							'context'     => array( 'view', 'edit' ),
 						),

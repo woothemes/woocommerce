@@ -5,6 +5,9 @@
  * @package WooCommerce\Tests\Importer
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+
 /**
  * Test class for WC_Product_CSV_Importer.
  */
@@ -34,8 +37,8 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 
 		// Callback used by WP_HTTP_TestCase to decide whether to perform HTTP requests or to provide a mocked response.
 		$this->http_responder = array( $this, 'mock_http_responses' );
-		$this->csv_file = dirname( __FILE__ ) . '/sample.csv';
-		$this->sut = new WC_Product_CSV_Importer(
+		$this->csv_file       = dirname( __FILE__ ) . '/sample.csv';
+		$this->sut            = new WC_Product_CSV_Importer(
 			$this->csv_file,
 			array(
 				'mapping'          => $this->get_csv_mapped_items(),
@@ -108,14 +111,14 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 	public function test_import_for_admin_users() {
 		// In most cases, an admin user will run the import.
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
-		$results  = $this->sut->import();
+		$results = $this->sut->import();
 
 		$this->assertEquals( 0, count( $results['failed'] ) );
 		$this->assertEquals( 0, count( $results['updated'] ) );
 		$this->assertEquals( 0, count( $results['skipped'] ) );
 		$this->assertEquals(
 			7,
-			count( $results['imported'] ),
+			count( $results['imported'] ) + count( $results['imported_variations'] ),
 			'One import item references a downloadable file stored in an unapproved location: if the import is triggered by an admin user, that location will be automatically approved.'
 		);
 	}
@@ -126,11 +129,11 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 	public function test_import_for_shop_managers() {
 		// In some cases, a shop manager may run the import.
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'shop_manager' ) ) );
-		$results  = $this->sut->import();
+		$results = $this->sut->import();
 
 		$this->assertEquals( 0, count( $results['updated'] ) );
 		$this->assertEquals( 0, count( $results['skipped'] ) );
-		$this->assertEquals( 6, count( $results['imported'] ) );
+		$this->assertEquals( 6, count( $results['imported'] ) + count( $results['imported_variations'] ) );
 		$this->assertEquals(
 			1,
 			count( $results['failed'] ),
@@ -220,7 +223,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 		);
 		$items    = array(
 			array(
-				'simple',
+				ProductType::SIMPLE,
 				'WOOLOGO',
 				'Woo Logo',
 				'1',
@@ -276,8 +279,8 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'visible',
 				'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
-				'',
-				'',
+				'Jul 8, 2023',
+				'1689239400',
 				'taxable',
 				'standard',
 				'1',
@@ -290,7 +293,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'',
 				'1',
 				'Lorem ipsum dolor sit amet.',
-				'',
+				'4',
 				'5',
 				'Music > Albums, Music',
 				'Woo',
@@ -333,7 +336,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 		$importer = new WC_Product_CSV_Importer( $this->csv_file, $args );
 		$items    = array(
 			array(
-				'type'                  => 'simple',
+				'type'                  => ProductType::SIMPLE,
 				'sku'                   => 'WOOLOGO',
 				'name'                  => 'Woo Logo',
 				'featured'              => '',
@@ -341,7 +344,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'short_description'     => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'description'           => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'     => '2017-01-01',
-				'date_on_sale_to'       => '2030-01-01',
+				'date_on_sale_to'       => '2030-01-01 0:00:00',
 				'tax_status'            => 'taxable',
 				'tax_class'             => 'standard',
 				'stock_status'          => 'instock',
@@ -361,7 +364,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'       => 0,
 				'product_url'           => '',
 				'button_text'           => '',
-				'status'                => 'publish',
+				'status'                => ProductStatus::PUBLISH,
 				'raw_image_id'          => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_1_front.jpg',
 				'raw_gallery_image_ids' => array( 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_1_back.jpg' ),
 				'virtual'               => '',
@@ -377,15 +380,15 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'            => 0,
 			),
 			array(
-				'type'                  => 'simple',
+				'type'                  => ProductType::SIMPLE,
 				'sku'                   => 'WOOALBUM',
 				'name'                  => 'Woo Album #1',
 				'featured'              => true,
 				'catalog_visibility'    => 'visible',
 				'short_description'     => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'description'           => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
-				'date_on_sale_from'     => null,
-				'date_on_sale_to'       => null,
+				'date_on_sale_from'     => 'Jul 8, 2023',
+				'date_on_sale_to'       => '2023-07-13T09:10:00Z',
 				'tax_status'            => 'taxable',
 				'tax_class'             => 'standard',
 				'stock_status'          => 'instock',
@@ -398,14 +401,14 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'height'                => '',
 				'reviews_allowed'       => true,
 				'purchase_note'         => 'Lorem ipsum dolor sit amet.',
-				'sale_price'            => '',
+				'sale_price'            => '4',
 				'regular_price'         => '5',
 				'shipping_class_id'     => 0,
 				'download_limit'        => 10,
 				'download_expiry'       => 90,
 				'product_url'           => '',
 				'button_text'           => '',
-				'status'                => 'publish',
+				'status'                => ProductStatus::PUBLISH,
 				'raw_image_id'          => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/cd_1_angle.jpg',
 				'raw_gallery_image_ids' => array( 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/cd_1_flat.jpg' ),
 				'virtual'               => true,
@@ -430,15 +433,15 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'            => 1,
 			),
 			array(
-				'type'               => 'external',
+				'type'               => ProductType::EXTERNAL,
 				'sku'                => '',
 				'name'               => 'WooCommerce Product CSV Suite',
 				'featured'           => '',
 				'catalog_visibility' => 'visible',
 				'short_description'  => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'description'        => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
-				'date_on_sale_from'  => null,
-				'date_on_sale_to'    => null,
+				'date_on_sale_from'  => '2023-07-08 05:10:15',
+				'date_on_sale_to'    => '2023/07/13',
 				'tax_status'         => 'taxable',
 				'tax_class'          => 'standard',
 				'stock_status'       => 'instock',
@@ -451,14 +454,14 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'height'             => '',
 				'reviews_allowed'    => false,
 				'purchase_note'      => 'Lorem ipsum dolor sit amet.',
-				'sale_price'         => '',
+				'sale_price'         => '180',
 				'regular_price'      => '199',
 				'shipping_class_id'  => 0,
 				'download_limit'     => 0,
 				'download_expiry'    => 0,
 				'product_url'        => 'https://woocommerce.com/products/product-csv-import-suite/',
 				'button_text'        => 'Buy on WooCommerce.com',
-				'status'             => 'publish',
+				'status'             => ProductStatus::PUBLISH,
 				'raw_image_id'       => null,
 				'virtual'            => false,
 				'downloadable'       => false,
@@ -466,7 +469,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'         => 2,
 			),
 			array(
-				'type'                  => 'variable',
+				'type'                  => ProductType::VARIABLE,
 				'sku'                   => 'WOOIDEA',
 				'name'                  => 'Ship Your Idea',
 				'featured'              => '',
@@ -494,7 +497,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'       => 0,
 				'product_url'           => '',
 				'button_text'           => '',
-				'status'                => 'publish',
+				'status'                => ProductStatus::PUBLISH,
 				'raw_image_id'          => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_4_front.jpg',
 				'raw_gallery_image_ids' => array(
 					'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_4_back.jpg',
@@ -518,7 +521,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'            => 3,
 			),
 			array(
-				'type'               => 'variation',
+				'type'               => ProductType::VARIATION,
 				'sku'                => '',
 				'name'               => '',
 				'featured'           => '',
@@ -546,7 +549,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'    => 0,
 				'product_url'        => '',
 				'button_text'        => '',
-				'status'             => 'publish',
+				'status'             => ProductStatus::PUBLISH,
 				'raw_image_id'       => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_4_front.jpg',
 				'virtual'            => false,
 				'downloadable'       => false,
@@ -563,7 +566,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'         => 1,
 			),
 			array(
-				'type'               => 'variation',
+				'type'               => ProductType::VARIATION,
 				'sku'                => '',
 				'name'               => '',
 				'featured'           => '',
@@ -591,7 +594,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'    => 0,
 				'product_url'        => '',
 				'button_text'        => '',
-				'status'             => 'publish',
+				'status'             => ProductStatus::PUBLISH,
 				'raw_image_id'       => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_3_front.jpg',
 				'virtual'            => false,
 				'downloadable'       => false,
@@ -608,7 +611,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'menu_order'         => 2,
 			),
 			array(
-				'type'                  => 'grouped',
+				'type'                  => ProductType::GROUPED,
 				'sku'                   => '',
 				'name'                  => 'Best Woo Products',
 				'featured'              => true,
@@ -636,7 +639,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'       => 0,
 				'product_url'           => '',
 				'button_text'           => '',
-				'status'                => 'publish',
+				'status'                => ProductStatus::PUBLISH,
 				'raw_image_id'          => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_1_front.jpg',
 				'raw_gallery_image_ids' => array( 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/cd_1_angle.jpg' ),
 				'virtual'               => false,
@@ -700,7 +703,9 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 	 * Test that directory traversal is prevented.
 	 */
 	public function test_server_path_traversal() {
-		self::file_copy( $this->csv_file, ABSPATH . '../sample.csv' );
+		if ( ! file_exists( ABSPATH . '../sample.csv' ) ) {
+			self::file_copy( $this->csv_file, ABSPATH . '../sample.csv' );
+		}
 
 		$_POST['file_url'] = '../sample.csv';
 		$import_controller = new WC_Product_CSV_Importer_Controller();

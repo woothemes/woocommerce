@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { ReactElement, Component } from 'react';
 import {
 	UseComboboxGetItemPropsOptions,
 	UseComboboxGetMenuPropsOptions,
@@ -16,7 +15,8 @@ export type DefaultItemType = {
 export type SelectedType< ItemType > = ItemType | null;
 
 export type Props = {
-	[ key: string ]: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	[ key: string ]: any;
 };
 
 export type getItemPropsType< ItemType > = (
@@ -50,10 +50,12 @@ export type ChildrenType< ItemType > = ( {
 	items,
 	isOpen,
 	highlightedIndex,
-}: ChildrenProps< ItemType > ) => ReactElement | Component;
+}: ChildrenProps< ItemType > ) => React.ReactNode;
 
 export type getItemLabelType< ItemType > = ( item: ItemType | null ) => string;
 
 export type getItemValueType< ItemType > = (
 	item: ItemType | null
 ) => string | number;
+
+export type SelectedItemFocusHandle = () => void;

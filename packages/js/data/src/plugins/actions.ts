@@ -6,9 +6,10 @@ import {
 	select,
 	dispatch as depreciatedDispatch,
 } from '@wordpress/data-controls';
-import { _n, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { DispatchFromMap } from '@automattic/data-stores';
 import { controls } from '@wordpress/data';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -49,21 +50,22 @@ const isPluginResponseError = (
 	typeof error === 'object' && error !== null && plugins[ 0 ] in error;
 
 const formatErrorMessage = (
-	pluginErrors: PluginResponseErrors,
-	actionType = 'install'
+	actionType: 'install' | 'activate' = 'install',
+	plugins: Partial< PluginNames >[],
+	rawErrorMessage: string
 ) => {
 	return sprintf(
 		/* translators: %(actionType): install or activate (the plugin). %(pluginName): a plugin slug (e.g. woocommerce-services). %(error): a single error message or in plural a comma separated error message list.*/
 		_n(
 			'Could not %(actionType)s %(pluginName)s plugin, %(error)s',
 			'Could not %(actionType)s the following plugins: %(pluginName)s with these Errors: %(error)s',
-			Object.keys( pluginErrors ).length || 1,
+			Object.keys( plugins ).length || 1,
 			'woocommerce'
 		),
 		{
 			actionType,
-			pluginName: Object.keys( pluginErrors ).join( ', ' ),
-			error: Object.values( pluginErrors ).join( ', \n' ),
+			pluginName: plugins.join( ', ' ),
+			error: rawErrorMessage,
 		}
 	);
 };
@@ -174,59 +176,74 @@ export function setRecommendedPlugins(
 }
 
 function* handlePluginAPIError(
-	actionType: string,
+	actionType: 'install' | 'activate',
 	plugins: Partial< PluginNames >[],
 	error: unknown
 ) {
-	yield setError( 'installPlugins', error );
+	let rawErrorMessage;
 
-	let pluginResponseError = error;
-	if (
-		( error instanceof Error || isRestApiError( error ) ) &&
-		plugins[ 0 ]
-	) {
-		pluginResponseError = {
-			[ plugins[ 0 ] ]: [ error.message ],
-		};
-	}
-
-	if ( isPluginResponseError( plugins, pluginResponseError ) ) {
-		throw new PluginError(
-			formatErrorMessage( pluginResponseError, actionType ),
-			pluginResponseError
-		);
+	if ( isPluginResponseError( plugins, error ) ) {
+		// Backend error messages are in the form of { plugin-slug: [ error messages ] }.
+		rawErrorMessage = Object.values( error ).join( ', \n' );
 	} else {
-		throw new PluginError(
-			`Unexpected Plugin Error: ${ JSON.stringify(
-				pluginResponseError
-			) }`,
-			pluginResponseError
-		);
+		// Other error such as API connection errors.
+		rawErrorMessage =
+			isRestApiError( error ) || error instanceof Error
+				? error.message
+				: JSON.stringify( error );
 	}
+
+	// Track the error.
+	switch ( actionType ) {
+		case 'install':
+			recordEvent( 'install_plugins_error', {
+				plugins: plugins.join( ', ' ),
+				message: rawErrorMessage,
+			} );
+			break;
+		case 'activate':
+			recordEvent( 'activate_plugins_error', {
+				plugins: plugins.join( ', ' ),
+				message: rawErrorMessage,
+			} );
+	}
+
+	throw new PluginError(
+		formatErrorMessage( actionType, plugins, rawErrorMessage ),
+		error
+	);
 }
 
 // Action Creator Generators
-export function* installPlugins( plugins: Partial< PluginNames >[] ) {
+export function* installPlugins(
+	plugins: Partial< PluginNames >[],
+	async = false
+) {
 	yield setIsRequesting( 'installPlugins', true );
 
 	try {
 		const results: InstallPluginsResponse = yield apiFetch( {
 			path: `${ WC_ADMIN_NAMESPACE }/plugins/install`,
 			method: 'POST',
-			data: { plugins: plugins.join( ',' ) },
+			data: { plugins: plugins.join( ',' ), async },
 		} );
 
-		if ( results.data.installed.length ) {
+		if ( results.data.installed?.length ) {
 			yield updateInstalledPlugins( results.data.installed );
 		}
-		if ( Object.keys( results.errors.errors ).length ) {
+		if (
+			results.errors?.errors &&
+			Object.keys( results.errors.errors ).length
+		) {
 			throw results.errors.errors;
 		}
 
-		yield setIsRequesting( 'installPlugins', false );
 		return results;
 	} catch ( error ) {
+		yield setError( 'installPlugins', error );
 		yield handlePluginAPIError( 'install', plugins, error );
+	} finally {
+		yield setIsRequesting( 'installPlugins', false );
 	}
 }
 
@@ -248,11 +265,12 @@ export function* activatePlugins( plugins: Partial< PluginNames >[] ) {
 			throw results.errors.errors;
 		}
 
-		yield setIsRequesting( 'activatePlugins', false );
-
 		return results;
 	} catch ( error ) {
+		yield setError( 'activatePlugins', error );
 		yield handlePluginAPIError( 'activate', plugins, error );
+	} finally {
+		yield setIsRequesting( 'activatePlugins', false );
 	}
 }
 
@@ -268,13 +286,52 @@ export function* installAndActivatePlugins( plugins: string[] ) {
 			'activatePlugins',
 			plugins
 		);
-		return {
+
+		const response = {
 			...activations,
 			data: {
 				...activations.data,
 				...installations.data,
 			},
 		};
+
+		// If everything was a success and we both installed and activated, make the success message more informative.
+		if (
+			installations.success &&
+			Object.keys( installations.data.results ).length &&
+			activations.success &&
+			activations.data.activated.length
+		) {
+			// If only one plugin was installed, use the plugin details to create a more informative message.
+			if ( activations.data.activated.length === 1 ) {
+				const plugin_slug = activations.data.activated[ 0 ];
+				const plugin = activations.data.plugin_details?.[ plugin_slug ];
+
+				if ( plugin ) {
+					response.message = sprintf(
+						/* translators: %1$s: plugin name, %2$s: plugin version */
+						__(
+							'%1$s (%2$s) was successfully installed and activated.',
+							'woocommerce'
+						),
+						plugin.name,
+						plugin.version
+					);
+				} else {
+					response.message = __(
+						'A plugin was successfully installed and activated.',
+						'woocommerce'
+					);
+				}
+			} else {
+				response.message = __(
+					'Plugins were successfully installed and activated.',
+					'woocommerce'
+				);
+			}
+		}
+
+		return response;
 	} catch ( error ) {
 		throw error;
 	}
@@ -304,7 +361,7 @@ export function* connectToJetpack(
 }
 
 export function* installJetpackAndConnect(
-	errorAction: ( errorMesage: string ) => void,
+	errorAction: ( errorMessage: string ) => void,
 	getAdminLink: ( endpoint: string ) => string
 ) {
 	try {
@@ -328,7 +385,7 @@ export function* installJetpackAndConnect(
 
 export function* connectToJetpackWithFailureRedirect(
 	failureRedirect: string,
-	errorAction: ( errorMesage: string ) => void,
+	errorAction: ( errorMessage: string ) => void,
 	getAdminLink: ( endpoint: string ) => string
 ) {
 	try {
@@ -349,6 +406,7 @@ export function* connectToJetpackWithFailureRedirect(
 }
 
 const SUPPORTED_TYPES = [ 'payments' ];
+
 export function* dismissRecommendedPlugins( type: RecommendedTypes ) {
 	if ( ! SUPPORTED_TYPES.includes( type ) ) {
 		return [];
@@ -377,6 +435,18 @@ export function* dismissRecommendedPlugins( type: RecommendedTypes ) {
 	return success;
 }
 
+export function* deactivatePlugin( pluginFile: string ) {
+	try {
+		yield apiFetch( {
+			path: `/wp/v2/plugins/${ pluginFile }`,
+			method: 'POST',
+			data: { status: 'inactive' },
+		} );
+	} catch ( error ) {
+		throw error;
+	}
+}
+
 export type Actions = ReturnType<
 	| typeof updateActivePlugins
 	| typeof updateInstalledPlugins
@@ -398,4 +468,5 @@ export type ActionDispatchers = DispatchFromMap< {
 	installAndActivatePlugins: typeof installAndActivatePlugins;
 	connectToJetpackWithFailureRedirect: typeof connectToJetpackWithFailureRedirect;
 	dismissRecommendedPlugins: typeof dismissRecommendedPlugins;
+	deactivatePlugin: typeof deactivatePlugin;
 } >;

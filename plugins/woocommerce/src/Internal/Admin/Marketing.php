@@ -7,7 +7,6 @@ namespace Automattic\WooCommerce\Internal\Admin;
 
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\Marketing\InstalledExtensions;
-use Automattic\WooCommerce\Internal\Admin\Loader;
 use Automattic\WooCommerce\Admin\PageController;
 
 /**
@@ -18,18 +17,18 @@ class Marketing {
 	use CouponsMovedTrait;
 
 	/**
-	 * Name of recommended plugins transient.
+	 * Constant representing the key for the submenu name value in the global $submenu array.
 	 *
-	 * @var string
+	 * @var int
 	 */
-	const RECOMMENDED_PLUGINS_TRANSIENT = 'wc_marketing_recommended_plugins';
+	const SUBMENU_NAME_KEY = 0;
 
 	/**
-	 * Name of knowledge base post transient.
+	 * Constant representing the key for the submenu location value in the global $submenu array.
 	 *
-	 * @var string
+	 * @var int
 	 */
-	const KNOWLEDGE_BASE_TRANSIENT = 'wc_marketing_knowledge_base';
+	const SUBMENU_LOCATION_KEY = 2;
 
 	/**
 	 * Class instance.
@@ -59,7 +58,9 @@ class Marketing {
 		add_action( 'admin_menu', array( $this, 'register_pages' ), 5 );
 		add_action( 'admin_menu', array( $this, 'add_parent_menu_item' ), 6 );
 
-		add_filter( 'woocommerce_admin_preload_options', array( $this, 'preload_options' ) );
+		// Overwrite submenu default ordering for marketing menu. High priority gives plugins the chance to register their own menu items.
+		add_action( 'admin_menu', array( $this, 'reorder_marketing_submenu' ), 99 );
+
 		add_filter( 'woocommerce_admin_shared_settings', array( $this, 'component_settings' ), 30 );
 	}
 
@@ -82,12 +83,12 @@ class Marketing {
 		}
 
 		PageController::get_instance()->connect_page(
-			[
+			array(
 				'id'         => 'woocommerce-marketing',
 				'title'      => 'Marketing',
 				'capability' => 'manage_woocommerce',
 				'path'       => 'wc-admin&path=/marketing',
-			]
+			)
 		);
 	}
 
@@ -98,12 +99,18 @@ class Marketing {
 		$this->register_overview_page();
 
 		$controller = PageController::get_instance();
-		$defaults   = [
+		$defaults   = array(
 			'parent'        => 'woocommerce-marketing',
 			'existing_page' => false,
-		];
+		);
 
-		$marketing_pages = apply_filters( 'woocommerce_marketing_menu_items', [] );
+		/**
+		 * Filters marketing menu items.
+		 *
+		 * @since 4.1.0
+		 * @param array $items Marketing pages.
+		 */
+		$marketing_pages = apply_filters( 'woocommerce_marketing_menu_items', array() );
 		foreach ( $marketing_pages as $marketing_page ) {
 			if ( ! is_array( $marketing_page ) ) {
 				continue;
@@ -131,16 +138,12 @@ class Marketing {
 
 		// First register the page.
 		PageController::get_instance()->register_page(
-			[
-				'id'       => 'woocommerce-marketing-overview',
-				'title'    => __( 'Overview', 'woocommerce' ),
-				'path'     => 'wc-admin&path=/marketing',
-				'parent'   => 'woocommerce-marketing',
-				'nav_args' => array(
-					'parent' => 'woocommerce-marketing',
-					'order'  => 10,
-				),
-			]
+			array(
+				'id'     => 'woocommerce-marketing-overview',
+				'title'  => __( 'Overview', 'woocommerce' ),
+				'path'   => 'wc-admin&path=/marketing',
+				'parent' => 'woocommerce-marketing',
+			)
 		);
 
 		// Now fix the path, since register_page() gets it wrong.
@@ -157,15 +160,64 @@ class Marketing {
 	}
 
 	/**
-	 * Preload options to prime state of the application.
+	 * Order marketing menu items alphabetically.
+	 * Overview should be first, and Coupons should be second, followed by other marketing menu items.
 	 *
-	 * @param array $options Array of options to preload.
-	 * @return array
+	 * @return  void
 	 */
-	public function preload_options( $options ) {
-		$options[] = 'woocommerce_marketing_overview_welcome_hidden';
+	public function reorder_marketing_submenu() {
+		global $submenu;
 
-		return $options;
+		if ( ! isset( $submenu['woocommerce-marketing'] ) ) {
+			return;
+		}
+
+		$marketing_submenu = $submenu['woocommerce-marketing'];
+		$new_menu_order    = array();
+
+		// Overview should be first.
+		$overview_key = array_search( 'Overview', array_column( $marketing_submenu, self::SUBMENU_NAME_KEY ), true );
+
+		if ( false === $overview_key ) {
+			/*
+			 * If Overview is not found, we may be on a site with a different language.
+			 * We can use a fallback and try to find the overview page by its path.
+			 */
+			$overview_key = array_search( 'admin.php?page=wc-admin&path=/marketing', array_column( $marketing_submenu, self::SUBMENU_LOCATION_KEY ), true );
+		}
+
+		if ( false !== $overview_key ) {
+			$new_menu_order[] = $marketing_submenu[ $overview_key ];
+			array_splice( $marketing_submenu, $overview_key, 1 );
+		}
+
+		// Coupons should be second.
+		$coupons_key = array_search( 'Coupons', array_column( $marketing_submenu, self::SUBMENU_NAME_KEY ), true );
+
+		if ( false === $coupons_key ) {
+			/*
+			 * If Coupons is not found, we may be on a site with a different language.
+			 * We can use a fallback and try to find the coupons page by its path.
+			 */
+			$coupons_key = array_search( 'edit.php?post_type=shop_coupon', array_column( $marketing_submenu, self::SUBMENU_LOCATION_KEY ), true );
+		}
+
+		if ( false !== $coupons_key ) {
+			$new_menu_order[] = $marketing_submenu[ $coupons_key ];
+			array_splice( $marketing_submenu, $coupons_key, 1 );
+		}
+
+		// Sort the rest of the items alphabetically.
+		usort(
+			$marketing_submenu,
+			function ( $a, $b ) {
+				return strcmp( $a[0], $b[0] );
+			}
+		);
+
+		$new_menu_order = array_merge( $new_menu_order, $marketing_submenu );
+
+		$submenu['woocommerce-marketing'] = $new_menu_order;  //phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	/**
@@ -183,121 +235,5 @@ class Marketing {
 		$settings['marketing']['installedExtensions'] = InstalledExtensions::get_data();
 
 		return $settings;
-	}
-
-	/**
-	 * Load recommended plugins from WooCommerce.com
-	 *
-	 * @return array
-	 */
-	public function get_recommended_plugins() {
-		$plugins = get_transient( self::RECOMMENDED_PLUGINS_TRANSIENT );
-
-		if ( false === $plugins ) {
-			$request = wp_remote_get(
-				'https://woocommerce.com/wp-json/wccom/marketing-tab/1.2/recommendations.json',
-				array(
-					'user-agent' => 'WooCommerce/' . WC()->version . '; ' . get_bloginfo( 'url' ),
-				)
-			);
-			$plugins = [];
-
-			if ( ! is_wp_error( $request ) && 200 === $request['response']['code'] ) {
-				$plugins = json_decode( $request['body'], true );
-			}
-
-			set_transient(
-				self::RECOMMENDED_PLUGINS_TRANSIENT,
-				$plugins,
-				// Expire transient in 15 minutes if remote get failed.
-				// Cache an empty result to avoid repeated failed requests.
-				empty( $plugins ) ? 900 : 3 * DAY_IN_SECONDS
-			);
-		}
-
-		return array_values( $plugins );
-	}
-
-	/**
-	 * Load knowledge base posts from WooCommerce.com
-	 *
-	 * @param string $category Category of posts to retrieve.
-	 * @return array
-	 */
-	public function get_knowledge_base_posts( $category ) {
-
-		$kb_transient = self::KNOWLEDGE_BASE_TRANSIENT;
-
-		$categories = array(
-			'marketing' => 1744,
-			'coupons'   => 25202,
-		);
-
-		// Default to marketing category (if no category set on the kb component).
-		if ( ! empty( $category ) && array_key_exists( $category, $categories ) ) {
-			$category_id  = $categories[ $category ];
-			$kb_transient = $kb_transient . '_' . strtolower( $category );
-		} else {
-			$category_id = $categories['marketing'];
-		}
-
-		$posts = get_transient( $kb_transient );
-
-		if ( false === $posts ) {
-			$request_url = add_query_arg(
-				array(
-					'categories' => $category_id,
-					'page'       => 1,
-					'per_page'   => 8,
-					'_embed'     => 1,
-				),
-				'https://woocommerce.com/wp-json/wp/v2/posts?utm_medium=product'
-			);
-
-			$request = wp_remote_get(
-				$request_url,
-				array(
-					'user-agent' => 'WooCommerce/' . WC()->version . '; ' . get_bloginfo( 'url' ),
-				)
-			);
-			$posts   = [];
-
-			if ( ! is_wp_error( $request ) && 200 === $request['response']['code'] ) {
-				$raw_posts = json_decode( $request['body'], true );
-
-				foreach ( $raw_posts as $raw_post ) {
-					$post = [
-						'title'         => html_entity_decode( $raw_post['title']['rendered'] ),
-						'date'          => $raw_post['date_gmt'],
-						'link'          => $raw_post['link'],
-						'author_name'   => isset( $raw_post['author_name'] ) ? html_entity_decode( $raw_post['author_name'] ) : '',
-						'author_avatar' => isset( $raw_post['author_avatar_url'] ) ? $raw_post['author_avatar_url'] : '',
-					];
-
-					$featured_media = $raw_post['_embedded']['wp:featuredmedia'] ?? [];
-					if ( count( $featured_media ) > 0 ) {
-						$image         = current( $featured_media );
-						$post['image'] = add_query_arg(
-							array(
-								'resize' => '650,340',
-								'crop'   => 1,
-							),
-							$image['source_url']
-						);
-					}
-
-					$posts[] = $post;
-				}
-			}
-
-			set_transient(
-				$kb_transient,
-				$posts,
-				// Expire transient in 15 minutes if remote get failed.
-				empty( $posts ) ? 900 : DAY_IN_SECONDS
-			);
-		}
-
-		return $posts;
 	}
 }

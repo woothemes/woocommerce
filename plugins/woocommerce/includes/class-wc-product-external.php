@@ -8,6 +8,8 @@
  * @version 3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -31,7 +33,7 @@ class WC_Product_External extends WC_Product {
 	 * @return string
 	 */
 	public function get_type() {
-		return 'external';
+		return ProductType::EXTERNAL;
 	}
 
 	/*

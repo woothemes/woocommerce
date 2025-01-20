@@ -6,6 +6,10 @@
  * @version 3.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Utilities\I18nUtil;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -99,12 +103,16 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 	 * @return array
 	 */
 	public function get_default_column_names() {
+		$weight_unit_label    = I18nUtil::get_weight_unit_label( get_option( 'woocommerce_weight_unit', 'kg' ) );
+		$dimension_unit_label = I18nUtil::get_dimensions_unit_label( get_option( 'woocommerce_dimension_unit', 'cm' ) );
+
 		return apply_filters(
 			"woocommerce_product_export_{$this->export_type}_default_columns",
 			array(
 				'id'                 => __( 'ID', 'woocommerce' ),
 				'type'               => __( 'Type', 'woocommerce' ),
 				'sku'                => __( 'SKU', 'woocommerce' ),
+				'global_unique_id'   => __( 'GTIN, UPC, EAN, or ISBN', 'woocommerce' ),
 				'name'               => __( 'Name', 'woocommerce' ),
 				'published'          => __( 'Published', 'woocommerce' ),
 				'featured'           => __( 'Is featured?', 'woocommerce' ),
@@ -121,13 +129,13 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 				'backorders'         => __( 'Backorders allowed?', 'woocommerce' ),
 				'sold_individually'  => __( 'Sold individually?', 'woocommerce' ),
 				/* translators: %s: weight */
-				'weight'             => sprintf( __( 'Weight (%s)', 'woocommerce' ), get_option( 'woocommerce_weight_unit' ) ),
+				'weight'             => sprintf( __( 'Weight (%s)', 'woocommerce' ), $weight_unit_label ),
 				/* translators: %s: length */
-				'length'             => sprintf( __( 'Length (%s)', 'woocommerce' ), get_option( 'woocommerce_dimension_unit' ) ),
+				'length'             => sprintf( __( 'Length (%s)', 'woocommerce' ), $dimension_unit_label ),
 				/* translators: %s: width */
-				'width'              => sprintf( __( 'Width (%s)', 'woocommerce' ), get_option( 'woocommerce_dimension_unit' ) ),
+				'width'              => sprintf( __( 'Width (%s)', 'woocommerce' ), $dimension_unit_label ),
 				/* translators: %s: Height */
-				'height'             => sprintf( __( 'Height (%s)', 'woocommerce' ), get_option( 'woocommerce_dimension_unit' ) ),
+				'height'             => sprintf( __( 'Height (%s)', 'woocommerce' ), $dimension_unit_label ),
 				'reviews_allowed'    => __( 'Allow customer reviews?', 'woocommerce' ),
 				'purchase_note'      => __( 'Purchase note', 'woocommerce' ),
 				'sale_price'         => __( 'Sale price', 'woocommerce' ),
@@ -156,7 +164,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 	 */
 	public function prepare_data_to_export() {
 		$args = array(
-			'status'   => array( 'private', 'publish', 'draft', 'future', 'pending' ),
+			'status'   => array( ProductStatus::PRIVATE, ProductStatus::PUBLISH, ProductStatus::DRAFT, ProductStatus::FUTURE, ProductStatus::PENDING ),
 			'type'     => $this->product_types_to_export,
 			'limit'    => $this->get_limit(),
 			'page'     => $this->get_page(),
@@ -177,8 +185,8 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 		$variable_products = array();
 
 		foreach ( $products->products as $product ) {
-			// Check if the category is set, this means we need to fetch variations seperately as they are not tied to a category.
-			if ( ! empty( $args['category'] ) && $product->is_type( 'variable' ) ) {
+			// Check if the category is set, this means we need to fetch variations separately as they are not tied to a category.
+			if ( ! empty( $args['category'] ) && $product->is_type( ProductType::VARIABLE ) ) {
 				$variable_products[] = $product->get_id();
 			}
 
@@ -191,7 +199,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 				$products = wc_get_products(
 					array(
 						'parent' => $parent_id,
-						'type'   => array( 'variation' ),
+						'type'   => array( ProductType::VARIATION ),
 						'return' => 'objects',
 						'limit'  => -1,
 					)
@@ -257,7 +265,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 		 * @since 3.1.0
 		 *
 		 * @param array                   $row         An associative array with the data of a single row in the CSV file.
-		 * @param WC_Product              $product     The product object correspnding to the current row.
+		 * @param WC_Product              $product     The product object corresponding to the current row.
 		 * @param WC_Product_CSV_Exporter $exporter    The instance of the CSV exporter.
 		 */
 		return apply_filters( 'woocommerce_product_export_row_data', $row, $product, $this );
@@ -273,15 +281,15 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 	 */
 	protected function get_column_value_published( $product ) {
 		$statuses = array(
-			'draft'   => -1,
-			'private' => 0,
-			'publish' => 1,
+			ProductStatus::DRAFT   => -1,
+			ProductStatus::PRIVATE => 0,
+			ProductStatus::PUBLISH => 1,
 		);
 
 		// Fix display for variations when parent product is a draft.
-		if ( 'variation' === $product->get_type() ) {
+		if ( ProductType::VARIATION === $product->get_type() ) {
 			$parent = $product->get_parent_data();
-			$status = 'draft' === $parent['status'] ? $parent['status'] : $product->get_status( 'edit' );
+			$status = ProductStatus::DRAFT === $parent['status'] ? $parent['status'] : $product->get_status( 'edit' );
 		} else {
 			$status = $product->get_status( 'edit' );
 		}
@@ -448,7 +456,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 	 * @return string
 	 */
 	protected function get_column_value_grouped_products( $product ) {
-		if ( 'grouped' !== $product->get_type() ) {
+		if ( ProductType::GROUPED !== $product->get_type() ) {
 			return '';
 		}
 
@@ -501,7 +509,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 		$manage_stock   = $product->get_manage_stock( 'edit' );
 		$stock_quantity = $product->get_stock_quantity( 'edit' );
 
-		if ( $product->is_type( 'variation' ) && 'parent' === $manage_stock ) {
+		if ( $product->is_type( ProductType::VARIATION ) && 'parent' === $manage_stock ) {
 			return 'parent';
 		} elseif ( $manage_stock ) {
 			return $stock_quantity;
@@ -652,7 +660,7 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 					$this->column_names[ 'attributes:taxonomy' . $i ] = sprintf( __( 'Attribute %d global', 'woocommerce' ), $i );
 
 					if ( is_a( $attribute, 'WC_Product_Attribute' ) ) {
-						$row[ 'attributes:name' . $i ] = wc_attribute_label( $attribute->get_name(), $product );
+						$row[ 'attributes:name' . $i ] = html_entity_decode( wc_attribute_label( $attribute->get_name(), $product ), ENT_QUOTES );
 
 						if ( $attribute->is_taxonomy() ) {
 							$terms  = $attribute->get_terms();
@@ -671,21 +679,21 @@ class WC_Product_CSV_Exporter extends WC_CSV_Batch_Exporter {
 
 						$row[ 'attributes:visible' . $i ] = $attribute->get_visible();
 					} else {
-						$row[ 'attributes:name' . $i ] = wc_attribute_label( $attribute_name, $product );
+						$row[ 'attributes:name' . $i ] = html_entity_decode( wc_attribute_label( $attribute_name, $product ), ENT_QUOTES );
 
 						if ( 0 === strpos( $attribute_name, 'pa_' ) ) {
 							$option_term = get_term_by( 'slug', $attribute, $attribute_name ); // @codingStandardsIgnoreLine.
-							$row[ 'attributes:value' . $i ]    = $option_term && ! is_wp_error( $option_term ) ? str_replace( ',', '\\,', $option_term->name ) : str_replace( ',', '\\,', $attribute );
+							$row[ 'attributes:value' . $i ]    = $option_term && ! is_wp_error( $option_term ) ? html_entity_decode( str_replace( ',', '\\,', $option_term->name ), ENT_QUOTES ) : html_entity_decode( str_replace( ',', '\\,', $attribute ), ENT_QUOTES );
 							$row[ 'attributes:taxonomy' . $i ] = 1;
 						} else {
-							$row[ 'attributes:value' . $i ]    = str_replace( ',', '\\,', $attribute );
+							$row[ 'attributes:value' . $i ]    = html_entity_decode( str_replace( ',', '\\,', $attribute ), ENT_QUOTES );
 							$row[ 'attributes:taxonomy' . $i ] = 0;
 						}
 
 						$row[ 'attributes:visible' . $i ] = '';
 					}
 
-					if ( $product->is_type( 'variable' ) && isset( $default_attributes[ sanitize_title( $attribute_name ) ] ) ) {
+					if ( $product->is_type( ProductType::VARIABLE ) && isset( $default_attributes[ sanitize_title( $attribute_name ) ] ) ) {
 						/* translators: %s: attribute number */
 						$this->column_names[ 'attributes:default' . $i ] = sprintf( __( 'Attribute %d default', 'woocommerce' ), $i );
 						$default_value                                   = $default_attributes[ sanitize_title( $attribute_name ) ];

@@ -5,7 +5,7 @@
  * @package WooCommerce\Tests\Functions.
  */
 
-use \PHPUnit\Framework\MockObject\Matcher\InvokedRecorder;
+use PHPUnit\Framework\MockObject\Matcher\InvokedRecorder;
 
 /**
  * Class WC_Formatting_Functions_Test
@@ -121,15 +121,13 @@ class WC_Attribute_Functions_Test extends \WC_Unit_Test_Case {
 		$ids = array();
 
 		$ids[] = wc_create_attribute( array( 'name' => 'Brand' ) );
-		$this->assertInternalType(
-			'int',
+		$this->assertIsInt(
 			end( $ids ),
 			'wc_create_attribute should return a numeric id on success.'
 		);
 
 		$ids[] = wc_create_attribute( array( 'name' => str_repeat( 'n', 28 ) ) );
-		$this->assertInternalType(
-			'int',
+		$this->assertIsInt(
 			end( $ids ),
 			'Attribute creation should succeed when its slug is 28 characters long.'
 		);
@@ -167,6 +165,54 @@ class WC_Attribute_Functions_Test extends \WC_Unit_Test_Case {
 		foreach ( $ids as $id ) {
 			wc_delete_attribute( $id );
 		}
+	}
+
+	/**
+	 * Describes the behavior of the wc_update_attribute() function.
+	 *
+	 * @return void
+	 */
+	public function test_wc_update_attribute(): void {
+		$attribute_id = wc_create_attribute(
+			array(
+				'name'         => 'Whipuptitude',
+				'order_by'     => 'name_num',
+				'has_archives' => true,
+			)
+		);
+
+		$this->assertIsInt( $attribute_id, 'New product attribute was successfully created.' );
+
+		$update = wc_update_attribute(
+			$attribute_id,
+			array(
+				'name' => 'Assemblebility',
+			)
+		);
+
+		// Grab the updated attribute.
+		$attribute = wc_get_attribute( $attribute_id );
+
+		// If we change the title, then only the title is changed. Other properties remain unmodified.
+		$this->assertIsInt( $update, 'The product attribute was successfully updated.' );
+		$this->assertEquals( 'Assemblebility', $attribute->name, 'The product attribute name was updated.' );
+		$this->assertEquals( 'name_num', $attribute->order_by, 'The "order_by" property remained unchanged.' );
+		$this->assertTrue( $attribute->has_archives, 'The "has_archives" property remained unchanged.' );
+
+		$update = wc_update_attribute(
+			$attribute_id,
+			array(
+				'name'     => 'Ready-to-go-ness',
+				'order_by' => 'invalid_value',
+			)
+		);
+
+		// Grab the updated attribute.
+		$attribute = wc_get_attribute( $attribute_id );
+
+		$this->assertIsInt( $update, 'The product attribute was successfully updated, even if some non-essential parameters were invalid.' );
+		$this->assertEquals( 'Ready-to-go-ness', $attribute->name, 'The product attribute name was updated.' );
+		$this->assertEquals( 'menu_order', $attribute->order_by, 'Any invalid property changes will be reset to their defaults.' );
 	}
 
 	public function get_attribute_names_and_slugs() {

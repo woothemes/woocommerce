@@ -7,6 +7,7 @@
 
 namespace Automattic\WooCommerce\Admin\API;
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingIndustries;
 use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingProfile;
 use Automattic\WooCommerce\Admin\Features\Features;
@@ -37,9 +38,9 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 	protected $rest_base = 'onboarding/tasks';
 
 	/**
-	 * Duration to milisecond mapping.
+	 * Duration to millisecond mapping.
 	 *
-	 * @var string
+	 * @var array
 	 */
 	protected $duration_to_ms = array(
 		'day'  => DAY_IN_SECONDS * 1000,
@@ -295,10 +296,14 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 	/**
 	 * Check if a given request has access to manage woocommerce.
 	 *
+	 * @deprecated 7.8.0 snooze task is deprecated.
+	 *
 	 * @param  WP_REST_Request $request Full details about the request.
 	 * @return WP_Error|boolean
 	 */
 	public function snooze_task_permissions_check( $request ) {
+		wc_deprecated_function( __CLASS__ . '::' . __FUNCTION__, '7.8.0' );
+
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return new \WP_Error( 'woocommerce_rest_cannot_create', __( 'Sorry, you are not allowed to snooze onboarding tasks.', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
 		}
@@ -340,36 +345,11 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public static function import_sample_products() {
-		if (
-			( Features::is_enabled( 'experimental-import-products-task' ) || Features::is_enabled( 'experimental-products-task' ) )
-			&& static::is_experiment_product_task()
-		) {
-
-			$sample_csv_file = Features::is_enabled( 'experimental-fashion-sample-products' ) ? WC_ABSPATH . 'sample-data/experimental_fashion_sample_9_products.csv' :
-			WC_ABSPATH . 'sample-data/experimental_sample_9_products.csv';
-		} else {
-			$sample_csv_file = WC_ABSPATH . 'sample-data/sample_products.csv';
-		}
+		$sample_csv_file = Features::is_enabled( 'experimental-fashion-sample-products' ) ? WC_ABSPATH . 'sample-data/experimental_fashion_sample_9_products.csv' :
+		WC_ABSPATH . 'sample-data/experimental_sample_9_products.csv';
 
 		$import = self::import_sample_products_from_csv( $sample_csv_file );
 		return rest_ensure_response( $import );
-	}
-
-	/**
-	 * Check if product task experiment is treatment.
-	 *
-	 * @return bool
-	 */
-	public static function is_experiment_product_task() {
-		$anon_id        = isset( $_COOKIE['tk_ai'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['tk_ai'] ) ) : '';
-		$allow_tracking = get_option( 'woocommerce_allow_tracking' ) === 'yes';
-		$abtest         = new \WooCommerce\Admin\Experimental_Abtest(
-			$anon_id,
-			'woocommerce',
-			$allow_tracking
-		);
-		return $abtest->get_variation( 'woocommerce_products_task_layout_stacked_v3' ) === 'treatment' ||
-			$abtest->get_variation( 'woocommerce_products_task_layout_card_v3' ) === 'treatment';
 	}
 
 	/**
@@ -380,13 +360,13 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function create_product_from_template( $request ) {
-		$template_name = $request->get_param( 'template_name' );
+		$template_name = basename( $request->get_param( 'template_name' ) );
 		$template_path = __DIR__ . '/Templates/' . $template_name . '_product.csv';
 		$template_path = apply_filters( 'woocommerce_product_template_csv_file_path', $template_path, $template_name );
 
 		$import = self::import_sample_products_from_csv( $template_path );
 
-		if ( is_wp_error( $import ) || 0 === count( $import['imported'] ) ) {
+		if ( is_wp_error( $import ) || ! is_array( $import['imported'] ) || 0 === count( $import['imported'] ) ) {
 			return new \WP_Error(
 				'woocommerce_rest_product_creation_error',
 				/* translators: %s is template name */
@@ -395,7 +375,7 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 			);
 		}
 		$product = wc_get_product( $import['imported'][0] );
-		$product->set_status( 'auto-draft' );
+		$product->set_status( ProductStatus::AUTO_DRAFT );
 		$product->save();
 
 		return rest_ensure_response(
@@ -783,6 +763,7 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 
 		if ( ! $task && $id ) {
 			$task = new DeprecatedExtendedTask(
+				null,
 				array(
 					'id'             => $id,
 					'is_dismissable' => true,
@@ -816,6 +797,7 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 
 		if ( ! $task && $id ) {
 			$task = new DeprecatedExtendedTask(
+				null,
 				array(
 					'id'             => $id,
 					'is_dismissable' => true,
@@ -841,11 +823,15 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 	/**
 	 * Snooze an onboarding task.
 	 *
+	 * @deprecated 7.8.0 snooze task is deprecated.
+	 *
 	 * @param WP_REST_Request $request Request data.
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function snooze_task( $request ) {
+		wc_deprecated_function( __CLASS__ . '::' . __FUNCTION__, '7.8.0' );
+
 		$task_id      = $request->get_param( 'id' );
 		$task_list_id = $request->get_param( 'task_list_id' );
 		$duration     = $request->get_param( 'duration' );
@@ -854,6 +840,7 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 
 		if ( ! $task && $task_id ) {
 			$task = new DeprecatedExtendedTask(
+				null,
 				array(
 					'id'            => $task_id,
 					'is_snoozeable' => true,
@@ -878,15 +865,20 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 	/**
 	 * Undo snooze of a single task.
 	 *
+	 * @deprecated 7.8.0 undo snooze task is deprecated.
+	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Request|WP_Error
 	 */
 	public function undo_snooze_task( $request ) {
+		wc_deprecated_function( __CLASS__ . '::' . __FUNCTION__, '7.8.0' );
+
 		$id   = $request->get_param( 'id' );
 		$task = TaskLists::get_task( $id );
 
 		if ( ! $task && $id ) {
 			$task = new DeprecatedExtendedTask(
+				null,
 				array(
 					'id'            => $id,
 					'is_snoozeable' => true,
@@ -974,6 +966,7 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 
 		if ( ! $task && $id ) {
 			$task = new DeprecatedExtendedTask(
+				null,
 				array(
 					'id' => $id,
 				)

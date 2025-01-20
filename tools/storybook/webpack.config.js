@@ -3,11 +3,12 @@
  */
 const path = require( 'path' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
+const webpack = require( 'webpack' );
 
 /**
  * External dependencies
  */
-const wcAdminWebpackConfig = require( '../../plugins/woocommerce-admin/webpack.config.js' );
+const wcAdminWebpackConfig = require( '../../plugins/woocommerce/client/admin/webpack.config.js' );
 
 const wcAdminPackages = [
 	'components',
@@ -19,6 +20,7 @@ const wcAdminPackages = [
 	'data',
 	'tracks',
 	'experimental',
+	'onboarding',
 ];
 
 module.exports = ( storybookConfig ) => {
@@ -30,9 +32,8 @@ module.exports = ( storybookConfig ) => {
 	storybookConfig.resolve.alias = wcAdminWebpackConfig.resolve.alias;
 
 	wcAdminPackages.forEach( ( name ) => {
-		storybookConfig.resolve.alias[
-			`@woocommerce/${ name }`
-		] = path.resolve( __dirname, `../../packages/js/${ name }/src` );
+		storybookConfig.resolve.alias[ `@woocommerce/${ name }` ] =
+			path.resolve( __dirname, `../../packages/js/${ name }/src` );
 	} );
 
 	storybookConfig.resolve.alias[ '@woocommerce/settings' ] = path.resolve(
@@ -40,8 +41,22 @@ module.exports = ( storybookConfig ) => {
 		'./setting.mock.js'
 	);
 
+	// We need to use react 18 for the storybook since some dependencies are not compatible with react 17
+	// Once we upgrade react to 18 in repo, we can remove this alias
+	storybookConfig.resolve.alias.react = path.resolve(
+		__dirname,
+		'./node_modules/react'
+	);
+	storybookConfig.resolve.alias[ 'react-dom' ] = path.resolve(
+		__dirname,
+		'./node_modules/react-dom'
+	);
+	storybookConfig.resolve.alias[ '@storybook/react-dom-shim' ] =
+		'@storybook/react-dom-shim/dist/react-18';
+
 	storybookConfig.resolve.modules = [
-		path.join( __dirname, '../../plugins/woocommerce-admin/client' ),
+		path.join( __dirname, '../../plugins/woocommerce/client/admin/client' ),
+		path.join( __dirname, '../../packages/js/product-editor/src' ),
 		'node_modules',
 	];
 
@@ -69,9 +84,30 @@ module.exports = ( storybookConfig ) => {
 				{
 					from: path.resolve(
 						__dirname,
+						`../../packages/js/onboarding/build-style/*.css`
+					),
+					to: `./onboarding-css/[name][ext]`,
+				},
+				{
+					from: path.resolve(
+						__dirname,
+						`../../packages/js/product-editor/build-style/*.css`
+					),
+					to: `./product-editor-css/[name][ext]`,
+				},
+				{
+					from: path.resolve(
+						__dirname,
 						`../../packages/js/experimental/build-style/*.css`
 					),
 					to: `./experimental-css/[name][ext]`,
+				},
+				{
+					from: path.resolve(
+						__dirname,
+						`../../plugins/woocommerce/client/admin/build/app/*.css`
+					),
+					to: `./app-css/[name][ext]`,
 				},
 			],
 		} )

@@ -1,44 +1,47 @@
 #!/usr/bin/env bash
 
-wp-env run tests-cli "wp theme install twentynineteen --activate"
+echo -e 'Activate default theme \n'
+wp-env run tests-cli wp theme activate twentytwentythree
 
-wp-env run tests-cli "wp plugin install https://github.com/WP-API/Basic-Auth/archive/master.zip --activate"
+echo -e 'Install twentytwenty, twentytwentytwo and storefront themes \n'
+wp-env run tests-cli wp theme install twentytwenty
+wp-env run tests-cli wp theme install twentytwentytwo
+wp-env run tests-cli wp theme install storefront
 
-wp-env run tests-cli "wp plugin install wp-mail-logging --activate"
+echo -e 'Update URL structure \n'
+wp-env run tests-cli wp rewrite structure '/%postname%/' --hard
 
-wp-env run tests-cli "wp plugin install https://github.com/woocommerce/woocommerce-reset/archive/refs/heads/trunk.zip --activate"
+echo -e 'Activate Filter Setter utility plugin \n'
+wp-env run tests-cli wp plugin activate filter-setter
 
-wp-env run tests-cli "wp rewrite structure /%postname%/"
+# This plugin allows you to process queued scheduled actions immediately.
+# It's used in the analytics e2e tests so that order numbers are shown in Analytics.
+echo -e 'Activate Process Waiting Actions utility plugin \n'
+wp-env run tests-cli wp plugin activate process-waiting-actions
 
-wp-env run tests-cli "wp user create customer customer@woocommercecoree2etestsuite.com \
+echo -e 'Activate Test Helper APIs utility plugin \n'
+wp-env run tests-cli wp plugin activate test-helper-apis
+
+echo -e 'Add Customer user \n'
+wp-env run tests-cli wp user create customer customer@woocommercecoree2etestsuite.com \
 	--user_pass=password \
-	--role=subscriber \
+	--role=customer \
 	--first_name='Jane' \
 	--last_name='Smith' \
-	--path=/var/www/html \
 	--user_registered='2022-01-01 12:23:45'
-"
 
 echo -e 'Update Blog Name \n'
-wp-env run tests-cli 'wp option update blogname "WooCommerce Core E2E Test Suite"'
+wp-env run tests-cli wp option update blogname 'WooCommerce Core E2E Test Suite'
 
-# Enable additional WooCommerce features based on command options
-while :; do
-	case $1 in
-		-c|--cot)	# Enable the COT feature
-			echo 'Enable the COT feature'
-			wp-env run tests-cli "wp plugin install https://gist.github.com/vedanshujain/564afec8f5e9235a1257994ed39b1449/archive/9d5f174ebf8eec8e0ce5417d00728524c7f3b6b3.zip --activate"
-			;;
-		--)			# End of all options
-			shift
-			break
-			;;
-		-?*)
-			echo "WARN: Unknown option (ignored):" $1 >&2
-			;;
-		*)			# No more options, so break out of the loop
-			break
-	esac
+echo -e 'Preparing Test Files \n'
+wp-env run tests-cli sudo cp /var/www/html/wp-content/plugins/woocommerce/tests/legacy/unit-tests/importer/sample.csv /var/www/sample.csv
 
-	shift
-done
+ENABLE_TRACKING="${ENABLE_TRACKING:-0}"
+
+if [ $ENABLE_TRACKING == 1 ]; then
+	echo -e 'Enable tracking\n'
+	wp-env run tests-cli wp option update woocommerce_allow_tracking 'yes'
+fi
+
+echo -e 'Upload test images \n'
+wp-env run tests-cli wp media import './test-data/images/image-01.png' './test-data/images/image-02.png' './test-data/images/image-03.png'

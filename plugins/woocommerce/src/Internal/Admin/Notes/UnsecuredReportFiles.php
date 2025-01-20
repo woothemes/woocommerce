@@ -9,7 +9,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Notes;
 
 defined( 'ABSPATH' ) || exit;
 
-use \Automattic\WooCommerce\Admin\Notes\Note;
+use Automattic\WooCommerce\Admin\Notes\Note;
 
 if ( ! class_exists( Note::class ) ) {
 	class_alias( WC_Admin_Note::class, Note::class );
@@ -48,7 +48,7 @@ class UnsecuredReportFiles {
 		$note->add_action(
 			'learn-more',
 			__( 'Learn more', 'woocommerce' ),
-			'https://developer.woocommerce.com/?p=10410',
+			'https://developer.woocommerce.com/2021/09/22/important-security-patch-released-in-woocommerce/',
 			Note::E_WC_ADMIN_NOTE_UNACTIONED,
 			true
 		);

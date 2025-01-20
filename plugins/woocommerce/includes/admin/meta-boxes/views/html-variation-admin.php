@@ -9,13 +9,15 @@
  * @var array $variation_data array of variation data @deprecated 4.4.0.
  */
 
+use Automattic\WooCommerce\Utilities\I18nUtil;
+
 defined( 'ABSPATH' ) || exit;
 
 ?>
 <div class="woocommerce_variation wc-metabox closed">
 	<h3>
+		<a href="javascript:void(0)" class="edit_variation edit"><?php esc_html_e( 'Edit', 'woocommerce' ); ?></a>
 		<a href="#" class="remove_variation delete" rel="<?php echo esc_attr( $variation_id ); ?>"><?php esc_html_e( 'Remove', 'woocommerce' ); ?></a>
-		<div class="handlediv" aria-label="<?php esc_attr_e( 'Click to toggle', 'woocommerce' ); ?>"></div>
 		<div class="tips sort" data-tip="<?php esc_attr_e( 'Drag and drop, or click to set admin variation order', 'woocommerce' ); ?>"></div>
 		<strong>#<?php echo esc_html( $variation_id ); ?> </strong>
 		<?php
@@ -36,11 +38,15 @@ defined( 'ABSPATH' ) || exit;
 				</option>
 				<?php if ( $attribute->is_taxonomy() ) : ?>
 					<?php foreach ( $attribute->get_terms() as $option ) : ?>
+						<?php /* phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment */ ?>
 						<option <?php selected( $selected_value, $option->slug ); ?> value="<?php echo esc_attr( $option->slug ); ?>"><?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $option->name, $option, $attribute->get_name(), $product_object ) ); ?></option>
+						<?php /* phpcs:enable */ ?>
 					<?php endforeach; ?>
 				<?php else : ?>
 					<?php foreach ( $attribute->get_options() as $option ) : ?>
+						<?php /* phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment */ ?>
 						<option <?php selected( $selected_value, $option ); ?> value="<?php echo esc_attr( $option ); ?>"><?php echo esc_html( apply_filters( 'woocommerce_variation_option_name', $option, null, $attribute->get_name(), $product_object ) ); ?></option>
+						<?php /* phpcs:enable */ ?>
 					<?php endforeach; ?>
 				<?php endif; ?>
 			</select>
@@ -64,27 +70,44 @@ defined( 'ABSPATH' ) || exit;
 	</h3>
 	<div class="woocommerce_variable_attributes wc-metabox-content" style="display: none;">
 		<div class="data">
-			<p class="form-row form-row-first upload_image">
-				<a href="#" class="upload_image_button tips <?php echo $variation_object->get_image_id( 'edit' ) ? 'remove' : ''; ?>" data-tip="<?php echo $variation_object->get_image_id( 'edit' ) ? esc_attr__( 'Remove this image', 'woocommerce' ) : esc_attr__( 'Upload an image', 'woocommerce' ); ?>" rel="<?php echo esc_attr( $variation_id ); ?>">
-					<img src="<?php echo $variation_object->get_image_id( 'edit' ) ? esc_url( wp_get_attachment_thumb_url( $variation_object->get_image_id( 'edit' ) ) ) : esc_url( wc_placeholder_img_src() ); ?>" /><input type="hidden" name="upload_image_id[<?php echo esc_attr( $loop ); ?>]" class="upload_image_id" value="<?php echo esc_attr( $variation_object->get_image_id( 'edit' ) ); ?>" />
-				</a>
-			</p>
-			<?php
-			if ( wc_product_sku_enabled() ) {
+			<div class="form-flex-box">
+				<p class="form-row upload_image">
+					<a href="#" class="upload_image_button tips <?php echo $variation_object->get_image_id( 'edit' ) ? 'remove' : ''; ?>" data-tip="<?php echo $variation_object->get_image_id( 'edit' ) ? esc_attr__( 'Remove this image', 'woocommerce' ) : esc_attr__( 'Upload an image', 'woocommerce' ); ?>" rel="<?php echo esc_attr( $variation_id ); ?>">
+						<img src="<?php echo $variation_object->get_image_id( 'edit' ) ? esc_url( wp_get_attachment_thumb_url( $variation_object->get_image_id( 'edit' ) ) ) : esc_url( wc_placeholder_img_src() ); ?>" /><input type="hidden" name="upload_image_id[<?php echo esc_attr( $loop ); ?>]" class="upload_image_id" value="<?php echo esc_attr( $variation_object->get_image_id( 'edit' ) ); ?>" />
+					</a>
+				</p>
+				<div class="form-row form-row-last">
+				<?php
+				if ( wc_product_sku_enabled() ) {
+					woocommerce_wp_text_input(
+						array(
+							'id'            => "variable_sku{$loop}",
+							'name'          => "variable_sku[{$loop}]",
+							'value'         => $variation_object->get_sku( 'edit' ),
+							'placeholder'   => $variation_object->get_sku(),
+							'label'         => '<abbr title="' . esc_attr__( 'Stock Keeping Unit', 'woocommerce' ) . '">' . esc_html__( 'SKU', 'woocommerce' ) . '</abbr>',
+							'desc_tip'      => true,
+							'description'   => __( 'SKU refers to a Stock-keeping unit, a unique identifier for each distinct product and service that can be purchased.', 'woocommerce' ),
+							'wrapper_class' => 'form-row',
+						)
+					);
+				}
 				woocommerce_wp_text_input(
 					array(
-						'id'            => "variable_sku{$loop}",
-						'name'          => "variable_sku[{$loop}]",
-						'value'         => $variation_object->get_sku( 'edit' ),
-						'placeholder'   => $variation_object->get_sku(),
-						'label'         => '<abbr title="' . esc_attr__( 'Stock Keeping Unit', 'woocommerce' ) . '">' . esc_html__( 'SKU', 'woocommerce' ) . '</abbr>',
+						'id'            => "variable_global_unique_id{$loop}",
+						'name'          => "variable_global_unique_id[{$loop}]",
+						'value'         => $variation_object->get_global_unique_id( 'edit' ),
+						'placeholder'   => $variation_object->get_global_unique_id(),
+						// translators: %1$s GTIN %2$s UPC %3$s EAN %4$s ISBN.
+						'label'         => sprintf( __( '%1$s, %2$s, %3$s, or %4$s', 'woocommerce' ), '<abbr title="' . esc_attr__( 'Global Trade Item Number', 'woocommerce' ) . '">' . esc_html__( 'GTIN', 'woocommerce' ) . '</abbr>', '<abbr title="' . esc_attr__( 'Universal Product Code', 'woocommerce' ) . '">' . esc_html__( 'UPC', 'woocommerce' ) . '</abbr>', '<abbr title="' . esc_attr__( 'European Article Number', 'woocommerce' ) . '">' . esc_html__( 'EAN', 'woocommerce' ) . '</abbr>', '<abbr title="' . esc_attr__( 'International Standard Book Number', 'woocommerce' ) . '">' . esc_html__( 'ISBN', 'woocommerce' ) . '</abbr>' ),
 						'desc_tip'      => true,
-						'description'   => __( 'SKU refers to a Stock-keeping unit, a unique identifier for each distinct product and service that can be purchased.', 'woocommerce' ),
-						'wrapper_class' => 'form-row form-row-last',
+						'description'   => __( 'Enter a barcode or any other identifier unique to this product. It can help you list this product on other channels or marketplaces.', 'woocommerce' ),
+						'wrapper_class' => 'form-row',
 					)
 				);
-			}
-			?>
+				?>
+				</div>
+			</div>
 			<p class="form-row form-row-full options">
 				<label>
 					<?php esc_html_e( 'Enabled', 'woocommerce' ); ?>
@@ -106,7 +129,9 @@ defined( 'ABSPATH' ) || exit;
 					</label>
 				<?php endif; ?>
 
+				<?php /* phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment */ ?>
 				<?php do_action( 'woocommerce_variation_options', $loop, $variation_data, $variation ); ?>
+				<?php /* phpcs:enable */ ?>
 			</p>
 
 			<div class="variable_pricing">
@@ -152,6 +177,7 @@ defined( 'ABSPATH' ) || exit;
 				$sale_price_dates_from = $sale_price_dates_from_timestamp ? date_i18n( 'Y-m-d', $sale_price_dates_from_timestamp ) : '';
 				$sale_price_dates_to   = $sale_price_dates_to_timestamp ? date_i18n( 'Y-m-d', $sale_price_dates_to_timestamp ) : '';
 
+				/* phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment */
 				echo '<div class="form-field sale_price_dates_fields hidden">
 					<p class="form-row form-row-first">
 						<label>' . esc_html__( 'Sale start date', 'woocommerce' ) . '</label>
@@ -162,6 +188,7 @@ defined( 'ABSPATH' ) || exit;
 						<input type="text" class="sale_price_dates_to" name="variable_sale_price_dates_to[' . esc_attr( $loop ) . ']" value="' . esc_attr( $sale_price_dates_to ) . '" placeholder="' . esc_attr_x( 'To&hellip;', 'placeholder', 'woocommerce' ) . '  YYYY-MM-DD" maxlength="10" pattern="' . esc_attr( apply_filters( 'woocommerce_date_input_html_pattern', '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])' ) ) . '" />
 					</p>
 				</div>';
+				/* phpcs: enable */
 
 				/**
 				 * Variation options pricing action.
@@ -236,7 +263,7 @@ defined( 'ABSPATH' ) || exit;
 							'custom_attributes' => array(
 								'step' => 'any',
 							),
-							'wrapper_class' => 'form-row',
+							'wrapper_class'     => 'form-row',
 						)
 					);
 
@@ -271,9 +298,9 @@ defined( 'ABSPATH' ) || exit;
 
 				if ( wc_product_weight_enabled() ) {
 					$label = sprintf(
-						/* translators: %s: weight unit */
+						/* translators: %s: Weight unit */
 						__( 'Weight (%s)', 'woocommerce' ),
-						esc_html( get_option( 'woocommerce_weight_unit' ) )
+						I18nUtil::get_weight_unit_label( get_option( 'woocommerce_weight_unit', 'kg' ) )
 					);
 
 					woocommerce_wp_text_input(
@@ -302,9 +329,9 @@ defined( 'ABSPATH' ) || exit;
 						<label for="product_length">
 							<?php
 							printf(
-								/* translators: %s: dimension unit */
+								/* translators: %s dimension unit */
 								esc_html__( 'Dimensions (L&times;W&times;H) (%s)', 'woocommerce' ),
-								esc_html( get_option( 'woocommerce_dimension_unit' ) )
+								esc_html( I18nUtil::get_dimensions_unit_label( get_option( 'woocommerce_dimension_unit' ) ) )
 							);
 							?>
 						</label>
@@ -409,7 +436,7 @@ defined( 'ABSPATH' ) || exit;
 
 							if ( $downloadable_files ) {
 								foreach ( $downloadable_files as $key => $file ) {
-									$disabled_download = isset( $file['enabled'] ) && false === $file['enabled'];
+									$disabled_download         = isset( $file['enabled'] ) && false === $file['enabled'];
 									$disabled_downloads_count += (int) $disabled_download;
 									include __DIR__ . '/html-product-variation-download.php';
 								}
@@ -421,8 +448,8 @@ defined( 'ABSPATH' ) || exit;
 								<th colspan="1">
 									<a href="#" class="button insert" data-row="
 									<?php
-									$key  = '';
-									$file = array(
+									$key               = '';
+									$file              = array(
 										'file' => '',
 										'name' => '',
 									);
@@ -501,7 +528,9 @@ defined( 'ABSPATH' ) || exit;
 				do_action( 'woocommerce_variation_options_download', $loop, $variation_data, $variation );
 				?>
 			</div>
+			<?php /* phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment */ ?>
 			<?php do_action( 'woocommerce_product_after_variable_attributes', $loop, $variation_data, $variation ); ?>
+			<?php /* phpcs:enable */ ?>
 		</div>
 	</div>
 </div>

@@ -9,22 +9,19 @@ namespace Automattic\WooCommerce\Admin\API\Reports\Stock;
 
 defined( 'ABSPATH' ) || exit;
 
-use \Automattic\WooCommerce\Admin\API\Reports\ExportableInterface;
+use Automattic\WooCommerce\Admin\API\Reports\GenericController;
+use Automattic\WooCommerce\Admin\API\Reports\ExportableInterface;
+use Automattic\WooCommerce\Enums\ProductType;
+use WP_REST_Request;
+use WP_REST_Response;
 
 /**
  * REST API Reports stock controller class.
  *
  * @internal
- * @extends WC_REST_Reports_Controller
+ * @extends GenericController
  */
-class Controller extends \WC_REST_Reports_Controller implements ExportableInterface {
-
-	/**
-	 * Endpoint namespace.
-	 *
-	 * @var string
-	 */
-	protected $namespace = 'wc-analytics';
+class Controller extends GenericController implements ExportableInterface {
 
 	/**
 	 * Route base.
@@ -97,7 +94,7 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 		$result = $query->query( $query_args );
 
 		$total_posts = $query->found_posts;
-		if ( $total_posts < 1 ) {
+		if ( $total_posts < 1 && isset( $query_args['paged'] ) && absint( $query_args['paged'] ) > 1 ) {
 			// Out-of-bounds, run the query again without LIMIT for total count.
 			unset( $query_args['paged'] );
 			$count_query = new \WP_Query();
@@ -136,30 +133,13 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 			$objects[] = $this->prepare_response_for_collection( $data );
 		}
 
-		$page      = (int) $query_args['paged'];
-		$max_pages = $query_results['pages'];
-
-		$response = rest_ensure_response( $objects );
-		$response->header( 'X-WP-Total', $query_results['total'] );
-		$response->header( 'X-WP-TotalPages', (int) $max_pages );
-
-		$base = add_query_arg( $request->get_query_params(), rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ) );
-
-		if ( $page > 1 ) {
-			$prev_page = $page - 1;
-			if ( $prev_page > $max_pages ) {
-				$prev_page = $max_pages;
-			}
-			$prev_link = add_query_arg( 'page', $prev_page, $base );
-			$response->link_header( 'prev', $prev_link );
-		}
-		if ( $max_pages > $page ) {
-			$next_page = $page + 1;
-			$next_link = add_query_arg( 'page', $next_page, $base );
-			$response->link_header( 'next', $next_link );
-		}
-
-		return $response;
+		return $this->add_pagination_headers(
+			$request,
+			$objects,
+			(int) $query_results['total'],
+			(int) $query_args['paged'],
+			(int) $query_results['pages']
+		);
 	}
 
 	/**
@@ -297,9 +277,9 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 	}
 
 	/**
-	 * Prepare a report object for serialization.
+	 * Prepare a report data item for serialization.
 	 *
-	 * @param  WC_Product      $product  Report data.
+	 * @param  WC_Product      $product Report data item as returned from Data Store.
 	 * @param  WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
@@ -319,12 +299,7 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 			$data['low_stock_amount'] = absint( max( get_option( 'woocommerce_notify_low_stock_amount' ), 1 ) );
 		}
 
-		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
-		$data    = $this->add_additional_fields_to_object( $data, $request );
-		$data    = $this->filter_response_by_context( $data, $context );
-
-		// Wrap the data in a response object.
-		$response = rest_ensure_response( $data );
+		$response = parent::prepare_item_for_response( $data, $request );
 		$response->add_links( $this->prepare_links( $product ) );
 
 		/**
@@ -346,7 +321,7 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 	 * @return array
 	 */
 	protected function prepare_links( $product ) {
-		if ( $product->is_type( 'variation' ) ) {
+		if ( $product->is_type( ProductType::VARIATION ) ) {
 			$links = array(
 				'product' => array(
 					'href' => rest_url( sprintf( '/%s/products/%d/variations/%d', $this->namespace, $product->get_parent_id(), $product->get_id() ) ),
@@ -441,26 +416,9 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 	 * @return array
 	 */
 	public function get_collection_params() {
-		$params                   = array();
-		$params['context']        = $this->get_context_param( array( 'default' => 'view' ) );
-		$params['page']           = array(
-			'description'       => __( 'Current page of the collection.', 'woocommerce' ),
-			'type'              => 'integer',
-			'default'           => 1,
-			'sanitize_callback' => 'absint',
-			'validate_callback' => 'rest_validate_request_arg',
-			'minimum'           => 1,
-		);
-		$params['per_page']       = array(
-			'description'       => __( 'Maximum number of items to be returned in result set.', 'woocommerce' ),
-			'type'              => 'integer',
-			'default'           => 10,
-			'minimum'           => 1,
-			'maximum'           => 100,
-			'sanitize_callback' => 'absint',
-			'validate_callback' => 'rest_validate_request_arg',
-		);
-		$params['exclude']        = array(
+		$params = parent::get_collection_params();
+		unset( $params['after'], $params['before'], $params['force_cache_refresh'] );
+		$params['exclude']            = array(
 			'description'       => __( 'Ensure result set excludes specific IDs.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
@@ -469,7 +427,7 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 			'default'           => array(),
 			'sanitize_callback' => 'wp_parse_id_list',
 		);
-		$params['include']        = array(
+		$params['include']            = array(
 			'description'       => __( 'Limit result set to specific ids.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
@@ -478,24 +436,16 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 			'default'           => array(),
 			'sanitize_callback' => 'wp_parse_id_list',
 		);
-		$params['offset']         = array(
+		$params['offset']             = array(
 			'description'       => __( 'Offset the result set by a specific number of items.', 'woocommerce' ),
 			'type'              => 'integer',
 			'sanitize_callback' => 'absint',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
-		$params['order']          = array(
-			'description'       => __( 'Order sort attribute ascending or descending.', 'woocommerce' ),
-			'type'              => 'string',
-			'default'           => 'asc',
-			'enum'              => array( 'asc', 'desc' ),
-			'validate_callback' => 'rest_validate_request_arg',
-		);
-		$params['orderby']        = array(
-			'description'       => __( 'Sort collection by object attribute.', 'woocommerce' ),
-			'type'              => 'string',
-			'default'           => 'stock_status',
-			'enum'              => array(
+		$params['order']['default']   = 'asc';
+		$params['orderby']['default'] = 'stock_status';
+		$params['orderby']['enum']    = $this->apply_custom_orderby_filters(
+			array(
 				'stock_status',
 				'stock_quantity',
 				'date',
@@ -503,10 +453,9 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 				'include',
 				'title',
 				'sku',
-			),
-			'validate_callback' => 'rest_validate_request_arg',
+			)
 		);
-		$params['parent']         = array(
+		$params['parent']             = array(
 			'description'       => __( 'Limit result set to those of particular parent IDs.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
@@ -515,7 +464,7 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 			'sanitize_callback' => 'wp_parse_id_list',
 			'default'           => array(),
 		);
-		$params['parent_exclude'] = array(
+		$params['parent_exclude']     = array(
 			'description'       => __( 'Limit result set to all items except those of a particular parent ID.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
@@ -524,7 +473,7 @@ class Controller extends \WC_REST_Reports_Controller implements ExportableInterf
 			'sanitize_callback' => 'wp_parse_id_list',
 			'default'           => array(),
 		);
-		$params['type']           = array(
+		$params['type']               = array(
 			'description' => __( 'Limit result set to items assigned a stock report type.', 'woocommerce' ),
 			'type'        => 'string',
 			'default'     => 'all',

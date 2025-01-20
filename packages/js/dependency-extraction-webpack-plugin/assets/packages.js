@@ -1,5 +1,7 @@
 module.exports = [
 	// wc-admin packages
+	'@woocommerce/admin-layout',
+	'@woocommerce/block-templates',
 	'@woocommerce/components',
 	'@woocommerce/csv-export',
 	'@woocommerce/currency',
@@ -14,10 +16,15 @@ module.exports = [
 	'@woocommerce/navigation',
 	'@woocommerce/notices',
 	'@woocommerce/number',
+	'@woocommerce/product-editor',
+	'@woocommerce/settings-editor',
 	'@woocommerce/tracks',
+	'@woocommerce/remote-logging',
 	// wc-blocks packages
 	'@woocommerce/blocks-checkout',
+	'@woocommerce/blocks-components',
 	'@woocommerce/block-data',
 	'@woocommerce/blocks-registry',
+	'@woocommerce/price-format',
 	'@woocommerce/settings',
 ];

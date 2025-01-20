@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { format as formatDate } from '@wordpress/date';
 import { createElement, Fragment } from '@wordpress/element';
 import moment from 'moment';
 
@@ -102,7 +103,7 @@ describe( 'DateTimePickerControl', () => {
 
 		const input = container.querySelector( 'input' );
 		expect( input?.value ).toBe(
-			dateTime.format( default24HourDateTimeFormat )
+			formatDate( default24HourDateTimeFormat, dateTime )
 		);
 	} );
 
@@ -119,10 +120,10 @@ describe( 'DateTimePickerControl', () => {
 		const input = container.querySelector( 'input' );
 
 		expect( input?.value ).toBe(
-			moment
-				.utc( ambiguousISODateTimeString )
-				.local()
-				.format( default24HourDateTimeFormat )
+			formatDate(
+				default24HourDateTimeFormat,
+				moment.utc( ambiguousISODateTimeString ).local()
+			)
 		);
 	} );
 
@@ -139,10 +140,10 @@ describe( 'DateTimePickerControl', () => {
 		const input = container.querySelector( 'input' );
 
 		expect( input?.value ).toBe(
-			moment
-				.utc( unambiguousISODateTimeString )
-				.local()
-				.format( default24HourDateTimeFormat )
+			formatDate(
+				default24HourDateTimeFormat,
+				moment.utc( unambiguousISODateTimeString ).local()
+			)
 		);
 	} );
 
@@ -158,7 +159,7 @@ describe( 'DateTimePickerControl', () => {
 
 		const input = container.querySelector( 'input' );
 		expect( input?.value ).toBe(
-			dateTime.format( default12HourDateTimeFormat )
+			formatDate( default12HourDateTimeFormat, dateTime )
 		);
 	} );
 
@@ -174,7 +175,7 @@ describe( 'DateTimePickerControl', () => {
 		);
 
 		const input = container.querySelector( 'input' );
-		expect( input?.value ).toBe( dateTime.format( dateTimeFormat ) );
+		expect( input?.value ).toBe( formatDate( dateTimeFormat, dateTime ) );
 	} );
 
 	it( 'should update the input when currentDate is changed', () => {
@@ -197,7 +198,7 @@ describe( 'DateTimePickerControl', () => {
 
 		const input = container.querySelector( 'input' );
 		expect( input?.value ).toBe(
-			updatedDateTime.format( default24HourDateTimeFormat )
+			formatDate( default24HourDateTimeFormat, updatedDateTime )
 		);
 	} );
 
@@ -209,9 +210,7 @@ describe( 'DateTimePickerControl', () => {
 		userEvent.click( input! );
 
 		await waitFor( () =>
-			expect(
-				container.querySelector( '.components-dropdown__content' )
-			).toBeInTheDocument()
+			expect( screen.getByLabelText( 'Calendar' ) ).toBeInTheDocument()
 		);
 	} );
 
@@ -224,7 +223,7 @@ describe( 'DateTimePickerControl', () => {
 
 		await waitFor( () =>
 			expect(
-				container.querySelector( '.components-dropdown__content' )
+				screen.queryByLabelText( 'Calendar' )
 			).not.toBeInTheDocument()
 		);
 	} );
@@ -236,11 +235,10 @@ describe( 'DateTimePickerControl', () => {
 
 		userEvent.click( input! );
 
-		await waitFor( () =>
-			expect(
-				container.querySelector( '.components-datetime' )
-			).toBeInTheDocument()
-		);
+		await waitFor( () => {
+			expect( screen.getByText( 'Time' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Date' ) ).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'should set the picker to 12 hour mode', async () => {
@@ -251,12 +249,11 @@ describe( 'DateTimePickerControl', () => {
 		const input = container.querySelector( 'input' );
 
 		userEvent.click( input! );
-
 		await waitFor( () =>
 			expect(
-				container.querySelector(
-					'.components-datetime__time-pm-button'
-				)
+				screen.getByLabelText( 'Hours', {
+					selector: 'input[inputmode="numeric"][max="12"][min="1"]',
+				} )
 			).toBeInTheDocument()
 		);
 	} );
@@ -271,12 +268,8 @@ describe( 'DateTimePickerControl', () => {
 		userEvent.click( input! );
 
 		await waitFor( () => {
-			expect(
-				container.querySelector( '.components-datetime' )
-			).not.toBeInTheDocument();
-			expect(
-				container.querySelector( '.components-datetime__date' )
-			).toBeInTheDocument();
+			expect( screen.queryByText( 'Time' ) ).not.toBeInTheDocument();
+			expect( screen.getByLabelText( 'Calendar' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -305,14 +298,130 @@ describe( 'DateTimePickerControl', () => {
 	//       TypeError: Cannot read properties of null (reading 'createEvent')
 	it( 'should call onChange when the input is changed', async () => {
 		const originalDateTime = moment( '2022-09-15 02:30:40' );
-		const dateTimeFormat = 'HH:mm, MM-DD-YYYY';
-		const newDateTimeInputString = '02:04, 06-08-2010';
-		const newDateTime = moment( newDateTimeInputString, dateTimeFormat );
+		const dateTimeFormat = 'm-d-Y, H:i';
+		const newDateTimeInputString = '06-08-2010, 02:04';
+		const newDateTime = moment( newDateTimeInputString );
 		const onChangeHandler = jest.fn();
 
 		const { container } = render(
 			<DateTimePickerControl
 				dateTimeFormat={ dateTimeFormat }
+				currentDate={ originalDateTime.toISOString() }
+				onChange={ onChangeHandler }
+				onChangeDebounceWait={ 10 }
+			/>
+		);
+
+		const input = container.querySelector( 'input' );
+		userEvent.type(
+			input!,
+			'{selectall}{backspace}' + newDateTimeInputString
+		);
+
+		await waitFor(
+			() =>
+				expect( onChangeHandler ).toHaveBeenLastCalledWith(
+					newDateTime.toISOString(),
+					true
+				),
+			{ timeout: 100 }
+		);
+	}, 10000 );
+
+	// We need to bump up the timeout for this test because:
+	//     1. userEvent.type() is slow (see https://github.com/testing-library/user-event/issues/577)
+	//     2. moment.js is slow
+	// Otherwise, the following error can occur on slow machines (such as our CI), because Jest times out and starts
+	// tearing down the component while test microtasks are still being executed
+	// (see https://github.com/facebook/jest/issues/12670)
+	//       TypeError: Cannot read properties of null (reading 'createEvent')
+	it( 'should force time to the start of the day if date only', async () => {
+		const originalDateTime = moment( '09-15-2022' );
+		const newDateTimeInputString = '06-08-2010';
+		const newDateTime = moment( newDateTimeInputString ).startOf( 'day' );
+		const onChangeHandler = jest.fn();
+
+		const { container } = render(
+			<DateTimePickerControl
+				isDateOnlyPicker
+				timeForDateOnly={ 'start-of-day' }
+				currentDate={ originalDateTime.toISOString() }
+				onChange={ onChangeHandler }
+				onChangeDebounceWait={ 10 }
+			/>
+		);
+
+		const input = container.querySelector( 'input' );
+		userEvent.type(
+			input!,
+			'{selectall}{backspace}' + newDateTimeInputString
+		);
+
+		await waitFor(
+			() =>
+				expect( onChangeHandler ).toHaveBeenLastCalledWith(
+					newDateTime.toISOString(),
+					true
+				),
+			{ timeout: 100 }
+		);
+	}, 10000 );
+
+	// We need to bump up the timeout for this test because:
+	//     1. userEvent.type() is slow (see https://github.com/testing-library/user-event/issues/577)
+	//     2. moment.js is slow
+	// Otherwise, the following error can occur on slow machines (such as our CI), because Jest times out and starts
+	// tearing down the component while test microtasks are still being executed
+	// (see https://github.com/facebook/jest/issues/12670)
+	//       TypeError: Cannot read properties of null (reading 'createEvent')
+	it( 'should force time to the end of the day if date only', async () => {
+		const originalDateTime = moment( '09-15-2022' );
+		const newDateTimeInputString = '06-08-2010';
+		const newDateTime = moment( newDateTimeInputString ).endOf( 'day' );
+		const onChangeHandler = jest.fn();
+
+		const { container } = render(
+			<DateTimePickerControl
+				isDateOnlyPicker
+				timeForDateOnly={ 'end-of-day' }
+				currentDate={ originalDateTime.toISOString() }
+				onChange={ onChangeHandler }
+				onChangeDebounceWait={ 10 }
+			/>
+		);
+
+		const input = container.querySelector( 'input' );
+		userEvent.type(
+			input!,
+			'{selectall}{backspace}' + newDateTimeInputString
+		);
+
+		await waitFor(
+			() =>
+				expect( onChangeHandler ).toHaveBeenLastCalledWith(
+					newDateTime.toISOString(),
+					true
+				),
+			{ timeout: 100 }
+		);
+	}, 10000 );
+
+	// We need to bump up the timeout for this test because:
+	//     1. userEvent.type() is slow (see https://github.com/testing-library/user-event/issues/577)
+	//     2. moment.js is slow
+	// Otherwise, the following error can occur on slow machines (such as our CI), because Jest times out and starts
+	// tearing down the component while test microtasks are still being executed
+	// (see https://github.com/facebook/jest/issues/12670)
+	//       TypeError: Cannot read properties of null (reading 'createEvent')
+	it( 'should not force time to the start of the day if not date only', async () => {
+		const originalDateTime = moment( '09-15-2022' );
+		const newDateTimeInputString = '06-08-2010 7:00';
+		const newDateTime = moment( newDateTimeInputString );
+		const onChangeHandler = jest.fn();
+
+		const { container } = render(
+			<DateTimePickerControl
+				timeForDateOnly={ 'start-of-day' }
 				currentDate={ originalDateTime.toISOString() }
 				onChange={ onChangeHandler }
 				onChangeDebounceWait={ 10 }
@@ -377,17 +486,20 @@ describe( 'DateTimePickerControl', () => {
 	//       TypeError: Cannot read properties of null (reading 'createEvent')
 	it( 'should call the current onChange when the input is changed', async () => {
 		const originalDateTime = moment( '2022-09-15 02:30:40' );
-		const dateTimeFormat = 'HH:mm, MM-DD-YYYY';
-		const newDateTimeInputString = '02:04, 06-08-2010';
-		const newDateTime = moment( newDateTimeInputString, dateTimeFormat );
+		const dateTimeFormat = 'm-d-Y, H:i';
+		const newDateTimeInputString = '06-08-2010, 02:04';
+		const newDateTime = moment( newDateTimeInputString );
 		const originalOnChangeHandler = jest.fn();
 		const newOnChangeHandler = jest.fn();
 
 		let count = 0;
 
-		const Container: React.FC< { children?: React.ReactNode } > = ( {
-			children,
-		} ) => {
+		const Container: React.FC< {
+			children?: ( props: {
+				className: string;
+				onChange: () => void;
+			} ) => React.ReactNode;
+		} > = ( { children } ) => {
 			function getChildren() {
 				if ( typeof children === 'function' ) {
 					return children( {
@@ -542,4 +654,112 @@ describe( 'DateTimePickerControl', () => {
 
 		await waitFor( () => expect( onChangeHandler ).not.toHaveBeenCalled() );
 	} );
+
+	it( 'should not call onChange if currentDate is set to an equivalent UTC date without Zulu offset specifier', async () => {
+		const originalDateTime = '2023-01-01T00:00:00Z';
+		const equivalentDateTimeWithoutZulu = '2023-01-01T00:00:00';
+		const onChangeHandler = jest.fn();
+
+		const { rerender } = render(
+			<DateTimePickerControl
+				currentDate={ originalDateTime }
+				onChange={ onChangeHandler }
+			/>
+		);
+
+		// re-render the component; we do this to then test whether our onChange still gets called
+		rerender(
+			<DateTimePickerControl
+				currentDate={ equivalentDateTimeWithoutZulu }
+				onChange={ onChangeHandler }
+			/>
+		);
+
+		await waitFor( () => expect( onChangeHandler ).not.toHaveBeenCalled() );
+	} );
+
+	it( 'should not call onChange if currentDate is set to an equivalent UTC date without time', async () => {
+		const originalDateTime = '2023-01-01T00:00:00Z';
+		const equivalentDateTimeWithoutTime = '2023-01-01';
+		const onChangeHandler = jest.fn();
+
+		const { rerender } = render(
+			<DateTimePickerControl
+				currentDate={ originalDateTime }
+				onChange={ onChangeHandler }
+			/>
+		);
+
+		// re-render the component; we do this to then test whether our onChange still gets called
+		rerender(
+			<DateTimePickerControl
+				currentDate={ equivalentDateTimeWithoutTime }
+				onChange={ onChangeHandler }
+			/>
+		);
+
+		await waitFor( () => expect( onChangeHandler ).not.toHaveBeenCalled() );
+	} );
+
+	it( 'should not call onChange when the dateTimeFormat changes', async () => {
+		// we are specifically using a date with seconds in it, with a format
+		// without seconds in it; this helps us to determine if the currentDate
+		// is getting re-parsed from the input string (if it does this, it
+		// would result in a different date)
+		const originalDateTime = moment( '2022-11-15 02:30:40' );
+		const originalDateTimeFormat = 'm-d-Y, H:i';
+		const newDateTimeFormat = 'Y-m-d H:i';
+		const onChangeHandler = jest.fn();
+
+		const { rerender } = render(
+			<DateTimePickerControl
+				dateTimeFormat={ originalDateTimeFormat }
+				currentDate={ originalDateTime.toISOString() }
+				onChange={ onChangeHandler }
+			/>
+		);
+
+		// re-render the component; we do this to then test whether our onChange still gets called
+		rerender(
+			<DateTimePickerControl
+				dateTimeFormat={ newDateTimeFormat }
+				currentDate={ originalDateTime.toISOString() }
+				onChange={ onChangeHandler }
+			/>
+		);
+
+		await waitFor( () => expect( onChangeHandler ).not.toHaveBeenCalled() );
+	} );
+
+	// We need to bump up the timeout for this test because:
+	//     1. userEvent.type() is slow (see https://github.com/testing-library/user-event/issues/577)
+	//     2. moment.js is slow
+	// Otherwise, the following error can occur on slow machines (such as our CI), because Jest times out and starts
+	// tearing down the component while test microtasks are still being executed
+	// (see https://github.com/facebook/jest/issues/12670)
+	//       TypeError: Cannot read properties of null (reading 'createEvent')
+	it( 'should not call onChange when the input is changed to an equivalent date', async () => {
+		const originalDateTime = moment( '2022-09-15' );
+		const newDateTimeInputString = 'September 9, 2022';
+		const onChangeHandler = jest.fn();
+
+		const { container } = render(
+			<DateTimePickerControl
+				isDateOnlyPicker={ true }
+				currentDate={ originalDateTime.toISOString() }
+				onChange={ onChangeHandler }
+				onChangeDebounceWait={ 5000 }
+			/>
+		);
+
+		const input = container.querySelector( 'input' );
+		userEvent.type(
+			input!,
+			'{selectall}{backspace}' + newDateTimeInputString
+		);
+
+		await waitFor( () => expect( onChangeHandler ).not.toHaveBeenCalled(), {
+			timeout: 10000,
+		} );
+	}, 10000 );
 } );

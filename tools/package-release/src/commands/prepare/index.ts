@@ -2,15 +2,18 @@
  * External dependencies
  */
 import { CliUx, Command, Flags } from '@oclif/core';
-import { readFileSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 
 /**
  * Internal dependencies
  */
 import {
-	getAllPackges,
+	getAllPackages,
 	validatePackage,
 	getFilepathFromPackageName,
+	getPackageJson,
+	getComposerJson,
+	getPackageType,
 } from '../../validate';
 import {
 	getNextVersion,
@@ -49,6 +52,10 @@ export default class PackagePrepare extends Command {
 			default: false,
 			description: 'Perform prepare function on all packages.',
 		} ),
+		'initial-release': Flags.boolean( {
+			default: false,
+			description: "Create a package's first release to NPM",
+		} ),
 	};
 
 	/**
@@ -62,17 +69,23 @@ export default class PackagePrepare extends Command {
 		}
 
 		if ( flags.all ) {
-			this.preparePackages( getAllPackges() );
+			await this.preparePackages( getAllPackages() );
 			return;
 		}
 
 		const packages = args.packages.split( ',' );
 
+		if ( flags[ 'initial-release' ] && packages.length > 1 ) {
+			this.error(
+				'Please release only a single package when making an initial release'
+			);
+		}
+
 		packages.forEach( ( name: string ) =>
 			validatePackage( name, ( e: string ): void => this.error( e ) )
 		);
 
-		this.preparePackages( packages );
+		await this.preparePackages( packages, flags[ 'initial-release' ] );
 	}
 
 	/**
@@ -80,18 +93,34 @@ export default class PackagePrepare extends Command {
 	 *
 	 * @param {Array<string>} packages Packages to prepare.
 	 */
-	private preparePackages( packages: Array< string > ) {
-		packages.forEach( ( name ) => {
+	private async preparePackages(
+		packages: Array< string >,
+		initialRelease?: boolean
+	) {
+		packages.forEach( async ( name ) => {
 			CliUx.ux.action.start( `Preparing ${ name }` );
 
 			try {
 				if ( hasValidChangelogs( name ) ) {
 					validateChangelogEntries( name );
-					const nextVersion = getNextVersion( name );
-					writeChangelog( name );
+					let nextVersion = getNextVersion( name );
 					if ( nextVersion ) {
-						this.bumpPackageVersion( name, nextVersion );
+						writeChangelog( name );
+					} else {
+						if ( initialRelease ) {
+							// @todo: When the composer.json versioning is "wordpress" as is for plugins, this value needs to be 1.0
+							nextVersion = '1.0.0';
+						} else {
+							throw new Error(
+								`Error reading version number for ${ name }. Check that a Changelog file exists and has a version number. If making an initial release, pass the --initialRelease flag.`
+							);
+						}
+
+						writeChangelog( name, nextVersion );
 					}
+
+					this.bumpPackageVersion( name, nextVersion );
+
 					CliUx.ux.action.stop();
 				} else {
 					CliUx.ux.action.stop(
@@ -113,16 +142,28 @@ export default class PackagePrepare extends Command {
 	 * @param {string} version Next version.
 	 */
 	private bumpPackageVersion( name: string, version: string ) {
-		const filepath = getFilepathFromPackageName( name );
-		const packageJsonFilepath = `${ filepath }/package.json`;
 		try {
-			const packageJson = JSON.parse(
-				readFileSync( packageJsonFilepath, 'utf8' )
-			);
-			packageJson.version = version;
+			const filepath = getFilepathFromPackageName( name );
+			const packageType = getPackageType( name );
+			let jsonFilepath;
+			let json;
+
+			if ( packageType === 'js' ) {
+				jsonFilepath = `${ filepath }/package.json`;
+				json = getPackageJson( name );
+			} else if ( packageType === 'php' ) {
+				jsonFilepath = `${ filepath }/composer.json`;
+				json = getComposerJson( name );
+			} else {
+				this.error(
+					`Can't bump version for ${ name }. The package does not exist.`
+				);
+			}
+
+			json.version = version;
 			writeFileSync(
-				packageJsonFilepath,
-				JSON.stringify( packageJson, null, '\t' ) + '\n'
+				jsonFilepath,
+				JSON.stringify( json, null, '\t' ) + '\n'
 			);
 		} catch ( e ) {
 			this.error( `Can't bump version for ${ name }.` );

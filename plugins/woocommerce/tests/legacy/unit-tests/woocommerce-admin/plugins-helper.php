@@ -5,7 +5,7 @@
  * @package WooCommerce\Admin\Tests\PluginHelper
  */
 
-use \Automattic\WooCommerce\Admin\PluginsHelper;
+use Automattic\WooCommerce\Admin\PluginsHelper;
 
 /**
  * WC_Admin_Tests_Plugin_Helper Class
@@ -56,16 +56,39 @@ class WC_Admin_Tests_Plugins_Helper extends WP_UnitTestCase {
 		// Phpunit test environment active plugins option is empty.
 		$this->assertEquals( array(), $active_slugs, 'Should not be any active slugs.' );
 
-		// Get facebook plugin path.
+		// Get Akismet plugin path.
 		$akismet_path = PluginsHelper::get_plugin_path_from_slug( 'akismet' );
 
-		// Activate facebook plugin.
+		// Activate Akismet plugin.
 		activate_plugin( $akismet_path );
 
 		// Get active slugs.
 		$active_slugs = PluginsHelper::get_active_plugin_slugs();
 
+		$this->assertEquals( array( 'akismet' ), $active_slugs, 'Akismet should be listed as active.' );
+	}
+
+	/**
+	 * Test get_active_plugin_slugs()
+	 */
+	public function test_get_active_plugin_slugs_multisite() {
+		$this->skipWithoutMultisite();
+
+		// Get active slugs.
+		$active_slugs = PluginsHelper::get_active_plugin_slugs();
+
 		// Phpunit test environment active plugins option is empty.
+		$this->assertEquals( array(), $active_slugs, 'Should not be any active slugs.' );
+
+		// Get Akismet plugin path.
+		$akismet_path = PluginsHelper::get_plugin_path_from_slug( 'akismet' );
+
+		// Activate Akismet plugin.
+		activate_plugin( $akismet_path, '', true );
+
+		// Get active slugs.
+		$active_slugs = PluginsHelper::get_active_plugin_slugs();
+
 		$this->assertEquals( array( 'akismet' ), $active_slugs, 'Akismet should be listed as active.' );
 	}
 
@@ -136,5 +159,41 @@ class WC_Admin_Tests_Plugins_Helper extends WP_UnitTestCase {
 		// Test not installed plugin response.
 		$actual_data = PluginsHelper::get_plugin_data( 'my-plugin' );
 		$this->assertEquals( false, $actual_data, 'Should return false if plugin is not found.' );
+	}
+
+	/**
+	 * Test activate_plugins() by using Akismet.
+	 */
+	public function test_activate_akismet() {
+		// Prepare Akismet plugin in the "installed" state.
+		deactivate_plugins( 'akismet/akismet.php' );
+		$this->assertTrue( PluginsHelper::is_plugin_installed( 'akismet' ) );
+
+		// Activate the plugin.
+		$test = PluginsHelper::activate_plugins( array( 'akismet' ) );
+
+		// Assert plugin activated.
+		$this->assertSame( 'akismet', $test['activated'][0] );
+
+		// Assert no errors return.
+		$this->assertFalse( $test['errors']->has_errors() );
+
+		// Clean up.
+		deactivate_plugins( 'akismet/akismet.php' );
+	}
+
+	/**
+	 * Test error handling in activate_plugins().
+	 */
+	public function test_activate_plugins_with_error() {
+		// Try to activate a plugin that has not been installed.
+		$this->assertFalse( PluginsHelper::is_plugin_installed( 'foo-bar' ) );
+		$test = PluginsHelper::activate_plugins( array( 'foo-bar' ) );
+
+		// Assert plugin is NOT activated.
+		$this->assertFalse( PluginsHelper::is_plugin_active( 'foo-bar' ) );
+
+		// Assert that errors return.
+		$this->assertTrue( $test['errors']->has_errors() );
 	}
 }

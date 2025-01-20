@@ -16,6 +16,7 @@ import {
 	Transition,
 	CSSTransition,
 	TransitionGroup,
+	TransitionStatus,
 } from 'react-transition-group';
 import classnames from 'classnames';
 
@@ -32,6 +33,7 @@ type CollapsibleListProps = {
 	show?: number;
 	onCollapse?: () => void;
 	onExpand?: () => void;
+	direction?: 'up' | 'down';
 } & ListProps;
 
 const defaultStyle = {
@@ -91,7 +93,7 @@ function getUpdatedShownChildren(
 }
 
 const getTransitionStyle = (
-	state: 'entering' | 'entered' | 'exiting' | 'exited',
+	state: TransitionStatus,
 	isCollapsed: boolean,
 	elementRef: HTMLDivElement | null
 ) => {
@@ -126,6 +128,7 @@ export const ExperimentalCollapsibleList: React.FC< CollapsibleListProps > = ( {
 	show = 0,
 	onCollapse,
 	onExpand,
+	direction = 'up',
 	...listProps
 } ): JSX.Element => {
 	const [ isCollapsed, setCollapsed ] = useState( collapsed );
@@ -225,9 +228,33 @@ export const ExperimentalCollapsibleList: React.FC< CollapsibleListProps > = ( {
 		'woocommerce-experimental-list-wrapper': ! isCollapsed,
 	} );
 
+	const hiddenChildren =
+		displayedChildren.hidden.length > 0 ? (
+			<ExperimentalListItem
+				key="collapse-item"
+				className="list-item-collapse"
+				onClick={ clickHandler }
+				animation="none"
+				disableGutters
+			>
+				<p>
+					{ isCollapsed
+						? footerLabels.expand
+						: footerLabels.collapse }
+				</p>
+
+				<Icon
+					className="list-item-collapse__icon"
+					size={ 30 }
+					icon={ isCollapsed ? chevronDown : chevronUp }
+				/>
+			</ExperimentalListItem>
+		) : null;
+
 	return (
 		<ExperimentalList { ...listProps } className={ listClasses }>
 			{ [
+				direction === 'down' && hiddenChildren,
 				...displayedChildren.shown,
 				<Transition
 					key="remaining-children"
@@ -236,9 +263,7 @@ export const ExperimentalCollapsibleList: React.FC< CollapsibleListProps > = ( {
 					mountOnEnter={ true }
 					unmountOnExit={ false }
 				>
-					{ (
-						state: 'entering' | 'entered' | 'exiting' | 'exited'
-					) => {
+					{ ( state ) => {
 						const transitionStyles = getTransitionStyle(
 							state,
 							isCollapsed,
@@ -288,27 +313,7 @@ export const ExperimentalCollapsibleList: React.FC< CollapsibleListProps > = ( {
 						);
 					} }
 				</Transition>,
-				displayedChildren.hidden.length > 0 ? (
-					<ExperimentalListItem
-						key="collapse-item"
-						className="list-item-collapse"
-						onClick={ clickHandler }
-						animation="none"
-						disableGutters
-					>
-						<p>
-							{ isCollapsed
-								? footerLabels.expand
-								: footerLabels.collapse }
-						</p>
-
-						<Icon
-							className="list-item-collapse__icon"
-							size={ 30 }
-							icon={ isCollapsed ? chevronDown : chevronUp }
-						/>
-					</ExperimentalListItem>
-				) : null,
+				direction === 'up' && hiddenChildren,
 			] }
 		</ExperimentalList>
 	);

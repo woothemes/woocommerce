@@ -6,6 +6,8 @@
  * @version  3.3.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -40,6 +42,7 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 		add_filter( 'views_edit-product', array( $this, 'product_views' ) );
 		add_filter( 'get_search_query', array( $this, 'search_label' ) );
 		add_filter( 'posts_clauses', array( $this, 'posts_clauses' ), 10, 2 );
+		add_action( 'manage_product_posts_custom_column', array( $this, 'add_sample_product_badge' ), 9, 2 );
 	}
 
 	/**
@@ -358,7 +361,7 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 			$output .= selected( $value, $current_product_type, false );
 			$output .= '>' . esc_html( $label ) . '</option>';
 
-			if ( 'simple' === $value ) {
+			if ( ProductType::SIMPLE === $value ) {
 
 				$output .= '<option value="downloadable" ';
 				$output .= selected( 'downloadable', $current_product_type, false );
@@ -658,4 +661,19 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 		return $pieces;
 	}
 
+	/**
+	 * Add a sample product badge to the product list table.
+	 *
+	 * @param string $column_name Column name.
+	 * @param int    $post_id     Post ID.
+	 *
+	 * @since 8.8.0
+	 */
+	public function add_sample_product_badge( $column_name, $post_id ) {
+		$is_sample_product = 'product' === get_post_type( $post_id ) && get_post_meta( $post_id, '_headstart_post', true );
+
+		if ( $is_sample_product && 'name' === $column_name ) {
+			echo '<span class="sample-product-badge" style="margin-right: 6px;border-radius: 4px; background: #F6F7F7; padding: 4px; color: #3C434A;font-size: 12px;font-style: normal;font-weight: 400;line-height: 16px; height: 24px;">' . esc_html__( 'Sample', 'woocommerce' ) . '</span>';
+		}
+	}
 }

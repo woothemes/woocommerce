@@ -10,19 +10,24 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see https://docs.woocommerce.com/document/template-structure/
+ * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 4.0.0
+ * @version 9.7.0
  */
+
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+
 ?>
 
 <?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
+<?php echo $email_improvements_enabled ? '<div class="email-introduction">' : ''; ?>
 <?php /* translators: %s: Customer username */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $user_login ) ); ?></p>
 <?php /* translators: %s: Store name */ ?>
@@ -31,17 +36,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p><?php printf( esc_html__( 'Username: %s', 'woocommerce' ), esc_html( $user_login ) ); ?></p>
 <p><?php esc_html_e( 'If you didn\'t make this request, just ignore this email. If you\'d like to proceed:', 'woocommerce' ); ?></p>
 <p>
-	<a class="link" href="<?php echo esc_url( add_query_arg( array( 'key' => $reset_key, 'id' => $user_id ), wc_get_endpoint_url( 'lost-password', '', wc_get_page_permalink( 'myaccount' ) ) ) ); ?>"><?php // phpcs:ignore ?>
+	<a class="link" href="<?php echo esc_url( add_query_arg( array( 'key' => $reset_key, 'id' => $user_id, 'login' => rawurlencode( $user_login ) ), wc_get_endpoint_url( 'lost-password', '', wc_get_page_permalink( 'myaccount' ) ) ) ); ?>"><?php // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound ?>
 		<?php esc_html_e( 'Click here to reset your password', 'woocommerce' ); ?>
 	</a>
 </p>
+<?php echo $email_improvements_enabled ? '</div>' : ''; ?>
 
 <?php
 /**
  * Show user-defined additional content - this is set in each email's settings.
  */
 if ( $additional_content ) {
+	echo $email_improvements_enabled ? '<div class="email-additional-content">' : '';
 	echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) );
+	echo $email_improvements_enabled ? '</div>' : '';
 }
 
 do_action( 'woocommerce_email_footer', $email );

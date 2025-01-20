@@ -5,12 +5,15 @@
  * @package WooCommerce\Classes
  */
 
+use Automattic\WooCommerce\Caching\CacheNameSpaceTrait;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
  * WC_Cache_Helper.
  */
 class WC_Cache_Helper {
+	use CacheNameSpaceTrait;
 
 	/**
 	 * Transients to delete on shutdown.
@@ -42,7 +45,7 @@ class WC_Cache_Helper {
 	 */
 	public static function additional_nocache_headers( $headers ) {
 		global $wp_query;
-		
+
 		$agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		$set_cache = false;
@@ -115,44 +118,6 @@ class WC_Cache_Helper {
 	}
 
 	/**
-	 * Get prefix for use with wp_cache_set. Allows all cache in a group to be invalidated at once.
-	 *
-	 * @param  string $group Group of cache to get.
-	 * @return string
-	 */
-	public static function get_cache_prefix( $group ) {
-		// Get cache key - uses cache key wc_orders_cache_prefix to invalidate when needed.
-		$prefix = wp_cache_get( 'wc_' . $group . '_cache_prefix', $group );
-
-		if ( false === $prefix ) {
-			$prefix = microtime();
-			wp_cache_set( 'wc_' . $group . '_cache_prefix', $prefix, $group );
-		}
-
-		return 'wc_cache_' . $prefix . '_';
-	}
-
-	/**
-	 * Increment group cache prefix (invalidates cache).
-	 *
-	 * @param string $group Group of cache to clear.
-	 */
-	public static function incr_cache_prefix( $group ) {
-		wc_deprecated_function( 'WC_Cache_Helper::incr_cache_prefix', '3.9.0', 'WC_Cache_Helper::invalidate_cache_group' );
-		self::invalidate_cache_group( $group );
-	}
-
-	/**
-	 * Invalidate cache group.
-	 *
-	 * @param string $group Group of cache to clear.
-	 * @since 3.9.0
-	 */
-	public static function invalidate_cache_group( $group ) {
-		wp_cache_set( 'wc_' . $group . '_cache_prefix', microtime(), $group );
-	}
-
-	/**
 	 * Get a hash of the customer location.
 	 *
 	 * @return string
@@ -164,7 +129,18 @@ class WC_Cache_Helper {
 		$location['state']    = $customer->get_billing_state();
 		$location['postcode'] = $customer->get_billing_postcode();
 		$location['city']     = $customer->get_billing_city();
-		return apply_filters( 'woocommerce_geolocation_ajax_get_location_hash', substr( md5( implode( '', $location ) ), 0, 12 ), $location, $customer );
+		$location_hash        = substr( md5( strtolower( implode( '', $location ) ) ), 0, 12 );
+
+		/**
+		 * Controls the location hash used in geolocation-based caching.
+		 *
+		 * @since 3.6.0
+		 *
+		 * @param string      $location_hash The hash used for geolocation.
+		 * @param array       $location      The location/address data.
+		 * @param WC_Customer $customer      The current customer object.
+		 */
+		return apply_filters( 'woocommerce_geolocation_ajax_get_location_hash', $location_hash, $location, $customer );
 	}
 
 	/**
@@ -204,8 +180,7 @@ class WC_Cache_Helper {
 					$redirect_url = add_query_arg( $wp->query_string, '', $redirect_url );
 				}
 
-				$redirect_url = add_query_arg( 'v', $location_hash, remove_query_arg( 'v', $redirect_url ) );
-
+				$redirect_url = add_query_arg( 'v', $location_hash, remove_query_arg( array( 'v', 'add-to-cart' ), $redirect_url ) );
 				wp_safe_redirect( esc_url_raw( $redirect_url ), 307 );
 				exit;
 			}

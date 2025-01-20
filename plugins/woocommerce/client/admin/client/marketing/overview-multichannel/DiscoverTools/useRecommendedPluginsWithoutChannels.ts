@@ -1,0 +1,94 @@
+/**
+ * External dependencies
+ */
+import { useSelect, useDispatch } from '@wordpress/data';
+import { differenceWith } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { store as marketingStore } from '~/marketing/data';
+import { useRecommendedChannels } from '~/marketing/hooks';
+import { RecommendedPlugin } from '~/marketing/types';
+
+type UseRecommendedPluginsWithoutChannels = {
+	/**
+	 * Boolean indicating whether it is initializing.
+	 */
+	isInitializing: boolean;
+
+	/**
+	 * Boolean indicating whether it is loading.
+	 *
+	 * This will be true when data is being refetched
+	 * after `invalidateResolution` is called in the `installAndActivate` method.
+	 */
+	isLoading: boolean;
+
+	/**
+	 * An array of recommended marketing plugins without marketing channels.
+	 */
+	data: RecommendedPlugin[];
+
+	/**
+	 * Install and activate a plugin.
+	 */
+	installAndActivate: ( slug: string ) => void;
+};
+
+const selector = 'getRecommendedPlugins';
+const category = 'marketing';
+
+/**
+ * A hook to return a list of recommended plugins without marketing channels,
+ * and related methods, to be used with the `DiscoverTools` component.
+ */
+export const useRecommendedPluginsWithoutChannels =
+	(): UseRecommendedPluginsWithoutChannels => {
+		const {
+			loading: loadingRecommendedPlugins,
+			data: dataRecommendedPlugins,
+		} = useSelect( ( select ) => {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const { getRecommendedPlugins, hasFinishedResolution } =
+				select( marketingStore );
+
+			return {
+				loading: ! hasFinishedResolution( selector, [ category ] ),
+				data: getRecommendedPlugins( category ) as RecommendedPlugin[],
+			};
+		}, [] );
+
+		const {
+			loading: loadingRecommendedChannels,
+			data: dataRecommendedChannels,
+		} = useRecommendedChannels();
+
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+		const { invalidateResolution, installAndActivateRecommendedPlugin } =
+			useDispatch( marketingStore );
+
+		const isInitializing =
+			( loadingRecommendedPlugins && ! dataRecommendedPlugins.length ) ||
+			( loadingRecommendedChannels && ! dataRecommendedChannels );
+
+		const loading = loadingRecommendedPlugins || loadingRecommendedChannels;
+
+		const recommendedPluginsWithoutChannels = differenceWith(
+			dataRecommendedPlugins,
+			dataRecommendedChannels || [],
+			( a, b ) => a.product === b.product
+		);
+
+		const installAndActivate = ( slug: string ) => {
+			installAndActivateRecommendedPlugin( slug, category );
+			invalidateResolution( selector, [ category ] );
+		};
+
+		return {
+			isInitializing,
+			isLoading: loading,
+			data: isInitializing ? [] : recommendedPluginsWithoutChannels,
+			installAndActivate,
+		};
+	};

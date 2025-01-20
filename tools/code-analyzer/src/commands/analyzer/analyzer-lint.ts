@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { Command } from '@commander-js/extra-typings';
-import { Logger } from 'cli-core/src/logger';
+import { Command, Option } from '@commander-js/extra-typings';
+import { Logger } from '@woocommerce/monorepo-utils/src/core/logger';
 import { join } from 'path';
 
 /**
@@ -12,7 +12,6 @@ import { scanForChanges } from '../../lib/scan-changes';
 import {
 	printDatabaseUpdates,
 	printHookResults,
-	printSchemaChange,
 	printTemplateResults,
 } from '../../print';
 
@@ -37,23 +36,27 @@ const program = new Command()
 		join( process.cwd(), '../../' )
 	)
 	.option(
-		'-o, --outputStyle <outputStyle>',
-		'Output style for the results. Options: github, cli. Github output will use ::set-output to set the results as an output variable.',
-		'cli'
+		'-e, --exclude <exclude...>',
+		'List of folders / files to exclude.',
+		[]
 	)
-	.option(
-		'-ss, --skipSchemaCheck',
-		'Skip the schema check, enable this if you are not analyzing WooCommerce'
+	.addOption(
+		new Option( '-o, --outputStyle <outputStyle>' ).choices( [
+			'github',
+			'cli',
+		] as const )
 	)
 	.action( async ( compare, sinceVersion, options ) => {
-		const { skipSchemaCheck = false, source, base, outputStyle } = options;
+		const { source, base, outputStyle = 'cli', exclude = [] } = options;
 
 		const changes = await scanForChanges(
 			compare,
 			sinceVersion,
-			skipSchemaCheck,
 			source,
-			base
+			base,
+			outputStyle,
+			undefined,
+			exclude
 		);
 
 		if ( changes.templates.size ) {
@@ -62,6 +65,15 @@ const program = new Command()
 				outputStyle,
 				'TEMPLATES',
 				Logger.notice
+			);
+		} else {
+			Logger.notice( '\n\n## TEMPLATE CHANGES' );
+			Logger.notice(
+				'---------------------------------------------------'
+			);
+			Logger.notice( 'No template changes found.' );
+			Logger.notice(
+				'---------------------------------------------------'
 			);
 		}
 
@@ -72,19 +84,28 @@ const program = new Command()
 				'HOOKS',
 				Logger.notice
 			);
-		}
-
-		if ( changes.schema.filter( ( s ) => ! s.areEqual ).length ) {
-			printSchemaChange(
-				changes.schema,
-				sinceVersion,
-				outputStyle,
-				Logger.notice
+		} else {
+			Logger.notice( '\n\n## HOOK CHANGES' );
+			Logger.notice(
+				'---------------------------------------------------'
+			);
+			Logger.notice( 'No hook changes found.' );
+			Logger.notice(
+				'---------------------------------------------------'
 			);
 		}
 
 		if ( changes.db ) {
 			printDatabaseUpdates( changes.db, outputStyle, Logger.notice );
+		} else {
+			Logger.notice( '\n\n## DB CHANGES' );
+			Logger.notice(
+				'---------------------------------------------------'
+			);
+			Logger.notice( 'No db changes found.' );
+			Logger.notice(
+				'---------------------------------------------------'
+			);
 		}
 	} );
 

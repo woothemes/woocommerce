@@ -1,69 +1,26 @@
 <?php
 /**
- * REST API Reports controller extended by WC Admin plugin.
- *
- * Handles requests to the reports endpoint.
+ * REST API Reports controller extended to handle requests to the reports endpoint.
  */
 
 namespace Automattic\WooCommerce\Admin\API\Reports;
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Admin\API\Reports\GenericController;
+use Automattic\WooCommerce\Admin\API\Reports\OrderAwareControllerTrait;
+
 /**
- * REST API Reports controller class.
+ * Reports controller class.
+ *
+ * Controller that handles the endpoint that returns all available analytics endpoints.
  *
  * @internal
- * @extends WC_REST_Reports_Controller
+ * @extends GenericController
  */
-class Controller extends \WC_REST_Reports_Controller {
+class Controller extends GenericController {
 
-	/**
-	 * Endpoint namespace.
-	 *
-	 * @var string
-	 */
-	protected $namespace = 'wc-analytics';
-
-	/**
-	 * Route base.
-	 *
-	 * @var string
-	 */
-	protected $rest_base = 'reports';
-
-	/**
-	 * Register the routes for reports.
-	 */
-	public function register_routes() {
-		register_rest_route(
-			$this->namespace,
-			'/' . $this->rest_base,
-			array(
-				array(
-					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_items' ),
-					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-					'args'                => $this->get_collection_params(),
-				),
-				'schema' => array( $this, 'get_public_item_schema' ),
-			)
-		);
-	}
-
-	/**
-	 * Check whether a given request has permission to read reports.
-	 *
-	 * @param  WP_REST_Request $request Full details about the request.
-	 * @return WP_Error|boolean
-	 */
-	public function get_items_permissions_check( $request ) {
-		if ( ! wc_rest_check_manager_permissions( 'reports', 'read' ) ) {
-			return new \WP_Error( 'woocommerce_rest_cannot_view', __( 'Sorry, you cannot list resources.', 'woocommerce' ), array( 'status' => rest_authorization_required_code() ) );
-		}
-
-		return true;
-	}
-
+	use OrderAwareControllerTrait;
 
 	/**
 	 * Get all reports.
@@ -154,6 +111,7 @@ class Controller extends \WC_REST_Reports_Controller {
 		$reports = apply_filters( 'woocommerce_admin_reports', $reports );
 
 		foreach ( $reports as $report ) {
+			// Silently skip non-compliant reports. Like the ones for WC_Admin_Reports::get_reports().
 			if ( empty( $report['slug'] ) ) {
 				continue;
 			}
@@ -182,52 +140,6 @@ class Controller extends \WC_REST_Reports_Controller {
 	}
 
 	/**
-	 * Get the order number for an order. If no filter is present for `woocommerce_order_number`, we can just return the ID.
-	 * Returns the parent order number if the order is actually a refund.
-	 *
-	 * @param  int $order_id Order ID.
-	 * @return string
-	 */
-	protected function get_order_number( $order_id ) {
-		$order = wc_get_order( $order_id );
-
-		if ( ! $order instanceof \WC_Order && ! $order instanceof \WC_Order_Refund ) {
-			return null;
-		}
-
-		if ( 'shop_order_refund' === $order->get_type() ) {
-			$order = wc_get_order( $order->get_parent_id() );
-		}
-
-		if ( ! has_filter( 'woocommerce_order_number' ) ) {
-			return $order->get_id();
-		}
-
-		return $order->get_order_number();
-	}
-
-	/**
-	 * Get the order total with the related currency formatting.
-	 * Returns the parent order total if the order is actually a refund.
-	 *
-	 * @param  int $order_id Order ID.
-	 * @return string
-	 */
-	protected function get_total_formatted( $order_id ) {
-		$order = wc_get_order( $order_id );
-
-		if ( ! $order instanceof \WC_Order && ! $order instanceof \WC_Order_Refund ) {
-			return null;
-		}
-
-		if ( 'shop_order_refund' === $order->get_type() ) {
-			$order = wc_get_order( $order->get_parent_id() );
-		}
-
-		return wp_strip_all_tags( html_entity_decode( $order->get_formatted_order_total() ), true );
-	}
-
-	/**
 	 * Prepare a report object for serialization.
 	 *
 	 * @param stdClass        $report  Report data.
@@ -241,12 +153,8 @@ class Controller extends \WC_REST_Reports_Controller {
 			'path'        => $report->path,
 		);
 
-		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
-		$data    = $this->add_additional_fields_to_object( $data, $request );
-		$data    = $this->filter_response_by_context( $data, $context );
-
 		// Wrap the data in a response object.
-		$response = rest_ensure_response( $data );
+		$response = parent::prepare_item_for_response( $data, $request );
 		$response->add_links(
 			array(
 				'self'       => array(
@@ -275,6 +183,8 @@ class Controller extends \WC_REST_Reports_Controller {
 
 	/**
 	 * Get the Report's schema, conforming to JSON Schema.
+	 *
+	 * @override WP_REST_Controller::get_item_schema()
 	 *
 	 * @return array
 	 */
@@ -317,43 +227,5 @@ class Controller extends \WC_REST_Reports_Controller {
 		return array(
 			'context' => $this->get_context_param( array( 'default' => 'view' ) ),
 		);
-	}
-
-	/**
-	 * Get order statuses without prefixes.
-	 * Includes unregistered statuses that have been marked "actionable".
-	 *
-	 * @internal
-	 * @return array
-	 */
-	public static function get_order_statuses() {
-		// Allow all statuses selected as "actionable" - this may include unregistered statuses.
-		// See: https://github.com/woocommerce/woocommerce-admin/issues/5592.
-		$actionable_statuses = get_option( 'woocommerce_actionable_order_statuses', array() );
-
-		// See WC_REST_Orders_V2_Controller::get_collection_params() re: any/trash statuses.
-		$registered_statuses = array_merge( array( 'any', 'trash' ), array_keys( self::get_order_status_labels() ) );
-
-		// Merge the status arrays (using flip to avoid array_unique()).
-		$allowed_statuses = array_keys( array_merge( array_flip( $registered_statuses ), array_flip( $actionable_statuses ) ) );
-
-		return $allowed_statuses;
-	}
-
-	/**
-	 * Get order statuses (and labels) without prefixes.
-	 *
-	 * @internal
-	 * @return array
-	 */
-	public static function get_order_status_labels() {
-		$order_statuses = array();
-
-		foreach ( wc_get_order_statuses() as $key => $label ) {
-			$new_key                    = str_replace( 'wc-', '', $key );
-			$order_statuses[ $new_key ] = $label;
-		}
-
-		return $order_statuses;
 	}
 }

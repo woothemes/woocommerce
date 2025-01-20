@@ -2,9 +2,18 @@
 	"extends": "../tsconfig",
 	"compilerOptions": {
 		"rootDir": "src",
+		"noCheck": true,
 		"outDir": "build-module",
 		"declaration": true,
 		"declarationMap": true,
-		"declarationDir": "./build-types"
-	}
+		"declarationDir": "./build-types",
+		"typeRoots": [
+			"./typings",
+			"./node_modules/@types"
+		]
+	},
+	"include": [
+		"typings/**/*",
+		"src/**/*",
+	]
 }

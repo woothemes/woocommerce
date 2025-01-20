@@ -25,6 +25,7 @@ defined( 'ABSPATH' ) || exit;
  * A facade to allow deprecating an entire class.
  */
 class DeprecatedClassFacade {
+
 	/**
 	 * The instance that this facade covers over.
 	 *
@@ -33,10 +34,33 @@ class DeprecatedClassFacade {
 	protected $instance;
 
 	/**
+	 * The name of the non-deprecated class that this facade covers.
+	 *
+	 * @var string
+	 */
+	protected static $facade_over_classname = '';
+
+	/**
+	 * The version that this class was deprecated in.
+	 *
+	 * @var string
+	 */
+	protected static $deprecated_in_version = '';
+
+	/**
+	 * Static array of logged messages.
+	 *
+	 * @var array
+	 */
+	private static $logged_messages = array();
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->instance = new static::$facade_over_classname();
+		if ( '' !== static::$facade_over_classname ) {
+			$this->instance = new static::$facade_over_classname();
+		}
 	}
 
 	/**
@@ -45,14 +69,25 @@ class DeprecatedClassFacade {
 	 * @param string $function The name of the deprecated function being called.
 	 */
 	private static function log_deprecation( $function ) {
-		error_log( // phpcs:ignore
-			sprintf(
-				'%1$s is deprecated since version %2$s! Use %3$s instead.',
-				static::class . '::' . $function,
-				static::$deprecated_in_version,
-				static::$facade_over_classname . '::' . $function
-			)
+		$message = sprintf(
+			'%1$s is deprecated since version %2$s! Use %3$s instead.',
+			static::class . '::' . $function,
+			static::$deprecated_in_version,
+			static::$facade_over_classname . '::' . $function
 		);
+
+		if ( '' !== static::$facade_over_classname ) {
+			$message = $message . sprintf(
+				' Use %s instead.',
+				static::$facade_over_classname . '::' . $function
+			);
+		}
+
+		// Only log when the message has not been logged before.
+		if ( ! in_array( $message, self::$logged_messages, true ) ) {
+			error_log( $message ); // phpcs:ignore
+			self::$logged_messages[] = $message;
+		}
 	}
 
 	/**
@@ -63,6 +98,10 @@ class DeprecatedClassFacade {
 	 */
 	public function __call( $name, $arguments ) {
 		self::log_deprecation( $name );
+
+		if ( ! isset( $this->instance ) ) {
+			return;
+		}
 
 		return call_user_func_array(
 			array(
@@ -81,6 +120,10 @@ class DeprecatedClassFacade {
 	 */
 	public static function __callStatic( $name, $arguments ) {
 		self::log_deprecation( $name );
+
+		if ( '' === static::$facade_over_classname ) {
+			return;
+		}
 
 		return call_user_func_array(
 			array(

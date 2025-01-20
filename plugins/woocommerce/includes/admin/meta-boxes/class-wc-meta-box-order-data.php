@@ -8,6 +8,7 @@
  * @version     2.2.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,11 +35,23 @@ class WC_Meta_Box_Order_Data {
 	protected static $shipping_fields = array();
 
 	/**
-	 * Init billing and shipping fields we display + save.
+	 * Get billing fields for the meta box.
+	 *
+	 * @param \WC_Order $order Order object.
+	 * @param string    $context Context of fields (view or edit).
+	 * @return array
 	 */
-	public static function init_address_fields() {
-
-		self::$billing_fields = apply_filters(
+	protected static function get_billing_fields( $order = false, $context = 'edit' ) {
+		/**
+		 * Provides an opportunity to modify the list of order billing fields displayed on the admin.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param array Billing fields.
+		 * @param WC_Order|false $order Order object.
+		 * @param string $context Context of fields (view or edit).
+		 */
+		return apply_filters(
 			'woocommerce_admin_billing_fields',
 			array(
 				'first_name' => array(
@@ -87,10 +100,30 @@ class WC_Meta_Box_Order_Data {
 				'phone'      => array(
 					'label' => __( 'Phone', 'woocommerce' ),
 				),
-			)
+			),
+			$order,
+			$context
 		);
+	}
 
-		self::$shipping_fields = apply_filters(
+	/**
+	 * Get shipping fields for the meta box.
+	 *
+	 * @param \WC_Order $order Order object.
+	 * @param string    $context Context of fields (view or edit).
+	 * @return array
+	 */
+	protected static function get_shipping_fields( $order = false, $context = 'edit' ) {
+		/**
+		 * Provides an opportunity to modify the list of order shipping fields displayed on the admin.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param array Shipping fields.
+		 * @param WC_Order|false $order Order object.
+		 * @param string $context Context of fields (view or edit).
+		 */
+		return apply_filters(
 			'woocommerce_admin_shipping_fields',
 			array(
 				'first_name' => array(
@@ -136,8 +169,18 @@ class WC_Meta_Box_Order_Data {
 				'phone'      => array(
 					'label' => __( 'Phone', 'woocommerce' ),
 				),
-			)
+			),
+			$order,
+			$context
 		);
+	}
+
+	/**
+	 * Init billing and shipping fields we display + save. Maintained for backwards compat.
+	 */
+	public static function init_address_fields() {
+		self::$billing_fields  = self::get_billing_fields();
+		self::$shipping_fields = self::get_shipping_fields();
 	}
 
 	/**
@@ -151,8 +194,6 @@ class WC_Meta_Box_Order_Data {
 		OrderUtil::init_theorder_object( $post );
 
 		$order = $theorder;
-
-		self::init_address_fields();
 
 		if ( WC()->payment_gateways() ) {
 			$payment_gateways = WC()->payment_gateways->payment_gateways();
@@ -223,7 +264,6 @@ class WC_Meta_Box_Order_Data {
 						);
 					}
 
-
 					$ip_address = $order->get_customer_ip_address();
 					if ( $ip_address ) {
 						$meta_list[] = sprintf(
@@ -237,6 +277,21 @@ class WC_Meta_Box_Order_Data {
 
 					?>
 				</p>
+				<?php
+					/**
+					 * Hook allowing extenders to render custom content
+					 * within the Order details box.
+					 *
+					 * This allows urgent notices or other important
+					 * order-related info to be displayed upfront in
+					 * the order page. Example: display a notice if
+					 * the order is disputed.
+					 *
+					 * @param $order WC_Order The order object being displayed.
+					 * @since 7.9.0
+					 */
+					do_action( 'woocommerce_admin_order_data_after_payment_info', $order );
+				?>
 				<div class="order_data_column_container">
 					<div class="order_data_column">
 						<h3><?php esc_html_e( 'General', 'woocommerce' ); ?></h3>
@@ -304,24 +359,32 @@ class WC_Meta_Box_Order_Data {
 							$user_string = '';
 							$user_id     = '';
 							if ( $order->get_user_id() ) {
-								$user_id     = absint( $order->get_user_id() );
-								$user        = get_user_by( 'id', $user_id );
+								$user_id  = absint( $order->get_user_id() );
+								$customer = new WC_Customer( $user_id );
+								/* translators: 1: user display name 2: user ID 3: user email */
 								$user_string = sprintf(
-									/* translators: 1: user display name 2: user ID 3: user email */
+									/* translators: 1: customer name, 2 customer id, 3: customer email */
 									esc_html__( '%1$s (#%2$s &ndash; %3$s)', 'woocommerce' ),
-									$user->display_name,
-									absint( $user->ID ),
-									$user->user_email
+									$customer->get_first_name() . ' ' . $customer->get_last_name(),
+									$customer->get_id(),
+									$customer->get_email()
 								);
 							}
 							?>
 							<select class="wc-customer-search" id="customer_user" name="customer_user" data-placeholder="<?php esc_attr_e( 'Guest', 'woocommerce' ); ?>" data-allow_clear="true">
-								<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected">
-									<?php
-									// htmlspecialchars to prevent XSS when rendered by selectWoo.
-									echo esc_html( htmlspecialchars( wp_kses_post( $user_string ) ) );
-									?>
-								</option>
+								<?php
+								// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment
+								/**
+								 * Filter to customize the display of the currently selected customer for an order in the order edit page.
+								 * This is the same filter used in the ajax call for customer search in the same metabox.
+								 *
+								 * @since 7.2.0 (this instance of the filter)
+								 *
+								 * @param array @user_info An array containing one item with the name and email of the user currently selected as the customer for the order.
+								 */
+								?>
+								<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected"><?php echo esc_html( htmlspecialchars( wp_kses_post( current( apply_filters( 'woocommerce_json_search_found_customers', array( $user_string ) ) ) ) ) ); ?></option>
+								<?php // phpcs:enable WooCommerce.Commenting.CommentHooks.MissingHookComment ?>
 							</select>
 							<!--/email_off-->
 						</p>
@@ -337,7 +400,6 @@ class WC_Meta_Box_Order_Data {
 						</h3>
 						<div class="address">
 							<?php
-
 							// Display values.
 							if ( $order->get_formatted_billing_address() ) {
 								echo '<p>' . wp_kses( $order->get_formatted_billing_address(), array( 'br' => array() ) ) . '</p>';
@@ -345,7 +407,9 @@ class WC_Meta_Box_Order_Data {
 								echo '<p class="none_set"><strong>' . esc_html__( 'Address:', 'woocommerce' ) . '</strong> ' . esc_html__( 'No billing address set.', 'woocommerce' ) . '</p>';
 							}
 
-							foreach ( self::$billing_fields as $key => $field ) {
+							$billing_fields = self::get_billing_fields( $order, 'view' );
+
+							foreach ( $billing_fields as $key => $field ) {
 								if ( isset( $field['show'] ) && false === $field['show'] ) {
 									continue;
 								}
@@ -368,7 +432,7 @@ class WC_Meta_Box_Order_Data {
 									$field_value = make_clickable( esc_html( $field_value ) );
 								}
 
-								if ( $field_value ) {
+								if ( $field_value || '0' === $field_value ) {
 									echo '<p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p>';
 								}
 							}
@@ -377,9 +441,10 @@ class WC_Meta_Box_Order_Data {
 
 						<div class="edit_address">
 							<?php
-
 							// Display form.
-							foreach ( self::$billing_fields as $key => $field ) {
+							$billing_fields = self::get_billing_fields( $order, 'edit' );
+
+							foreach ( $billing_fields as $key => $field ) {
 								if ( ! isset( $field['type'] ) ) {
 									$field['type'] = 'text';
 								}
@@ -400,6 +465,9 @@ class WC_Meta_Box_Order_Data {
 								switch ( $field['type'] ) {
 									case 'select':
 										woocommerce_wp_select( $field, $order );
+										break;
+									case 'checkbox':
+										woocommerce_wp_checkbox( $field, $order );
 										break;
 									default:
 										woocommerce_wp_text_input( $field, $order );
@@ -457,7 +525,6 @@ class WC_Meta_Box_Order_Data {
 						</h3>
 						<div class="address">
 							<?php
-
 							// Display values.
 							if ( $order->get_formatted_shipping_address() ) {
 								echo '<p>' . wp_kses( $order->get_formatted_shipping_address(), array( 'br' => array() ) ) . '</p>';
@@ -465,15 +532,19 @@ class WC_Meta_Box_Order_Data {
 								echo '<p class="none_set"><strong>' . esc_html__( 'Address:', 'woocommerce' ) . '</strong> ' . esc_html__( 'No shipping address set.', 'woocommerce' ) . '</p>';
 							}
 
-							if ( ! empty( self::$shipping_fields ) ) {
-								foreach ( self::$shipping_fields as $key => $field ) {
+							$shipping_fields = self::get_shipping_fields( $order, 'view' );
+
+							if ( ! empty( $shipping_fields ) ) {
+								foreach ( $shipping_fields as $key => $field ) {
 									if ( isset( $field['show'] ) && false === $field['show'] ) {
 										continue;
 									}
 
 									$field_name = 'shipping_' . $key;
 
-									if ( is_callable( array( $order, 'get_' . $field_name ) ) ) {
+									if ( isset( $field['value'] ) ) {
+										$field_value = $field['value'];
+									} elseif ( is_callable( array( $order, 'get_' . $field_name ) ) ) {
 										$field_value = $order->{"get_$field_name"}( 'edit' );
 									} else {
 										$field_value = $order->get_meta( '_' . $field_name );
@@ -483,23 +554,24 @@ class WC_Meta_Box_Order_Data {
 										$field_value = wc_make_phone_clickable( $field_value );
 									}
 
-									if ( $field_value ) {
+									if ( $field_value || '0' === $field_value ) {
 										echo '<p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p>';
 									}
 								}
 							}
 
 							if ( apply_filters( 'woocommerce_enable_order_notes_field', 'yes' === get_option( 'woocommerce_enable_order_comments', 'yes' ) ) && $order->get_customer_note() ) { // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
-								echo '<p class="order_note"><strong>' . esc_html( __( 'Customer provided note:', 'woocommerce' ) ) . '</strong> ' . nl2br( esc_html( $order->get_customer_note() ) ) . '</p>';
+								echo '<p class="order_note"><strong>' . esc_html( __( 'Customer provided note:', 'woocommerce' ) ) . '</strong> ' . wp_kses( nl2br( esc_html( $order->get_customer_note() ) ), array() ) . '</p>';
 							}
 							?>
 						</div>
 						<div class="edit_address">
 							<?php
-
 							// Display form.
-							if ( ! empty( self::$shipping_fields ) ) {
-								foreach ( self::$shipping_fields as $key => $field ) {
+							$shipping_fields = self::get_shipping_fields( $order, 'edit' );
+
+							if ( ! empty( $shipping_fields ) ) {
+								foreach ( $shipping_fields as $key => $field ) {
 									if ( ! isset( $field['type'] ) ) {
 										$field['type'] = 'text';
 									}
@@ -509,15 +581,20 @@ class WC_Meta_Box_Order_Data {
 
 									$field_name = 'shipping_' . $key;
 
-									if ( is_callable( array( $order, 'get_' . $field_name ) ) ) {
-										$field['value'] = $order->{"get_$field_name"}( 'edit' );
-									} else {
-										$field['value'] = $order->get_meta( '_' . $field_name );
+									if ( ! isset( $field['value'] ) ) {
+										if ( is_callable( array( $order, 'get_' . $field_name ) ) ) {
+											$field['value'] = $order->{"get_$field_name"}( 'edit' );
+										} else {
+											$field['value'] = $order->get_meta( '_' . $field_name );
+										}
 									}
 
 									switch ( $field['type'] ) {
 										case 'select':
 											woocommerce_wp_select( $field, $order );
+											break;
+										case 'checkbox':
+											woocommerce_wp_checkbox( $field, $order );
 											break;
 										default:
 											woocommerce_wp_text_input( $field, $order );
@@ -526,11 +603,18 @@ class WC_Meta_Box_Order_Data {
 								}
 							}
 
+							/**
+							 * Allows 3rd parties to alter whether the customer note should be displayed on the admin.
+							 *
+							 * @since 2.1.0
+							 *
+							 * @param bool TRUE if the note should be displayed. FALSE otherwise.
+							 */
 							if ( apply_filters( 'woocommerce_enable_order_notes_field', 'yes' === get_option( 'woocommerce_enable_order_comments', 'yes' ) ) ) :
 								?>
 								<p class="form-field form-field-wide">
 									<label for="customer_note"><?php esc_html_e( 'Customer provided note', 'woocommerce' ); ?>:</label>
-									<textarea rows="1" cols="40" name="customer_note" tabindex="6" id="excerpt" placeholder="<?php esc_attr_e( 'Customer notes about the order', 'woocommerce' ); ?>"><?php echo wp_kses_post( $order->get_customer_note() ); ?></textarea>
+									<textarea rows="1" cols="40" name="customer_note" tabindex="6" id="excerpt" placeholder="<?php esc_attr_e( 'Customer notes about the order', 'woocommerce' ); ?>"><?php echo wp_kses( $order->get_customer_note(), array() ); ?></textarea>
 								</p>
 							<?php endif; ?>
 						</div>
@@ -561,8 +645,6 @@ class WC_Meta_Box_Order_Data {
 			throw new Exception( __( 'Payment method is missing.', 'woocommerce' ), 400 );
 		}
 
-		self::init_address_fields();
-
 		// Ensure gateways are loaded in case they need to insert data into the emails.
 		WC()->payment_gateways();
 		WC()->shipping();
@@ -583,8 +665,10 @@ class WC_Meta_Box_Order_Data {
 		}
 
 		// Update billing fields.
-		if ( ! empty( self::$billing_fields ) ) {
-			foreach ( self::$billing_fields as $key => $field ) {
+		$billing_fields = self::get_billing_fields( $order, 'edit' );
+
+		if ( ! empty( $billing_fields ) ) {
+			foreach ( $billing_fields as $key => $field ) {
 				if ( ! isset( $field['id'] ) ) {
 					$field['id'] = '_billing_' . $key;
 				}
@@ -593,17 +677,24 @@ class WC_Meta_Box_Order_Data {
 					continue;
 				}
 
-				if ( is_callable( array( $order, 'set_billing_' . $key ) ) ) {
-					$props[ 'billing_' . $key ] = wc_clean( wp_unslash( $_POST[ $field['id'] ] ) );
+				$value = wc_clean( wp_unslash( $_POST[ $field['id'] ] ) );
+
+				// Update a field if it includes an update callback.
+				if ( isset( $field['update_callback'] ) ) {
+					call_user_func( $field['update_callback'], $field['id'], $value, $order );
+				} elseif ( is_callable( array( $order, 'set_billing_' . $key ) ) ) {
+					$props[ 'billing_' . $key ] = $value;
 				} else {
-					$order->update_meta_data( $field['id'], wc_clean( wp_unslash( $_POST[ $field['id'] ] ) ) );
+					$order->update_meta_data( $field['id'], $value );
 				}
 			}
 		}
 
 		// Update shipping fields.
-		if ( ! empty( self::$shipping_fields ) ) {
-			foreach ( self::$shipping_fields as $key => $field ) {
+		$shipping_fields = self::get_shipping_fields( $order, 'edit' );
+
+		if ( ! empty( $shipping_fields ) ) {
+			foreach ( $shipping_fields as $key => $field ) {
 				if ( ! isset( $field['id'] ) ) {
 					$field['id'] = '_shipping_' . $key;
 				}
@@ -612,10 +703,15 @@ class WC_Meta_Box_Order_Data {
 					continue;
 				}
 
-				if ( is_callable( array( $order, 'set_shipping_' . $key ) ) ) {
-					$props[ 'shipping_' . $key ] = wc_clean( wp_unslash( $_POST[ $field['id'] ] ) );
+				$value = isset( $_POST[ $field['id'] ] ) ? wc_clean( wp_unslash( $_POST[ $field['id'] ] ) ) : '';
+
+				// Update a field if it includes an update callback.
+				if ( isset( $field['update_callback'] ) ) {
+					call_user_func( $field['update_callback'], $field['id'], $value, $order );
+				} elseif ( is_callable( array( $order, 'set_shipping_' . $key ) ) ) {
+					$props[ 'shipping_' . $key ] = $value;
 				} else {
-					$order->update_meta_data( $field['id'], wc_clean( wp_unslash( $_POST[ $field['id'] ] ) ) );
+					$order->update_meta_data( $field['id'], $value );
 				}
 			}
 		}
@@ -656,13 +752,13 @@ class WC_Meta_Box_Order_Data {
 		$props['date_created'] = $date;
 
 		// Set created via prop if new post.
-		if ( isset( $_POST['original_post_status'] ) && 'auto-draft' === $_POST['original_post_status'] ) {
+		if ( isset( $_POST['original_post_status'] ) && OrderStatus::AUTO_DRAFT === $_POST['original_post_status'] ) {
 			$props['created_via'] = 'admin';
 		}
 
 		// Customer note.
 		if ( isset( $_POST['customer_note'] ) ) {
-			$props['customer_note'] = sanitize_text_field( wp_unslash( $_POST['customer_note'] ) );
+			$props['customer_note'] = sanitize_textarea_field( wp_unslash( $_POST['customer_note'] ) );
 		}
 
 		// Save order data.

@@ -1,21 +1,57 @@
-const { chromium, expect } = require( '@playwright/test' );
+const { chromium, expect, request } = require( '@playwright/test' );
+const { admin, customer } = require( './test-data/data' );
 const fs = require( 'fs' );
-const {
-	ADMIN_USER,
-	ADMIN_PASSWORD,
-	CUSTOMER_USER,
-	CUSTOMER_PASSWORD,
-} = process.env;
-const adminUsername = ADMIN_USER ?? 'admin';
-const adminPassword = ADMIN_PASSWORD ?? 'password';
-const customerUsername = CUSTOMER_USER ?? 'customer';
-const customerPassword = CUSTOMER_PASSWORD ?? 'password';
+const { site } = require( './utils' );
+const { logIn } = require( './utils/login' );
+const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { DISABLE_HPOS, DISABLE_SITE_RESET } = process.env;
 
+/**
+ * @param {import('@playwright/test').FullConfig} config
+ */
 module.exports = async ( config ) => {
 	const { stateDir, baseURL, userAgent } = config.projects[ 0 ].use;
 
 	console.log( `State Dir: ${ stateDir }` );
 	console.log( `Base URL: ${ baseURL }` );
+
+	// Try calling the site reset plugin (if testing on an external environment)
+	if ( ! baseURL.includes( 'localhost' ) ) {
+		if ( DISABLE_SITE_RESET ) {
+			console.log(
+				'Site reset disabled by DISABLE_SITE_RESET env variable'
+			);
+		} else {
+			console.log( 'Resetting site...' );
+			try {
+				const reset = await request.newContext();
+				const credentials = Buffer.from(
+					`${ admin.username }:${ admin.password }`
+				).toString( 'base64' );
+				const response = await reset.get(
+					`${ baseURL }/wp-json/wc-cleanup/v1/reset`,
+					{
+						headers: {
+							Authorization: `Basic ${ credentials }`,
+						},
+					}
+				);
+
+				if ( response.ok() ) {
+					console.log( 'Reset successful:', response.status() );
+				} else {
+					console.error( 'ERROR! Reset failed:', response.status() );
+				}
+			} catch ( error ) {
+				console.error(
+					'Reset failed:',
+					error.response ? error.response.status() : error.message
+				);
+			}
+		}
+	} else {
+		console.log( 'Resetting site skipped as baseURL is localhost' );
+	}
 
 	// used throughout tests for authentication
 	process.env.ADMINSTATE = `${ stateDir }adminState.json`;
@@ -27,7 +63,7 @@ module.exports = async ( config ) => {
 		console.log( 'Admin state file deleted successfully.' );
 	} catch ( err ) {
 		if ( err.code === 'ENOENT' ) {
-			console.log( 'Admin state file does not exist.' );
+			console.log( 'Admin state file does not exist' );
 		} else {
 			console.log( 'Admin state file could not be deleted: ' + err );
 		}
@@ -47,6 +83,7 @@ module.exports = async ( config ) => {
 	let adminLoggedIn = false;
 	let customerLoggedIn = false;
 	let customerKeyConfigured = false;
+	let hposConfigured = false;
 
 	// Specify user agent when running against an external test site to avoid getting HTTP 406 NOT ACCEPTABLE errors.
 	const contextOptions = { baseURL, userAgent };
@@ -54,24 +91,15 @@ module.exports = async ( config ) => {
 	// Create browser, browserContext, and page for customer and admin users
 	const browser = await chromium.launch();
 	const adminContext = await browser.newContext( contextOptions );
-	const customerContext = await browser.newContext( contextOptions );
 	const adminPage = await adminContext.newPage();
-	const customerPage = await customerContext.newPage();
 
 	// Sign in as admin user and save state
-	const adminRetries = 5;
+	const adminRetries = 2;
 	for ( let i = 0; i < adminRetries; i++ ) {
 		try {
 			console.log( 'Trying to log-in as admin...' );
-			await adminPage.goto( `/wp-admin` );
-			await adminPage.fill( 'input[name="log"]', adminUsername );
-			await adminPage.fill( 'input[name="pwd"]', adminPassword );
-			await adminPage.click( 'text=Log In' );
-			await adminPage.waitForLoadState( 'networkidle' );
-
-			await expect( adminPage.locator( 'div.wrap > h1' ) ).toHaveText(
-				'Dashboard'
-			);
+			await adminPage.goto( `./wp-admin` );
+			await logIn( adminPage, admin.username, admin.password, false );
 			await adminPage
 				.context()
 				.storageState( { path: process.env.ADMINSTATE } );
@@ -83,6 +111,10 @@ module.exports = async ( config ) => {
 				`Admin log-in failed, Retrying... ${ i }/${ adminRetries }`
 			);
 			console.log( e );
+			await adminPage.screenshot( {
+				fullPage: true,
+				path: `tests/e2e-pw/test-results/admin-login-fail-${ i }.png`,
+			} );
 		}
 	}
 
@@ -94,62 +126,72 @@ module.exports = async ( config ) => {
 	}
 
 	// While we're here, let's add a consumer token for API access
-	// This step was failing occasionally, and globalsetup doesn't retry, so make it retry
-	const nRetries = 5;
-	for ( let i = 0; i < nRetries; i++ ) {
-		try {
-			console.log( 'Trying to add consumer token...' );
-			await adminPage.goto(
-				`/wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys&create-key=1`
+	if ( ! process.env.CONSUMER_KEY || ! process.env.CONSUMER_SECRET ) {
+		const nRetries = 3;
+		for ( let i = 0; i < nRetries; i++ ) {
+			try {
+				console.log( 'Trying to add consumer token...' );
+				await adminPage.goto(
+					`./wp-admin/admin.php?page=wc-settings&tab=advanced&section=keys&create-key=1`
+				);
+				const keyName = `e2e-api-access-${ Date.now() }`;
+				await adminPage.locator( '#key_description' ).fill( keyName );
+				await adminPage
+					.locator( '#key_permissions' )
+					.selectOption( 'read_write' );
+				await adminPage.locator( 'text=Generate API key' ).click();
+				process.env.CONSUMER_KEY = await adminPage
+					.locator( '#key_consumer_key' )
+					.inputValue();
+				process.env.CONSUMER_SECRET = await adminPage
+					.locator( '#key_consumer_secret' )
+					.inputValue();
+				process.env.API_KEY_NAME = keyName;
+				console.log(
+					`${ process.env.API_KEY_NAME } consumer token successfully created`
+				);
+				customerKeyConfigured = true;
+				break;
+			} catch ( e ) {
+				console.log(
+					`Failed to add consumer token. Retrying... ${ i }/${ nRetries }`
+				);
+				await adminPage.screenshot( {
+					fullPage: true,
+					path: `tests/e2e-pw/test-results/generate-key-fail-${ i }.png`,
+				} );
+				console.log( e );
+			}
+		}
+
+		if ( ! customerKeyConfigured ) {
+			console.error(
+				'Cannot proceed e2e test, as we could not set the customer key. Please check if the test site has been setup correctly.'
 			);
-			await adminPage.fill( '#key_description', 'Key for API access' );
-			await adminPage.selectOption( '#key_permissions', 'read_write' );
-			await adminPage.click( 'text=Generate API key' );
-			process.env.CONSUMER_KEY = await adminPage.inputValue(
-				'#key_consumer_key'
-			);
-			process.env.CONSUMER_SECRET = await adminPage.inputValue(
-				'#key_consumer_secret'
-			);
-			console.log( 'Added consumer token successfully.' );
-			customerKeyConfigured = true;
-			break;
-		} catch ( e ) {
-			console.log(
-				`Failed to add consumer token. Retrying... ${ i }/${ nRetries }`
-			);
-			console.log( e );
+			process.exit( 1 );
 		}
 	}
 
-	if ( ! customerKeyConfigured ) {
-		console.error(
-			'Cannot proceed e2e test, as we could not set the customer key. Please check if the test site has been setup correctly.'
-		);
-		process.exit( 1 );
-	}
+	await adminContext.close();
 
 	// Sign in as customer user and save state
-	const customerRetries = 5;
+	const customerRetries = 2;
+	const customerContext = await browser.newContext( contextOptions );
+	const customerPage = await customerContext.newPage();
 	for ( let i = 0; i < customerRetries; i++ ) {
 		try {
 			console.log( 'Trying to log-in as customer...' );
-			await customerPage.goto( `/wp-admin` );
-			await customerPage.fill( 'input[name="log"]', customerUsername );
-			await customerPage.fill( 'input[name="pwd"]', customerPassword );
-			await customerPage.click( 'text=Log In' );
-
-			await customerPage.goto( `/my-account` );
+			await customerPage.goto( `./my-account` );
+			await logIn(
+				customerPage,
+				customer.username,
+				customer.password,
+				false
+			);
+			await expect( customerPage ).toHaveTitle( /My Account.*/i );
 			await expect(
-				customerPage.locator(
-					'.woocommerce-MyAccount-navigation-link--customer-logout'
-				)
+				customerPage.getByRole( 'link', { name: 'Log out' } ).first()
 			).toBeVisible();
-			await expect(
-				customerPage.locator(
-					'div.woocommerce-MyAccount-content > p >> nth=0'
-				)
-			).toContainText( 'Hello' );
 
 			await customerPage
 				.context()
@@ -162,8 +204,14 @@ module.exports = async ( config ) => {
 				`Customer log-in failed. Retrying... ${ i }/${ customerRetries }`
 			);
 			console.log( e );
+			await customerPage.screenshot( {
+				fullPage: true,
+				path: `tests/e2e-pw/test-results/customer-login-fail-${ i }.png`,
+			} );
 		}
 	}
+
+	await customerContext.close();
 
 	if ( ! customerLoggedIn ) {
 		console.error(
@@ -172,7 +220,77 @@ module.exports = async ( config ) => {
 		process.exit( 1 );
 	}
 
-	await adminContext.close();
-	await customerContext.close();
+	// While we're here, let's set HPOS according to the passed in DISABLE_HPOS env variable
+	// (if a value for DISABLE_HPOS was set)
+	// This was always being set to 'yes' after login in wp-env so this step ensures the
+	// correct value is set before we begin our tests
+	console.log( `DISABLE_HPOS: ${ DISABLE_HPOS }` );
+
+	const api = new wcApi( {
+		url: baseURL,
+		consumerKey: process.env.CONSUMER_KEY,
+		consumerSecret: process.env.CONSUMER_SECRET,
+		version: 'wc/v3',
+	} );
+
+	if ( DISABLE_HPOS ) {
+		const hposSettingRetries = 5;
+
+		const value = DISABLE_HPOS === '1' ? 'no' : 'yes';
+
+		for ( let i = 0; i < hposSettingRetries; i++ ) {
+			try {
+				console.log(
+					`Trying to switch ${
+						value === 'yes' ? 'on' : 'off'
+					} HPOS...`
+				);
+				const response = await api.post(
+					'settings/advanced/woocommerce_custom_orders_table_enabled',
+					{ value }
+				);
+				if ( response.data.value === value ) {
+					console.log(
+						`HPOS Switched ${
+							value === 'yes' ? 'on' : 'off'
+						} successfully`
+					);
+					hposConfigured = true;
+					break;
+				}
+			} catch ( e ) {
+				console.log(
+					`HPOS setup failed. Retrying... ${ i }/${ hposSettingRetries }`
+				);
+				console.log( e );
+			}
+		}
+
+		if ( ! hposConfigured ) {
+			console.error(
+				'Cannot proceed e2e test, HPOS configuration failed. Please check if the correct DISABLE_HPOS value was used and the test site has been setup correctly.'
+			);
+			process.exit( 1 );
+		}
+	}
+
+	const response = await api.get(
+		'settings/advanced/woocommerce_custom_orders_table_enabled'
+	);
+	const dataValue = response.data.value;
+	const enabledOption = response.data.options[ dataValue ];
+	console.log(
+		`HPOS configuration (woocommerce_custom_orders_table_enabled): ${ dataValue } - ${ enabledOption }`
+	);
+
+	await site.useCartCheckoutShortcodes( baseURL, userAgent, admin );
+
 	await browser.close();
+
+	if ( process.env.RESET_SITE === 'true' ) {
+		await site.reset(
+			process.env.CONSUMER_KEY,
+			process.env.CONSUMER_SECRET
+		);
+	}
 };

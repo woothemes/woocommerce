@@ -47,9 +47,9 @@ class Controller extends \WC_REST_Reports_Controller {
 	}
 
 	/**
-	 * Prepare a report object for serialization.
+	 * Prepare a report data item for serialization.
 	 *
-	 * @param  WC_Product      $report  Report data.
+	 * @param  WC_Product      $report  Report data item as returned from Data Store.
 	 * @param  WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
@@ -68,11 +68,13 @@ class Controller extends \WC_REST_Reports_Controller {
 		 *
 		 * Allows modification of the report data right before it is returned.
 		 *
+		 * @since 6.5.0
+		 *
 		 * @param WP_REST_Response $response The response object.
-		 * @param WC_Product       $product   The original bject.
+		 * @param WC_Product       $report   The original object.
 		 * @param WP_REST_Request  $request  Request used to generate the response.
 		 */
-		return apply_filters( 'woocommerce_rest_prepare_report_stock_stats', $response, $product, $request );
+		return apply_filters( 'woocommerce_rest_prepare_report_stock_stats', $response, $report, $request );
 	}
 
 	/**

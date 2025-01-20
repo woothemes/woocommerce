@@ -6,6 +6,8 @@
 namespace Automattic\WooCommerce\Internal\DependencyManagement;
 
 use Automattic\WooCommerce\Container;
+use Automattic\WooCommerce\Proxies\LegacyProxy;
+use Automattic\WooCommerce\Testing\Tools\DependencyManagement\MockableLegacyProxy;
 use Automattic\WooCommerce\Utilities\StringUtil;
 use Automattic\WooCommerce\Vendor\League\Container\Container as BaseContainer;
 use Automattic\WooCommerce\Vendor\League\Container\Definition\DefinitionInterface;
@@ -13,6 +15,8 @@ use Automattic\WooCommerce\Vendor\League\Container\Definition\DefinitionInterfac
 /**
  * This class extends the original League's Container object by adding some functionality
  * that we need for WooCommerce.
+ *
+ * NOTE: This class will be removed in WooCommerce 10.0.
  */
 class ExtendedContainer extends BaseContainer {
 
@@ -22,6 +26,13 @@ class ExtendedContainer extends BaseContainer {
 	 * @var string
 	 */
 	private $woocommerce_namespace = 'Automattic\\WooCommerce\\';
+
+	/**
+	 * Holds the original registrations so that 'reset_replacement' can work, keys are class names and values are the original concretes.
+	 *
+	 * @var array
+	 */
+	private $original_concretes = array();
 
 	/**
 	 * Whitelist of classes that we can register using the container
@@ -40,6 +51,13 @@ class ExtendedContainer extends BaseContainer {
 	);
 
 	/**
+	 * A list of tags that have already been fully resolved, see 'get' for details.
+	 *
+	 * @var array
+	 */
+	private array $known_tags = array();
+
+	/**
 	 * Register a class in the container.
 	 *
 	 * @param string    $class_name Class name.
@@ -49,7 +67,7 @@ class ExtendedContainer extends BaseContainer {
 	 * @return DefinitionInterface The generated definition for the container.
 	 * @throws ContainerException Invalid parameters.
 	 */
-	public function add( string $class_name, $concrete = null, bool $shared = null ) : DefinitionInterface {
+	public function add( string $class_name, $concrete = null, ?bool $shared = null ): DefinitionInterface {
 		if ( ! $this->is_class_allowed( $class_name ) ) {
 			throw new ContainerException( "You cannot add '$class_name', only classes in the {$this->woocommerce_namespace} namespace are allowed." );
 		}
@@ -68,7 +86,7 @@ class ExtendedContainer extends BaseContainer {
 	}
 
 	/**
-	 * Replace an existing registration with a different concrete.
+	 * Replace an existing registration with a different concrete. See also 'reset_replacement' and 'reset_all_replacements'.
 	 *
 	 * @param string $class_name The class name whose definition will be replaced.
 	 * @param mixed  $concrete The new concrete (same as "add").
@@ -76,7 +94,7 @@ class ExtendedContainer extends BaseContainer {
 	 * @return DefinitionInterface The modified definition.
 	 * @throws ContainerException Invalid parameters.
 	 */
-	public function replace( string $class_name, $concrete ) : DefinitionInterface {
+	public function replace( string $class_name, $concrete ): DefinitionInterface {
 		if ( ! $this->has( $class_name ) ) {
 			throw new ContainerException( "The container doesn't have '$class_name' registered, please use 'add' instead of 'replace'." );
 		}
@@ -86,7 +104,41 @@ class ExtendedContainer extends BaseContainer {
 			throw new ContainerException( "You cannot use concrete '$concrete_class', only classes in the {$this->woocommerce_namespace} namespace are allowed." );
 		}
 
+		if ( ! array_key_exists( $class_name, $this->original_concretes ) ) {
+			// LegacyProxy is a special case: we replace it with MockableLegacyProxy at unit testing bootstrap time.
+			$original_concrete                       = LegacyProxy::class === $class_name ? MockableLegacyProxy::class : $this->extend( $class_name )->getConcrete( $concrete );
+			$this->original_concretes[ $class_name ] = $original_concrete;
+		}
+
 		return $this->extend( $class_name )->setConcrete( $concrete );
+	}
+
+	/**
+	 * Reset a replaced registration back to its original concrete.
+	 *
+	 * @param string $class_name The class name whose definition had been replaced.
+	 * @return bool True if the registration has been reset, false if no replacement had been made for the specified class name.
+	 */
+	public function reset_replacement( string $class_name ): bool {
+		if ( ! array_key_exists( $class_name, $this->original_concretes ) ) {
+			return false;
+		}
+
+		$this->extend( $class_name )->setConcrete( $this->original_concretes[ $class_name ] );
+		unset( $this->original_concretes[ $class_name ] );
+
+		return true;
+	}
+
+	/**
+	 * Reset all the replaced registrations back to their original concretes.
+	 */
+	public function reset_all_replacements() {
+		foreach ( $this->original_concretes as $class_name => $concrete ) {
+			$this->extend( $class_name )->setConcrete( $concrete );
+		}
+
+		$this->original_concretes = array();
 	}
 
 	/**
@@ -94,9 +146,7 @@ class ExtendedContainer extends BaseContainer {
 	 */
 	public function reset_all_resolved() {
 		foreach ( $this->definitions->getIterator() as $definition ) {
-			// setConcrete causes the cached resolved value to be forgotten.
-			$concrete = $definition->getConcrete();
-			$definition->setConcrete( $concrete );
+			$definition->forgetResolved();
 		}
 	}
 
@@ -112,6 +162,17 @@ class ExtendedContainer extends BaseContainer {
 	public function get( $id, bool $new = false ) {
 		if ( false === strpos( $id, '\\' ) ) {
 			throw new ContainerException( "Attempt to get an instance of the non-namespaced class '$id' from the container, did you forget to add a namespace import?" );
+		}
+
+		// This is a workaround for an issue that arises when using service providers inheriting from AbstractInterfaceServiceProvider:
+		// if one of these providers registers classes both by name and by tag, and one of its registered classes is requested
+		// with 'get' by name before a list of classes is requested by tag, then that service provider gets locked as
+		// the only one providing that tag, and the others get ignored. This is due to the fact that container definitions
+		// are created "on the fly" as needed and the base 'get' method won't try to register additional providers
+		// if the requested tag is already provided by at least one of the already existing definitions.
+		if ( $this->definitions->hasTag( $id ) && ! in_array( $id, $this->known_tags, true ) && $this->providers->provides( $id ) ) {
+			$this->providers->register( $id );
+			$this->known_tags[] = $id;
 		}
 
 		return parent::get( $id, $new );

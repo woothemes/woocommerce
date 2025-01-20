@@ -2,13 +2,24 @@
  * External dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
-import { apiFetch } from '@wordpress/data-controls';
+import apiFetch from '@wordpress/api-fetch';
+
+import {
+	apiFetch as controlsApiFetch,
+	dispatch as deprecatedDispatch,
+	select,
+} from '@wordpress/data-controls';
+import { controls } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { WC_PRODUCT_NAMESPACE } from './constants';
-import { Product, ProductQuery } from './types';
+import {
+	STORE_NAME,
+	WC_PRODUCT_NAMESPACE,
+	WC_V3_ENDPOINT_SUGGESTED_PRODUCTS,
+} from './constants';
+import { GetSuggestedProductsOptions, Product, ProductQuery } from './types';
 import {
 	getProductError,
 	getProductsError,
@@ -18,6 +29,12 @@ import {
 	getProductSuccess,
 } from './actions';
 import { request } from '../utils';
+import { createIdFromOptions } from './utils';
+
+const dispatch =
+	controls && controls.dispatch ? controls.dispatch : deprecatedDispatch;
+const resolveSelect =
+	controls && controls.resolveSelect ? controls.resolveSelect : select;
 
 export function* getProducts( query: Partial< ProductQuery > ) {
 	// id is always required.
@@ -48,7 +65,7 @@ export function* getProducts( query: Partial< ProductQuery > ) {
 
 export function* getProduct( productId: number ) {
 	try {
-		const product: Product = yield apiFetch( {
+		const product: Product = yield controlsApiFetch( {
 			path: addQueryArgs( `${ WC_PRODUCT_NAMESPACE }/${ productId }`, {
 				context: 'edit',
 			} ),
@@ -56,9 +73,44 @@ export function* getProduct( productId: number ) {
 		} );
 
 		yield getProductSuccess( productId, product );
+
+		yield dispatch( STORE_NAME, 'finishResolution', 'getPermalinkParts', [
+			productId,
+		] );
+
 		return product;
 	} catch ( error ) {
 		yield getProductError( productId, error );
+		throw error;
+	}
+}
+
+export function* getRelatedProducts( productId: number ) {
+	try {
+		// Get the product.
+		const product: Product = yield resolveSelect(
+			STORE_NAME,
+			'getProduct',
+			productId
+		);
+
+		// Pick the related products IDs.
+		const relatedProductsIds = product.related_ids;
+		if ( ! relatedProductsIds?.length ) {
+			return [];
+		}
+
+		// Get the related products.
+		const relatedProducts: Product[] = yield resolveSelect(
+			STORE_NAME,
+			'getProducts',
+			{
+				include: relatedProductsIds,
+			}
+		);
+
+		return relatedProducts;
+	} catch ( error ) {
 		throw error;
 	}
 }
@@ -81,3 +133,20 @@ export function* getProductsTotalCount( query: Partial< ProductQuery > ) {
 		throw error;
 	}
 }
+
+export function* getPermalinkParts( productId: number ) {
+	yield resolveSelect( STORE_NAME, 'getProduct', [ productId ] );
+}
+
+export const getSuggestedProducts =
+	( options: GetSuggestedProductsOptions ) =>
+	// @ts-expect-error There are no types for this.
+	async ( { dispatch: contextualDispatch } ) => {
+		const key = createIdFromOptions( options );
+
+		const data = await apiFetch( {
+			path: addQueryArgs( WC_V3_ENDPOINT_SUGGESTED_PRODUCTS, options ),
+		} );
+
+		contextualDispatch.setSuggestedProductAction( key, data );
+	};

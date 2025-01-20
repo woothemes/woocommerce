@@ -74,6 +74,13 @@ class OrdersTableMetaQuery {
 	private $queries = array();
 
 	/**
+	 * Flat list of clauses by name.
+	 *
+	 * @var array
+	 */
+	private $flattened_clauses = array();
+
+	/**
 	 * JOIN clauses to add to the main SQL query.
 	 *
 	 * @var array
@@ -130,6 +137,73 @@ class OrdersTableMetaQuery {
 	}
 
 	/**
+	 * Returns a list of names (corresponding to meta_query clauses) that can be used as an 'orderby' arg.
+	 *
+	 * @since 7.4
+	 *
+	 * @return array
+	 */
+	public function get_orderby_keys(): array {
+		if ( ! $this->flattened_clauses ) {
+			return array();
+		}
+
+		$keys   = array();
+		$keys[] = 'meta_value';
+		$keys[] = 'meta_value_num';
+
+		$first_clause = reset( $this->flattened_clauses );
+		if ( $first_clause && ! empty( $first_clause['key'] ) ) {
+			$keys[] = $first_clause['key'];
+		}
+
+		$keys = array_merge(
+			$keys,
+			array_keys( $this->flattened_clauses )
+		);
+
+		return $keys;
+	}
+
+	/**
+	 * Returns an SQL fragment for the given meta_query key that can be used in an ORDER BY clause.
+	 * Call {@see 'get_orderby_keys'} to obtain a list of valid keys.
+	 *
+	 * @since 7.4
+	 *
+	 * @param string $key The key name.
+	 * @return string
+	 *
+	 * @throws \Exception When an invalid key is passed.
+	 */
+	public function get_orderby_clause_for_key( string $key ): string {
+		$clause = false;
+
+		if ( isset( $this->flattened_clauses[ $key ] ) ) {
+			$clause = $this->flattened_clauses[ $key ];
+		} else {
+			$first_clause = reset( $this->flattened_clauses );
+
+			if ( $first_clause && ! empty( $first_clause['key'] ) ) {
+				if ( 'meta_value_num' === $key ) {
+					return "{$first_clause['alias']}.meta_value+0";
+				}
+
+				if ( 'meta_value' === $key || $first_clause['key'] === $key ) {
+					$clause = $first_clause;
+				}
+			}
+		}
+
+		if ( ! $clause ) {
+			// translators: %s is a meta_query key.
+			throw new \Exception( sprintf( __( 'Invalid meta_query clause key: %s.', 'woocommerce' ), $key ) );
+		}
+
+		return "CAST({$clause['alias']}.meta_value AS {$clause['cast']})";
+	}
+
+	/**
 	 * Checks whether a given meta_query clause is atomic or not (i.e. not nested).
 	 *
 	 * @param array $arg The meta_query clause.
@@ -158,8 +232,8 @@ class OrdersTableMetaQuery {
 					unset( $arg['value'] );
 				}
 
-				$arg['compare']      = isset( $arg['compare'] ) ? strtoupper( $arg['compare'] ) : ( isset( $arg['value'] ) && is_array( $arg['value'] ) ? 'IN' : '=' );
-				$arg['compare_key']  = isset( $arg['compare_key'] ) ? strtoupper( $arg['compare_key'] ) : ( isset( $arg['key'] ) && is_array( $arg['key'] ) ? 'IN' : '=' );
+				$arg['compare']     = isset( $arg['compare'] ) ? strtoupper( $arg['compare'] ) : ( isset( $arg['value'] ) && is_array( $arg['value'] ) ? 'IN' : '=' );
+				$arg['compare_key'] = isset( $arg['compare_key'] ) ? strtoupper( $arg['compare_key'] ) : ( isset( $arg['key'] ) && is_array( $arg['key'] ) ? 'IN' : '=' );
 
 				if ( ! in_array( $arg['compare'], self::NON_NUMERIC_OPERATORS, true ) && ! in_array( $arg['compare'], self::NUMERIC_OPERATORS, true ) ) {
 					$arg['compare'] = '=';
@@ -169,7 +243,8 @@ class OrdersTableMetaQuery {
 					$arg['compare_key'] = '=';
 				}
 
-				$sanitized[ $key ] = $arg;
+				$sanitized[ $key ]          = $arg;
+				$sanitized[ $key ]['index'] = $key;
 			} else {
 				$sanitized_arg = $this->sanitize_meta_query( $arg );
 
@@ -275,7 +350,6 @@ class OrdersTableMetaQuery {
 		$queries     = $this->queries;
 		$sql_where   = $this->process( $queries );
 		$this->where = $sql_where;
-
 	}
 
 	/**
@@ -298,12 +372,24 @@ class OrdersTableMetaQuery {
 					$this->generate_where_for_clause_value( $arg ),
 				)
 			);
+
+			// Store clauses by their key for ORDER BY purposes.
+			$flat_clause_key = is_int( $arg['index'] ) ? $arg['alias'] : $arg['index'];
+
+			$unique_flat_key = $flat_clause_key;
+			$i               = 1;
+			while ( isset( $this->flattened_clauses[ $unique_flat_key ] ) ) {
+				$unique_flat_key = $flat_clause_key . '-' . $i;
+				++$i;
+			}
+
+			$this->flattened_clauses[ $unique_flat_key ] =& $arg;
 		} else {
 			// Nested.
 			$relation = $arg['relation'];
 			unset( $arg['relation'] );
-
-			foreach ( $arg as $key => &$clause ) {
+			$chunks = array();
+			foreach ( $arg as $index => &$clause ) {
 				$chunks[] = $this->process( $clause, $arg );
 			}
 
@@ -432,6 +518,9 @@ class OrdersTableMetaQuery {
 
 		$alias = $clause['alias'];
 
+		$meta_compare_string_start = '';
+		$meta_compare_string_end   = '';
+		$subquery_alias            = '';
 		if ( in_array( $clause['compare_key'], array( '!=', 'NOT IN', 'NOT LIKE', 'NOT EXISTS', 'NOT REGEXP' ), true ) ) {
 			$i                     = count( $this->table_aliases );
 			$subquery_alias        = self::ALIAS_PREFIX . $i;
@@ -454,7 +543,7 @@ class OrdersTableMetaQuery {
 				$where              = $wpdb->prepare( "$alias.meta_key LIKE %s", $meta_compare_value ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				break;
 			case 'IN':
-				$meta_compare_string = "$alias.meta_key IN (" . substr( str_repeat( ',%s', count( $clause['key'] ) ), 1 ) . ')';
+				$meta_compare_string = "$alias.meta_key IN (" . substr( str_repeat( ',%s', count( (array) $clause['key'] ) ), 1 ) . ')';
 				$where               = $wpdb->prepare( $meta_compare_string, $clause['key'] ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				break;
 			case 'RLIKE':
@@ -479,7 +568,7 @@ class OrdersTableMetaQuery {
 				$where              = $wpdb->prepare( $meta_compare_string, $meta_compare_value ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				break;
 			case 'NOT IN':
-				$array_subclause     = '(' . substr( str_repeat( ',%s', count( $clause['key'] ) ), 1 ) . ') ';
+				$array_subclause     = '(' . substr( str_repeat( ',%s', count( (array) $clause['key'] ) ), 1 ) . ') ';
 				$meta_compare_string = $meta_compare_string_start . "AND $subquery_alias.meta_key IN " . $array_subclause . $meta_compare_string_end;
 				$where               = $wpdb->prepare( $meta_compare_string, $clause['key'] ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				break;
@@ -531,7 +620,7 @@ class OrdersTableMetaQuery {
 		switch ( $meta_compare ) {
 			case 'IN':
 			case 'NOT IN':
-				$where = $wpdb->prepare( '(' . substr( str_repeat( ',%s', count( $meta_value ) ), 1 ) . ')', $meta_value ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				$where = $wpdb->prepare( '(' . substr( str_repeat( ',%s', count( (array) $meta_value ) ), 1 ) . ')', $meta_value ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				break;
 
 			case 'BETWEEN':
@@ -567,6 +656,7 @@ class OrdersTableMetaQuery {
 				return "CAST({$clause['alias']}.meta_value AS {$clause['cast']}) {$meta_compare} {$where}";
 			}
 		}
-	}
 
+		return '';
+	}
 }

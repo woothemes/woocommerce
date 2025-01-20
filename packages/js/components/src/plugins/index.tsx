@@ -9,9 +9,16 @@ import {
 	useState,
 	useEffect,
 } from '@wordpress/element';
-import { SyntheticEvent } from 'react';
+import { SyntheticEvent, useCallback } from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { PLUGINS_STORE_NAME, InstallPluginsResponse } from '@woocommerce/data';
+import { PLUGINS_STORE_NAME } from '@woocommerce/data';
+import type {
+	InstallPluginsResponse,
+	PluginSelectors,
+	PluginActions,
+} from '@woocommerce/data';
+
+type ButtonProps = React.ComponentProps< typeof Button >;
 
 type PluginsProps = {
 	onComplete: (
@@ -19,12 +26,18 @@ type PluginsProps = {
 		response: InstallPluginsResponse
 	) => void;
 	onError: ( errors: unknown, response: InstallPluginsResponse ) => void;
+	onClick?: () => void;
 	onSkip?: () => void;
 	skipText?: string;
 	autoInstall?: boolean;
 	pluginSlugs?: string[];
 	onAbort?: () => void;
 	abortText?: string;
+	installText?: string;
+	installButtonVariant?: ButtonProps[ 'variant' ];
+	learnMoreLink?: string;
+	learnMoreText?: string;
+	onLearnMore?: () => void;
 };
 
 export const Plugins = ( {
@@ -32,16 +45,28 @@ export const Plugins = ( {
 	onAbort,
 	onComplete,
 	onError = () => null,
-	pluginSlugs = [ 'jetpack', 'woocommerce-services' ],
+	onClick = () => null,
+	pluginSlugs = [ 'woocommerce-services' ],
 	onSkip,
+	installText = __( 'Install & enable', 'woocommerce' ),
 	skipText = __( 'No thanks', 'woocommerce' ),
 	abortText = __( 'Abort', 'woocommerce' ),
+	installButtonVariant = 'primary',
+	learnMoreLink,
+	learnMoreText = __( 'Learn more', 'woocommerce' ),
+	onLearnMore,
 }: PluginsProps ) => {
 	const [ hasErrors, setHasErrors ] = useState( false );
-	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
+	// Tracks action so that multiple instances of this button don't all light up when one is clicked
+	const [ hasBeenClicked, setHasBeenClicked ] = useState( false );
+	const { installAndActivatePlugins }: PluginActions =
+		useDispatch( PLUGINS_STORE_NAME );
 	const { isRequesting } = useSelect( ( select ) => {
-		const { getActivePlugins, getInstalledPlugins, isPluginsRequesting } =
-			select( PLUGINS_STORE_NAME );
+		const {
+			getActivePlugins,
+			getInstalledPlugins,
+			isPluginsRequesting,
+		}: PluginSelectors = select( PLUGINS_STORE_NAME );
 
 		return {
 			isRequesting:
@@ -50,56 +75,64 @@ export const Plugins = ( {
 			activePlugins: getActivePlugins(),
 			installedPlugins: getInstalledPlugins(),
 		};
-	} );
+	}, [] );
 
-	const handleErrors = (
-		errors: unknown,
-		response: InstallPluginsResponse
-	) => {
-		setHasErrors( true );
+	const handleErrors = useCallback(
+		( errors: unknown, response: InstallPluginsResponse ) => {
+			setHasErrors( true );
 
-		onError( errors, response );
-	};
+			onError( errors, response );
+		},
+		[ onError ]
+	);
 
-	const handleSuccess = (
-		plugins: string[],
-		response: InstallPluginsResponse
-	) => {
-		onComplete( plugins, response );
-	};
+	const handleSuccess = useCallback(
+		( plugins: string[], response: InstallPluginsResponse ) => {
+			onComplete( plugins, response );
+		},
+		[ onComplete ]
+	);
 
-	const installAndActivate = async (
-		event?: SyntheticEvent< HTMLAnchorElement >
-	) => {
-		if ( event ) {
-			event.preventDefault();
-		}
+	const installAndActivate = useCallback(
+		async ( event?: SyntheticEvent ) => {
+			if ( event ) {
+				event.preventDefault();
+			}
 
-		// Avoid double activating.
-		if ( isRequesting ) {
-			return false;
-		}
+			// Avoid double activating.
+			if ( isRequesting ) {
+				return false;
+			}
 
-		installAndActivatePlugins( pluginSlugs )
-			.then( ( response ) => {
-				handleSuccess( response.data.activated, response );
-			} )
-			.catch( ( response ) => {
-				handleErrors( response.errors, response );
-			} );
-	};
+			installAndActivatePlugins( pluginSlugs )
+				.then( ( response ) => {
+					handleSuccess( response.data.activated, response );
+				} )
+				.catch( ( response ) => {
+					setHasBeenClicked( false );
+					handleErrors( response.errors, response );
+				} );
+		},
+		[
+			handleErrors,
+			handleSuccess,
+			installAndActivatePlugins,
+			isRequesting,
+			pluginSlugs,
+		]
+	);
 
 	useEffect( () => {
 		if ( autoInstall ) {
 			installAndActivate();
 		}
-	}, [] );
+	}, [ autoInstall ] );
 
 	if ( hasErrors ) {
 		return (
 			<>
 				<Button
-					isPrimary
+					variant="primary"
 					isBusy={ isRequesting }
 					onClick={ installAndActivate }
 				>
@@ -121,7 +154,11 @@ export const Plugins = ( {
 	if ( ! pluginSlugs.length ) {
 		return (
 			<Fragment>
-				<Button isPrimary isBusy={ isRequesting } onClick={ onSkip }>
+				<Button
+					variant="primary"
+					isBusy={ isRequesting }
+					onClick={ onSkip }
+				>
 					{ __( 'Continue', 'woocommerce' ) }
 				</Button>
 			</Fragment>
@@ -131,19 +168,35 @@ export const Plugins = ( {
 	return (
 		<>
 			<Button
-				isBusy={ isRequesting }
-				isPrimary
-				onClick={ installAndActivate }
+				isBusy={ isRequesting && hasBeenClicked }
+				variant={
+					isRequesting && hasBeenClicked
+						? 'primary' // set to primary when busy, the other variants look weird when combined with isBusy
+						: installButtonVariant
+				}
+				disabled={ isRequesting && hasBeenClicked }
+				onClick={ () => {
+					onClick();
+					setHasBeenClicked( true );
+					installAndActivate();
+				} }
 			>
-				{ __( 'Install & enable', 'woocommerce' ) }
+				{ installText }
 			</Button>
 			{ onSkip && (
-				<Button isTertiary onClick={ onSkip }>
+				<Button variant="tertiary" onClick={ onSkip }>
 					{ skipText }
 				</Button>
 			) }
+			{ learnMoreLink && (
+				<a href={ learnMoreLink } target="_blank" rel="noreferrer">
+					<Button variant="tertiary" onClick={ onLearnMore }>
+						{ learnMoreText }
+					</Button>
+				</a>
+			) }
 			{ onAbort && (
-				<Button isTertiary onClick={ onAbort }>
+				<Button variant="tertiary" onClick={ onAbort }>
 					{ abortText }
 				</Button>
 			) }

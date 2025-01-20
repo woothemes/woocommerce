@@ -312,7 +312,7 @@ jQuery( function( $ ) {
 					var select2_args = $.extend( {
 						allowClear        : $( this ).data( 'allow_clear' ) ? true : false,
 						placeholder       : $( this ).data( 'placeholder' ),
-						minimumInputLength: $( this ).data( 'minimum_input_length' ) ?? '3',
+						minimumInputLength: $( this ).data( 'minimum_input_length' ) !== null && $( this ).data( 'minimum_input_length' ) !== undefined ? $( this ).data( 'minimum_input_length' ) : '3',
 						escapeMarkup      : function( m ) {
 							return m;
 						},
@@ -324,6 +324,7 @@ jQuery( function( $ ) {
 								return {
 									taxonomy: $( this ).data( 'taxonomy' ),
 									limit:    $( this ).data( 'limit' ),
+									orderby:  $( this ).data( 'orderby'),
 									term:     params.term,
 									action:   'woocommerce_json_search_taxonomy_terms',
 									security: wc_enhanced_select_params.search_taxonomy_terms_nonce
@@ -355,7 +356,7 @@ jQuery( function( $ ) {
 					var select2_args = $.extend( {
 						allowClear        : $( this ).data( 'allow_clear' ) ? true : false,
 						placeholder       : $( this ).data( 'placeholder' ),
-						minimumInputLength: $( this ).data( 'minimum_input_length' ) ?? '3',
+						minimumInputLength: $( this ).data( 'minimum_input_length' ) !== null && $( this ).data( 'minimum_input_length' ) !== undefined ? $( this ).data( 'minimum_input_length' ) : '3',
 						escapeMarkup      : function( m ) {
 							return m;
 						},

@@ -9,7 +9,7 @@ import { apiFetch } from '@wordpress/data-controls';
 import { cleanQuery, getUrlParameters, getRestPath, parseId } from './utils';
 import CRUD_ACTIONS from './crud-actions';
 import TYPES from './action-types';
-import { IdType, IdQuery, Item, ItemQuery } from './types';
+import { IdType, IdQuery, Item, ItemQuery, CrudActionOptions } from './types';
 
 type ResolverOptions = {
 	resourceName: string;
@@ -25,20 +25,43 @@ export function createItemError( query: Partial< ItemQuery >, error: unknown ) {
 	};
 }
 
-export function createItemSuccess( key: IdType, item: Item ) {
+export function createItemRequest( query: Partial< ItemQuery > ) {
+	return {
+		type: TYPES.CREATE_ITEM_REQUEST as const,
+		query,
+	};
+}
+
+export function createItemSuccess(
+	key: IdType,
+	item: Item,
+	query: Partial< ItemQuery >,
+	options?: CrudActionOptions
+) {
 	return {
 		type: TYPES.CREATE_ITEM_SUCCESS as const,
 		key,
 		item,
+		query,
+		options,
 	};
 }
 
-export function deleteItemError( key: IdType, error: unknown ) {
+export function deleteItemError( key: IdType, error: unknown, force: boolean ) {
 	return {
 		type: TYPES.DELETE_ITEM_ERROR as const,
 		key,
 		error,
 		errorType: CRUD_ACTIONS.DELETE_ITEM,
+		force,
+	};
+}
+
+export function deleteItemRequest( key: IdType, force: boolean ) {
+	return {
+		type: TYPES.DELETE_ITEM_REQUEST as const,
+		key,
+		force,
 	};
 }
 
@@ -116,20 +139,38 @@ export function getItemsTotalCountError(
 	};
 }
 
-export function updateItemError( key: IdType, error: unknown ) {
+export function updateItemError(
+	key: IdType,
+	error: unknown,
+	query: Partial< ItemQuery >
+) {
 	return {
 		type: TYPES.UPDATE_ITEM_ERROR as const,
 		key,
 		error,
 		errorType: CRUD_ACTIONS.UPDATE_ITEM,
+		query,
 	};
 }
 
-export function updateItemSuccess( key: IdType, item: Item ) {
+export function updateItemRequest( key: IdType, query: Partial< ItemQuery > ) {
+	return {
+		type: TYPES.UPDATE_ITEM_REQUEST as const,
+		key,
+		query,
+	};
+}
+
+export function updateItemSuccess(
+	key: IdType,
+	item: Item,
+	query: Partial< ItemQuery >
+) {
 	return {
 		type: TYPES.UPDATE_ITEM_SUCCESS as const,
 		key,
 		item,
+		query,
 	};
 }
 
@@ -137,7 +178,11 @@ export const createDispatchActions = ( {
 	namespace,
 	resourceName,
 }: ResolverOptions ) => {
-	const createItem = function* ( query: Partial< ItemQuery > ) {
+	const createItem = function* (
+		query: Partial< ItemQuery >,
+		options: CrudActionOptions
+	) {
+		yield createItemRequest( query );
 		const urlParameters = getUrlParameters( namespace, query );
 
 		try {
@@ -151,7 +196,7 @@ export const createDispatchActions = ( {
 			} );
 			const { key } = parseId( item.id, urlParameters );
 
-			yield createItemSuccess( key, item );
+			yield createItemSuccess( key, item, query, options );
 			return item;
 		} catch ( error ) {
 			yield createItemError( query, error );
@@ -162,6 +207,7 @@ export const createDispatchActions = ( {
 	const deleteItem = function* ( idQuery: IdQuery, force = true ) {
 		const urlParameters = getUrlParameters( namespace, idQuery );
 		const { id, key } = parseId( idQuery, urlParameters );
+		yield deleteItemRequest( key, force );
 
 		try {
 			const item: Item = yield apiFetch( {
@@ -176,7 +222,7 @@ export const createDispatchActions = ( {
 			yield deleteItemSuccess( key, force, item );
 			return item;
 		} catch ( error ) {
-			yield deleteItemError( key, error );
+			yield deleteItemError( key, error, force );
 			throw error;
 		}
 	};
@@ -187,21 +233,23 @@ export const createDispatchActions = ( {
 	) {
 		const urlParameters = getUrlParameters( namespace, idQuery );
 		const { id, key } = parseId( idQuery, urlParameters );
+		yield updateItemRequest( key, query );
 
 		try {
 			const item: Item = yield apiFetch( {
 				path: getRestPath(
 					`${ namespace }/${ id }`,
-					cleanQuery( query, namespace ),
+					{},
 					urlParameters
 				),
 				method: 'PUT',
+				data: query,
 			} );
 
-			yield updateItemSuccess( key, item );
+			yield updateItemSuccess( key, item, query );
 			return item;
 		} catch ( error ) {
-			yield updateItemError( key, error );
+			yield updateItemError( key, error, query );
 			throw error;
 		}
 	};
@@ -215,8 +263,10 @@ export const createDispatchActions = ( {
 
 export type Actions = ReturnType<
 	| typeof createItemError
+	| typeof createItemRequest
 	| typeof createItemSuccess
 	| typeof deleteItemError
+	| typeof deleteItemRequest
 	| typeof deleteItemSuccess
 	| typeof getItemError
 	| typeof getItemSuccess
@@ -225,5 +275,6 @@ export type Actions = ReturnType<
 	| typeof getItemsTotalCountSuccess
 	| typeof getItemsTotalCountError
 	| typeof updateItemError
+	| typeof updateItemRequest
 	| typeof updateItemSuccess
 >;

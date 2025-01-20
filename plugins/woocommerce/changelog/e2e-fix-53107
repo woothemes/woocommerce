@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: fix incorrect site reset reporting in global setup

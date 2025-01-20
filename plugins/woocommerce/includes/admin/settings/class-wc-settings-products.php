@@ -6,6 +6,8 @@
  * @version 2.4.0
  */
 
+use Automattic\WooCommerce\Utilities\I18nUtil;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -30,6 +32,13 @@ class WC_Settings_Products extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'box';
+
+	/**
 	 * Get own sections.
 	 *
 	 * @return array
@@ -43,11 +52,15 @@ class WC_Settings_Products extends WC_Settings_Page {
 	}
 
 	/**
-	 * Get settings for the detault section.
+	 * Get settings for the default section.
 	 *
 	 * @return array
 	 */
 	protected function get_settings_for_default_section() {
+		$locale_info            = include WC()->plugin_path() . '/i18n/locale-info.php';
+		$default_weight_unit    = $locale_info['US']['weight_unit'];
+		$default_dimension_unit = $locale_info['US']['dimension_unit'];
+
 		$settings =
 			array(
 				array(
@@ -109,13 +122,13 @@ class WC_Settings_Products extends WC_Settings_Page {
 					'id'       => 'woocommerce_weight_unit',
 					'class'    => 'wc-enhanced-select',
 					'css'      => 'min-width:300px;',
-					'default'  => 'kg',
+					'default'  => $default_weight_unit,
 					'type'     => 'select',
 					'options'  => array(
-						'kg'  => __( 'kg', 'woocommerce' ),
-						'g'   => __( 'g', 'woocommerce' ),
-						'lbs' => __( 'lbs', 'woocommerce' ),
-						'oz'  => __( 'oz', 'woocommerce' ),
+						'kg'  => I18nUtil::get_weight_unit_label( 'kg' ),
+						'g'   => I18nUtil::get_weight_unit_label( 'g' ),
+						'lbs' => I18nUtil::get_weight_unit_label( 'lbs' ),
+						'oz'  => I18nUtil::get_weight_unit_label( 'oz' ),
 					),
 					'desc_tip' => true,
 				),
@@ -126,14 +139,14 @@ class WC_Settings_Products extends WC_Settings_Page {
 					'id'       => 'woocommerce_dimension_unit',
 					'class'    => 'wc-enhanced-select',
 					'css'      => 'min-width:300px;',
-					'default'  => 'cm',
+					'default'  => $default_dimension_unit,
 					'type'     => 'select',
 					'options'  => array(
-						'm'  => __( 'm', 'woocommerce' ),
-						'cm' => __( 'cm', 'woocommerce' ),
-						'mm' => __( 'mm', 'woocommerce' ),
-						'in' => __( 'in', 'woocommerce' ),
-						'yd' => __( 'yd', 'woocommerce' ),
+						'm'  => I18nUtil::get_dimensions_unit_label( 'm' ),
+						'cm' => I18nUtil::get_dimensions_unit_label( 'cm' ),
+						'mm' => I18nUtil::get_dimensions_unit_label( 'mm' ),
+						'in' => I18nUtil::get_dimensions_unit_label( 'in' ),
+						'yd' => I18nUtil::get_dimensions_unit_label( 'yd' ),
 					),
 					'desc_tip' => true,
 				),
@@ -376,7 +389,7 @@ class WC_Settings_Products extends WC_Settings_Page {
 					'desc'     => sprintf(
 					// translators: Link to WooCommerce Docs.
 						__( "If you are using X-Accel-Redirect download method along with NGINX server, make sure that you have applied settings as described in <a href='%s'>Digital/Downloadable Product Handling</a> guide.", 'woocommerce' ),
-						'https://docs.woocommerce.com/document/digital-downloadable-product-handling#nginx-setting'
+						'https://woocommerce.com/document/digital-downloadable-product-handling#nginx-setting'
 					),
 					'options'  => array(
 						'force'     => __( 'Force downloads', 'woocommerce' ),
@@ -394,7 +407,7 @@ class WC_Settings_Products extends WC_Settings_Page {
 					'desc_tip'      => sprintf(
 						/* translators: %1$s is a link to the WooCommerce documentation. */
 						__( 'If the "Force Downloads" or "X-Accel-Redirect/X-Sendfile" download method is selected but does not work, the system will use the "Redirect" method as a last resort. <a href="%1$s">See this guide</a> for more details.', 'woocommerce' ),
-						'https://docs.woocommerce.com/document/digital-downloadable-product-handling/'
+						'https://woocommerce.com/document/digital-downloadable-product-handling/'
 					),
 					'checkboxgroup' => 'start',
 					'autoload'      => false,
@@ -440,7 +453,21 @@ class WC_Settings_Products extends WC_Settings_Page {
 					'desc_tip' => sprintf(
 					// translators: Link to WooCommerce Docs.
 						__( "Not required if your download directory is protected. <a href='%s'>See this guide</a> for more details. Files already uploaded will not be affected.", 'woocommerce' ),
-						'https://docs.woocommerce.com/document/digital-downloadable-product-handling#unique-string'
+						'https://woocommerce.com/document/digital-downloadable-product-handling#unique-string'
+					),
+				),
+
+				array(
+					'title'    => __( 'Count partial downloads', 'woocommerce' ),
+					'desc'     => __( 'Count downloads even if only part of a file is fetched.', 'woocommerce' ),
+					'id'       => 'woocommerce_downloads_count_partial',
+					'type'     => 'checkbox',
+					'default'  => 'yes',
+					'desc_tip' => sprintf(
+						/* Translators: 1: opening link tag 2: closing link tag. */
+						__( 'Repeat fetches made within a reasonable window of time (by default, 30 minutes) will not be counted twice. This is a generally reasonably way to enforce download limits in relation to ranged requests. %1$sLearn more.%2$s', 'woocommerce' ),
+						'<a href="https://woocommerce.com/document/digital-downloadable-product-handling/">',
+						'</a>'
 					),
 				),
 

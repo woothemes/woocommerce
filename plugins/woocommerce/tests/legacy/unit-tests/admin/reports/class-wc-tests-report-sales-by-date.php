@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Admin\Reports
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 /**
  * Tests for the WC_Report_Sales_By_Date class.
  */
@@ -16,6 +18,16 @@ class WC_Tests_Report_Sales_By_Date extends WC_Unit_Test_Case {
 	public static function setUpBeforeClass(): void {
 		include_once WC_Unit_Tests_Bootstrap::instance()->plugin_dir . '/includes/admin/reports/class-wc-admin-report.php';
 		include_once WC_Unit_Tests_Bootstrap::instance()->plugin_dir . '/includes/admin/reports/class-wc-report-sales-by-date.php';
+	}
+
+	/**
+	 * Set up the test.
+	 */
+	public function setUp(): void {
+		parent::setUp();
+		if ( \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			$this->markTestSkipped( 'This test is not compatible with the custom orders table.' );
+		}
 	}
 
 	/**
@@ -53,18 +65,18 @@ class WC_Tests_Report_Sales_By_Date extends WC_Unit_Test_Case {
 
 		// A standard order.
 		$order1 = WC_Helper_Order::create_order( 0, $product->get_id() );
-		$order1->set_status( 'completed' );
+		$order1->set_status( OrderStatus::COMPLETED );
 		$order1->save();
 
 		// An order using a coupon.
 		$order2 = WC_Helper_Order::create_order();
 		$order2->apply_coupon( $coupon );
-		$order2->set_status( 'completed' );
+		$order2->set_status( OrderStatus::COMPLETED );
 		$order2->save();
 
 		// An order that was refunded, save for shipping.
 		$order3 = WC_Helper_Order::create_order();
-		$order3->set_status( 'completed' );
+		$order3->set_status( OrderStatus::COMPLETED );
 		$order3->save();
 		wc_create_refund(
 			array(
@@ -73,7 +85,7 @@ class WC_Tests_Report_Sales_By_Date extends WC_Unit_Test_Case {
 			)
 		);
 
-		// Parameters borrowed from WC_Admin_Dashboard::get_sales_report_data().
+		// Parameters borrowed from WC_Admin_Reports::replace_dashboard_status_widget_reports().
 		$report                 = new WC_Report_Sales_By_Date();
 		$report->start_date     = strtotime( date( 'Y-m-01', current_time( 'timestamp' ) ) );
 		$report->end_date       = current_time( 'timestamp' );

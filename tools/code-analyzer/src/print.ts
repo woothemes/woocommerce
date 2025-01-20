@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import { setOutput } from '@actions/core';
+
+/**
  * Internal dependencies
  */
-import { SchemaDiff } from './git';
 import { HookChangeDescription } from './lib/hook-changes';
 import { TemplateChangeDescription } from './lib/template-changes';
 
@@ -19,18 +23,17 @@ export const printTemplateResults = (
 	title: string,
 	log: ( s: string ) => void
 ): void => {
-	//[code,title,message]
 	if ( output === 'github' ) {
 		let opt = '\\n\\n### Template changes:';
 		for ( const { filePath, code, message } of data ) {
-			opt += `\\n* **file:** ${ filePath }`;
+			opt += `\\n* **File:** ${ filePath }`;
 			opt += `\\n  * ${ code.toUpperCase() }: ${ message }`;
 			log(
 				`::${ code } file=${ filePath },line=1,title=${ title }::${ message }`
 			);
 		}
 
-		log( `::set-output name=templates::${ opt }` );
+		setOutput( 'templates', opt );
 	} else {
 		log( `\n## ${ title }:` );
 		for ( const { filePath, code, message } of data ) {
@@ -56,12 +59,6 @@ export const printHookResults = (
 	sectionTitle: string,
 	log: ( s: string ) => void
 ) => {
-	// [
-	// 	'NOTICE',
-	// 	title,
-	// 	message,
-	// 	description,
-	// ]
 	if ( output === 'github' ) {
 		let opt = '\\n\\n### New hooks:';
 		for ( const {
@@ -72,7 +69,7 @@ export const printHookResults = (
 			hookType,
 			changeType,
 		} of data ) {
-			opt += `\\n* **file:** ${ filePath }`;
+			opt += `\\n* **File:** ${ filePath }`;
 
 			const cliMessage = `**${ name }** introduced in ${ version }`;
 			const ghMessage = `\\'${ name }\\' introduced in ${ version }`;
@@ -85,7 +82,7 @@ export const printHookResults = (
 			);
 		}
 
-		log( `::set-output name=wphooks::${ opt }` );
+		setOutput( 'wphooks', opt );
 	} else {
 		log( `\n## ${ sectionTitle }:` );
 		log( '---------------------------------------------------' );
@@ -96,6 +93,7 @@ export const printHookResults = (
 			description,
 			hookType,
 			changeType,
+			ghLink,
 		} of data ) {
 			const cliMessage = `**${ name }** introduced in ${ version }`;
 			const ghMessage = `\\'${ name }\\' introduced in ${ version }`;
@@ -106,46 +104,11 @@ export const printHookResults = (
 			log( '---------------------------------------------------' );
 			log( `HOOK: ${ name }: ${ description }` );
 			log( '---------------------------------------------------' );
-			log( `NOTICE | ${ title } | ${ message }` );
+			log( `GITHUB: ${ ghLink }` );
 			log( '---------------------------------------------------' );
+			log( `NOTICE | ${ title } | ${ message }` );
+			log( '---------------------------------------------------\n' );
 		}
-	}
-};
-
-/**
- *  Print Schema change results.
- *
- * @param {Object}   schemaDiffs Schema diff object
- * @param {string}   version     Version change was introduced.
- * @param {string}   output      Output style.
- * @param {Function} log         Print method.
- */
-export const printSchemaChange = (
-	schemaDiffs: SchemaDiff[],
-	version: string,
-	output: string,
-	log: ( s: string ) => void
-) => {
-	if ( output === 'github' ) {
-		let githubCommentContent = '\\n\\n### New schema changes:';
-		schemaDiffs.forEach( ( schemaDiff ) => {
-			if ( ! schemaDiff.areEqual ) {
-				githubCommentContent += `\\n* **Schema:** ${ schemaDiff.method } introduced in ${ version }`;
-			}
-		} );
-
-		log( `::set-output name=schema::${ githubCommentContent }` );
-	} else {
-		log( '\n## SCHEMA CHANGES' );
-		log( '---------------------------------------------------' );
-		schemaDiffs.forEach( ( schemaDiff ) => {
-			if ( ! schemaDiff.areEqual ) {
-				log(
-					` NOTICE | Schema changes detected in ${ schemaDiff.method } as of ${ version }`
-				);
-				log( '---------------------------------------------------' );
-			}
-		} );
 	}
 };
 
@@ -167,7 +130,7 @@ export const printDatabaseUpdates = (
 ): void => {
 	if ( output === 'github' ) {
 		const githubCommentContent = `\\n\\n### New database updates:\\n * **${ updateFunctionName }** introduced in ${ updateFunctionVersion }`;
-		log( `::set-output name=database::${ githubCommentContent }` );
+		setOutput( 'database', githubCommentContent );
 	} else {
 		log( '\n## DATABASE UPDATES' );
 		log( '---------------------------------------------------' );

@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Add a default error snack bar when enabling payment gateways.

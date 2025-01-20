@@ -125,7 +125,7 @@ Copy and paste the system status report from **WooCommerce > System Status** in 
 
 				$version_string = '';
 				$network_string = '';
-				if ( strstr( $plugin['url'], 'woothemes.com' ) || strstr( $plugin['url'], 'woocommerce.com' ) ) {
+				if ( strstr( $plugin['url'], 'woothemes.com' ) || strstr( $plugin['url'], 'woo.com' ) ) {
 					if ( ! empty( $plugin['version_latest'] ) && version_compare( $plugin['version_latest'], $plugin['version'], '>' ) ) {
 						/* translators: %s: plugin latest version */
 						$version_string = sprintf( esc_html__( '%s is available', 'woocommerce-beta-tester' ), $plugin['version_latest'] );
@@ -153,6 +153,13 @@ Copy and paste the system status report from **WooCommerce > System Status** in 
 	 * @return string
 	 */
 	protected function construct_ssr() {
+		// This function depends on the WC core global being available. Sometimes, such as when we deactivate
+		// WC to install a live branches version, WC will not be available and cause a crash if we don't exit early
+		// here.
+		if ( ! class_exists( 'WC' ) ) {
+			return '';
+		}
+
 		if ( version_compare( WC()->version, '3.6', '<' ) ) {
 			return '';
 		}
@@ -332,7 +339,7 @@ Copy and paste the system status report from **WooCommerce > System Status** in 
 		$items_to_remove = array( 'wc-beta-tester-settings', 'wc-beta-tester-version-picker', 'wc-beta-tester' );
 		if ( isset( $submenu['plugins.php'] ) ) {
 			foreach ( $submenu['plugins.php'] as $key => $menu ) {
-				if (  in_array( $menu[2], $items_to_remove ) ) {
+				if ( in_array( $menu[2], $items_to_remove, true ) ) {
 					unset( $submenu['plugins.php'][ $key ] );
 				}
 			}

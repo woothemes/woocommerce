@@ -10,17 +10,21 @@ namespace Automattic\WooCommerce\RestApi\UnitTests\Helpers;
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Internal\Features\FeaturesController;
+use Automattic\WooCommerce\Utilities\OrderUtil;
+use WC_Data_Store;
 use WC_Mock_Payment_Gateway;
 use WC_Order;
 use WC_Product;
-use \WC_Tax;
-use \WC_Shipping_Rate;
-use \WC_Order_Item_Shipping;
-use \WC_Order_Item_Product;
+use WC_Tax;
+use WC_Shipping_Rate;
+use WC_Order_Item_Shipping;
+use WC_Order_Item_Product;
+use WC_Gateway_BACS;
 
 /**
  * Class OrderHelper.
@@ -69,7 +73,7 @@ class OrderHelper {
 		ShippingHelper::create_simple_flat_rate();
 
 		$order_data = array(
-			'status'        => 'pending',
+			'status'        => OrderStatus::PENDING,
 			'customer_id'   => $customer_id,
 			'customer_note' => '',
 			'total'         => '',
@@ -123,7 +127,7 @@ class OrderHelper {
 
 		// Set payment gateway.
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways['bacs'] );
+		$order->set_payment_method( $payment_gateways[ WC_Gateway_BACS::ID ] );
 
 		// Set totals.
 		$order->set_shipping_total( 10 );
@@ -141,8 +145,6 @@ class OrderHelper {
 	 * Helper method to drop custom tables if present.
 	 */
 	public static function delete_order_custom_tables() {
-		$features_controller = wc_get_container()->get( Featurescontroller::class );
-		$features_controller->change_feature_enable( 'custom_order_tables', true );
 		$synchronizer = wc_get_container()
 			->get( DataSynchronizer::class );
 		if ( $synchronizer->check_orders_table_exists() ) {
@@ -151,12 +153,27 @@ class OrderHelper {
 	}
 
 	/**
+	 * Enables or disables the custom orders table across WP temporarily.
+	 *
+	 * @param boolean $enabled TRUE to enable COT or FALSE to disable.
+	 * @return void
+	 */
+	public static function toggle_cot_feature_and_usage( bool $enabled ) {
+		$features_controller = wc_get_container()->get( Featurescontroller::class );
+		$features_controller->change_feature_enable( 'custom_order_tables', $enabled );
+
+		update_option( CustomOrdersTableController::CUSTOM_ORDERS_TABLE_USAGE_ENABLED_OPTION, wc_bool_to_string( $enabled ) );
+		wp_cache_flush();
+
+		// Confirm things are really correct.
+		$wc_data_store = WC_Data_Store::load( 'order' );
+		assert( is_a( $wc_data_store->get_current_class_name(), OrdersTableDataStore::class, true ) === $enabled, 'data store\'s classname is "' . $wc_data_store->get_current_class_name() . '", but $enabled is "' . ( $enabled ? 'true' : 'false' ) . '"' );
+	}
+
+	/**
 	 * Helper method to create custom tables if not present.
 	 */
 	public static function create_order_custom_table_if_not_exist() {
-		$features_controller = wc_get_container()->get( Featurescontroller::class );
-		$features_controller->change_feature_enable( 'custom_order_tables', true );
-
 		$synchronizer = wc_get_container()->get( DataSynchronizer::class );
 		if ( ! $synchronizer->check_orders_table_exists() ) {
 			$synchronizer->create_database_tables();
@@ -169,6 +186,8 @@ class OrderHelper {
 	 * @return int Order ID
 	 */
 	public static function create_complex_wp_post_order() {
+		$current_cot_state = OrderUtil::custom_orders_table_usage_is_enabled();
+		self::toggle_cot_feature_and_usage( false );
 		update_option( 'woocommerce_prices_include_tax', 'yes' );
 		update_option( 'woocommerce_calc_taxes', 'yes' );
 		$uniq_cust_id = wp_generate_password( 10, false );
@@ -194,7 +213,7 @@ class OrderHelper {
 
 		$order->save();
 
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_currency( 'INR' );
 		$order->set_customer_id( $customer->get_id() );
 		$order->set_billing_email( $customer->get_billing_email() );
@@ -238,6 +257,8 @@ class OrderHelper {
 		$order->save();
 		$order->save_meta_data();
 
+		self::toggle_cot_feature_and_usage( $current_cot_state );
+
 		return $order->get_id();
 	}
 
@@ -249,8 +270,20 @@ class OrderHelper {
 	 */
 	public static function switch_data_store( $order, $data_store ) {
 		$update_data_store_func = function ( $data_store ) {
-			$this->data_store = $data_store;
+			// Each order object contains a reference to its data store, but this reference is itself
+			// held inside of an instance of WC_Data_Store, so we create that first.
+			$data_store_wrapper = WC_Data_Store::load( 'order' );
+
+			// Bind $data_store to our WC_Data_Store.
+			( function ( $data_store ) {
+				$this->current_class_name = get_class( $data_store );
+				$this->instance           = $data_store;
+			} )->call( $data_store_wrapper, $data_store );
+
+			// Finally, update the $order object with our WC_Data_Store( $data_store ) instance.
+			$this->data_store = $data_store_wrapper;
 		};
+
 		$update_data_store_func->call( $order, $data_store );
 	}
 
@@ -270,7 +303,7 @@ class OrderHelper {
 
 		$product = \Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper::create_simple_product();
 
-		$order->set_status( 'pending' );
+		$order->set_status( OrderStatus::PENDING );
 		$order->set_created_via( 'unit-tests' );
 		$order->set_currency( 'COP' );
 		$order->set_customer_ip_address( '127.0.0.1' );
@@ -300,7 +333,7 @@ class OrderHelper {
 		$order->set_billing_phone( '555-32123' );
 
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways['bacs'] );
+		$order->set_payment_method( $payment_gateways[ WC_Gateway_BACS::ID ] );
 
 		$order->set_shipping_total( 5.0 );
 		$order->set_discount_total( 0.0 );
@@ -318,5 +351,4 @@ class OrderHelper {
 
 		return $order;
 	}
-
 }

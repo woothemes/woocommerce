@@ -1,0 +1,16 @@
+{
+	"extends": "../tsconfig-cjs",
+	"compilerOptions": {
+		"outDir": "build",
+		"noCheck": false,
+		"resolveJsonModule": true,
+		"typeRoots": [
+			"./typings",
+			"./node_modules/@types"
+		]
+	},
+	"include": [
+		"typings/**/*",
+		"src/**/*",
+	]
+}

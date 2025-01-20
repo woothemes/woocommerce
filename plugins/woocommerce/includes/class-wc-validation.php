@@ -51,33 +51,33 @@ class WC_Validation {
 
 		switch ( $country ) {
 			case 'AT':
+			case 'BE':
+			case 'CH':
+			case 'HU':
+			case 'NO':
 				$valid = (bool) preg_match( '/^([0-9]{4})$/', $postcode );
 				break;
 			case 'BA':
 				$valid = (bool) preg_match( '/^([7-8]{1})([0-9]{4})$/', $postcode );
 				break;
-			case 'BE':
-				$valid = (bool) preg_match( '/^([0-9]{4})$/i', $postcode );
-				break;
 			case 'BR':
 				$valid = (bool) preg_match( '/^([0-9]{5})([-])?([0-9]{3})$/', $postcode );
-				break;
-			case 'CH':
-				$valid = (bool) preg_match( '/^([0-9]{4})$/i', $postcode );
 				break;
 			case 'DE':
 				$valid = (bool) preg_match( '/^([0]{1}[1-9]{1}|[1-9]{1}[0-9]{1})[0-9]{3}$/', $postcode );
 				break;
+			case 'DK':
+				$valid = (bool) preg_match( '/^(DK-)?([1-24-9]\d{3}|3[0-8]\d{2})$/', $postcode );
+				break;
 			case 'ES':
+			case 'FI':
+			case 'EE':
 			case 'FR':
 			case 'IT':
 				$valid = (bool) preg_match( '/^([0-9]{5})$/i', $postcode );
 				break;
 			case 'GB':
 				$valid = self::is_gb_postcode( $postcode );
-				break;
-			case 'HU':
-				$valid = (bool) preg_match( '/^([0-9]{4})$/i', $postcode );
 				break;
 			case 'IE':
 				$valid = (bool) preg_match( '/([AC-FHKNPRTV-Y]\d{2}|D6W)[0-9AC-FHKNPRTV-Y]{4}/', wc_normalize_postcode( $postcode ) );
@@ -103,8 +103,9 @@ class WC_Validation {
 				$valid = (bool) preg_match( '/^([0-9]{2})([-])([0-9]{3})$/', $postcode );
 				break;
 			case 'CZ':
+			case 'SE':
 			case 'SK':
-				$valid = (bool) preg_match( '/^([0-9]{3})(\s?)([0-9]{2})$/', $postcode );
+				$valid = (bool) preg_match( "/^($country-)?([0-9]{3})(\s?)([0-9]{2})$/", $postcode );
 				break;
 			case 'NL':
 				$valid = (bool) preg_match( '/^([1-9][0-9]{3})(\s?)(?!SA|SD|SS)[A-Z]{2}$/i', $postcode );

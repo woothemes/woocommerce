@@ -7,7 +7,7 @@ namespace Automattic\WooCommerce\RestApi\UnitTests\Helpers;
 
 defined( 'ABSPATH' ) || exit;
 
-use \WC_Customer;
+use WC_Customer;
 
 /**
  * Class CustomerHelper.
@@ -110,7 +110,7 @@ class CustomerHelper {
 	}
 
 	/**
-	 * Set the the current customer's billing details in the session.
+	 * Set the current customer's billing details in the session.
 	 *
 	 * @param string $default_shipping_method Shipping Method slug
 	 */

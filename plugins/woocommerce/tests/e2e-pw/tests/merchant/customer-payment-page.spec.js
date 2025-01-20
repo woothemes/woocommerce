@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 let productId, orderId;
@@ -7,6 +8,7 @@ const productPrice = '15.99';
 
 test.describe(
 	'WooCommerce Merchant Flow: Orders > Customer Payment Page',
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -58,66 +60,95 @@ test.describe(
 			await api.put( 'payment_gateways/bacs', { enabled: 'false' } );
 		} );
 
-		test( 'should show the customer payment page link on a pending order', async ( {
-			page,
-		} ) => {
-			await page.goto(
-				`wp-admin/post.php?post=${ orderId }&action=edit`
-			);
+		test(
+			'should show the customer payment page link on a pending order',
+			{ tag: [ tags.NOT_E2E ] },
+			async ( { page } ) => {
+				await page.goto(
+					`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				);
 
-			// verify that the order is pending payment
-			await expect(
-				page.locator( '#select2-order_status-container' )
-			).toContainText( 'Pending payment' );
+				// verify that the order is pending payment
+				await expect(
+					page.locator( '#select2-order_status-container' )
+				).toContainText( 'Pending payment' );
 
-			//verify that the customer payment page link is displayed
-			await expect(
-				page.locator( 'label[for=order_status] > a' )
-			).toContainText( 'Customer payment page →' );
-		} );
+				//verify that the customer payment page link is displayed
+				await expect(
+					page.locator( 'label[for=order_status] > a' )
+				).toContainText( 'Customer payment page →' );
+			}
+		);
 
-		test( 'should load the customer payment page', async ( { page } ) => {
-			await page.goto(
-				`wp-admin/post.php?post=${ orderId }&action=edit`
-			);
+		test(
+			'should load the customer payment page',
+			{ tag: [ tags.NOT_E2E ] },
+			async ( { page } ) => {
+				await page.goto(
+					`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				);
 
-			// visit the page
-			await page.click( 'label[for=order_status] > a' );
+				// visit the page
+				await page.locator( 'label[for=order_status] > a' ).click();
 
-			// verify we landed on the customer payment page
-			await expect( page.locator( 'h1.entry-title' ) ).toContainText(
-				'Pay for order'
-			);
-			await expect( page.locator( 'td.product-name' ) ).toContainText(
-				productName
-			);
-			await expect(
-				page.locator( 'span.woocommerce-Price-amount.amount >> nth=0' )
-			).toContainText( productPrice );
-		} );
+				// verify we landed on the customer payment page
+				await expect(
+					page.getByRole( 'button', { name: 'Pay for order' } )
+				).toBeVisible();
+				await expect( page.locator( 'td.product-name' ) ).toContainText(
+					productName
+				);
+				await expect(
+					page.locator(
+						'span.woocommerce-Price-amount.amount >> nth=0'
+					)
+				).toContainText( productPrice );
+			}
+		);
 
+		//todo audit follow-up: this test is using the payment links as a merchant - not sure about its relevance.
+		// and checking that the customer can pay for their oder is covered in the shopper tests
 		test( 'can pay for the order through the customer payment page', async ( {
 			page,
 		} ) => {
-			// key required, so can't go directly to the customer payment page
-			await page.goto(
-				`wp-admin/post.php?post=${ orderId }&action=edit`
-			);
-			await page.click( 'label[for=order_status] > a' );
+			await test.step( 'Load the customer payment page', async () => {
+				// key required, so can't go directly to the customer payment page
+				await page.goto(
+					`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+				);
+				await page.locator( 'label[for=order_status] > a' ).click();
+			} );
+			await test.step( 'Select payment method and pay for the order', async () => {
+				// explicitly select the payment method
+				await page.getByText( 'Direct bank transfer' ).click();
 
-			// pay for the order
-			await page.click( 'button#place_order' );
+				// Handle notice if present
+				await page.addLocatorHandler(
+					page.getByRole( 'link', { name: 'Dismiss' } ),
+					async () => {
+						await page
+							.getByRole( 'link', { name: 'Dismiss' } )
+							.click();
+					}
+				);
 
-			// Verify we landed on the order received page
-			await expect( page.locator( 'h1.entry-title' ) ).toContainText(
-				'Order received'
-			);
-			await expect(
-				page.locator( 'li.woocommerce-order-overview__order.order' )
-			).toContainText( orderId.toString() );
-			await expect(
-				page.locator( 'span.woocommerce-Price-amount.amount >> nth=0' )
-			).toContainText( productPrice );
+				// pay for the order
+				await page
+					.getByRole( 'button', { name: 'Pay for order' } )
+					.click();
+			} );
+			await test.step( 'Verify the order received page', async () => {
+				// Verify we landed on the order received page
+				await expect(
+					page.getByText( 'Your order has been received' )
+				).toBeVisible();
+				await expect(
+					page.getByText( `Order #: ${ orderId }` )
+				).toBeVisible();
+				await expect(
+					await page.getByText( `Total: $${ productPrice }` ).count()
+				).toBeGreaterThan( 0 );
+			} );
 		} );
 	}
 );

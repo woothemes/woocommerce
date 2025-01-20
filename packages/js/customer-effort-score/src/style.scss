@@ -1,18 +1,23 @@
-@import 'customer-feedback-simple/customer-feedback-simple.scss';
+@import 'components/customer-feedback-simple/customer-feedback-simple.scss';
+@import 'components/feedback-modal/feedback-modal.scss';
 
 .woocommerce-customer-effort-score__selection {
-	margin: 1em 0;
+	margin: 1em 0 1.5em 0;
 
-	.components-base-control__field {
-		display: flex;
-		flex-direction: column;
-		margin: 0 auto;
-		color: var(--wp-admin-theme-color);
+	.woocommerce-customer-effort-score__radio-control {
 
-		@include breakpoint( '>600px' ) {
+		.components-radio-control__group-wrapper,
+		.components-v-stack {
+			display: flex;
 			flex-direction: row;
+			flex-wrap: wrap;
+			margin: 0 auto;
+			color: var(--wp-admin-theme-color);
+			gap: unset;
 		}
 	}
+
+
 
 	.components-radio-control__option {
 		&:not(:last-child) {
@@ -22,7 +27,7 @@
 		}
 
 		input {
-			// Hide the radio input but keep it accessibile.
+			// Hide the radio input but keep it accessible.
 			position: absolute;
 			opacity: 0;
 		}
@@ -41,13 +46,13 @@
 			}
 		}
 
-		input:focus + label {
+		input:focus+label {
 			outline: 2px solid $studio-wordpress-blue;
 			background-color: peach;
 			color: $studio-blue-60;
 		}
 
-		input:checked + label {
+		input:checked+label {
 			outline: 2px solid $studio-wordpress-blue;
 			background-color: $studio-wordpress-blue-0;
 		}
@@ -61,33 +66,37 @@
 			color: $studio-wordpress-blue;
 		}
 
-		input[value='1'] + label::before {
+		input[value='1']+label::before {
 			content: '😞';
 		}
 
-		input[value='2'] + label::before {
+		input[value='2']+label::before {
 			content: '🙁';
 		}
 
-		input[value='3'] + label::before {
+		input[value='3']+label::before {
 			content: '😑';
 		}
 
-		input[value='4'] + label::before {
+		input[value='4']+label::before {
 			content: '🙂';
 		}
 
-		input[value='5'] + label::before {
+		input[value='5']+label::before {
 			content: '😍';
 		}
 	}
 }
 
 .woocommerce-customer-effort-score__comments {
+	margin-bottom: 1.5em;
+
 	label {
 		display: block;
 		color: inherit;
 		font-weight: bold;
+		text-transform: none;
+		font-size: 14px;
 	}
 
 	textarea {
@@ -95,10 +104,27 @@
 	}
 }
 
+.woocommerce-customer-effort-score {
+	.components-modal__content {
+		padding-bottom: 100px;
+	}
+}
+
 .woocommerce-customer-effort-score__buttons {
 	text-align: right;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: #fff;
+	padding: calc(2 * $gap );
 
 	.components-button {
 		margin-left: 1em;
 	}
+}
+
+.woocommerce-customer-effort-score .woocommerce-customer-effort-score__intro {
+	max-width: 550px;
+	margin: 0 0 1.5em 0;
 }

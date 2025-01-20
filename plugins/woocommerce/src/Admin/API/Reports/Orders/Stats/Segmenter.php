@@ -7,8 +7,8 @@ namespace Automattic\WooCommerce\Admin\API\Reports\Orders\Stats;
 
 defined( 'ABSPATH' ) || exit;
 
-use \Automattic\WooCommerce\Admin\API\Reports\Segmenter as ReportsSegmenter;
-use \Automattic\WooCommerce\Admin\API\Reports\ParameterException;
+use Automattic\WooCommerce\Admin\API\Reports\Segmenter as ReportsSegmenter;
+use Automattic\WooCommerce\Admin\API\Reports\ParameterException;
 
 /**
  * Date & time interval and numeric range handling class for Reporting API.
@@ -374,7 +374,7 @@ class Segmenter extends ReportsSegmenter {
 
 			$segments = $this->get_product_related_segments( $type, $segmenting_selections, $segmenting_from, $segmenting_where, $segmenting_groupby, $segmenting_dimension_name, $table_name, $query_params, $unique_orders_table );
 		} elseif ( 'variation' === $this->query_args['segmentby'] ) {
-			if ( ! isset( $this->query_args['product_includes'] ) || count( $this->query_args['product_includes'] ) !== 1 ) {
+			if ( ! isset( $this->query_args['product_includes'] ) || ! is_array( $this->query_args['product_includes'] ) || count( $this->query_args['product_includes'] ) !== 1 ) {
 				throw new ParameterException( 'wc_admin_reports_invalid_segmenting_variation', __( 'product_includes parameter need to specify exactly one product when segmenting by variation.', 'woocommerce' ) );
 			}
 

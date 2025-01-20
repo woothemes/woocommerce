@@ -8,7 +8,10 @@
  * @since    2.6.0
  */
 
-use Automattic\WooCommerce\Utilities\OrderUtil;
+use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
+use Automattic\WooCommerce\Utilities\ArrayUtil;
+use Automattic\WooCommerce\Utilities\StringUtil;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,6 +22,7 @@ defined( 'ABSPATH' ) || exit;
  * @extends WC_REST_Orders_V2_Controller
  */
 class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
+	use CogsAwareTrait;
 
 	/**
 	 * Endpoint namespace.
@@ -47,7 +51,7 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 
 		$current_order_coupons      = array_values( $order->get_coupons() );
 		$current_order_coupon_codes = array_map(
-			function( $coupon ) {
+			function ( $coupon ) {
 				return $coupon->get_code();
 			},
 			$current_order_coupons
@@ -58,11 +62,12 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 				throw new WC_REST_Exception( 'woocommerce_rest_coupon_item_id_readonly', __( 'Coupon item ID is readonly.', 'woocommerce' ), 400 );
 			}
 
-			if ( empty( $item['code'] ) ) {
+			$coupon_code = ArrayUtil::get_value_or_default( $item, 'code' );
+			if ( StringUtil::is_null_or_whitespace( $coupon_code ) ) {
 				throw new WC_REST_Exception( 'woocommerce_rest_invalid_coupon', __( 'Coupon code is required.', 'woocommerce' ), 400 );
 			}
 
-			$coupon_code = wc_format_coupon_code( wc_clean( $item['code'] ) );
+			$coupon_code = wc_format_coupon_code( wc_clean( $coupon_code ) );
 			$coupon      = new WC_Coupon( $coupon_code );
 
 			// Skip check if the coupon is already applied to the order, as this could wrongly throw an error for single-use coupons.
@@ -128,7 +133,7 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 							foreach ( $value as $item ) {
 								if ( is_array( $item ) ) {
 									if ( $this->item_is_null( $item ) || ( isset( $item['quantity'] ) && 0 === $item['quantity'] ) ) {
-										$order->remove_item( $item['id'] );
+										$this->remove_item( $order, $key, $item['id'] );
 									} else {
 										$this->set_item( $order, $key, $item );
 									}
@@ -158,11 +163,77 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 		 * The dynamic portion of the hook name, `$this->post_type`,
 		 * refers to the object type slug.
 		 *
+		 * @since 7.4.0
+		 *
 		 * @param WC_Data         $order    Object object.
 		 * @param WP_REST_Request $request  Request object.
 		 * @param bool            $creating If is creating a new object.
 		 */
 		return apply_filters( "woocommerce_rest_pre_insert_{$this->post_type}_object", $order, $request, $creating );
+	}
+
+	/**
+	 * Create or update a line item, overridden to add COGS data as needed.
+	 *
+	 * @param array  $posted Line item data.
+	 * @param string $action 'create' to add line item or 'update' to update it.
+	 * @param object $item Passed when updating an item. Null during creation.
+	 * @return WC_Order_Item_Product
+	 * @throws WC_REST_Exception Invalid data, server error.
+	 */
+	protected function prepare_line_items( $posted, $action = 'create', $item = null ) {
+		$prepared = parent::prepare_line_items( $posted, $action, $item );
+
+		if ( ! $prepared->has_cogs() || ! $this->cogs_is_enabled() ) {
+			return $prepared;
+		}
+
+		$cogs_value = $posted['cost_of_goods_sold']['value'] ?? null;
+		if ( ! is_null( $cogs_value ) ) {
+			$prepared->set_cogs_value( (float) $cogs_value );
+		}
+
+		return $prepared;
+	}
+
+	/**
+	 * Wrapper method to remove order items.
+	 * When updating, the item ID provided is checked to ensure it is associated
+	 * with the order.
+	 *
+	 * @param WC_Order $order     The order to remove the item from.
+	 * @param string   $item_type The item type (from the request, not from the item, e.g. 'line_items' rather than 'line_item').
+	 * @param int      $item_id   The ID of the item to remove.
+	 *
+	 * @return void
+	 * @throws WC_REST_Exception If item ID is not associated with order.
+	 */
+	protected function remove_item( WC_Order $order, string $item_type, int $item_id ): void {
+		$item = $order->get_item( $item_id );
+
+		if ( ! $item ) {
+			throw new WC_REST_Exception(
+				'woocommerce_rest_invalid_item_id',
+				esc_html__( 'Order item ID provided is not associated with order.', 'woocommerce' ),
+				400
+			);
+		}
+
+		if ( 'line_items' === $item_type ) {
+			require_once WC_ABSPATH . 'includes/admin/wc-admin-functions.php';
+			wc_maybe_adjust_line_item_product_stock( $item, 0 );
+		}
+
+		/**
+		 * Allow extensions be notified before the item is removed.
+		 *
+		 * @param WC_Order_Item $item The item object.
+		 *
+		 * @since 9.3.0.
+		 */
+		do_action( 'woocommerce_rest_remove_order_item', $item );
+
+		$order->remove_item( $item_id );
 	}
 
 	/**
@@ -200,6 +271,7 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 			if ( $creating ) {
 				$object->set_created_via( 'rest-api' );
 				$object->set_prices_include_tax( 'yes' === get_option( 'woocommerce_prices_include_tax' ) );
+				$object->save();
 				$object->calculate_totals();
 			} else {
 				// If items have changed, recalculate order totals.
@@ -213,7 +285,8 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 
 			// Set status.
 			if ( ! empty( $request['status'] ) ) {
-				$object->set_status( $request['status'] );
+				$manual_update = isset( $request['manual_update'] ) ? $request['manual_update'] : false;
+				$object->set_status( $request['status'], '', $manual_update );
 			}
 
 			$object->save();
@@ -234,33 +307,6 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 	}
 
 	/**
-	 * Get formatted item data.
-	 *
-	 * @param WC_Order $order WC_Data instance.
-	 * @return array
-	 */
-	protected function get_formatted_item_data( $order ) {
-		$item_data       = parent::get_formatted_item_data( $order );
-		$cpt_hidden_keys = array();
-
-		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-			$cpt_hidden_keys = (new \WC_Order_Data_Store_CPT())->get_internal_meta_keys();
-		}
-
-		// XXX: This might be removed once we finalize the design for internal keys vs meta vs props in COT.
-		if ( ! empty( $item_data['meta_data'] ) ) {
-			$item_data['meta_data'] = array_filter(
-				$item_data['meta_data'],
-				function( $meta ) use ( $cpt_hidden_keys ) {
-					return ! in_array( $meta->key, $cpt_hidden_keys, true );
-				}
-			);
-		}
-
-		return $item_data;
-	}
-
-	/**
 	 * Prepare objects query.
 	 *
 	 * @since  3.0.0
@@ -271,17 +317,6 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 		// This is needed to get around an array to string notice in WC_REST_Orders_V2_Controller::prepare_objects_query.
 		$statuses = $request['status'];
 		unset( $request['status'] );
-
-		// Prevents WC_REST_Orders_V2_Controller::prepare_objects_query() from generating a meta_query for 'customer'.
-		// which COT can handle as a native field.
-		$cot_customer =
-			( OrderUtil::custom_orders_table_usage_is_enabled() && isset( $request['customer'] ) )
-			? $request['customer']
-			: null;
-
-		if ( $cot_customer ) {
-			unset( $request['customer'] );
-		}
 
 		$args = parent::prepare_objects_query( $request );
 
@@ -301,42 +336,7 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 		// Put the statuses back for further processing (next/prev links, etc).
 		$request['status'] = $statuses;
 
-		// Add back 'customer' to args and request.
-		if ( ! is_null( $cot_customer ) ) {
-			$args['customer']    = $cot_customer;
-			$request['customer'] = $cot_customer;
-		}
-
 		return $args;
-	}
-
-	/**
-	 * Get objects.
-	 *
-	 * @param  array $query_args Query args.
-	 * @return array
-	 */
-	protected function get_objects( $query_args ) {
-		// Do not use WC_Order_Query for the CPT datastore.
-		if ( ! OrderUtil::custom_orders_table_usage_is_enabled() ) {
-			return parent::get_objects( $query_args );
-		}
-
-		$query   = new \WC_Order_Query(
-			array_merge(
-				$query_args,
-				array(
-					'paginate' => true,
-				)
-			)
-		);
-		$results = $query->get_orders();
-
-		return array(
-			'objects' => $results->orders,
-			'total'   => $results->total,
-			'pages'   => $results->max_num_pages,
-		);
 	}
 
 	/**
@@ -348,6 +348,55 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 		$schema = parent::get_item_schema();
 
 		$schema['properties']['coupon_lines']['items']['properties']['discount']['readonly'] = true;
+
+		$schema['properties']['manual_update'] = array(
+			'default'     => false,
+			'description' => __( 'Set the action as manual so that the order note registers as "added by user".', 'woocommerce' ),
+			'type'        => 'boolean',
+			'context'     => array( 'edit' ),
+		);
+
+		if ( $this->cogs_is_enabled() ) {
+			$schema = $this->add_cogs_related_schema( $schema );
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * Add the Cost of Goods Sold related fields to the schema.
+	 *
+	 * @param array $schema The original schema.
+	 * @return array The updated schema.
+	 */
+	private function add_cogs_related_schema( array $schema ): array {
+		$schema['properties']['cost_of_goods_sold'] = array(
+			'description' => __( 'Cost of Goods Sold data.', 'woocommerce' ),
+			'type'        => 'object',
+			'context'     => array( 'view', 'edit' ),
+			'properties'  => array(
+				'total_value' => array(
+					'description' => __( 'Total value of the Cost of Goods Sold for the order.', 'woocommerce' ),
+					'type'        => 'number',
+					'readonly'    => true,
+					'context'     => array( 'view', 'edit' ),
+				),
+			),
+		);
+
+		$schema['properties']['line_items']['items']['properties']['cost_of_goods_sold'] = array(
+			'description' => __( 'Cost of Goods Sold data. Only present for product line items.', 'woocommerce' ),
+			'type'        => 'object',
+			'context'     => array( 'view', 'edit' ),
+			'properties'  => array(
+				'total_value' => array(
+					'description' => __( 'Value of the Cost of Goods Sold for the order item.', 'woocommerce' ),
+					'type'        => 'number',
+					'readonly'    => true,
+					'context'     => array( 'view', 'edit' ),
+				),
+			),
+		);
 
 		return $schema;
 	}
@@ -366,11 +415,43 @@ class WC_REST_Orders_Controller extends WC_REST_Orders_V2_Controller {
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
-				'enum' => array_merge( array( 'any', 'trash' ), $this->get_order_statuses() ),
+				'enum' => array_merge( array( 'any', OrderStatus::TRASH ), $this->get_order_statuses() ),
 			),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
 		return $params;
+	}
+
+	/**
+	 * Core method to prepare a single order object for response
+	 * (doesn't fire hooks, execute rest_ensure_response, or add links).
+	 *
+	 * @param  WC_Data         $order  Object data.
+	 * @param  WP_REST_Request $request Request object.
+	 * @return array Prepared response data.
+	 * @since  9.5.0
+	 */
+	protected function prepare_object_for_response_core( $order, $request ): array {
+		$cogs_is_enabled = $this->cogs_is_enabled();
+
+		$data = parent::prepare_object_for_response_core( $order, $request );
+
+		if ( isset( $data['line_items'] ) ) {
+			foreach ( $data['line_items'] as &$line_item_data ) {
+				if ( isset( $line_item_data['cogs_value'] ) ) {
+					if ( $cogs_is_enabled ) {
+						$line_item_data['cost_of_goods_sold']['value'] = $line_item_data['cogs_value'];
+					}
+					unset( $line_item_data['cogs_value'] );
+				}
+			}
+		}
+
+		if ( $cogs_is_enabled ) {
+			$data['cost_of_goods_sold']['total_value'] = $order->get_cogs_total_value();
+		}
+
+		return $data;
 	}
 }

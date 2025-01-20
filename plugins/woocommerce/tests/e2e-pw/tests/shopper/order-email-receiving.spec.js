@@ -1,95 +1,140 @@
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
-const { customerDetails, storeDetails } = require( '../../test-data/data' );
+const { customer, storeDetails } = require( '../../test-data/data' );
 const { api } = require( '../../utils' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
 
-let productId, orderId;
+let productId, orderId, zoneId;
 
 const product = {
 	name: 'Order email product',
 	type: 'simple',
-	price: '42.77',
+	regular_price: '42.77',
+};
+const zoneInfo = {
+	name: 'Free shipping',
+};
+const methodInfo = {
+	method_id: 'free_shipping',
 };
 
-const customerEmail = 'order-email-test@example.com';
 const storeName = 'WooCommerce Core E2E Test Suite';
 
-test.describe( 'Shopper Order Email Receiving', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+//todo audit follow-up: these checks should be part of the end-to-end flow of placing an order
+test.describe(
+	'Shopper Order Email Receiving',
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS, tags.NOT_E2E ] },
+	() => {
+		test.use( { storageState: process.env.ADMINSTATE } );
 
-	test.beforeAll( async () => {
-		productId = await api.create.product( product );
-		await api.update.enableCashOnDelivery();
-	} );
+		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
+			productId = await api.create.product( product );
+			await api.update.enableCashOnDelivery();
 
-	test.beforeEach( async ( { page } ) => {
-		await page.goto(
-			`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
-				customerEmail
-			) }`
-		);
-		// clear out the email logs before each test
-		while ( ( await page.$( '#bulk-action-selector-top' ) ) !== null ) {
-			await page.click( '#cb-select-all-1' );
-			await page.selectOption( '#bulk-action-selector-top', 'delete' );
-			await page.click( '#doaction' );
-		}
-	} );
+			zoneId = await api.create.shippingZone( zoneInfo );
+			await api.create.shippingMethod( zoneId, methodInfo );
+		} );
 
-	test.afterAll( async () => {
-		await api.deletePost.product( productId );
-		if ( orderId ) {
-			await api.deletePost.order( orderId );
-		}
-		await api.update.disableCashOnDelivery();
-	} );
+		test.beforeEach( async ( { page } ) => {
+			await page.goto(
+				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
+					customer.email
+				) }`
+			);
+			// clear out the email logs before each test
+			while (
+				await page.locator( '#bulk-action-selector-top' ).isVisible()
+			) {
+				// In WP 6.3, label intercepts check action. Need to force.
+				await page
+					.getByLabel( 'Select All' )
+					.first()
+					.check( { force: true } );
+				await page
+					.locator( '#bulk-action-selector-top' )
+					.selectOption( 'delete' );
+				await page.locator( '#doaction' ).click();
+			}
+		} );
 
-	test( 'should receive order email after purchasing an item', async ( {
-		page,
-	} ) => {
-		// ensure that the store's address is in the US
-		await api.update.storeDetails( storeDetails.us.store );
+		test.afterAll( async () => {
+			await api.deletePost.product( productId );
+			if ( orderId ) {
+				await api.deletePost.order( orderId );
+			}
+			await api.update.disableCashOnDelivery();
 
-		await page.goto( `/shop/?add-to-cart=${ productId }` );
-		await page.waitForLoadState( 'networkidle' );
+			await api.deletePost.shippingZone( zoneId );
+		} );
 
-		await page.goto( '/checkout/' );
+		test( 'should receive order email after purchasing an item', async ( {
+			page,
+		} ) => {
+			// ensure that the store's address is in the US
+			await api.update.storeDetails( storeDetails.us.store );
 
-		await page.fill( '#billing_first_name', customerDetails.us.first_name );
-		await page.fill( '#billing_last_name', customerDetails.us.last_name );
-		await page.fill( '#billing_address_1', customerDetails.us.address );
-		await page.fill( '#billing_city', customerDetails.us.city );
-		await page.selectOption(
-			'#billing_country',
-			customerDetails.us.country
-		);
+			await addAProductToCart( page, productId );
 
-		await page.selectOption( '#billing_state', customerDetails.us.state );
+			await page.goto( 'checkout/' );
 
-		await page.fill( '#billing_postcode', customerDetails.us.zip );
-		await page.fill( '#billing_phone', customerDetails.us.phone );
-		await page.fill( '#billing_email', customerEmail );
+			await page
+				.locator( '#billing_first_name' )
+				.fill( customer.billing.us.first_name );
+			await page
+				.locator( '#billing_last_name' )
+				.fill( customer.billing.us.last_name );
+			await page
+				.locator( '#billing_address_1' )
+				.fill( customer.billing.us.address );
+			await page
+				.locator( '#billing_city' )
+				.fill( customer.billing.us.city );
+			await page
+				.locator( '#billing_country' )
+				.selectOption( customer.billing.us.country );
 
-		await page.click( 'text=Place order' );
+			await page
+				.locator( '#billing_state' )
+				.selectOption( customer.billing.us.state );
 
-		await page.waitForSelector(
-			'li.woocommerce-order-overview__order > strong'
-		);
-		orderId = await page.textContent(
-			'li.woocommerce-order-overview__order > strong'
-		);
+			await page
+				.locator( '#billing_postcode' )
+				.fill( customer.billing.us.zip );
+			await page
+				.locator( '#billing_phone' )
+				.fill( customer.billing.us.phone );
+			await page.locator( '#billing_email' ).fill( customer.email );
 
-		// search to narrow it down to just the messages we want
-		await page.goto(
-			`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
-				customerEmail
-			) }`
-		);
-		await page.waitForLoadState( 'networkidle' );
-		await expect(
-			page.locator( 'td.column-receiver >> nth=0' )
-		).toContainText( customerEmail );
-		await expect(
-			page.locator( 'td.column-subject >> nth=1' )
-		).toContainText( `[${ storeName }]: New order #${ orderId }` );
-	} );
-} );
+			await page.locator( 'text=Place order' ).click();
+
+			await expect(
+				page.getByText( 'Your order has been received' )
+			).toBeVisible();
+			orderId = getOrderIdFromUrl( page );
+
+			// search to narrow it down to just the messages we want
+			await page.goto(
+				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
+					customer.email
+				) }`
+			);
+			await expect(
+				page.locator( 'td.column-receiver >> nth=0' )
+			).toContainText( customer.email );
+			await expect(
+				page.locator( 'td.column-subject >> nth=1' )
+			).toContainText( `[${ storeName }]: New order #${ orderId }` );
+		} );
+	}
+);

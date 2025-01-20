@@ -5,6 +5,10 @@
  * @package WooCommerce\Classes
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
+use Automattic\WooCommerce\Utilities\OrderUtil;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -100,6 +104,12 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 			$order->set_order_key( wc_generate_order_key() );
 		}
 		parent::create( $order );
+
+		// Do not fire 'woocommerce_new_order' for draft statuses.
+		if ( in_array( $order->get_status( 'edit' ), array( OrderStatus::AUTO_DRAFT, OrderStatus::DRAFT, 'checkout-draft' ), true ) ) {
+			return;
+		}
+
 		do_action( 'woocommerce_new_order', $order->get_id(), $order );
 	}
 
@@ -177,28 +187,54 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 	 */
 	public function update( &$order ) {
 		// Before updating, ensure date paid is set if missing.
-		if ( ! $order->get_date_paid( 'edit' ) && version_compare( $order->get_version( 'edit' ), '3.0', '<' ) && $order->has_status( apply_filters( 'woocommerce_payment_complete_order_status', $order->needs_processing() ? 'processing' : 'completed', $order->get_id(), $order ) ) ) {
-			$order->set_date_paid( $order->get_date_created( 'edit' ) );
+		if ( ! $order->get_date_paid( 'edit' ) && version_compare( $order->get_version( 'edit' ), '3.0', '<' ) ) {
+			/**
+			 * Filter the order status to use when payment is complete.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param string   $payment_complete_status Default status to use when payment is complete.
+			 * @param int      $order_id               Order ID.
+			 */
+			$payment_complete_status = apply_filters( 'woocommerce_payment_complete_order_status', $order->needs_processing() ? OrderStatus::PROCESSING : OrderStatus::COMPLETED, $order->get_id(), $order );
+			if ( $order->has_status( $payment_complete_status ) ) {
+				$order->set_date_paid( $order->get_date_created( 'edit' ) );
+			}
 		}
 
 		// Also grab the current status so we can compare.
 		$previous_status = get_post_status( $order->get_id() );
+		// If the order doesn't exist in the DB, we will consider it as new.
+		if ( ! $previous_status && $order->get_id() === 0 ) {
+			$previous_status = 'new';
+		}
 
 		// Update the order.
 		parent::update( $order );
 
-		// Fire a hook depending on the status - this should be considered a creation if it was previously draft status.
-		$new_status = $order->get_status( 'edit' );
+		$current_status = $order->get_status( 'edit' );
 
-		if ( $new_status !== $previous_status && in_array( $previous_status, array( 'new', 'auto-draft', 'draft' ), true ) ) {
-			do_action( 'woocommerce_new_order', $order->get_id(), $order );
-		} else {
-			do_action( 'woocommerce_update_order', $order->get_id(), $order );
+		// We need to remove the wc- prefix from the status for comparison and proper evaluation of new vs updated orders.
+		$previous_status = OrderUtil::remove_status_prefix( $previous_status );
+		$current_status  = OrderUtil::remove_status_prefix( $current_status );
+
+		$draft_statuses = array( 'new', OrderStatus::AUTO_DRAFT, OrderStatus::DRAFT, 'checkout-draft' );
+
+		// This hook should be fired only if the new status is not one of draft statuses and the previous status was one of the draft statuses.
+		if (
+			$current_status !== $previous_status
+			&& ! in_array( $current_status, $draft_statuses, true )
+			&& in_array( $previous_status, $draft_statuses, true )
+		) {
+			do_action( 'woocommerce_new_order', $order->get_id(), $order );  // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+			return;
 		}
+
+		do_action( 'woocommerce_update_order', $order->get_id(), $order );  // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 	}
 
 	/**
-	 * Helper method that updates all the post meta for an order based on it's settings in the WC_Order class.
+	 * Helper method that updates all the post meta for an order based on its settings in the WC_Order class.
 	 *
 	 * @param WC_Order $order Order object.
 	 * @since 3.0.0
@@ -448,6 +484,9 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 	 */
 	public function get_order_id_by_order_key( $order_key ) {
 		global $wpdb;
+		if ( empty( $order_key ) ) {
+			return 0;
+		}
 		return $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '_order_key' AND meta_value = %s", $order_key ) );
 	}
 
@@ -538,11 +577,11 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 
 		$unpaid_orders = $wpdb->get_col(
 			$wpdb->prepare(
-				// @codingStandardsIgnoreStart
+			// @codingStandardsIgnoreStart
 				"SELECT posts.ID
 				FROM {$wpdb->posts} AS posts
 				WHERE   posts.post_type   IN ('" . implode( "','", wc_get_order_types() ) . "')
-				AND     posts.post_status = 'wc-pending'
+				AND     posts.post_status = '" . OrderInternalStatus::PENDING . "'
 				AND     posts.post_modified < %s",
 				// @codingStandardsIgnoreEnd
 				gmdate( 'Y-m-d H:i:s', absint( $date ) )
@@ -577,6 +616,7 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 					'_shipping_address_index',
 					'_billing_last_name',
 					'_billing_email',
+					'_billing_phone',
 				)
 			)
 		);
@@ -602,6 +642,16 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 							FROM {$wpdb->prefix}woocommerce_order_items as order_items
 							WHERE order_item_name LIKE %s",
 							'%' . $wpdb->esc_like( wc_clean( $term ) ) . '%'
+						)
+					),
+					$wpdb->get_col(
+						$wpdb->prepare(
+							"SELECT DISTINCT os.order_id FROM {$wpdb->prefix}wc_order_stats os
+							INNER JOIN {$wpdb->prefix}wc_customer_lookup cl ON os.customer_id = cl.customer_id
+							INNER JOIN {$wpdb->usermeta} um ON cl.user_id = um.user_id
+							WHERE (um.meta_key = 'billing_phone' OR um.meta_key = 'shipping_phone')
+							AND um.meta_value = %s",
+							wc_clean( $term )
 						)
 					)
 				)
@@ -986,6 +1036,40 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 	 * @return array|object
 	 */
 	public function query( $query_vars ) {
+		/**
+		 * Allows 3rd parties to filter query args that will trigger an unsupported notice.
+		 *
+		 * @since 9.2.0
+		 *
+		 * @param array $unsupported_args Array of query arg names.
+		 */
+		$unsupported_args = (array) apply_filters(
+			'woocommerce_order_data_store_cpt_query_unsupported_args',
+			array( 'meta_query', 'field_query' )
+		);
+
+		// Trigger doing_it_wrong() for query vars only supported in HPOS.
+		$unsupported_args_in_query = array_keys( array_filter( array_intersect_key( $query_vars, array_flip( $unsupported_args ) ) ) );
+
+		if ( $unsupported_args_in_query && __CLASS__ === get_class( $this ) ) {
+			wc_doing_it_wrong(
+				__METHOD__,
+				esc_html(
+					sprintf(
+						// translators: %s is a comma separated list of query arguments.
+						_n(
+							'Order query argument (%s) is not supported on the current order datastore.',
+							'Order query arguments (%s) are not supported on the current order datastore.',
+							count( $unsupported_args_in_query ),
+							'woocommerce'
+						),
+						implode( ', ', $unsupported_args_in_query )
+					)
+				),
+				'9.2.0'
+			);
+		}
+
 		$args = $this->get_wp_query_args( $query_vars );
 
 		if ( ! empty( $args['errors'] ) ) {
@@ -1119,76 +1203,6 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 	}
 
 	/**
-	 * Prime following caches:
-	 *  1. item-$order_item_id   For individual items.
-	 *  2. order-items-$order-id For fetching items associated with an order.
-	 *  3. order-item meta.
-	 *
-	 * @param array $order_ids  Order Ids to prime cache for.
-	 * @param array $query_vars Query vars for the query.
-	 */
-	private function prime_order_item_caches_for_orders( $order_ids, $query_vars ) {
-		global $wpdb;
-		if ( isset( $query_vars['fields'] ) && 'all' !== $query_vars['fields'] ) {
-			$line_items = array(
-				'line_items',
-				'shipping_lines',
-				'fee_lines',
-				'coupon_lines',
-			);
-
-			if ( is_array( $query_vars['fields'] ) && 0 === count( array_intersect( $line_items, $query_vars['fields'] ) ) ) {
-				return;
-			}
-		}
-		$cache_keys     = array_map(
-			function ( $order_id ) {
-				return 'order-items-' . $order_id;
-			},
-			$order_ids
-		);
-		$cache_values   = wc_cache_get_multiple( $cache_keys, 'orders' );
-		$non_cached_ids = array();
-		foreach ( $order_ids as $order_id ) {
-			if ( false === $cache_values[ 'order-items-' . $order_id ] ) {
-				$non_cached_ids[] = $order_id;
-			}
-		}
-		if ( empty( $non_cached_ids ) ) {
-			return;
-		}
-
-		$non_cached_ids        = esc_sql( $non_cached_ids );
-		$non_cached_ids_string = implode( ',', $non_cached_ids );
-		$order_items           = $wpdb->get_results(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			"SELECT order_item_type, order_item_id, order_id, order_item_name FROM {$wpdb->prefix}woocommerce_order_items WHERE order_id in ( $non_cached_ids_string ) ORDER BY order_item_id;"
-		);
-		if ( empty( $order_items ) ) {
-			return;
-		}
-
-		$order_items_for_all_orders = array_reduce(
-			$order_items,
-			function ( $order_items_collection, $order_item ) {
-				if ( ! isset( $order_items_collection[ $order_item->order_id ] ) ) {
-					$order_items_collection[ $order_item->order_id ] = array();
-				}
-				$order_items_collection[ $order_item->order_id ][] = $order_item;
-				return $order_items_collection;
-			}
-		);
-		foreach ( $order_items_for_all_orders as $order_id => $items ) {
-			wp_cache_set( 'order-items-' . $order_id, $items, 'orders' );
-		}
-		foreach ( $order_items as $item ) {
-			wp_cache_set( 'item-' . $item->order_item_id, $item, 'order-items' );
-		}
-		$order_item_ids = wp_list_pluck( $order_items, 'order_item_id' );
-		update_meta_cache( 'order_item', $order_item_ids );
-	}
-
-	/**
 	 * Prime cache for raw meta data for orders in bulk. Difference between this and WP built-in metadata is that this method also fetches `meta_id` field which we use and cache it.
 	 *
 	 * @param array $order_ids  Order Ids to prime cache for.
@@ -1242,15 +1256,18 @@ class WC_Order_Data_Store_CPT extends Abstract_WC_Order_Data_Store_CPT implement
 	}
 
 	/**
-	 * Return the order type of a given item which belongs to WC_Order.
+	 * Attempts to restore the specified order back to its original status (after having been trashed).
 	 *
-	 * @since  3.2.0
-	 * @param  WC_Order $order Order Object.
-	 * @param  int      $order_item_id Order item id.
-	 * @return string Order Item type
+	 * @param WC_Order $order The order to be untrashed.
+	 *
+	 * @return bool If the operation was successful.
 	 */
-	public function get_order_item_type( $order, $order_item_id ) {
-		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT DISTINCT order_item_type FROM {$wpdb->prefix}woocommerce_order_items WHERE order_id = %d and order_item_id = %d;", $order->get_id(), $order_item_id ) );
+	public function untrash_order( WC_Order $order ): bool {
+		if ( ! wp_untrash_post( $order->get_id() ) ) {
+			return false;
+		}
+
+		$order->set_status( get_post_field( 'post_status', $order->get_id() ) );
+		return (bool) $order->save();
 	}
 }

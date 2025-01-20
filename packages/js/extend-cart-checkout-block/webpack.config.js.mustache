@@ -10,6 +10,23 @@ const defaultRules = defaultConfig.module.rules.filter( ( rule ) => {
 
 module.exports = {
 	...defaultConfig,
+	entry: {
+		index: path.resolve(process.cwd(), 'src', 'js', 'index.js'),
+		'{{slug}}-checkout-newsletter-subscription-block': path.resolve(
+			process.cwd(),
+			'src',
+			'js',
+			'checkout-newsletter-subscription-block',
+			'index.js'
+		),
+		'{{slug}}-checkout-newsletter-subscription-block-frontend': path.resolve(
+			process.cwd(),
+			'src',
+			'js',
+			'checkout-newsletter-subscription-block',
+			'frontend.js'
+		),
+	},
 	module: {
 		...defaultConfig.module,
 		rules: [
@@ -25,6 +42,7 @@ module.exports = {
 						options: {
 							sassOptions: {
 								includePaths: [ 'src/css' ],
+								loadPaths: [ 'src/css', '.' ],
 							},
 							additionalData: ( content, loaderContext ) => {
 								const {
@@ -44,8 +62,7 @@ module.exports = {
 
 								// Add code here to prepend to all .scss/.sass files.
 								return (
-									'@import "_colors"; ' +
-									content
+									'@import "colors"; ' + content
 								);
 							},
 						},

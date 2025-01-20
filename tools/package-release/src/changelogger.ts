@@ -9,25 +9,30 @@ import { join } from 'path';
  * Internal dependencies
  */
 import { getFilepathFromPackageName } from './validate';
+import { MONOREPO_ROOT } from './const';
 
 /**
  * Call changelogger's next version function to get the version for the next release.
  *
  * @param {string} name Package name.
- * @return {string} Next release version.
+ * @return {string|null} Next release version or null if none exists.
  */
 export const getNextVersion = ( name: string ) => {
 	try {
-		const cwd = getFilepathFromPackageName( name );
-		return execSync( './vendor/bin/changelogger version next', {
-			cwd,
-			encoding: 'utf-8',
-		} ).trim();
+		// Match the last version number in the string.
+		const semverPattern = /\d+(\.\d+){2}$/;
+		const str = execSync(
+			`pnpm --filter="${ name }" --silent changelog version next`,
+			{
+				cwd: MONOREPO_ROOT,
+				encoding: 'utf-8',
+			}
+		).trim();
+		const match = str.match( semverPattern );
+		return match ? match[ 0 ] : null;
 	} catch ( e ) {
 		if ( e instanceof Error ) {
-			// eslint-disable-next-line no-console
-			console.log( e );
-			throw e;
+			return null;
 		}
 	}
 };
@@ -40,9 +45,8 @@ export const getNextVersion = ( name: string ) => {
  */
 export const validateChangelogEntries = ( name: string ) => {
 	try {
-		const cwd = getFilepathFromPackageName( name );
-		return execSync( './vendor/bin/changelogger validate', {
-			cwd,
+		return execSync( `pnpm --filter="${ name }" changelog validate`, {
+			cwd: MONOREPO_ROOT,
 			encoding: 'utf-8',
 		} );
 	} catch ( e ) {
@@ -59,13 +63,17 @@ export const validateChangelogEntries = ( name: string ) => {
  *
  * @param {string} name Package name.
  */
-export const writeChangelog = ( name: string ) => {
+export const writeChangelog = ( name: string, nextVersion?: string ) => {
 	try {
-		const cwd = getFilepathFromPackageName( name );
-		execSync( './vendor/bin/changelogger write --add-pr-num', {
-			cwd,
-			encoding: 'utf-8',
-		} );
+		execSync(
+			`pnpm --filter="${ name }" changelog write --add-pr-num ${
+				nextVersion ? '--use-version ' + nextVersion : ''
+			}`,
+			{
+				cwd: MONOREPO_ROOT,
+				encoding: 'utf-8',
+			}
+		);
 	} catch ( e ) {
 		if ( e instanceof Error ) {
 			// eslint-disable-next-line no-console

@@ -42,7 +42,10 @@ class WC_Helper_API {
 	 * @return array|WP_Error The response from wp_safe_remote_request()
 	 */
 	public static function request( $endpoint, $args = array() ) {
-		$url = self::url( $endpoint );
+		if ( ! isset( $args['query_string'] ) ) {
+			$args['query_string'] = '';
+		}
+		$url = self::url( $endpoint, $args['query_string'] );
 
 		if ( ! empty( $args['authenticated'] ) ) {
 			if ( ! self::_authenticate( $url, $args ) ) {
@@ -65,6 +68,61 @@ class WC_Helper_API {
 	}
 
 	/**
+	 * Create signature for a request.
+	 *
+	 * @param string $access_token_secret The access token secret.
+	 * @param string $url The URL to add the access token and signature to.
+	 * @param string $method The request method.
+	 * @param array  $body The body of the request.
+	 * @return string The signature.
+	 */
+	private static function create_request_signature( string $access_token_secret, string $url, string $method, $body = null ): string {
+
+		$request_uri  = wp_parse_url( $url, PHP_URL_PATH );
+		$query_string = wp_parse_url( $url, PHP_URL_QUERY );
+
+		if ( is_string( $query_string ) ) {
+			$request_uri .= '?' . $query_string;
+		}
+
+		$data = array(
+			'host'        => wp_parse_url( $url, PHP_URL_HOST ),
+			'request_uri' => $request_uri,
+			'method'      => $method,
+		);
+
+		if ( ! empty( $body ) ) {
+			$data['body'] = $body;
+		}
+
+		return hash_hmac( 'sha256', wp_json_encode( $data ), $access_token_secret );
+	}
+
+	/**
+	 * Add the access token and signature to the provided URL.
+	 *
+	 * @param string $url The URL to add the access token and signature to.
+	 * @return string
+	 */
+	public static function add_auth_parameters( string $url ): string {
+		$auth = WC_Helper_Options::get( 'auth' );
+
+		if ( empty( $auth['access_token'] ) || empty( $auth['access_token_secret'] ) ) {
+			return false;
+		}
+
+		$signature = self::create_request_signature( (string) $auth['access_token_secret'], $url, 'GET' );
+
+		return add_query_arg(
+			array(
+				'token'     => $auth['access_token'],
+				'signature' => $signature,
+			),
+			$url
+		);
+	}
+
+	/**
 	 * Adds authentication headers to an HTTP request.
 	 *
 	 * @param string $url The request URI.
@@ -78,24 +136,13 @@ class WC_Helper_API {
 			return false;
 		}
 
-		$request_uri  = parse_url( $url, PHP_URL_PATH );
-		$query_string = parse_url( $url, PHP_URL_QUERY );
-
-		if ( is_string( $query_string ) ) {
-			$request_uri .= '?' . $query_string;
-		}
-
-		$data = array(
-			'host'        => parse_url( $url, PHP_URL_HOST ),
-			'request_uri' => $request_uri,
-			'method'      => ! empty( $args['method'] ) ? $args['method'] : 'GET',
+		$signature = self::create_request_signature(
+			(string) $auth['access_token_secret'],
+			$url,
+			! empty( $args['method'] ) ? $args['method'] : 'GET',
+			$args['body'] ?? null
 		);
 
-		if ( ! empty( $args['body'] ) ) {
-			$data['body'] = $args['body'];
-		}
-
-		$signature = hash_hmac( 'sha256', json_encode( $data ), $auth['access_token_secret'] );
 		if ( empty( $args['headers'] ) ) {
 			$args['headers'] = array();
 		}
@@ -160,13 +207,15 @@ class WC_Helper_API {
 	 * Using the API base, form a request URL from a given endpoint.
 	 *
 	 * @param string $endpoint The endpoint to request.
+	 * @param string $query_string Optional query string to append to the URL.
 	 *
 	 * @return string The absolute endpoint URL.
 	 */
-	public static function url( $endpoint ) {
+	public static function url( $endpoint, $query_string = '' ) {
 		$endpoint = ltrim( $endpoint, '/' );
-		$endpoint = sprintf( '%s/%s', self::$api_base, $endpoint );
+		$endpoint = sprintf( '%s/%s/%s', self::$api_base, $endpoint, $query_string );
 		$endpoint = esc_url_raw( $endpoint );
+		$endpoint = rtrim( $endpoint, '/' );
 		return $endpoint;
 	}
 }

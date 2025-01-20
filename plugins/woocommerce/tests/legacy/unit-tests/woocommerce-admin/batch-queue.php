@@ -6,8 +6,10 @@
  * @since 3.5.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\Admin\Schedulers\CustomersScheduler;
 use Automattic\WooCommerce\Internal\Admin\Schedulers\OrdersScheduler;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 /**
  * Reports Generation Batch Queue Test Class
@@ -16,6 +18,8 @@ use Automattic\WooCommerce\Internal\Admin\Schedulers\OrdersScheduler;
  * @since 3.5.0
  */
 class WC_Admin_Tests_Reports_Regenerate_Batching extends WC_REST_Unit_Test_Case {
+	use ArraySubsetAsserts;
+
 	/**
 	 * Queue batch size.
 	 *
@@ -165,7 +169,7 @@ class WC_Admin_Tests_Reports_Regenerate_Batching extends WC_REST_Unit_Test_Case 
 			1,
 			OrdersScheduler::queue()->search(
 				array(
-					'status' => 'pending',
+					'status' => OrderStatus::PENDING,
 					'hook'   => OrdersScheduler::get_action( 'import' ),
 				)
 			)
@@ -176,7 +180,7 @@ class WC_Admin_Tests_Reports_Regenerate_Batching extends WC_REST_Unit_Test_Case 
 			0,
 			OrdersScheduler::queue()->search(
 				array(
-					'status' => 'pending',
+					'status' => OrderStatus::PENDING,
 					'hook'   => OrdersScheduler::get_action( 'import' ),
 				)
 			)

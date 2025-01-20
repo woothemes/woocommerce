@@ -22,6 +22,8 @@ import { ordersFilter } from '../requests/merchant/orders-filter.js';
 import { addOrder } from '../requests/merchant/add-order.js';
 import { ordersAPI } from '../requests/api/orders.js';
 import { homeWCAdmin } from '../requests/merchant/home-wc-admin.js';
+import { setCartCheckoutShortcodes } from '../setup/cart-checkout-shortcode.js';
+import { addCustomerOrder } from '../setup/add-customer-order.js';
 
 const shopper_request_threshold = 'p(95)<10000';
 const merchant_request_threshold = 'p(95)<10000';
@@ -85,6 +87,7 @@ export const options = {
 	},
 	thresholds: {
 		checks: [ 'rate==1' ],
+		// Listing individual metrics due to https://github.com/grafana/k6/issues/1321
 		'http_req_duration{name:Shopper - Site Root}': [
 			`${ shopper_request_threshold }`,
 		],
@@ -140,13 +143,13 @@ export const options = {
 			`${ shopper_request_threshold }`,
 		],
 		'http_req_duration{name:Shopper - My Account}': [
-			`${shopper_request_threshold}`,
+			`${ shopper_request_threshold }`,
 		],
 		'http_req_duration{name:Shopper - My Account Orders}': [
-			`${shopper_request_threshold}`,
+			`${ shopper_request_threshold }`,
 		],
 		'http_req_duration{name:Shopper - My Account Open Order}': [
-			`${shopper_request_threshold}`,
+			`${ shopper_request_threshold }`,
 		],
 		'http_req_duration{name:Merchant - WP Login Page}': [
 			`${ merchant_request_threshold }`,
@@ -247,6 +250,11 @@ export const options = {
 	},
 };
 
+export function setup() {
+	setCartCheckoutShortcodes();
+	addCustomerOrder();
+}
+
 export function shopperBrowseFlow() {
 	homePage();
 	shopPage();
@@ -271,7 +279,12 @@ export function cartFlow() {
 }
 export function allMerchantFlow() {
 	wpLogin();
-	homeWCAdmin();
+	homeWCAdmin( {
+		other: false,
+		orders: false,
+		reviews: false,
+		products: false,
+	} );
 	addOrder();
 	orders();
 	ordersSearch();

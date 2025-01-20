@@ -8,12 +8,17 @@
  * @version 3.4.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Checkout class.
  */
 class WC_Checkout {
+	use CogsAwareTrait;
 
 	/**
 	 * The single instance of the class.
@@ -58,7 +63,11 @@ class WC_Checkout {
 			add_action( 'woocommerce_checkout_billing', array( self::$instance, 'checkout_form_billing' ) );
 			add_action( 'woocommerce_checkout_shipping', array( self::$instance, 'checkout_form_shipping' ) );
 
-			// woocommerce_checkout_init action is ran once when the class is first constructed.
+			/**
+			 * Runs once when the WC_Checkout class is first instantiated.
+			 *
+			 * @since 3.0.0 or earlier
+			 */
 			do_action( 'woocommerce_checkout_init', self::$instance );
 		}
 		return self::$instance;
@@ -154,6 +163,13 @@ class WC_Checkout {
 			case 'payment_method':
 				return $this->legacy_posted_data['payment_method'];
 			case 'customer_id':
+				/**
+				 * Provides an opportunity to modify the customer ID associated with the current checkout process.
+				 *
+				 * @since 3.0.0 or earlier
+				 *
+				 * @param int The current user's ID (this may be 0 if no user is logged in).
+				 */
 				return apply_filters( 'woocommerce_checkout_customer_id', get_current_user_id() );
 			case 'shipping_methods':
 				return (array) WC()->session->get( 'chosen_shipping_methods' );
@@ -181,6 +197,13 @@ class WC_Checkout {
 	 * @return boolean
 	 */
 	public function is_registration_required() {
+		/**
+		 * Controls if registration is required in order for checkout to be completed.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $checkout_registration_required If customers must be registered to checkout.
+		 */
 		return apply_filters( 'woocommerce_checkout_registration_required', 'yes' !== get_option( 'woocommerce_enable_guest_checkout' ) );
 	}
 
@@ -191,20 +214,20 @@ class WC_Checkout {
 	 * @return boolean
 	 */
 	public function is_registration_enabled() {
+		/**
+		 * Determines if customer registration is enabled during checkout.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $checkout_registration_enabled If checkout registration is enabled.
+		 */
 		return apply_filters( 'woocommerce_checkout_registration_enabled', 'yes' === get_option( 'woocommerce_enable_signup_and_login_from_checkout' ) );
 	}
 
 	/**
-	 * Get an array of checkout fields.
-	 *
-	 * @param  string $fieldset to get.
-	 * @return array
+	 * Initialize the checkout fields.
 	 */
-	public function get_checkout_fields( $fieldset = '' ) {
-		if ( ! is_null( $this->fields ) ) {
-			return $fieldset ? $this->fields[ $fieldset ] : $this->fields;
-		}
-
+	protected function initialize_checkout_fields() {
 		// Fields are based on billing/shipping country. Grab those values but ensure they are valid for the store before using.
 		$billing_country   = $this->get_value( 'billing_country' );
 		$billing_country   = empty( $billing_country ) ? WC()->countries->get_base_country() : $billing_country;
@@ -264,6 +287,14 @@ class WC_Checkout {
 				'autocomplete' => 'new-password',
 			);
 		}
+
+		/**
+		 * Sets the fields used during checkout.
+		 *
+		 * @since 3.0.0 or earlier
+		 *
+		 * @param array[] $checkout_fields
+		 */
 		$this->fields = apply_filters( 'woocommerce_checkout_fields', $this->fields );
 
 		foreach ( $this->fields as $field_type => $fields ) {
@@ -278,14 +309,37 @@ class WC_Checkout {
 				}
 			}
 		}
+	}
 
-		return $fieldset ? $this->fields[ $fieldset ] : $this->fields;
+	/**
+	 * Get an array of checkout fields.
+	 *
+	 * @param  string $fieldset to get.
+	 * @return array
+	 */
+	public function get_checkout_fields( $fieldset = '' ) {
+		if ( is_null( $this->fields ) ) {
+			$this->initialize_checkout_fields();
+		}
+
+		// If a fieldset is specified, return only the fields for that fieldset, or array if the field set does not exist.
+		if ( $fieldset ) {
+			return $this->fields[ $fieldset ] ?? array();
+		}
+
+		return $this->fields;
 	}
 
 	/**
 	 * When we process the checkout, lets ensure cart items are rechecked to prevent checkout.
 	 */
 	public function check_cart_items() {
+		/**
+		 * Provides an opportunity to check cart items before checkout. This generally occurs during checkout validation.
+		 *
+		 * @see WC_Checkout::validate_checkout()
+		 * @since 3.0.0 or earlier
+		 */
 		do_action( 'woocommerce_check_cart_items' );
 	}
 
@@ -319,7 +373,14 @@ class WC_Checkout {
 	 * @return int|WP_ERROR
 	 */
 	public function create_order( $data ) {
-		// Give plugins the opportunity to create an order themselves.
+		/**
+		 * Gives plugins an opportunity to create a new order themselves.
+		 *
+		 * @since 3.0.0 or earlier
+		 *
+		 * @param int|null    $order_id Can be set to an order ID to short-circuit the default order creation process.
+		 * @param WC_Checkout $checkout Reference to the current WC_Checkout instance.
+		 */
 		$order_id = apply_filters( 'woocommerce_create_order', null, $this );
 		if ( $order_id ) {
 			return $order_id;
@@ -337,8 +398,15 @@ class WC_Checkout {
 			 * different items or cost, create a new order. We use a hash to
 			 * detect changes which is based on cart items + order total.
 			 */
-			if ( $order && $order->has_cart_hash( $cart_hash ) && $order->has_status( array( 'pending', 'failed' ) ) ) {
-				// Action for 3rd parties.
+			if ( $order && $order->has_cart_hash( $cart_hash ) && $order->has_status( array( OrderStatus::PENDING, OrderStatus::FAILED ) ) ) {
+				/**
+				 * Indicates that we are resuming checkout for an existing order (which is pending payment, and which
+				 * has not changed since it was added to the current shopping session).
+				 *
+				 * @since 3.0.0 or earlier
+				 *
+				 * @param int $order_id The ID of the order being resumed.
+				 */
 				do_action( 'woocommerce_resume_order', $order_id );
 
 				// Remove all items - we will re-add them later.
@@ -360,7 +428,7 @@ class WC_Checkout {
 			foreach ( $data as $key => $value ) {
 				if ( is_callable( array( $order, "set_{$key}" ) ) ) {
 					$order->{"set_{$key}"}( $value );
-					// Store custom fields prefixed with wither shipping_ or billing_. This is for backwards compatibility with 2.6.x.
+					// Store custom fields prefixed with either shipping_ or billing_. This is for backwards compatibility with 2.6.x.
 				} elseif ( isset( $fields_prefix[ current( explode( '_', $key ) ) ] ) ) {
 					if ( ! isset( $shipping_fields[ $key ] ) ) {
 						$order->update_meta_data( '_' . $key, $value );
@@ -368,9 +436,17 @@ class WC_Checkout {
 				}
 			}
 
-			$order->hold_applied_coupons( $data['billing_email'] );
+			if ( isset( $data['billing_email'] ) ) {
+				$order->hold_applied_coupons( $data['billing_email'] );
+			}
+
 			$order->set_created_via( 'checkout' );
 			$order->set_cart_hash( $cart_hash );
+			/**
+			 * This action is documented in woocommerce/includes/class-wc-checkout.php
+			 *
+			 * @since 3.0.0 or earlier
+			 */
 			$order->set_customer_id( apply_filters( 'woocommerce_checkout_customer_id', get_current_user_id() ) );
 			$order->set_currency( get_woocommerce_currency() );
 			$order->set_prices_include_tax( 'yes' === get_option( 'woocommerce_prices_include_tax' ) );
@@ -379,6 +455,10 @@ class WC_Checkout {
 			$order->set_customer_note( isset( $data['order_comments'] ) ? $data['order_comments'] : '' );
 			$order->set_payment_method( isset( $available_gateways[ $data['payment_method'] ] ) ? $available_gateways[ $data['payment_method'] ] : $data['payment_method'] );
 			$this->set_data_from_cart( $order );
+
+			if ( $this->cogs_is_enabled() ) {
+				$order->calculate_cogs_total_value();
+			}
 
 			/**
 			 * Action hook to adjust order before save.
@@ -407,7 +487,7 @@ class WC_Checkout {
 			return $order_id;
 		} catch ( Exception $e ) {
 			if ( $order && $order instanceof WC_Order ) {
-				$order->get_data_store()->release_held_coupons( $order );
+				wc_release_coupons_for_order( $order );
 				/**
 				 * Action hook fired when an order is discarded due to Exception.
 				 *
@@ -475,8 +555,8 @@ class WC_Checkout {
 					array(
 						'name'         => $product->get_name(),
 						'tax_class'    => $product->get_tax_class(),
-						'product_id'   => $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id(),
-						'variation_id' => $product->is_type( 'variation' ) ? $product->get_id() : 0,
+						'product_id'   => $product->is_type( ProductType::VARIATION ) ? $product->get_parent_id() : $product->get_id(),
+						'variation_id' => $product->is_type( ProductType::VARIATION ) ? $product->get_id() : 0,
 					)
 				);
 			}
@@ -553,6 +633,7 @@ class WC_Checkout {
 						'taxes'        => array(
 							'total' => $shipping_rate->taxes,
 						),
+						'tax_status'   => $shipping_rate->tax_status,
 					)
 				);
 
@@ -581,6 +662,15 @@ class WC_Checkout {
 	 */
 	public function create_order_tax_lines( &$order, $cart ) {
 		foreach ( array_keys( $cart->get_cart_contents_taxes() + $cart->get_shipping_taxes() + $cart->get_fee_taxes() ) as $tax_rate_id ) {
+			/**
+			 * Controls the zero rate tax ID.
+			 *
+			 * An order item tax will not be created for this ID (which by default is 'zero-rated').
+			 *
+			 * @since 3.0.0 or earlier
+			 *
+			 * @param string $tax_rate_id The ID of the zero rate tax.
+			 */
 			if ( $tax_rate_id && apply_filters( 'woocommerce_cart_remove_taxes_zero_rate_id', 'zero-rated' ) !== $tax_rate_id ) {
 				$item = new WC_Order_Item_Tax();
 				$item->set_props(
@@ -625,10 +715,8 @@ class WC_Checkout {
 				)
 			);
 
-			// Avoid storing used_by - it's not needed and can get large.
-			$coupon_data = $coupon->get_data();
-			unset( $coupon_data['used_by'] );
-			$item->add_meta_data( 'coupon_data', $coupon_data );
+			$coupon_info = $coupon->get_short_info();
+			$item->add_meta_data( 'coupon_info', $coupon_info );
 
 			/**
 			 * Action hook to adjust item before save.
@@ -672,6 +760,7 @@ class WC_Checkout {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$data = array(
 			'terms'                              => (int) isset( $_POST['terms'] ),
+			'terms-field'                        => (int) isset( $_POST['terms-field'] ),
 			'createaccount'                      => (int) ( $this->is_registration_enabled() ? ! empty( $_POST['createaccount'] ) : false ),
 			'payment_method'                     => isset( $_POST['payment_method'] ) ? wc_clean( wp_unslash( $_POST['payment_method'] ) ) : '',
 			'shipping_method'                    => isset( $_POST['shipping_method'] ) ? wc_clean( wp_unslash( $_POST['shipping_method'] ) ) : '',
@@ -680,7 +769,7 @@ class WC_Checkout {
 		);
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
-		$skipped = array();
+		$skipped        = array();
 		$form_was_shown = isset( $_POST['woocommerce-process-checkout-nonce'] ); // phpcs:disable WordPress.Security.NonceVerification.Missing
 
 		foreach ( $this->get_checkout_fields() as $fieldset_key => $fieldset ) {
@@ -712,6 +801,9 @@ class WC_Checkout {
 							$value = wc_sanitize_textarea( $value );
 							break;
 						case 'password':
+							if ( $data['createaccount'] && 'account_password' === $key ) {
+								$value = wp_slash( $value ); // Passwords are encrypted with slashes on account creation, so we need to slash here too.
+							}
 							break;
 						default:
 							$value = wc_clean( $value );
@@ -794,6 +886,8 @@ class WC_Checkout {
 				}
 
 				if ( in_array( 'phone', $format, true ) ) {
+					$data[ $key ] = wc_sanitize_phone_number( $data[ $key ] );
+
 					if ( $validate_fieldset && '' !== $data[ $key ] && ! WC_Validation::is_phone( $data[ $key ] ) ) {
 						/* translators: %s: phone number */
 						$errors->add( $key . '_validation', sprintf( __( '%s is not a valid phone number.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), array( 'id' => $key ) );
@@ -851,8 +945,8 @@ class WC_Checkout {
 		$this->check_cart_items();
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( empty( $data['woocommerce_checkout_update_totals'] ) && empty( $data['terms'] ) && ! empty( $_POST['terms-field'] ) ) {
-			$errors->add( 'terms', __( 'Please read and accept the terms and conditions to proceed with your order.', 'woocommerce' ) );
+		if ( empty( $data['woocommerce_checkout_update_totals'] ) && empty( $data['terms'] ) && ! empty( $data['terms-field'] ) ) {
+			$errors->add( 'terms', __( 'Please read and accept the terms and conditions to proceed with your order.', 'woocommerce' ), array( 'id' => 'terms' ) );
 		}
 
 		if ( WC()->cart->needs_shipping() ) {
@@ -949,6 +1043,9 @@ class WC_Checkout {
 
 		if ( is_array( $data['shipping_method'] ) ) {
 			foreach ( $data['shipping_method'] as $i => $value ) {
+				if ( ! is_string( $value ) ) {
+					continue;
+				}
 				$chosen_shipping_methods[ $i ] = $value;
 			}
 		}
@@ -975,8 +1072,13 @@ class WC_Checkout {
 			return;
 		}
 
-		// Store Order ID in session so it can be re-used after payment failure.
+		// Store Order ID in session, so it can be re-used after payment failure.
 		WC()->session->set( 'order_awaiting_payment', $order_id );
+
+		// We save the session early because if the payment gateway hangs
+		// the request will never finish, thus the session data will never be saved,
+		// and this can lead to duplicate orders if the user submits the order again.
+		WC()->session->save_data();
 
 		// Process Payment.
 		$result = $available_gateways[ $payment_method ]->process_payment( $order_id );
@@ -993,6 +1095,7 @@ class WC_Checkout {
 				exit;
 			}
 
+			// Using wp_send_json will gracefully handle any problem encoding data.
 			wp_send_json( $result );
 		}
 	}
@@ -1030,6 +1133,11 @@ class WC_Checkout {
 	 * @param array $data Posted data.
 	 */
 	protected function process_customer( $data ) {
+		/**
+		 * This action is documented in woocommerce/includes/class-wc-checkout.php
+		 *
+		 * @since 3.0.0 or earlier
+		 */
 		$customer_id = apply_filters( 'woocommerce_checkout_customer_id', get_current_user_id() );
 
 		if ( ! is_user_logged_in() && ( $this->is_registration_required() || ! empty( $data['createaccount'] ) ) ) {
@@ -1046,7 +1154,17 @@ class WC_Checkout {
 			);
 
 			if ( is_wp_error( $customer_id ) ) {
-				throw new Exception( $customer_id->get_error_message() );
+				if ( 'registration-error-email-exists' === $customer_id->get_error_code() ) {
+					/**
+					 * Filter the notice shown when a customer tries to register with an existing email address.
+					 *
+					 * @since 3.3.0
+					 * @param string $message The notice.
+					 * @param string $email   The email address.
+					 */
+					throw new Exception( apply_filters( 'woocommerce_registration_error_email_exists', __( 'An account is already registered with your email address. <a href="#" class="showlogin">Please log in.</a>', 'woocommerce' ), $data['billing_email'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+				}
+				throw new Exception( $customer_id->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
 
 			wc_set_customer_auth_cookie( $customer_id );
@@ -1085,7 +1203,7 @@ class WC_Checkout {
 				if ( is_callable( array( $customer, "set_{$key}" ) ) ) {
 					$customer->{"set_{$key}"}( $value );
 
-					// Store custom fields prefixed with wither shipping_ or billing_.
+					// Store custom fields prefixed with either shipping_ or billing_.
 				} elseif ( 0 === stripos( $key, 'billing_' ) || 0 === stripos( $key, 'shipping_' ) ) {
 					$customer->update_meta_data( $key, $value );
 				}
@@ -1202,6 +1320,7 @@ class WC_Checkout {
 				 * since it could be empty see:
 				 * https://github.com/woocommerce/woocommerce/issues/24631
 				 */
+
 				if ( apply_filters( 'woocommerce_cart_needs_payment', $order->needs_payment(), WC()->cart ) ) {
 					$this->process_order_payment( $order_id, $posted_data['payment_method'] );
 				} else {
@@ -1218,7 +1337,7 @@ class WC_Checkout {
 	 * Get a posted address field after sanitization and validation.
 	 *
 	 * @param string $key  Field key.
-	 * @param string $type Type of address. Available options: 'billing' or 'shipping'.
+	 * @param string $type Type of address; 'billing' or 'shipping'.
 	 * @return string
 	 */
 	public function get_posted_address_data( $key, $type = 'billing' ) {
@@ -1270,7 +1389,7 @@ class WC_Checkout {
 
 		if ( is_callable( array( $customer_object, "get_$input" ) ) ) {
 			$value = $customer_object->{"get_$input"}();
-		} elseif ( $customer_object->meta_exists( $input ) ) {
+		} elseif ( is_callable( array( $customer_object, 'meta_exists' ) ) && $customer_object->meta_exists( $input ) ) {
 			$value = $customer_object->get_meta( $input, true );
 		}
 

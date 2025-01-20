@@ -7,9 +7,11 @@
 
 namespace Automattic\WooCommerce\Admin\API\Reports\Customers\Stats;
 
+use Automattic\WooCommerce\Admin\API\Reports\Customers\Query;
+
 defined( 'ABSPATH' ) || exit;
 
-use \Automattic\WooCommerce\Admin\API\Reports\TimeInterval;
+use Automattic\WooCommerce\Admin\API\Reports\TimeInterval;
 
 /**
  * REST API Reports customers stats controller class.
@@ -83,7 +85,7 @@ class Controller extends \WC_REST_Reports_Controller {
 	 */
 	public function get_items( $request ) {
 		$query_args      = $this->prepare_reports_query( $request );
-		$customers_query = new Query( $query_args );
+		$customers_query = new Query( $query_args, 'customers-stats' );
 		$report_data     = $customers_query->get_data();
 		$out_data        = array(
 			'totals' => $report_data,
@@ -93,11 +95,11 @@ class Controller extends \WC_REST_Reports_Controller {
 	}
 
 	/**
-	 * Prepare a report object for serialization.
+	 * Prepare a report data item for serialization.
 	 *
-	 * @param Array           $report  Report data.
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response
+	 * @param array            $report  Report data item as returned from Data Store.
+	 * @param \WP_REST_Request $request Request object.
+	 * @return \WP_REST_Response
 	 */
 	public function prepare_item_for_response( $report, $request ) {
 		$data = $report;
@@ -218,25 +220,26 @@ class Controller extends \WC_REST_Reports_Controller {
 				'name',
 				'username',
 				'email',
+				'all',
 			),
 		);
 		$params['name_includes']           = array(
-			'description'       => __( 'Limit response to objects with specfic names.', 'woocommerce' ),
+			'description'       => __( 'Limit response to objects with specific names.', 'woocommerce' ),
 			'type'              => 'string',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['name_excludes']           = array(
-			'description'       => __( 'Limit response to objects excluding specfic names.', 'woocommerce' ),
+			'description'       => __( 'Limit response to objects excluding specific names.', 'woocommerce' ),
 			'type'              => 'string',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['username_includes']       = array(
-			'description'       => __( 'Limit response to objects with specfic usernames.', 'woocommerce' ),
+			'description'       => __( 'Limit response to objects with specific usernames.', 'woocommerce' ),
 			'type'              => 'string',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['username_excludes']       = array(
-			'description'       => __( 'Limit response to objects excluding specfic usernames.', 'woocommerce' ),
+			'description'       => __( 'Limit response to objects excluding specific usernames.', 'woocommerce' ),
 			'type'              => 'string',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
@@ -251,12 +254,12 @@ class Controller extends \WC_REST_Reports_Controller {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['country_includes']        = array(
-			'description'       => __( 'Limit response to objects with specfic countries.', 'woocommerce' ),
+			'description'       => __( 'Limit response to objects with specific countries.', 'woocommerce' ),
 			'type'              => 'string',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['country_excludes']        = array(
-			'description'       => __( 'Limit response to objects excluding specfic countries.', 'woocommerce' ),
+			'description'       => __( 'Limit response to objects excluding specific countries.', 'woocommerce' ),
 			'type'              => 'string',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
@@ -386,7 +389,7 @@ class Controller extends \WC_REST_Reports_Controller {
 				'type' => 'string',
 			),
 		);
-		$params['force_cache_refresh'] = array(
+		$params['force_cache_refresh']     = array(
 			'description'       => __( 'Force retrieval of fresh data instead of from the cache.', 'woocommerce' ),
 			'type'              => 'boolean',
 			'sanitize_callback' => 'wp_validate_boolean',

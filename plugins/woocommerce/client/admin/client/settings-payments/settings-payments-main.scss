@@ -1,0 +1,306 @@
+.woocommerce-embed-page {
+	#wpbody .woocommerce-layout,
+	.woocommerce-layout__notice-list-hide + .wrap {
+		padding-top: 0;
+	}
+}
+
+.settings-payments-main__container {
+	margin: 0 -20px;
+	padding-bottom: 32px;
+
+	.settings-payment-gateways {
+		&__header {
+			display: flex;
+			justify-content: space-between;
+			padding: $gap-smaller 48px $gap-large;
+			align-items: center;
+
+			@media screen and ( max-width: 1024px ) {
+				padding: $gap-smaller $gap-large $gap-large;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				display: block;
+				padding: $gap-smaller $gap $gap-large;
+			}
+		}
+
+		&__header-title {
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 24px;
+		}
+
+		&__header-select-container {
+			min-width: 240px;
+			max-width: 313px;
+			background-color: #fff;
+			border: 1px solid $gray-300;
+			display: inline-block;
+			border-radius: 2px;
+
+			.components-input-control__prefix {
+				min-width: fit-content;
+				padding-left: 12px;
+				color: $gray-700;
+			}
+
+			.components-select-control__input {
+				min-height: 32px;
+			}
+
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
+
+			&--indicator {
+				height: 26px;
+				cursor: pointer;
+				padding-top: 6px;
+				margin-left: auto;
+
+				&-icon {
+					border-left: 1px solid $gray-200;
+					height: 20px;
+					padding: 0 5px;
+
+					svg {
+						fill: $alert-yellow;
+						width: 20px;
+						height: 20px;
+					}
+				}
+			}
+
+			&.has-alert {
+				display: flex;
+				align-items: center;
+
+				.components-country-select-control__menu {
+					width: 310px;
+
+					@media screen and ( max-width: 782px ) {
+						width: 313px;
+					}
+				}
+			}
+
+			@media screen and ( max-width: 782px ) {
+				margin-top: $gap;
+			}
+		}
+	}
+
+	.other-payment-gateways__header__title-image-placeholder {
+		width: 24px;
+		height: 24px;
+		background-color: $gray-100;
+		border-radius: 4px;
+	}
+
+	.other-payment-gateways {
+		border: 1px solid $gray-200;
+		border-radius: 4px;
+		margin: 32px 48px 0 48px;
+		padding: 8px 24px;
+
+		&__header {
+			padding: 20px 0;
+			display: flex;
+			justify-content: space-between;
+
+			&:hover {
+				cursor: pointer;
+			}
+
+			&__title {
+				display: flex;
+				gap: 10px;
+				font-size: 16px;
+				font-weight: 600;
+				line-height: 24px;
+
+				&-image {
+					width: 24px;
+					height: 24px;
+					border-radius: 2px;
+				}
+
+				@media screen and ( max-width: 782px ) {
+					font-weight: 500;
+				}
+			}
+
+			/* Override hover and focus states for the button */
+			.components-button:focus:not(:disabled) {
+				box-shadow: none;
+				outline: none;
+			}
+
+			.components-button {
+				color: $gray-900;
+			}
+		}
+
+		&__content {
+			margin-top: 16px;
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+
+			&__title {
+				display: flex;
+				gap: 4px;
+				align-items: center;
+
+				&__h3 {
+					text-transform: uppercase;
+					font-size: 12px;
+					font-weight: 500;
+					color: $gray-900;
+					line-height: 16px;
+				}
+
+				&__tooltip {
+					color: $gray-700;
+					width: 16px;
+					height: 16px;
+				}
+			}
+
+			&__grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr); /* 3 columns */
+				gap: $gap; /* Space between columns */
+				padding: $gap 0;
+
+				@media screen and (max-width: 1024px) {
+					grid-template-columns: repeat(2, 1fr); /* 2 columns */
+				}
+
+				@media screen and (max-width: 768px) {
+					grid-template-columns: repeat(1, 1fr); /* w columns */
+				}
+			}
+
+			&__grid-item {
+				display: flex; /* Use Flexbox to align image and content */
+				align-items: flex-start; /* Align items to the top */
+				padding: $gap 0;
+
+				&-image {
+					width: 40px;
+					height: 40px;
+					margin-right: 20px; /* Space between image and text */
+					border-radius: 4px;
+
+					@media screen and ( max-width: 782px ) {
+						width: 24px;
+						height: 24px;
+					}
+				}
+
+				&__content {
+					display: flex;
+					flex-direction: column; /* Stack title, description, and button vertically */
+					gap: 4px;
+
+					&__title {
+						display: block;
+						font-size: 14px;
+						font-weight: 600;
+						line-height: 20px;
+					}
+
+					&__description {
+						display: block;
+						font-size: 13px;
+						font-weight: 400;
+						line-height: 20px;
+						color: $gray-700;
+					}
+
+					&__actions {
+						display: flex;
+						gap: $gap-smaller; /* Space between buttons */
+						padding-top: 4px; /* Space between description and buttons */
+						button {
+							align-self: flex-start; /* Align button to the left */
+						}
+					}
+				}
+			}
+
+			&__external-icon {
+				padding: 8px 0;
+
+				img {
+					height: 16px;
+					margin-right: 4px;
+				}
+
+				a {
+					padding: 0;
+					text-decoration: none;
+				}
+			}
+		}
+
+		@media screen and (max-width: 1024px) {
+			margin: 32px $gap-large 0 $gap-large;
+		}
+
+		@media screen and ( max-width: 782px ) {
+			margin: 32px $gap 0 $gap;
+			padding: $gap-smaller $gap;
+		}
+	}
+}
+
+@media screen and ( max-width: 1024px ) {
+	.settings-payments-main__container {
+		.woocommerce-item__payment-gateway-placeholder {
+			padding: 0 $gap-large;
+		}
+	}
+}
+
+@media screen and ( max-width: 782px ) {
+	.settings-payments-main__container {
+		.woocommerce-item__payment-gateway-placeholder {
+			padding: 0 $gap;
+
+			.woocommerce-list__item-inner {
+				display: grid;
+				grid-template-columns: 30px minmax(200px, 1fr) 40px;
+			}
+
+			.woocommerce-list__item-before {
+				margin-right: 0;
+
+				.drag-handle-wrapper {
+					margin-right: 10px;
+				}
+
+				.list-placeholder__before {
+					display: none;
+				}
+			}
+
+			.list-placeholder__content {
+				width: 80%; /* Set the width of the content to 80% to prevent overflowing */
+			}
+
+			.woocommerce-list__item-after {
+				display: none;
+			}
+		}
+	}
+}
+
+.settings-payment-gateways__header-select-container--indicator-popover {
+	width: 236px;
+	font-size: 13px;
+	line-height: 20px;
+}
