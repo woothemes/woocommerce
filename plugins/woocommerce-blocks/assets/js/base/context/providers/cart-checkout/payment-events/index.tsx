@@ -12,7 +12,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	checkoutStore,
-	PAYMENT_STORE_KEY,
+	paymentStore,
 	validationStore,
 } from '@woocommerce/block-data';
 import deprecated from '@wordpress/deprecated';
@@ -66,8 +66,7 @@ export const PaymentEventsProvider = ( {
 		};
 	} );
 	const { isPaymentReady } = useSelect( ( select ) => {
-		const store = select( PAYMENT_STORE_KEY );
-
+		const store = select( paymentStore );
 		return {
 			// The PROCESSING status represents before the checkout runs the observers
 			// registered for the payment_setup event.
@@ -92,7 +91,7 @@ export const PaymentEventsProvider = ( {
 		__internalSetPaymentProcessing,
 		__internalSetPaymentIdle,
 		__internalEmitPaymentProcessingEvent,
-	} = useDispatch( PAYMENT_STORE_KEY );
+	} = useDispatch( paymentStore );
 
 	// flip payment to processing if checkout processing is complete and there are no errors
 	useEffect( () => {
