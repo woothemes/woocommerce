@@ -273,7 +273,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "wp-6.6"
+			"pinVersion": "^1.15.0"
 		},
 		{
 			"dependencies": [
