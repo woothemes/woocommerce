@@ -407,7 +407,6 @@ export function getCurrencyData() {
 	};
 }
 
-
 /**
  * Escape special characters for user input in regex.
  *
