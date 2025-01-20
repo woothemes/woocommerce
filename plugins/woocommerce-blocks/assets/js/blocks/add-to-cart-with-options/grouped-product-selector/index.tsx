@@ -9,6 +9,7 @@ import { Icon, button } from '@wordpress/icons';
  */
 import metadata from './block.json';
 import AddToCartWithOptionsGroupedProductSelectorEdit from './edit';
+import AddToCartWithOptionsGroupedProductSelectorSave from './save';
 import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '..';
 import './style.scss';
 import './editor.scss';
@@ -25,8 +26,6 @@ if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 				/>
 			),
 		},
-		save() {
-			return null;
-		},
+		save: AddToCartWithOptionsGroupedProductSelectorSave,
 	} );
 }

@@ -30,10 +30,10 @@ export const GROUPED_PRODUCT_ITEM_TEMPLATE: TemplateArray = [
 						'woocommerce/add-to-cart-with-options-quantity-selector',
 					],
 					[
-						'woocommerce/product-title',
+						'core/post-title',
 						{
-							headingLevel: 4,
-							fontSize: 'medium',
+							level: 4,
+							fontSize: 'small',
 							style: {
 								layout: {
 									selfStretch: 'fill',
@@ -48,12 +48,14 @@ export const GROUPED_PRODUCT_ITEM_TEMPLATE: TemplateArray = [
 									fontWeight: 400,
 								},
 							},
+							isLink: true,
 						},
 					],
 					[
 						'woocommerce/product-price',
 						{
-							fontSize: 'medium',
+							isDescendentOfSingleProductTemplate: false,
+							fontSize: 'small',
 							style: {
 								typography: {
 									fontWeight: 400,

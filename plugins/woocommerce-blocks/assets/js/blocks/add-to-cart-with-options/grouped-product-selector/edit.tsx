@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useProductDataContext } from '@woocommerce/shared-context';
 import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { type BlockEditProps } from '@wordpress/blocks';
 
@@ -19,12 +20,15 @@ export default function AddToCartWithOptionsGroupedProductSelectorEdit(
 ) {
 	const { className } = props.attributes;
 	const { current: currentProductType } = useProductTypeSelector();
+	const { product } = useProductDataContext();
+	const productType =
+		product.id === 0 ? currentProductType?.slug : product.type;
 
 	const blockProps = useBlockProps( {
 		className,
 	} );
 
-	if ( currentProductType?.slug !== 'grouped' ) {
+	if ( productType !== 'grouped' ) {
 		return null;
 	}
 

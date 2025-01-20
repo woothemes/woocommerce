@@ -24,7 +24,7 @@ interface Attributes {
 }
 
 type ProductItemProps = {
-	attributes: { productId: number; productType: string };
+	attributes: { postId: number; postType: string };
 	isLoading?: boolean;
 	product?: ProductResponseItem;
 	blocks: BlockInstance[];
@@ -45,19 +45,14 @@ const ProductItem = withProduct( function ProductItem( {
 	} );
 
 	return (
-		<BlockContextProvider
-			value={ {
-				postId: attributes.productId,
-				postType: attributes.productType,
-			} }
-		>
+		<BlockContextProvider value={ attributes }>
 			<ProductDataContextProvider
 				product={ product as ProductResponseItem }
 				isLoading={ isLoading as boolean }
 			>
 				{ isSelected ? (
 					<InnerBlocks
-						templateLock="all"
+						templateLock="insert"
 						__unstableDisableLayoutClassNames={ true }
 						role="listitem"
 					/>
@@ -151,8 +146,8 @@ export default function ProductItemTemplateEdit(
 				<ProductItem
 					key={ productItem.id }
 					attributes={ {
-						productId: productItem.id,
-						productType: productItem.type,
+						postId: productItem.id,
+						postType: 'product',
 					} }
 					blocks={ blocks }
 					isSelected={
