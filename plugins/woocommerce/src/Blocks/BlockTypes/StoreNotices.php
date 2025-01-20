@@ -80,7 +80,7 @@ class StoreNotices extends AbstractBlock {
 				data-wc-each--notice="state.notices"
 				data-wc-each-key="context.notice.id"
 			>
-				<div data-wc-bind--class="callbacks.getNoticeClass" data-wc-bind--role="callbacks.getNoticeRole" >
+				<div data-wc-init="callbacks.scrollIntoView" data-wc-bind--class="callbacks.getNoticeClass" data-wc-bind--role="callbacks.getNoticeRole" >
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
 						<path data-wc-bind--d="callbacks.getNoticeIconPath"></path>
 					</svg>

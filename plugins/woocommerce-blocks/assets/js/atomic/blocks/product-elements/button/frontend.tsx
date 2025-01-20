@@ -131,11 +131,18 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 					'woocommerce/store-notices'
 				);
 
-				noticesStore.actions.addNotice( {
-					notice: decodeEntities( message ),
-					type: 'error',
-					dismissible: true,
-				} );
+				// First check if the error is already in the notices store.
+				const existingNotice = noticesStore.state.notices.find(
+					( notice ) => notice.notice === decodeEntities( message )
+				);
+
+				if ( ! existingNotice ) {
+					noticesStore.actions.addNotice( {
+						notice: decodeEntities( message ),
+						type: 'error',
+						dismissible: true,
+					} );
+				}
 
 				// We don't care about errors blocking execution, but will
 				// console.error for troubleshooting.

@@ -23,12 +23,13 @@ export type StoreNoticesStore = {
 		addNotice: ( notice: Notice ) => void;
 	};
 	callbacks: {
-		getNoticeClass: () => string;
-		getNoticeRole: () => string;
-		getNoticeIconPath: () => string;
-		renderNoticeContent: () => void;
-		isNoticeDismissible: () => boolean;
 		dismissNotice: () => void;
+		isNoticeDismissible: () => boolean;
+		getNoticeClass: () => string;
+		getNoticeIconPath: () => string;
+		getNoticeRole: () => string;
+		renderNoticeContent: () => void;
+		scrollIntoView: () => void;
 	};
 };
 
@@ -57,6 +58,14 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 		},
 	},
 	callbacks: {
+		dismissNotice: () => {
+			const context = getContext< { notice: NoticeWithId } >();
+
+			state.notices = state.notices.filter(
+				( notice ) => notice.id !== context.notice.id
+			);
+		},
+
 		getNoticeClass: () => {
 			const context = getContext< { notice: NoticeWithId } >();
 
@@ -67,6 +76,12 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 			}[ context.notice.type ];
 
 			return `wc-block-components-notice-banner ${ noticeTypeClass }`;
+		},
+
+		getNoticeIconPath: () => {
+			const context = getContext< { notice: NoticeWithId } >();
+			const noticeType = context.notice.type;
+			return ICON_PATHS[ noticeType ];
 		},
 
 		getNoticeRole: () => {
@@ -81,10 +96,9 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 			return 'status';
 		},
 
-		getNoticeIconPath: () => {
+		isNoticeDismissible: () => {
 			const context = getContext< { notice: NoticeWithId } >();
-			const noticeType = context.notice.type;
-			return ICON_PATHS[ noticeType ];
+			return context.notice.dismissible;
 		},
 
 		renderNoticeContent: () => {
@@ -94,17 +108,9 @@ const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
 			ref.innerHTML = context.notice.notice;
 		},
 
-		isNoticeDismissible: () => {
-			const context = getContext< { notice: NoticeWithId } >();
-			return context.notice.dismissible;
-		},
-
-		dismissNotice: () => {
-			const context = getContext< { notice: NoticeWithId } >();
-
-			state.notices = state.notices.filter(
-				( notice ) => notice.id !== context.notice.id
-			);
+		scrollIntoView: () => {
+			const { ref } = getElement();
+			ref.scrollIntoView( { behavior: 'smooth' } );
 		},
 	},
 } );
