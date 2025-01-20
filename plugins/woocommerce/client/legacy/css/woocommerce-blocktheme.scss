@@ -453,7 +453,8 @@ a.added_to_cart {
 	// For block themes we increase the padding of the input fields across classic checkout and my account pages.
 	form .form-row {
 		select,
-		.input-text {
+		textarea.input-text,
+		input.input-text {
 			// Ensure inputs are well spaced.
 			font-size: var(--wp--preset--font-size--small);
 			padding: 0.9rem 1.1rem;
