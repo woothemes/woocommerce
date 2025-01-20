@@ -6,6 +6,12 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
 
+add_action(
+	'init',
+	function () {
+	}
+);
+
 /**
  * AddToCartWithOptions class.
  */
@@ -32,6 +38,60 @@ class AddToCartWithOptions extends AbstractBlock {
 		parent::initialize();
 		add_filter( 'wc_add_to_cart_message_html', array( $this, 'add_to_cart_message_html_filter' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'add_to_cart_redirect_filter' ), 10, 1 );
+
+		$this->register_block_patterns();
+	}
+
+	/**
+	 * Register block patterns used to render the correct layout for each product type.
+	 *
+	 * @return void
+	 */
+	private function register_block_patterns() {
+		register_block_pattern_category( 'woocommerce/add-to-cart', array( 'label' => __( 'Add to Cart', 'woocommerce' ) ) );
+		register_block_pattern(
+			'woocommerce/add-to-cart-simple',
+			array(
+				'title'       => __( 'Simple Products Add to Cart', 'woocommerce' ),
+				'content'     => '<!-- wp:woocommerce/add-to-cart-with-options-quantity-selector /-->
+<!-- wp:woocommerce/product-button {"textAlign":"center","fontSize":"small"} -->
+<div class="wp-block-woocommerce-product-button is-loading has-small-font-size"></div>
+<!-- /wp:woocommerce/product-button -->',
+				'description' => __( 'Add to Cart form rendered in Simple Products', 'woocommerce' ),
+				// 'inserter'    => false,
+				'categories'  => array( 'woocommerce/add-to-cart' ),
+			)
+		);
+		register_block_pattern(
+			'woocommerce/add-to-cart-external',
+			array(
+				'title'       => __( 'External Products Add to Cart', 'woocommerce' ),
+				'content'     => 'External Add to Cart Form :)',
+				'description' => __( 'Add to Cart form rendered in External Products', 'woocommerce' ),
+				// 'inserter'    => false,
+				'categories'  => array( 'woocommerce/add-to-cart' ),
+			)
+		);
+		register_block_pattern(
+			'woocommerce/add-to-cart-variable',
+			array(
+				'title'       => __( 'Variable Products Add to Cart', 'woocommerce' ),
+				'content'     => 'Variable Add to Cart Form :)',
+				'description' => __( 'Add to Cart form rendered in Variable Products', 'woocommerce' ),
+				// 'inserter'    => false,
+				'categories'  => array( 'woocommerce/add-to-cart' ),
+			)
+		);
+		register_block_pattern(
+			'woocommerce/add-to-cart-grouped',
+			array(
+				'title'       => __( 'Grouped Products Add to Cart', 'woocommerce' ),
+				'content'     => 'Grouped Add to Cart Form :)',
+				'description' => __( 'Add to Cart form rendered in Grouped Products', 'woocommerce' ),
+				// 'inserter'    => false,
+				'categories'  => array( 'woocommerce/add-to-cart' ),
+			)
+		);
 	}
 
 	/**
@@ -62,6 +122,22 @@ class AddToCartWithOptions extends AbstractBlock {
 		$this->asset_data_registry->add( 'productTypes', wc_get_product_types() );
 	}
 
+	protected function get_block_pattern_content( $pattern_name ) {
+		// Get the block patterns registry instance.
+		$registry = \WP_Block_Patterns_Registry::get_instance();
+
+		// Check if the pattern exists.
+		if ( $registry->is_registered( $pattern_name ) ) {
+			// Get the pattern details.
+			$pattern = $registry->get_registered( $pattern_name );
+
+			// Return the content of the pattern.
+			return isset( $pattern['content'] ) ? $pattern['content'] : '';
+		}
+
+		return '';
+	}
+
 	/**
 	 * Render the block.
 	 *
@@ -90,7 +166,40 @@ class AddToCartWithOptions extends AbstractBlock {
 
 		$product_type = $product->get_type();
 
-		if ( ! in_array( $product_type, array( 'simple', 'variable', 'external', 'grouped' ), true ) ) {
+		$synced_pattern_content = do_blocks( $this->get_block_pattern_content( 'woocommerce/add-to-cart-' . $product_type ) );
+
+		$form_html = '';
+		if ( $synced_pattern_content ) {
+			$block_html = $synced_pattern_content;
+
+			$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
+
+			$classes = implode(
+				' ',
+				array_filter(
+					array(
+						'wp-block-add-to-cart-with-options wc-block-add-to-cart-with-options',
+						esc_attr( $classes_and_styles['classes'] ),
+					)
+				)
+			);
+
+			$wrapper_attributes = get_block_wrapper_attributes(
+				array(
+					'class' => $classes,
+					'style' => esc_attr( $classes_and_styles['styles'] ),
+				)
+			);
+
+			$form_html = sprintf(
+				'<form %1$s %2$s>%3$s</form>',
+				$wrapper_attributes,
+				'',
+				$block_html
+			);
+
+			$product = $previous_product;
+		} elseif ( ! in_array( $product_type, array( 'simple', 'variable', 'external', 'grouped' ), true ) ) {
 
 			ob_start();
 
@@ -101,69 +210,10 @@ class AddToCartWithOptions extends AbstractBlock {
 			 */
 			do_action( 'woocommerce_' . $product->get_type() . '_add_to_cart' );
 
-			$product_html = ob_get_clean();
-
-			$product = $previous_product;
-
-			return $product_html;
+			$form_html = ob_get_clean();
 		}
 
-		$is_external_product_with_url = $product instanceof \WC_Product_External && $product->get_product_url();
-		/**
-		 * Filter to modify the add to cart with options HTML output.
-		 *
-		 * @since 9.6.0
-		 *
-		 * @param string $content The HTML content for the add to cart with options block.
-		 */
-		$product_html = apply_filters( 'woocommerce_add_to_cart_with_options_html', $content );
-
-		if ( ! $product_html ) {
-			$product = $previous_product;
-
-			return '';
-		}
-		$product_name                          = $product->get_name();
-		$parsed_attributes                     = $this->parse_attributes( $attributes );
-		$is_descendent_of_single_product_block = $parsed_attributes['isDescendentOfSingleProductBlock'];
-
-		if ( ! $is_external_product_with_url ) {
-			$product_html = $this->add_is_descendent_of_single_product_block_hidden_input_to_product_form( $product_html, $is_descendent_of_single_product_block );
-		}
-
-		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
-
-		$product_classname = $is_descendent_of_single_product_block ? 'product' : '';
-
-		$classes = implode(
-			' ',
-			array_filter(
-				array(
-					'wp-block-add-to-cart-with-options wc-block-add-to-cart-with-options',
-					esc_attr( $classes_and_styles['classes'] ),
-					esc_attr( $product_classname ),
-					'wc-block-add-to-cart-with-options--input',
-				)
-			)
-		);
-
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'class' => $classes,
-				'style' => esc_attr( $classes_and_styles['styles'] ),
-			)
-		);
-
-		$form = sprintf(
-			'<div %1$s %2$s>%3$s</div>',
-			$wrapper_attributes,
-			'',
-			$product_html
-		);
-
-		$product = $previous_product;
-
-		return $form;
+		return $form_html;
 	}
 
 	/**
