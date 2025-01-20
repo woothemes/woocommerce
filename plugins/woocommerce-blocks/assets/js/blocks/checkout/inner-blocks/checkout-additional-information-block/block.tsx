@@ -15,7 +15,7 @@ const Block: FunctionComponent = () => {
 		return {
 			additionalFields: store.getAdditionalFields(),
 		};
-	}, [] );
+	} );
 
 	const { setAdditionalFields } = useDispatch( checkoutStore );
 

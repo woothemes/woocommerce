@@ -137,7 +137,7 @@ export const CheckoutEventsProvider = ( {
 			checkoutOrderNotes: store.getOrderNotes(),
 			checkoutCustomerId: store.getCustomerId(),
 		};
-	}, [] );
+	} );
 
 	if ( redirectUrl && redirectUrl !== checkoutRedirectUrl ) {
 		__internalSetRedirectUrl( redirectUrl );

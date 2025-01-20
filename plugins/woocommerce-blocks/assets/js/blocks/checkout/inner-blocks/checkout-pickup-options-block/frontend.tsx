@@ -34,8 +34,7 @@ const FrontendBlock = ( {
 				checkoutIsProcessing: checkoutStore.isProcessing(),
 				prefersCollection: checkoutStore.prefersCollection(),
 			};
-		},
-		[]
+		}
 	);
 
 	const { showFormStepNumbers } = useCheckoutBlockContext();

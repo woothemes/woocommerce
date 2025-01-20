@@ -30,7 +30,7 @@ const CreateAccountUI = (): React.ReactElement | null => {
 		return {
 			shouldCreateAccount: store.getShouldCreateAccount(),
 		};
-	}, [] );
+	} );
 	const { __internalSetShouldCreateAccount, __internalSetCustomerPassword } =
 		useDispatch( checkoutStore );
 
@@ -92,7 +92,7 @@ const Block = (): JSX.Element => {
 			additionalFields: store.getAdditionalFields(),
 			customerId: store.getCustomerId(),
 		};
-	}, [] );
+	} );
 
 	const { setAdditionalFields } = useDispatch( checkoutStore );
 	const { billingAddress, setEmail } = useCheckoutAddress();

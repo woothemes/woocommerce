@@ -22,8 +22,7 @@ const Block = ( { className }: { className?: string } ): JSX.Element => {
 				isProcessing: store.isProcessing(),
 				orderNotes: store.getOrderNotes(),
 			};
-		},
-		[]
+		}
 	);
 	const { __internalSetOrderNotes } = useDispatch( checkoutStore );
 

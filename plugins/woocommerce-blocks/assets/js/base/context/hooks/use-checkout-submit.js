@@ -32,7 +32,7 @@ export const useCheckoutSubmit = () => {
 			isComplete: store.isComplete(),
 			hasError: store.hasError(),
 		};
-	}, [] );
+	} );
 	const { activePaymentMethod, isExpressPaymentMethodActive } = useSelect(
 		( select ) => {
 			const store = select( PAYMENT_STORE_KEY );

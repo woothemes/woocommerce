@@ -34,7 +34,7 @@ const CartExpressPayment = () => {
 			isComplete: store.isComplete(),
 			hasError: store.hasError(),
 		};
-	}, [] );
+	} );
 	const isExpressPaymentMethodActive = useSelect( ( select ) =>
 		select( PAYMENT_STORE_KEY ).isExpressPaymentMethodActive()
 	);

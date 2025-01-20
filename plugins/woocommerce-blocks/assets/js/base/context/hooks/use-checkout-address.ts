@@ -51,18 +51,14 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		prefersCollection,
 		editingBillingAddress,
 		editingShippingAddress,
-	} = useSelect(
-		( select ) => ( {
-			useShippingAsBilling:
-				select( checkoutStore ).getUseShippingAsBilling(),
-			prefersCollection: select( checkoutStore ).prefersCollection(),
-			editingBillingAddress:
-				select( checkoutStore ).getEditingBillingAddress(),
-			editingShippingAddress:
-				select( checkoutStore ).getEditingShippingAddress(),
-		} ),
-		[]
-	);
+	} = useSelect( ( select ) => ( {
+		useShippingAsBilling: select( checkoutStore ).getUseShippingAsBilling(),
+		prefersCollection: select( checkoutStore ).prefersCollection(),
+		editingBillingAddress:
+			select( checkoutStore ).getEditingBillingAddress(),
+		editingShippingAddress:
+			select( checkoutStore ).getEditingShippingAddress(),
+	} ) );
 	const {
 		__internalSetUseShippingAsBilling,
 		setEditingBillingAddress,

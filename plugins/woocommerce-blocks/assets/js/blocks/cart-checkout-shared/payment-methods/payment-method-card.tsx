@@ -42,7 +42,7 @@ const PaymentMethodCard = ( {
 				paymentMethodStore.getShouldSavePaymentMethod(),
 			customerId: checkoutStore.getCustomerId(),
 		};
-	}, [] );
+	} );
 	const { __internalSetShouldSavePaymentMethod } =
 		useDispatch( PAYMENT_STORE_KEY );
 	return (

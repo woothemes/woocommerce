@@ -46,8 +46,7 @@ const FrontendBlock = ( {
 				checkoutIsProcessing: checkoutStore.isProcessing(),
 				prefersCollection: checkoutStore.prefersCollection(),
 			};
-		},
-		[]
+		}
 	);
 	const { setPrefersCollection } = useDispatch( checkoutStoreDescriptor );
 	const {

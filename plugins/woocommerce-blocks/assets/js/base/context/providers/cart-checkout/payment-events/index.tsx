@@ -64,7 +64,7 @@ export const PaymentEventsProvider = ( {
 			hasError: store.hasError(),
 			isCalculating: store.isCalculating(),
 		};
-	}, [] );
+	} );
 	const { isPaymentReady } = useSelect( ( select ) => {
 		const store = select( PAYMENT_STORE_KEY );
 

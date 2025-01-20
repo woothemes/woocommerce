@@ -52,7 +52,7 @@ const Checkout = ( {
 			hasOrder: store.hasOrder(),
 			customerId: store.getCustomerId(),
 		};
-	}, [] );
+	} );
 	const { cartItems, cartIsLoading } = useStoreCart();
 
 	const { showFormStepNumbers } = attributes;

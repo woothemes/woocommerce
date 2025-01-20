@@ -42,9 +42,8 @@ export const useStoreCartCoupons = ( context = '' ): StoreCartCoupon => {
 		} );
 
 	const { applyCoupon, removeCoupon } = useDispatch( CART_STORE_KEY );
-	const orderId = useSelect(
-		( select ) => select( checkoutStore ).getOrderId(),
-		[]
+	const orderId = useSelect( ( select ) =>
+		select( checkoutStore ).getOrderId()
 	);
 
 	// Return cart, checkout or generic error message.

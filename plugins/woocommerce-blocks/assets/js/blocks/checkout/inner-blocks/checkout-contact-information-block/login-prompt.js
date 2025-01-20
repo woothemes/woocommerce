@@ -12,9 +12,8 @@ const LOGIN_TO_CHECKOUT_URL = `${ LOGIN_URL }?redirect_to=${ encodeURIComponent(
 ) }`;
 
 const LoginPrompt = () => {
-	const customerId = useSelect(
-		( select ) => select( checkoutStore ).getCustomerId(),
-		[]
+	const customerId = useSelect( ( select ) =>
+		select( checkoutStore ).getCustomerId()
 	);
 
 	if ( ! getSetting( 'checkoutShowLoginReminder', true ) || customerId ) {

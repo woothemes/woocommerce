@@ -31,9 +31,8 @@ const FrontendBlock = ( {
 	className?: string;
 } ) => {
 	const { showFormStepNumbers } = useCheckoutBlockContext();
-	const checkoutIsProcessing = useSelect(
-		( select ) => select( checkoutStore ).isProcessing(),
-		[]
+	const checkoutIsProcessing = useSelect( ( select ) =>
+		select( checkoutStore ).isProcessing()
 	);
 	const { cartNeedsPayment } = useStoreCart();
 

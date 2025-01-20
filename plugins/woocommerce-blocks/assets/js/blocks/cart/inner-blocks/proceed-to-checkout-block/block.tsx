@@ -31,9 +31,8 @@ const Block = ( {
 	buttonLabel: string;
 } ): JSX.Element => {
 	const link = getSetting< string >( 'page-' + checkoutPageId, false );
-	const isCalculating = useSelect(
-		( select ) => select( checkoutStore ).isCalculating(),
-		[]
+	const isCalculating = useSelect( ( select ) =>
+		select( checkoutStore ).isCalculating()
 	);
 
 	const [ positionReferenceElement, positionRelativeToViewport ] =

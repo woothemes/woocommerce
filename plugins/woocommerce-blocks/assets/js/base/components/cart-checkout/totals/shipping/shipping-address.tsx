@@ -22,9 +22,8 @@ import { getPickupLocation } from './utils';
 
 export const ShippingAddress = (): JSX.Element => {
 	const { shippingRates, shippingAddress } = useStoreCart();
-	const prefersCollection = useSelect(
-		( select ) => select( checkoutStore ).prefersCollection(),
-		[]
+	const prefersCollection = useSelect( ( select ) =>
+		select( checkoutStore ).prefersCollection()
 	);
 
 	const hasRates = hasShippingRate( shippingRates );

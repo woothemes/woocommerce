@@ -76,7 +76,7 @@ const CheckoutProcessor = () => {
 			redirectUrl: store.getRedirectUrl(),
 			shouldCreateAccount: store.getShouldCreateAccount(),
 		};
-	}, [] );
+	} );
 
 	const { __internalSetHasError, __internalProcessCheckoutResponse } =
 		useDispatch( checkoutStore );

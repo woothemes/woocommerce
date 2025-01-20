@@ -15,7 +15,7 @@ const CreatePassword = () => {
 		return {
 			customerPassword: store.getCustomerPassword(),
 		};
-	}, [] );
+	} );
 	const { __internalSetCustomerPassword } = useDispatch( checkoutStore );
 
 	return (

@@ -25,9 +25,8 @@ const FrontendBlock = ( {
 	children: JSX.Element;
 	className?: string;
 } ) => {
-	const checkoutIsProcessing = useSelect(
-		( select ) => select( checkoutStore ).isProcessing(),
-		[]
+	const checkoutIsProcessing = useSelect( ( select ) =>
+		select( checkoutStore ).isProcessing()
 	);
 	const { showShippingFields } = useCheckoutAddress();
 	const { showFormStepNumbers } = useCheckoutBlockContext();

@@ -176,7 +176,7 @@ export const Edit = ( {
 		return {
 			prefersCollection: checkoutStore.prefersCollection(),
 		};
-	}, [] );
+	} );
 	const { showPrice, showIcon, className, localPickupText, shippingText } =
 		attributes;
 	const {

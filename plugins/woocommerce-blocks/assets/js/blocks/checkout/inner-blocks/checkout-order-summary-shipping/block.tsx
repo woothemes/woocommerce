@@ -20,9 +20,8 @@ const Block = ( {
 } ): JSX.Element | null => {
 	const { cartNeedsShipping, shippingRates, shippingAddress } =
 		useStoreCart();
-	const prefersCollection = useSelect(
-		( select ) => select( checkoutStore ).prefersCollection(),
-		[]
+	const prefersCollection = useSelect( ( select ) =>
+		select( checkoutStore ).prefersCollection()
 	);
 
 	if ( ! cartNeedsShipping ) {

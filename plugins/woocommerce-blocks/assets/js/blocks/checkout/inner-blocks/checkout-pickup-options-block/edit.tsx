@@ -36,7 +36,7 @@ export const Edit = ( {
 		return {
 			prefersCollection: checkoutStore.prefersCollection(),
 		};
-	}, [] );
+	} );
 	const { className } = attributes;
 
 	if ( ! prefersCollection || ! LOCAL_PICKUP_ENABLED ) {
