@@ -165,18 +165,14 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 *
 	 * @param string $value Line discount.
 	 */
-	public function set_line_discount() {
-		$line_discount = 0;
-		$product = $this->get_product();
-		if ( $product ) {
-			$regular_price = $product->get_regular_price();
-			$sale_price = $product->get_sale_price();
-
-			if ( '' !== $sale_price && $sale_price < $regular_price ) {
-				$line_discount = ((float) $regular_price - (float) $sale_price) * $this->get_quantity();
-			}
+	public function set_line_discount( $value ) {
+		$value = wc_format_decimal( $value );
+		
+		if ( ! is_numeric( $value ) ) {
+			$value = 0;
 		}
-		$this->set_prop( 'line_discount', wc_format_decimal( $line_discount ) );
+		
+		$this->set_prop( 'line_discount', $value );
 	}
 
 	/**
@@ -462,7 +458,6 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 */
 	public function get_tax_status() {
 		$product = $this->get_product();
-		error_log("get_tax_status called, returning: " . $product ? $product->get_tax_status() : 'taxable');
 		return $product ? $product->get_tax_status() : 'taxable';
 	}
 	
@@ -473,8 +468,16 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 * @return float
 	 */
 	public function get_line_discount( $context = 'view' ) {
-		$line_discount = $this->get_prop( 'line_discount', $context );
-		return $line_discount;
+		$product = $this->get_product();
+		if ( ! $product ) {
+			return 0;
+		}
+		
+		$regular_price = $product->get_regular_price();
+		$sale_price = $product->get_sale_price() ? $product->get_sale_price() : $product->get_regular_price();
+		
+		$line_discount = ((float) $regular_price - (float) $sale_price) * $this->get_quantity();
+		return wc_format_decimal( $line_discount );
 	}
 
 
