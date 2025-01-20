@@ -1,15 +1,19 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "core/accordion-item",
+	"name": "woocommerce/accordion-item",
 	"version": "0.1.0",
 	"title": "Accordion",
-	"category": "design",
+	"category": "woocommerce",
+	"keywords": [ "WooCommerce" ],
 	"description": "A single accordion that displays a header and expandable content.",
 	"example": {},
 	"__experimental": true,
-	"parent": [ "core/accordion-group" ],
-	"allowedBlocks": [ "core/accordion-header", "core/accordion-panel" ],
+	"parent": [ "woocommerce/accordion-group" ],
+	"allowedBlocks": [
+		"woocommerce/accordion-header",
+		"woocommerce/accordion-panel"
+	],
 	"supports": {
 		"align": [ "wide", "full" ],
 		"color": {

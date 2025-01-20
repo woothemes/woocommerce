@@ -1,14 +1,15 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "core/accordion-header",
+	"name": "woocommerce/accordion-header",
 	"version": "0.1.0",
 	"title": "Accordion Header",
-	"category": "design",
+	"category": "woocommerce",
+	"keywords": [ "WooCommerce" ],
 	"description": "Accordion header.",
 	"example": {},
 	"__experimental": true,
-	"parent": [ "core/accordion-item" ],
+	"parent": [ "woocommerce/accordion-item" ],
 	"supports": {
 		"anchor": true,
 		"color": {

@@ -1,9 +1,10 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "core/accordion-group",
+	"name": "woocommerce/accordion-group",
 	"title": "Accordion Group",
-	"category": "design",
+	"category": "woocommerce",
+	"keywords": [ "WooCommerce" ],
 	"description": "A group of headers and associated expandable content.",
 	"example": {},
 	"__experimental": true,
@@ -55,7 +56,6 @@
 			"type": "array"
 		}
 	},
-	"allowedBlocks": [ "core/accordion-item" ],
-	"textdomain": "default",
-	"style": "wp-block-accordion-group"
+	"allowedBlocks": [ "woocommerce/accordion-item" ],
+	"textdomain": "default"
 }

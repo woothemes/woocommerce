@@ -16,6 +16,9 @@ import { PanelBody, ToggleControl } from '@wordpress/components';
  */
 import clsx from 'clsx';
 
+const ACCORDION_HEADER_BLOCK_NAME = 'woocommerce/accordion-header';
+const ACCORDION_PANEL_BLOCK_NAME = 'woocommerce/accordion-panel';
+
 export default function Edit( {
 	attributes: { openByDefault },
 	clientId,
@@ -66,9 +69,9 @@ export default function Edit( {
 		},
 		{
 			template: [
-				[ 'core/accordion-header', {} ],
+				[ ACCORDION_HEADER_BLOCK_NAME, {} ],
 				[
-					'core/accordion-panel',
+					ACCORDION_PANEL_BLOCK_NAME,
 					{
 						isSelected: true,
 						openByDefault,

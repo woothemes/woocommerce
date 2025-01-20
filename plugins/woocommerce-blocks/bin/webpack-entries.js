@@ -288,7 +288,10 @@ const entries = {
 	},
 	frontend: {
 		reviews: './assets/js/blocks/reviews/frontend.ts',
-		...getBlockEntries( 'frontend.{t,j}s{,x}' ),
+		...getBlockEntries( 'frontend.{t,j}s{,x}', {
+			...blocks,
+			...genericBlocks,
+		} ),
 		'product-button-interactivity':
 			'./assets/js/atomic/blocks/product-elements/button/frontend.tsx',
 	},

@@ -1,14 +1,15 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "core/accordion-panel",
+	"name": "woocommerce/accordion-panel",
 	"version": "0.1.0",
 	"title": "Accordion Panel",
-	"category": "design",
+	"category": "woocommerce",
+	"keywords": [ "WooCommerce" ],
 	"description": "Accordion Panel",
 	"example": {},
 	"__experimental": true,
-	"parent": [ "core/accordion-item" ],
+	"parent": [ "woocommerce/accordion-item" ],
 	"supports": {
 		"color": {
 			"background": true,

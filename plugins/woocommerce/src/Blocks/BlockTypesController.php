@@ -491,6 +491,8 @@ final class BlockTypesController {
 			'OrderConfirmation\CreateAccount',
 		);
 
+		
+
 		$block_types = array_merge(
 			$block_types,
 			Cart::get_cart_block_types(),
@@ -517,6 +519,11 @@ final class BlockTypesController {
 				$block_types[] = 'AddToCartWithOptionsQuantitySelector';
 				$block_types[] = 'AddToCartWithOptionsVariationSelector';
 			}
+			// Generic blocks that will be pushed upstream.
+			$block_types[] = 'AccordionGroup';
+			$block_types[] = 'AccordionItem';
+			$block_types[] = 'AccordionPanel';
+			$block_types[] = 'AccordionHeader';
 		}
 
 		/**

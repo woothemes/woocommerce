@@ -9,7 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 
-const ACCORDION_BLOCK_NAME = 'core/accordion-item';
+const ACCORDION_BLOCK_NAME = 'woocommerce/accordion-item';
 const ACCORDION_BLOCK = {
 	name: ACCORDION_BLOCK_NAME,
 };
