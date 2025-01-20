@@ -10,7 +10,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 /**
  * Internal dependencies
  */
-import { StoreNoticesStore } from '../../../../blocks/store-notices/frontend';
+import type { StoreNoticesStore } from '../../../../blocks/store-notices/frontend';
 
 interface Context {
 	isLoading: boolean;
@@ -68,6 +68,7 @@ const getContext = ( ns?: string ) => getContextFn< Context >( ns );
 
 const { state } = store< Store >( 'woocommerce/product-button', {
 	state: {
+		noticeId: '',
 		get slideInAnimation() {
 			const { animationStatus } = getContext();
 			return animationStatus === AnimationStatus.SLIDE_IN;
