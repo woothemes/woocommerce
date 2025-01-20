@@ -8,12 +8,6 @@ use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
 
-add_action(
-	'init',
-	function () {
-	}
-);
-
 /**
  * AddToCartWithOptions class.
  */
