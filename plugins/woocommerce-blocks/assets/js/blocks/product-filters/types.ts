@@ -16,17 +16,13 @@ export type BlockAttributes = {
 
 export type EditProps = BlockEditProps< BlockAttributes >;
 
-export const enum StockStatus {
-	IN_STOCK = 'instock',
-	OUT_OF_STOCK = 'outofstock',
-	ON_BACKORDER = 'onbackorder',
-}
-
 export type FilterOptionItem = {
 	label: string;
+	ariaLabel: string;
 	value: string;
 	selected?: boolean;
-	rawData?: Record< string, unknown >;
+	type: string;
+	data?: Record< string, unknown >;
 };
 
 export type FilterBlockContext = {
@@ -39,10 +35,6 @@ export type FilterBlockContext = {
 			maxPrice: number;
 			maxRange: number;
 		};
-		stock: Array< {
-			status: StockStatus;
-			count: number;
-		} >;
 	};
 };
 

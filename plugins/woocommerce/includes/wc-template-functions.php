@@ -12,6 +12,7 @@ use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Utilities\HtmlSanitizer;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -1559,23 +1560,47 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 
 	/**
 	 * Output the product sorting options.
+	 *
+	 * @param array|null $attributes Block attributes.
 	 */
-	function woocommerce_catalog_ordering() {
+	function woocommerce_catalog_ordering( $attributes = null ) {
 		if ( ! wc_get_loop_prop( 'is_paginated' ) || ! woocommerce_products_will_display() ) {
 			return;
 		}
 		$show_default_orderby    = 'menu_order' === apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', 'menu_order' ) );
-		$catalog_orderby_options = apply_filters(
-			'woocommerce_catalog_orderby',
-			array(
-				'menu_order' => __( 'Default sorting', 'woocommerce' ),
-				'popularity' => __( 'Sort by popularity', 'woocommerce' ),
-				'rating'     => __( 'Sort by average rating', 'woocommerce' ),
-				'date'       => __( 'Sort by latest', 'woocommerce' ),
-				'price'      => __( 'Sort by price: low to high', 'woocommerce' ),
-				'price-desc' => __( 'Sort by price: high to low', 'woocommerce' ),
-			)
-		);
+
+		if ( isset( $attributes ) && isset( $attributes['useLabel'] ) && $attributes['useLabel'] ) {
+			/**
+			 * Filters the catalog orderby options.
+			 *
+			 * @since 9.7.0
+			 * @param array $catalog_orderby_options Array of catalog orderby options.
+			 */
+			$catalog_orderby_options = apply_filters(
+				'woocommerce_catalog_orderby',
+				array(
+					'menu_order' => __( 'Default', 'woocommerce' ),
+					'popularity' => __( 'Popularity', 'woocommerce' ),
+					'rating'     => __( 'Average rating', 'woocommerce' ),
+					'date'       => __( 'Latest', 'woocommerce' ),
+					'price'      => __( 'Price: low to high', 'woocommerce' ),
+					'price-desc' => __( 'Price: high to low', 'woocommerce' ),
+				)
+			);
+		} else {
+			// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+			$catalog_orderby_options = apply_filters(
+				'woocommerce_catalog_orderby',
+				array(
+					'menu_order' => __( 'Default sorting', 'woocommerce' ),
+					'popularity' => __( 'Sort by popularity', 'woocommerce' ),
+					'rating'     => __( 'Sort by average rating', 'woocommerce' ),
+					'date'       => __( 'Sort by latest', 'woocommerce' ),
+					'price'      => __( 'Sort by price: low to high', 'woocommerce' ),
+					'price-desc' => __( 'Sort by price: high to low', 'woocommerce' ),
+				)
+			);
+		}
 
 		$default_orderby = wc_get_loop_prop( 'is_search' ) ? 'relevance' : apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', '' ) );
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
@@ -1606,6 +1631,7 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 				'catalog_orderby_options' => $catalog_orderby_options,
 				'orderby'                 => $orderby,
 				'show_default_orderby'    => $show_default_orderby,
+				'use_label'               => isset( $attributes['useLabel'] ) ? $attributes['useLabel'] : false,
 			)
 		);
 	}
@@ -3004,12 +3030,13 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 			// checkboxes apply the `custom_attributes` to the label - we need to apply the attribute on the input itself, instead.
 			if ( ! in_array( $args['type'], array( 'hidden', 'checkbox' ), true ) ) {
 				$args['custom_attributes']['aria-required'] = 'true';
+				$args['label_class'][]                      = 'required_field';
 			}
 
-			$args['class'][] = 'validate-required';
-			$required        = '&nbsp;<abbr class="required" title="' . esc_attr__( 'required', 'woocommerce' ) . '">*</abbr>';
+			$args['class'][]    = 'validate-required';
+			$required_indicator = '&nbsp;<span class="required" aria-hidden="true">*</span>';
 		} else {
-			$required = '&nbsp;<span class="optional">(' . esc_html__( 'optional', 'woocommerce' ) . ')</span>';
+			$required_indicator = '&nbsp;<span class="optional">(' . esc_html__( 'optional', 'woocommerce' ) . ')</span>';
 		}
 
 		if ( is_string( $args['label_class'] ) ) {
@@ -3080,7 +3107,7 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 						$field .= '<option value="' . esc_attr( $ckey ) . '" ' . selected( $value, $ckey, false ) . '>' . esc_html( $cvalue ) . '</option>';
 					}
 
-					$field .= '</select>';
+					$field .= $required_indicator . '</select>';
 
 					$field .= '<noscript><button type="submit" name="woocommerce_checkout_update_totals" value="' . esc_attr__( 'Update country / region', 'woocommerce' ) . '">' . esc_html__( 'Update country / region', 'woocommerce' ) . '</button></noscript>';
 
@@ -3140,7 +3167,7 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 					wp_kses_post( $args['label'] )
 				);
 
-				$field .= $required . '</label>';
+				$field .= $required_indicator . '</label>';
 
 				break;
 			case 'text':
@@ -3163,13 +3190,12 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 
 				break;
 			case 'select':
-				$field   = '';
 				$options = '';
 
 				if ( ! empty( $args['options'] ) ) {
 					foreach ( $args['options'] as $option_key => $option_text ) {
 						if ( '' === $option_key ) {
-							// If we have a blank option, select2 needs a placeholder.
+							// A blank option is the proper way to set a placeholder. If one is supplied we make sure the placeholder key is set for selectWoo.
 							if ( empty( $args['placeholder'] ) ) {
 								$args['placeholder'] = $option_text ? $option_text : __( 'Choose an option', 'woocommerce' );
 							}
@@ -3190,7 +3216,7 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 				if ( ! empty( $args['options'] ) ) {
 					foreach ( $args['options'] as $option_key => $option_text ) {
 						$field .= '<input type="radio" class="input-radio ' . esc_attr( implode( ' ', $args['input_class'] ) ) . '" value="' . esc_attr( $option_key ) . '" name="' . esc_attr( $key ) . '" ' . implode( ' ', $custom_attributes ) . ' id="' . esc_attr( $args['id'] ) . '_' . esc_attr( $option_key ) . '"' . checked( $value, $option_key, false ) . ' />';
-						$field .= '<label for="' . esc_attr( $args['id'] ) . '_' . esc_attr( $option_key ) . '" class="radio ' . implode( ' ', $args['label_class'] ) . '">' . esc_html( $option_text ) . '</label>';
+						$field .= '<label for="' . esc_attr( $args['id'] ) . '_' . esc_attr( $option_key ) . '" class="radio ' . implode( ' ', $args['label_class'] ) . '">' . esc_html( $option_text ) . $required_indicator . '</label>';
 					}
 				}
 
@@ -3201,7 +3227,7 @@ if ( ! function_exists( 'woocommerce_form_field' ) ) {
 			$field_html = '';
 
 			if ( $args['label'] && 'checkbox' !== $args['type'] ) {
-				$field_html .= '<label for="' . esc_attr( $label_id ) . '" class="' . esc_attr( implode( ' ', $args['label_class'] ) ) . '">' . wp_kses_post( $args['label'] ) . $required . '</label>';
+				$field_html .= '<label for="' . esc_attr( $label_id ) . '" class="' . esc_attr( implode( ' ', $args['label_class'] ) ) . '">' . wp_kses_post( $args['label'] ) . $required_indicator . '</label>';
 			}
 
 			$field_html .= '<span class="woocommerce-input-wrapper">' . $field;
@@ -3567,10 +3593,13 @@ if ( ! function_exists( 'wc_get_email_order_items' ) ) {
 	function wc_get_email_order_items( $order, $args = array() ) {
 		ob_start();
 
+		$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+		$image_size                 = $email_improvements_enabled ? 48 : 32;
+
 		$defaults = array(
 			'show_sku'      => false,
-			'show_image'    => false,
-			'image_size'    => array( 32, 32 ),
+			'show_image'    => $email_improvements_enabled,
+			'image_size'    => array( $image_size, $image_size ),
 			'plain_text'    => false,
 			'sent_to_admin' => false,
 		);

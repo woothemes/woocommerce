@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix rendering font family in emails
