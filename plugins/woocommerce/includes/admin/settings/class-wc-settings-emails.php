@@ -741,7 +741,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 */
 	public function email_font_family( $value ) {
 		$option_value = $value['value'];
-		$custom_fonts = $this->get_custom_fonts();
+		// This is a temporary fix to prevent using custom fonts without fallback
+		$custom_fonts = null; // $this->get_custom_fonts();
 
 		?>
 		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
