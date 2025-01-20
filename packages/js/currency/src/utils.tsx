@@ -4,7 +4,7 @@
 import { createElement } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { sprintf } from '@wordpress/i18n';
-import { NumberConfig, numberFormat } from '@woocommerce/number';
+import { NumberConfig, numberFormat, parseNumber } from '@woocommerce/number';
 import deprecated from '@wordpress/deprecated';
 
 /**
@@ -406,3 +406,45 @@ export function getCurrencyData() {
 		},
 	};
 }
+
+
+/**
+ * Escape special characters for user input in regex.
+ *
+ * @param {string} string
+ * @return {string} string
+ */
+const escapeRegExp = ( string: string ) => {
+	return string.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+};
+
+/**
+ * Localises a number or numeric string for display, adding the appropriate thousands and decimal separators.
+ * For compatibility reasons, it returns the input if it's not a number or a string of numbers.
+ */
+export const localiseMonetaryValue = (
+	config: NumberConfig,
+	number: number | string | unknown
+) => {
+	if ( typeof number === 'number' ) {
+		return numberFormat( config, number );
+	}
+
+	if ( typeof number === 'string' ) {
+		const dot = escapeRegExp( config.decimalSeparator );
+		const comma = escapeRegExp( config.thousandSeparator );
+
+		// Regex to match strictly numbers with arbitrary thousands and decimal separators.
+		// Example: /^\s*(\d+|\d{1,3}(?:,\d{3})*)(?:\.\d+)?\s*$/ for default config.
+		const regex = new RegExp(
+			`^\\s*(\\d+|\\d{1,3}(?:${ comma }\\d{3})*)(?:${ dot }\\d+)?\\s*$`
+		);
+
+		return number.replace( regex, ( n ) => {
+			const parsed = parseNumber( config, n );
+			return numberFormat( config, parsed );
+		} );
+	}
+
+	return number;
+};
