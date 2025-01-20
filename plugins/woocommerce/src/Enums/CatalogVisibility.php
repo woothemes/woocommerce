@@ -9,24 +9,24 @@ namespace Automattic\WooCommerce\Enums;
  */
 class CatalogVisibility {
 	/**
-	 * Visible product.
+	 * Product is visible on both shop and search results.
 	 *
 	 * @var string
 	 */
 	const VISIBLE = 'visible';
 
 	/**
-	 * Product visible in catalog.
+	 * Product is visible on the shop page only.
 	 */
 	const CATALOG = 'catalog';
 
 	/**
-	 * Product visible in search.
+	 * Product visible in the search results only.
 	 */
 	const SEARCH = 'search';
 
 	/**
-	 * Product invisible.
+	 * Product is invisible on both shop and search results, but can still be accessed directly.
 	 */
 	const HIDDEN = 'hidden';
 }
