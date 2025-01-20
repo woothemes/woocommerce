@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React, { useState, useEffect } from 'react';
-import { Fragment, createElement } from '@wordpress/element';
+import { createElement } from '@wordpress/element';
+import { Popover } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -18,6 +19,15 @@ import WooPay from '../../images/payment-methods/woopay';
 import AfterPay from '../../images/payment-methods/afterpay';
 import Affirm from '../../images/payment-methods/affirm';
 import Klarna from '../../images/payment-methods/klarna';
+import Cartebancaire from '../../images/cards/cb';
+import UnionPay from '../../images/cards/unionpay';
+import Diners from '../../images/cards/diners';
+import Eftpos from '../../images/cards/eftpos';
+import Ideal from '../../images/payment-methods/ideal';
+import Bancontact from '../../images/payment-methods/bancontact';
+import Eps from '../../images/payment-methods/eps';
+import Becs from '../../images/payment-methods/becs';
+import Przelewy24 from '../../images/payment-methods/przelewy24';
 
 /**
  * Payment methods list.
@@ -64,12 +74,48 @@ const PaymentMethods = [
 		component: <Klarna key="klarna" />,
 	},
 	{
+		name: 'cartebancaire',
+		component: <Cartebancaire key="cartebancaire" />,
+	},
+	{
+		name: 'unionpay',
+		component: <UnionPay key="unionpay" />,
+	},
+	{
+		name: 'diners',
+		component: <Diners key="diners" />,
+	},
+	{
+		name: 'eftpos',
+		component: <Eftpos key="eftpos" />,
+	},
+	{
 		name: 'jcb',
 		component: <JCB key="jcb" />,
 	},
+	{
+		name: 'bancontact',
+		component: <Bancontact key="bancontact" />,
+	},
+	{
+		name: 'becs',
+		component: <Becs key="becs" />,
+	},
+	{
+		name: 'eps',
+		component: <Eps key="eps" />,
+	},
+	{
+		name: 'ideal',
+		component: <Ideal key="ideal" />,
+	},
+	{
+		name: 'przelewy24',
+		component: <Przelewy24 key="przelewy24" />,
+	},
 ];
 
-export const WooPaymentsMethodsLogos: React.VFC< {
+export const WooPaymentsMethodsLogos: React.FC< {
 	isWooPayEligible: boolean;
 	maxElements: number;
 	tabletWidthBreakpoint?: number;
@@ -111,6 +157,7 @@ export const WooPaymentsMethodsLogos: React.VFC< {
 	totalPaymentMethods = 20,
 } ) => {
 	const [ maxShownElements, setMaxShownElements ] = useState( maxElements );
+	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
 
 	// Reduce the total number of payment methods by one if the store is not eligible for WooPay.
 	const maxSupportedPaymentMethods = isWooPayEligible
@@ -156,26 +203,49 @@ export const WooPaymentsMethodsLogos: React.VFC< {
 		mobileWidthBreakpoint,
 	] );
 
-	return (
-		<>
-			<div className="woocommerce-woopayments-payment-methods-logos">
-				{ PaymentMethods.slice(
-					0,
-					getMaxShownElements( maxShownElements )
-				).map( ( pm ) => {
-					// Do not display the WooPay logo if the store is not eligible for WooPay.
-					if ( ! isWooPayEligible && pm.name === 'woopay' ) {
-						return null;
-					}
+	const visiblePaymentMethods = PaymentMethods.slice(
+		0,
+		getMaxShownElements( maxShownElements )
+	).filter( ( pm ) => isWooPayEligible || pm.name !== 'woopay' );
 
-					return pm.component;
-				} ) }
-				{ maxShownElements < maxSupportedPaymentMethods && (
-					<div className="woocommerce-woopayments-payment-methods-logos-count">
-						+ { maxSupportedPaymentMethods - maxShownElements }
-					</div>
-				) }
-			</div>
-		</>
+	const hiddenPaymentMethods = PaymentMethods.slice(
+		getMaxShownElements( maxShownElements )
+	).filter( ( pm ) => isWooPayEligible || pm.name !== 'woopay' );
+
+	return (
+		<div className="woocommerce-woopayments-payment-methods-logos">
+			{ visiblePaymentMethods.map( ( pm ) => pm.component ) }
+			{ maxShownElements < maxSupportedPaymentMethods && (
+				<div
+					className="woocommerce-woopayments-payment-methods-logos-count"
+					onClick={ () => setIsPopoverVisible( ! isPopoverVisible ) }
+					onMouseEnter={ () => setIsPopoverVisible( true ) }
+					onMouseLeave={ () => setIsPopoverVisible( false ) }
+					role="button"
+					tabIndex={ 0 }
+					onKeyDown={ ( event ) => {
+						if ( event.key === 'Enter' || event.key === ' ' ) {
+							setIsPopoverVisible( ! isPopoverVisible );
+						}
+					} }
+				>
+					+ { maxSupportedPaymentMethods - maxShownElements }
+					{ isPopoverVisible && (
+						<Popover
+							position="top right"
+							className="woocommerce-woopayments-payment-methods-logos-popover"
+							noArrow={ true }
+							onClose={ () => setIsPopoverVisible( false ) }
+						>
+							<div className="woocommerce-woopayments-payment-methods-logos">
+								{ hiddenPaymentMethods.map(
+									( pm ) => pm.component
+								) }
+							</div>
+						</Popover>
+					) }
+				</div>
+			) }
+		</div>
 	);
 };

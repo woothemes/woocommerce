@@ -45,6 +45,10 @@ interface EnableGatewayButtonProps {
 	 */
 	gatewayHasRecommendedPaymentMethods: boolean;
 	/**
+	 * ID of the plugin that is being installed.
+	 */
+	installingPlugin: string | null;
+	/**
 	 * The text of the button.
 	 */
 	buttonText?: string;
@@ -67,6 +71,7 @@ export const EnableGatewayButton = ( {
 	isOffline,
 	acceptIncentive = () => {},
 	gatewayHasRecommendedPaymentMethods,
+	installingPlugin,
 	buttonText = __( 'Enable', 'woocommerce' ),
 	incentive = null,
 }: EnableGatewayButtonProps ) => {
@@ -129,9 +134,26 @@ export const EnableGatewayButton = ( {
 							window.location.href = onboardingHref;
 							return;
 						}
+					} else {
+						createErrorNotice(
+							__(
+								'The provider could not be enabled. Check the Manage page for details.',
+								'woocommerce'
+							),
+							{
+								type: 'snackbar',
+								explicitDismiss: true,
+								actions: [
+									{
+										label: __( 'Manage', 'woocommerce' ),
+										url: settingsHref,
+									},
+								],
+							}
+						);
 					}
 				}
-				// If no redirect occured, the data needs to be refreshed.
+				// If no redirect occurred, the data needs to be refreshed.
 				invalidateResolutionForStoreSelector(
 					isOffline
 						? 'getOfflinePaymentGateways'
@@ -151,7 +173,7 @@ export const EnableGatewayButton = ( {
 		<Button
 			variant={ 'primary' }
 			isBusy={ isUpdating }
-			disabled={ isUpdating }
+			disabled={ isUpdating || !! installingPlugin }
 			onClick={ enableGateway }
 			href={ settingsHref }
 		>

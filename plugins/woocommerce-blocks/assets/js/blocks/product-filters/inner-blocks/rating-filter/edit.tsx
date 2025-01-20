@@ -68,26 +68,11 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 							},
 						],
 						clearButton
-							? [
-									'woocommerce/product-filter-clear-button',
-									{
-										lock: {
-											remove: true,
-											move: false,
-										},
-									},
-							  ]
+							? [ 'woocommerce/product-filter-clear-button' ]
 							: null,
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
-				[
-					'woocommerce/product-filter-checkbox-list',
-					{
-						lock: {
-							remove: true,
-						},
-					},
-				],
+				[ 'woocommerce/product-filter-checkbox-list' ],
 			],
 		}
 	);
@@ -127,7 +112,10 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			return;
 		}
 
-		if ( collectionFilters?.rating_counts?.length === 0 ) {
+		if (
+			! collectionFilters?.rating_counts ||
+			collectionFilters?.rating_counts?.length === 0
+		) {
 			setDisplayedOptions( previewOptions );
 			return;
 		}
@@ -146,7 +134,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			? collectionFilters.rating_counts
 					.sort( ( a, b ) => b.rating - a.rating )
 					.filter( ( { rating } ) => rating >= minimumRating )
-					.map( ( { rating, count } ) => ( {
+					.map( ( { rating, count }, index ) => ( {
 						label: (
 							<Rating
 								key={ rating }
@@ -155,6 +143,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 							/>
 						),
 						value: rating?.toString(),
+						selected: index === 0,
 					} ) )
 			: [];
 

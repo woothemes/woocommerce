@@ -41,13 +41,13 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 		await page.goto( `${ '/shop' }?rating_filter=1,2,5` );
 
 		await expect(
-			page.getByText( 'Rating: Rated 1 out of 5' )
+			page.getByText( 'Rating: Rated 1 out of 5' ).first()
 		).toBeVisible();
 		await expect(
-			page.getByText( 'Rating: Rated 2 out of 5' )
+			page.getByText( 'Rating: Rated 2 out of 5' ).first()
 		).toBeVisible();
 		await expect(
-			page.getByText( 'Rating: Rated 5 out of 5' )
+			page.getByText( 'Rating: Rated 5 out of 5' ).first()
 		).toBeVisible();
 	} );
 
@@ -61,8 +61,12 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 			`${ '/shop' }?filter_stock_status=instock,onbackorder`
 		);
 
-		await expect( page.getByText( 'Status: In stock' ) ).toBeVisible();
-		await expect( page.getByText( 'Status: On backorder' ) ).toBeVisible();
+		await expect(
+			page.getByText( 'Status: In stock' ).first()
+		).toBeVisible();
+		await expect(
+			page.getByText( 'Status: On backorder' ).first()
+		).toBeVisible();
 	} );
 
 	test( 'With attribute filters applied it shows the correct active filters', async ( {
@@ -75,8 +79,8 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 			`${ '/shop' }?filter_color=blue,gray&query_type_color=or`
 		);
 
-		await expect( page.getByText( 'Color: Blue' ) ).toBeVisible();
-		await expect( page.getByText( 'Color: Gray' ) ).toBeVisible();
+		await expect( page.getByText( 'Color: Blue' ).first() ).toBeVisible();
+		await expect( page.getByText( 'Color: Gray' ).first() ).toBeVisible();
 	} );
 
 	test( 'With price filters applied it shows the correct active filters', async ( {
@@ -88,7 +92,7 @@ test.describe( 'woocommerce/product-filter-active - Frontend', () => {
 		await page.goto( `${ '/shop' }?min_price=17&max_price=71` );
 
 		await expect(
-			page.getByText( 'Price: Between $17 and $71' )
+			page.getByText( 'Price: $17 - $71' ).first()
 		).toBeVisible();
 	} );
 } );

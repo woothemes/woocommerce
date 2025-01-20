@@ -23,11 +23,3 @@ when:
     assign:
       teams:
         - flux
-  - author:
-      teamIs:
-        - mailpoet
-      ignore:
-        nameIs:
-    assign:
-      teams:
-        - mailpoet

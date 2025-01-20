@@ -64,7 +64,7 @@ body {
 
 	.show-password-input {
 		background-color: transparent !important;
-		color: var(--global--color-primary) !important;
+		color: var(--form--color-text) !important;
 		display: inherit;
 		outline-offset: 0;
 	}
@@ -291,6 +291,10 @@ body {
 .woocommerce-ordering {
 	margin: 0 0 1rem;
 	padding: 0.75rem 0;
+}
+
+.woocommerce-ordering > label {
+	margin-right: 0.25rem;
 }
 
 /**
@@ -578,7 +582,7 @@ table.variations {
 	}
 }
 
-button.reset_variations {
+a.reset_variations {
 	margin-left: 0.5em;
 }
 
@@ -1209,10 +1213,6 @@ button.reset_variations {
 				font-size: 1.5rem;
 				padding-top: 0.3rem;
 				padding-bottom: 0.3rem;
-			}
-
-			input {
-				border: 3px solid black;
 			}
 
 			.form-row {

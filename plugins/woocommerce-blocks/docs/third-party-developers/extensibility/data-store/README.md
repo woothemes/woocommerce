@@ -1,13 +1,13 @@
 # Data Store
 
-This document provides an overview of the data stores registered with `wp.data` for use by various blocks. Store keys are exported as constants on the `wc.wcBlocksData` export (externally registered as `@woocommerce/block-data` and enqueued via handle `wc-blocks-data-store`). For any block using the store, it's recommended to import the store key rather than using the reference directly to ensure dependencies are extracted correctly. It is assumed readers have some familiarity with the `wp.data` API. You can read more about that [here](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-data/).
+This document provides an overview of the data stores registered with `wp.data` for use by various blocks. Store descriptions are exported as constants on the `wc.wcBlocksData` export (externally registered as `@woocommerce/block-data` and enqueued via handle `wc-blocks-data-store`). For any block using the store, it's recommended to import the store description rather than using the reference directly to ensure dependencies are extracted correctly. It is assumed readers have some familiarity with the `wp.data` API. You can read more about that [here](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-data/).
 
 ## [Cart Store (wc/store/cart)](cart.md)
 
 The **[Cart Store (wc/store/cart)](cart.md)** is responsible for handling cart-related data and operations. To access this store using a constant, you can use:
 
 ```ts
-const { CART_STORE_KEY } = window.wc.wcBlocksData;
+const { cartStore } = window.wc.wcBlocksData;
 ```
 
 ## [Checkout Store (wc/store/checkout)](checkout.md)
@@ -15,7 +15,7 @@ const { CART_STORE_KEY } = window.wc.wcBlocksData;
 The **[Checkout Store (wc/store/checkout)](checkout.md)** manages the checkout process, ensuring a seamless experience for users. To access this store using a constant, you can use:
 
 ```ts
-const { CHECKOUT_STORE_KEY } = window.wc.wcBlocksData;
+const { checkoutStore } = window.wc.wcBlocksData;
 ```
 
 ## [Collections Store (wc/store/collections)](collections.md)
@@ -31,7 +31,7 @@ const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
 The **[Payment Store (wc/store/payment)](payment.md)** deals with all payment-related data and transactions. To access this store using a constant, you can use:
 
 ```ts
-const { PAYMENT_STORE_KEY } = window.wc.wcBlocksData;
+const { paymentStore } = window.wc.wcBlocksData;
 ```
 
 ## [Query-State Store (wc/store/query-state)](query-state.md)
@@ -55,15 +55,17 @@ const { SCHEMA_STORE_KEY } = window.wc.wcBlocksData;
 The **[Store Notices Store (wc/store/store-notices)](store-notices.md)** is dedicated to handling various store notices and alerts. To access this store using a constant, you can use:
 
 ```ts
-const { STORE_NOTICES_STORE_KEY } = window.wc.wcBlocksData;
+const { storeNoticesStore } = window.wc.wcBlocksData;
 ```
+
+This `StoreDescriptor` can be passed in the `mapSelect` function of `useSelect` and in `useDispatch`.
 
 ## [Validation Store (wc/store/validation)](validation.md)
 
 The **[Validation Store (wc/store/validation)](validation.md)** holds data relating to validation errors, it is primarily used in the Cart and Checkout flows to ensure the Checkout doesn't continue while invalid data is present. To access this store using a constant, you can use:
 
 ```ts
-const { VALIDATION_STORE_KEY } = window.wc.wcBlocksData;
+const { validationStore } = window.wc.wcBlocksData;
 ```
 
 <!-- FEEDBACK -->
