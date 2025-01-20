@@ -30,8 +30,6 @@ export const useShowShippingTotalWarning = () => {
 			};
 		}, [] );
 	const { createInfoNotice, removeNotice } = useDispatch( noticesStore );
-		}, [] );
-	const { createInfoNotice, removeNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
 		const isShowingNotice =
