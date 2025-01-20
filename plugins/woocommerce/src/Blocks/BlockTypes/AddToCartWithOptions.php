@@ -5,6 +5,8 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
+use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
 
 add_action(
 	'init',
@@ -38,60 +40,6 @@ class AddToCartWithOptions extends AbstractBlock {
 		parent::initialize();
 		add_filter( 'wc_add_to_cart_message_html', array( $this, 'add_to_cart_message_html_filter' ), 10, 2 );
 		add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'add_to_cart_redirect_filter' ), 10, 1 );
-
-		$this->register_block_patterns();
-	}
-
-	/**
-	 * Register block patterns used to render the correct layout for each product type.
-	 *
-	 * @return void
-	 */
-	private function register_block_patterns() {
-		register_block_pattern_category( 'woocommerce/add-to-cart', array( 'label' => __( 'Add to Cart', 'woocommerce' ) ) );
-		register_block_pattern(
-			'woocommerce/add-to-cart-simple',
-			array(
-				'title'       => __( 'Simple Products Add to Cart', 'woocommerce' ),
-				'content'     => '<!-- wp:woocommerce/add-to-cart-with-options-quantity-selector /-->
-<!-- wp:woocommerce/product-button {"textAlign":"center","fontSize":"small"} -->
-<div class="wp-block-woocommerce-product-button is-loading has-small-font-size"></div>
-<!-- /wp:woocommerce/product-button -->',
-				'description' => __( 'Add to Cart form rendered in Simple Products', 'woocommerce' ),
-				// 'inserter'    => false,
-				'categories'  => array( 'woocommerce/add-to-cart' ),
-			)
-		);
-		register_block_pattern(
-			'woocommerce/add-to-cart-external',
-			array(
-				'title'       => __( 'External Products Add to Cart', 'woocommerce' ),
-				'content'     => 'External Add to Cart Form :)',
-				'description' => __( 'Add to Cart form rendered in External Products', 'woocommerce' ),
-				// 'inserter'    => false,
-				'categories'  => array( 'woocommerce/add-to-cart' ),
-			)
-		);
-		register_block_pattern(
-			'woocommerce/add-to-cart-variable',
-			array(
-				'title'       => __( 'Variable Products Add to Cart', 'woocommerce' ),
-				'content'     => 'Variable Add to Cart Form :)',
-				'description' => __( 'Add to Cart form rendered in Variable Products', 'woocommerce' ),
-				// 'inserter'    => false,
-				'categories'  => array( 'woocommerce/add-to-cart' ),
-			)
-		);
-		register_block_pattern(
-			'woocommerce/add-to-cart-grouped',
-			array(
-				'title'       => __( 'Grouped Products Add to Cart', 'woocommerce' ),
-				'content'     => 'Grouped Add to Cart Form :)',
-				'description' => __( 'Add to Cart form rendered in Grouped Products', 'woocommerce' ),
-				// 'inserter'    => false,
-				'categories'  => array( 'woocommerce/add-to-cart' ),
-			)
-		);
 	}
 
 	/**
@@ -122,22 +70,6 @@ class AddToCartWithOptions extends AbstractBlock {
 		$this->asset_data_registry->add( 'productTypes', wc_get_product_types() );
 	}
 
-	protected function get_block_pattern_content( $pattern_name ) {
-		// Get the block patterns registry instance.
-		$registry = \WP_Block_Patterns_Registry::get_instance();
-
-		// Check if the pattern exists.
-		if ( $registry->is_registered( $pattern_name ) ) {
-			// Get the pattern details.
-			$pattern = $registry->get_registered( $pattern_name );
-
-			// Return the content of the pattern.
-			return isset( $pattern['content'] ) ? $pattern['content'] : '';
-		}
-
-		return '';
-	}
-
 	/**
 	 * Render the block.
 	 *
@@ -166,11 +98,27 @@ class AddToCartWithOptions extends AbstractBlock {
 
 		$product_type = $product->get_type();
 
-		$synced_pattern_content = do_blocks( $this->get_block_pattern_content( 'woocommerce/add-to-cart-' . $product_type ) );
+		if ( in_array( $product_type, array( ProductType::SIMPLE, ProductType::EXTERNAL, ProductType::VARIABLE, ProductType::GROUPED ), true ) ) {
+			$template_part_contents = '';
+			$slug                   = $product_type . '-product-add-to-cart-with-options';
+			// Determine if we need to load the template part from the DB, the theme or WooCommerce in that order.
+			$templates_from_db = BlockTemplateUtils::get_block_templates_from_db( array( $slug ), 'wp_template_part' );
+			if ( is_countable( $templates_from_db ) && count( $templates_from_db ) > 0 ) {
+				$template_slug_to_load = $templates_from_db[0]->theme;
+			} else {
+				$theme_has_template_part = BlockTemplateUtils::theme_has_template_part( $slug );
+				$template_slug_to_load   = $theme_has_template_part ? get_stylesheet() : BlockTemplateUtils::PLUGIN_SLUG;
+			}
+			$template_part = get_block_template( $template_slug_to_load . '//' . $slug, 'wp_template_part' );
 
-		$form_html = '';
-		if ( $synced_pattern_content ) {
-			$block_html = $synced_pattern_content;
+			if ( $template_part && ! empty( $template_part->content ) ) {
+				$template_part_contents = do_blocks( $template_part->content );
+			}
+
+			if ( '' === $template_part_contents ) {
+				$template_part_contents = // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+					do_blocks( file_get_contents( Package::get_path() . 'templates/' . BlockTemplateUtils::DIRECTORY_NAMES['TEMPLATE_PARTS'] . '/' . $slug . '.html' ) );
+			}
 
 			$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
 
@@ -195,12 +143,11 @@ class AddToCartWithOptions extends AbstractBlock {
 				'<form %1$s %2$s>%3$s</form>',
 				$wrapper_attributes,
 				'',
-				$block_html
+				$template_part_contents
 			);
 
 			$product = $previous_product;
-		} elseif ( ! in_array( $product_type, array( 'simple', 'variable', 'external', 'grouped' ), true ) ) {
-
+		} else {
 			ob_start();
 
 			/**
