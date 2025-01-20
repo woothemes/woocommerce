@@ -53,7 +53,6 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 	const maxNumberOfThumbnails = 8;
 	const minNumberOfThumbnails = 3;
 	const { productGalleryClientId } = context;
-	// @ts-expect-error @wordpress/block-editor/store types not provided
 	const { updateBlockAttributes } = useDispatch( blockEditorStore );
 
 	return (
@@ -75,10 +74,6 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 				}
 			>
 				<ToggleGroupControlOption
-					value={ ThumbnailsPosition.OFF }
-					label={ __( 'Off', 'woocommerce' ) }
-				/>
-				<ToggleGroupControlOption
 					value={ ThumbnailsPosition.LEFT }
 					label={
 						<Icon size={ 32 } icon={ thumbnailsPositionLeft } />
@@ -97,24 +92,22 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 					}
 				/>
 			</ToggleGroupControl>
-			{ context.thumbnailsPosition !== ThumbnailsPosition.OFF && (
-				<RangeControl
-					label={ __( 'Number of Thumbnails', 'woocommerce' ) }
-					value={ context.thumbnailsNumberOfThumbnails }
-					onChange={ ( value: number ) =>
-						updateBlockAttributes( productGalleryClientId, {
-							thumbnailsNumberOfThumbnails: Math.round( value ),
-						} )
-					}
-					help={ __(
-						'Choose how many thumbnails (3-8) will display. If more images exist, a “View all” button will display.',
-						'woocommerce'
-					) }
-					max={ maxNumberOfThumbnails }
-					min={ minNumberOfThumbnails }
-					step={ 1 }
-				/>
-			) }
+			<RangeControl
+				label={ __( 'Number of Thumbnails', 'woocommerce' ) }
+				value={ context.thumbnailsNumberOfThumbnails }
+				onChange={ ( value: number ) =>
+					updateBlockAttributes( productGalleryClientId, {
+						thumbnailsNumberOfThumbnails: Math.round( value ),
+					} )
+				}
+				help={ __(
+					'Choose how many thumbnails (3-8) will display. If more images exist, a “View all” button will display.',
+					'woocommerce'
+				) }
+				max={ maxNumberOfThumbnails }
+				min={ minNumberOfThumbnails }
+				step={ 1 }
+			/>
 		</>
 	);
 };

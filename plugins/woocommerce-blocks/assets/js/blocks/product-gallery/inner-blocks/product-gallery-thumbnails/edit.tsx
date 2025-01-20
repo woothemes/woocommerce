@@ -33,7 +33,7 @@ export const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
 	} );
 
 	const Placeholder = () => {
-		return context.thumbnailsPosition !== ThumbnailsPosition.OFF ? (
+		return (
 			<div className="wc-block-editor-product-gallery-thumbnails">
 				{ [
 					...Array( context.thumbnailsNumberOfThumbnails ).keys(),
@@ -51,7 +51,7 @@ export const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
 					);
 				} ) }
 			</div>
-		) : null;
+		);
 	};
 
 	return (
