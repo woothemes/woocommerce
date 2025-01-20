@@ -111,7 +111,10 @@ class WC_Customer_Data_Store_Session extends WC_Data_Store_WP implements WC_Cust
 				$data[ $session_key ] = (string) $session_value;
 			}
 		}
-		WC()->session->set( 'customer', $data );
+
+		if ( WC()->session ) {
+			WC()->session->set( 'customer', $data );
+		}
 	}
 
 	/**
