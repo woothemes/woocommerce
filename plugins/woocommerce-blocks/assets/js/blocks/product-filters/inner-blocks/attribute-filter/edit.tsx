@@ -114,7 +114,7 @@ const Edit = ( props: EditProps ) => {
 							? `${ term.name } (${ term.count })`
 							: term.name,
 						value: term.id.toString(),
-						selected: index === 1,
+						selected: index === 0,
 						rawData: term,
 					} ) )
 			);
