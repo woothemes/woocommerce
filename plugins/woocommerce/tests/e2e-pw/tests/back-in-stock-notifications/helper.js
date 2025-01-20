@@ -67,6 +67,15 @@ class AcceptanceHelper {
 			this.aVariableProductThatContainsOutOfStockVariationsWithAnAttributeWithValueAny.bind(
 				this
 			),
+		signUpPromptsInCatalogAreEnabled:
+			this.signUpPromptsInCatalogAreEnabled.bind( this ),
+		iAmOnTheCatalogPage: this.iAmOnTheCatalogPage.bind( this ),
+		iSeeAPromptToSignUpToBeNotifiedWhenTheProductIsBackInStock:
+			this.iSeeAPromptToSignUpToBeNotifiedWhenTheProductIsBackInStock.bind(
+				this
+			),
+		aVariableProductWhoseVariationsAreAllOutOfStock:
+			this.aVariableProductWhoseVariationsAreAllOutOfStock.bind( this ),
 	};
 	when = {
 		iClickTheNotifyMeButton: this.iClickTheNotifyMeButton.bind( this ),
@@ -97,6 +106,9 @@ class AcceptanceHelper {
 		iReSendAVerificationEmail: this.iReSendAVerificationEmail.bind( this ),
 		iCancelAPendingNotification:
 			this.iCancelAPendingNotification.bind( this ),
+		iFollowTheSignUpPromptLink:
+			this.iFollowTheSignUpPromptLink.bind( this ),
+		iReloadThePage: this.iReloadThePage.bind( this ),
 	};
 	then = {
 		iSeeAPromptToSignUpAndBeNotifiedWhenTheProductIsBackInStock:
@@ -181,7 +193,104 @@ class AcceptanceHelper {
 			this.iSeeSomeActivityRelatedWithNotificationsISignedUpToReceiveInThePast.bind(
 				this
 			),
+		iSeeANoticeWithFurtherInstructions:
+			this.iSeeANoticeWithFurtherInstructions.bind( this ),
+		iCompleteTheSignUpProcess: this.iCompleteTheSignUpProcess.bind( this ),
 	};
+
+	async iReloadThePage() {
+		await this.page.reload();
+	}
+
+	async aVariableProductWhoseVariationsAreAllOutOfStock() {
+		await this.api
+			.post( 'products', {
+				name: `A Variable Product ${ now }`,
+				type: 'variable',
+				attributes: [
+					{
+						name: 'Colour',
+						visible: true,
+						variation: true,
+						options: [ 'Red', 'Green', 'Blue', 'White' ],
+					},
+				],
+			} )
+			.then( ( response ) => {
+				this.productData = response.data;
+			} );
+		await this.api.post(
+			'products/' + this.productData.id + '/variations',
+			{
+				regular_price: '1.00',
+				stock_status: 'outofstock',
+				attributes: [
+					{
+						name: 'Colour',
+						option: 'Red',
+					},
+				],
+			}
+		);
+		const variation = await this.api.post(
+			'products/' + this.productData.id + '/variations',
+			{
+				regular_price: '1.00',
+				stock_status: 'outofstock',
+				attributes: [
+					{
+						name: 'Colour',
+						option: 'White',
+					},
+				],
+			}
+		);
+		this.outOfStockVariationType = 'defined';
+		this.variationId = variation.data.id;
+	}
+
+	async iCompleteTheSignUpProcess() {
+		await this.page.getByRole( 'button', { name: 'Notify me' } ).click();
+	}
+
+	async iSeeANoticeWithFurtherInstructions() {
+		await expect(
+			this.page.getByText( 'To join the waitlist, please' )
+		).toBeVisible();
+	}
+
+	async iFollowTheSignUpPromptLink() {
+		await this.page
+			.locator( 'li' )
+			.filter( {
+				hasText: this.productData.name,
+			} )
+			.getByRole( 'link', { name: 'Join the waitlist' } )
+			.click();
+	}
+
+	async iAmOnTheCatalogPage() {
+		await this.page.goto( '/shop/' );
+	}
+
+	async signUpPromptsInCatalogAreEnabled() {
+		await setOption(
+			request,
+			this.baseURL,
+			'wc_bis_loop_signup_prompt_status',
+			'yes'
+		);
+	}
+
+	async iSeeAPromptToSignUpToBeNotifiedWhenTheProductIsBackInStock() {
+		await expect(
+			await this.page
+				.locator(
+					`:has-text("${ this.productData.name }") ~ div:has-text("Out of stock. Join the waitlist to be notified when this product becomes available.")`
+				)
+				.nth( 0 )
+		).toBeVisible();
+	}
 
 	async iSeeSomeActivityRelatedWithNotificationsISignedUpToReceiveInThePast() {
 		await expect(
