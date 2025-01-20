@@ -35,7 +35,11 @@ class ProductButton extends AbstractBlock {
 	 * @return array The array of hooked blocks.
 	 */
 	public function block_hook_fallback_store_notice( $hooked_blocks, $position, $anchor_block ) {
-		if ( 'core/post-title' === $anchor_block && 'after' === $position ) {
+		// We have to hook on post-content/before for a couple of reasons:
+
+		// 1. In the product collection each product has a post-title so we can't hook there
+		// 2. We can't hook into first_child of post-content because right now post-content does not support it (the old client-side code was originally putting the React notice as first child of post-content)
+		if ( 'core/post-content' === $anchor_block && 'before' === $position ) {
 			$hooked_blocks[] = 'woocommerce/store-notices';
 		}
 
