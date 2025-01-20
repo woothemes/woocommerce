@@ -457,6 +457,9 @@ class CustomerEffortScoreTracks {
 			self::CES_TRACKS_QUEUE_OPTION_NAME,
 			array()
 		);
+
+		$queue = is_array( $queue ) ? $queue : array();
+
 		$remaining_items = array_filter(
 			$queue,
 			function ( $item ) use ( $clear_ces_tracks_queue_for_page ) {
