@@ -268,6 +268,8 @@ const CheckoutProcessor = () => {
 			...paymentData,
 		};
 
+		// Checkout fields are persisted on change, so we want to cancel any pending PUT requests
+		// before placing the order.
 		clearCheckoutPutRequests();
 
 		triggerFetch( {
