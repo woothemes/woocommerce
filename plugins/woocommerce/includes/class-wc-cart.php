@@ -1045,7 +1045,7 @@ class WC_Cart extends WC_Legacy_Cart {
 				return false;
 			}
 
-			// Variable product cannot be added to cart.
+			// Variable product cannot be added to cart without a specified variation.
 			if ( ! $variation_id && $product_data->is_type( ProductType::VARIABLE ) ) {
 				/* translators: 1: product link, 2: product name */
 				throw new Exception( sprintf( __( 'Please choose product options by visiting <a href="%1$s" title="%2$s">%2$s</a>.', 'woocommerce' ), esc_url( $product_data->get_permalink() ), esc_html( $product_data->get_name() ) ) );
