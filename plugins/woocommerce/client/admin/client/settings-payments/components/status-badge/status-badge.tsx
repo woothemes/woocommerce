@@ -114,7 +114,7 @@ export const StatusBadge = ( {
 						} }
 						onKeyDown={ ( event ) => {
 							if ( event.key === 'Enter' || event.key === ' ' ) {
-								setPopoverVisible( ! isPopoverVisible );
+								setPopoverVisible( ! setPopoverVisible );
 							}
 						} }
 						tabIndex={ 0 }
