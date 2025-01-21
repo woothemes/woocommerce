@@ -250,7 +250,7 @@
 		"storybook": "^7.6.4",
 		"storybook-addon-react-docgen": "1.2.44",
 		"stylelint": "^14.16.1",
-		"terser-webpack-plugin": "5.3.6",
+		"terser-webpack-plugin": "5.3.11",
 		"typescript": "5.7.x",
 		"utility-types": "3.10.0",
 		"webpack": "5.91.0",
