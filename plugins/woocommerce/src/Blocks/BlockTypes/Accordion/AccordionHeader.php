@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\Blocks\BlockTypes\Accordion;
 
 use Automattic\WooCommerce\Blocks\BlockTypes\AbstractBlock;
@@ -14,7 +16,7 @@ class AccordionHeader extends AbstractBlock {
 	 */
 	protected $block_name = 'accordion-header';
 
-    /**
+	/**
 	 * Get the frontend style handle for this block type.
 	 *
 	 * @return string[]|null
@@ -23,7 +25,7 @@ class AccordionHeader extends AbstractBlock {
 		return null;
 	}
 
-    /**
+	/**
 	 * Get the frontend script handle for this block type.
 	 *
 	 * @see $this->register_block_type()
@@ -31,6 +33,6 @@ class AccordionHeader extends AbstractBlock {
 	 * @return array|string|null
 	 */
 	protected function get_block_type_script( $key = null ) {
-    	return null;
-    }
+		return null;
+	}
 }
