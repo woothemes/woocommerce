@@ -1,0 +1,4 @@
+Significance: minor
+Type: performance
+
+Prevent order status query from running on irrelevant pages
