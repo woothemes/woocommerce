@@ -3,7 +3,7 @@
  */
 import { useBlockProps } from '@wordpress/block-editor';
 
-export const Edit = (): JSX.Element => {
+export const Edit = () => {
 	const blockProps = useBlockProps( {
 		className: 'wc-block-product-gallery-pager',
 	} );
