@@ -4,7 +4,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { previewCart } from '@woocommerce/resource-previews';
 import * as wpDataFunctions from '@wordpress/data';
-import { CART_STORE_KEY, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, paymentStore } from '@woocommerce/block-data';
 import { default as fetchMock } from 'jest-fetch-mock';
 import {
 	registerPaymentMethod,
@@ -48,11 +48,18 @@ jest.mock( '@woocommerce/blocks-components', () => {
 
 jest.mock( '@wordpress/data', () => {
 	const originalModule = jest.requireActual( '@wordpress/data' );
+	const originalBlockDataModule = jest.requireActual(
+		'@woocommerce/block-data'
+	);
 	return {
 		...originalModule,
-		select: jest.fn( ( storeName ) => {
-			const originalStore = originalModule.select( storeName );
-			if ( storeName === 'wc/store/payment' ) {
+		select: jest.fn( ( storeDescriptor ) => {
+			const paymentStoreInMock = originalBlockDataModule.paymentStore;
+			const originalStore = originalModule.select( storeDescriptor );
+			if (
+				storeDescriptor === paymentStoreInMock ||
+				storeDescriptor === 'wc/store/payment'
+			) {
 				return {
 					...originalStore,
 					getState: () => {
@@ -88,7 +95,7 @@ const registerMockPaymentMethods = () => {
 			ariaLabel: name,
 		} );
 	} );
-	dispatch( PAYMENT_STORE_KEY ).__internalUpdateAvailablePaymentMethods();
+	dispatch( paymentStore ).__internalUpdateAvailablePaymentMethods();
 };
 
 const resetMockPaymentMethods = () => {
@@ -138,7 +145,7 @@ describe( 'PaymentMethods', () => {
 		const ShowActivePaymentMethod = () => {
 			const { activePaymentMethod, activeSavedToken } =
 				wpDataFunctions.useSelect( ( select ) => {
-					const store = select( PAYMENT_STORE_KEY );
+					const store = select( paymentStore );
 					return {
 						activePaymentMethod: store.getActivePaymentMethod(),
 						activeSavedToken: store.getActiveSavedToken(),
@@ -160,9 +167,7 @@ describe( 'PaymentMethods', () => {
 		// Wait for the payment methods to finish loading before rendering.
 		await waitFor( () => {
 			expect(
-				wpDataFunctions
-					.select( PAYMENT_STORE_KEY )
-					.getActivePaymentMethod()
+				wpDataFunctions.select( paymentStore ).getActivePaymentMethod()
 			).toBe( 'cod' );
 		} );
 
