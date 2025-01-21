@@ -84,7 +84,7 @@ class CheckoutFieldsSchema {
 	 */
 	public function validate_schema( $options ) {
 		if ( ! $this->is_enabled() ) {
-			return;
+			return true;
 		}
 
 		if ( ! empty( $options['rules'] ) && ! is_array( $options['rules'] ) ) {
