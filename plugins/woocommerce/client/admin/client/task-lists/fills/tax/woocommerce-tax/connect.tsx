@@ -15,6 +15,7 @@ export const Connect: React.FC< SetupStepProps > = ( {
 	onManual,
 } ) => {
 	return (
+		// @ts-expect-error Todo: convert ConnectForm to TypeScript
 		<ConnectForm
 			onConnect={ () => {
 				recordEvent( 'tasklist_tax_connect_store', {

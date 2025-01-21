@@ -66,7 +66,6 @@ export const LysSurvey = ( {
 									/>
 								}
 								iconSize={ 14 }
-								size={ 24 }
 								onClick={ () => {
 									setIsShowThanks( false );
 									setIsShowSurvey( false );

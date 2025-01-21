@@ -48,7 +48,7 @@ export const Task: React.FC< TaskProps > = ( { query, task } ) => {
 		}
 
 		const remainingTasksCount = setupTaskList.tasks.filter(
-			( _task ) => ! _task.isComplete
+			( _task: TaskType ) => ! _task.isComplete
 		).length;
 
 		badgeElements.forEach( ( badge ) => {
@@ -57,7 +57,7 @@ export const Task: React.FC< TaskProps > = ( { query, task } ) => {
 	}, [] );
 
 	const onComplete = useCallback(
-		( options ) => {
+		( options: Record< string, unknown > ) => {
 			optimisticallyCompleteTask( id );
 			getHistory().push(
 				options && options.redirectPath

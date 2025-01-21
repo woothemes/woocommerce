@@ -26,6 +26,7 @@ const ShippingRecommendations: React.FC = () => {
 		isJetpackConnected,
 		isSellingDigitalProductsOnly,
 	} = useSelect( ( select ) => {
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const settings = select( SETTINGS_STORE_NAME ).getSettings( 'general' );
 
 		const {
@@ -34,20 +35,24 @@ const ShippingRecommendations: React.FC = () => {
 			isJetpackConnected: _isJetpackConnected,
 		} = select( PLUGINS_STORE_NAME );
 
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const profileItems = select( ONBOARDING_STORE_NAME ).getProfileItems()
 			.product_types;
 
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			activePlugins: getActivePlugins(),
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			installedPlugins: getInstalledPlugins(),
 			countryCode: getCountryCode(
 				settings.general?.woocommerce_default_country
 			),
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			isJetpackConnected: _isJetpackConnected(),
 			isSellingDigitalProductsOnly:
 				profileItems?.length === 1 && profileItems[ 0 ] === 'downloads',
 		};
-	} );
+	}, [] );
 
 	if (
 		activePlugins.includes( 'woocommerce-shipping' ) ||
