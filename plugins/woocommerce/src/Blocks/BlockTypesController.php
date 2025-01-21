@@ -491,8 +491,6 @@ final class BlockTypesController {
 			'OrderConfirmation\CreateAccount',
 		);
 
-		
-
 		$block_types = array_merge(
 			$block_types,
 			Cart::get_cart_block_types(),
