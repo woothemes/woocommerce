@@ -64,7 +64,7 @@ const test = baseTest.extend( {
 
 test.describe(
 	'Checkout Block page',
-	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS, tags.SKIP_ON_WPCOM ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -167,7 +167,7 @@ test.describe(
 				enabled: true,
 			} );
 			// make sure our customer user has a pre-defined billing/shipping address
-			await api.put( `customers/2`, {
+			await api.put( `customers/${ process.env.CUSTOMER_USER_ID }`, {
 				shipping: {
 					first_name: 'Maggie',
 					last_name: 'Simpson',
