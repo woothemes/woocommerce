@@ -5,7 +5,7 @@ use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\StoreApi\Exceptions\RouteException;
 use Automattic\WooCommerce\StoreApi\Payments\PaymentContext;
 use Automattic\WooCommerce\StoreApi\Payments\PaymentResult;
-
+use WC_Customer;
 /**
  * CheckoutTrait
  *
@@ -207,6 +207,7 @@ trait CheckoutTrait {
 	private function persist_additional_fields_for_order( \WP_REST_Request $request ) {
 		$errors         = new \WP_Error();
 		$request_fields = $request['additional_fields'] ?? [];
+
 		foreach ( $request_fields as $key => $value ) {
 			try {
 				$this->additional_fields_controller->validate_field_for_location( $key, $value, 'order' );
@@ -214,11 +215,23 @@ trait CheckoutTrait {
 				$errors[] = $e->getMessage();
 				continue;
 			}
-			$this->additional_fields_controller->persist_field_for_order( $key, $value, $this->order, 'other', false );
 		}
 
 		if ( $errors->has_errors() ) {
 			throw new RouteException( 'woocommerce_rest_checkout_invalid_additional_fields', $errors->get_error_messages(), 400 );
+		}
+
+		$this->additional_fields_controller->persist_field_for_order( $key, $value, $this->order, 'other', false );
+
+		// If the user is logged in, we need to sync the customer additional fields with the order
+		// otherwise they will be overwritten on next page load.
+		if ( is_user_logged_in() && 0 !== $this->order->get_customer_id() && get_current_user_id() === $this->order->get_customer_id() ) {
+			$customer = new WC_Customer( $this->order->get_customer_id() );
+			$this->additional_fields_controller->sync_customer_additional_fields_with_order(
+				$this->order,
+				$customer
+			);
+			$customer->save();
 		}
 	}
 }
