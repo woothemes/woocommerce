@@ -195,7 +195,13 @@ const SettingsPaymentsMethods = () => {
 	// Retrieve wooPayments gateway
 	const wooPayments = getWooPaymentsFromProviders( providers );
 
-	const onClick = useCallback( () => {
+	const onPaymentMethodsContinueClick = useCallback( () => {
+		// Record the event along with payment methods selected
+		recordEvent(
+			'wcpay_settings_payment_methods_continue',
+			paymentMethodsState
+		);
+
 		setIsCompleted( true );
 		// Get the onboarding URL or fallback to the test drive account link
 		const onboardUrl =
@@ -240,7 +246,7 @@ const SettingsPaymentsMethods = () => {
 					</h1>
 					<Button
 						className="components-button is-primary"
-						onClick={ onClick }
+						onClick={ onPaymentMethodsContinueClick }
 						isBusy={ isCompleted }
 						disabled={ isCompleted }
 					>
