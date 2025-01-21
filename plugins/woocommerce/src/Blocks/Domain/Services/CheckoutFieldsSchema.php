@@ -143,8 +143,12 @@ class CheckoutFieldsSchema {
 			return false;
 		}
 
-		/*
-		foreach ( $valid_schema as $rule => $valid_keywords ) {
+		$other_schema = [
+			'required',
+			'hidden',
+		];
+
+		foreach ( $other_schema as $rule ) {
 			if ( empty( $options['rules'][ $rule ] ) ) {
 				continue;
 			}
@@ -154,15 +158,25 @@ class CheckoutFieldsSchema {
 				_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
 				return false;
 			}
-			foreach ( $options['rules'][ $rule ] as $keyword => $value ) {
-				if ( ! in_array( $keyword, $valid_keywords, true ) ) {
-					$property_error = sprintf( 'The %s rule must be an array with valid keywords.', $rule );
-					$message        = sprintf( 'Unable to register field with id: "%s". %s', $id, $property_error );
-					_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
-					return false;
-				}
+			$result = $validator->validate(
+				Helper::toJSON(
+					[
+						'$schema'    => 'http://json-schema.org/draft-07/schema#',
+						'type'       => 'object',
+						'properties' => [
+							'test' => $options['rules'][ $rule ],
+						],
+						'required'   => [ 'test' ],
+					]
+				),
+				$this->meta_schema_json
+			);
+			if ( $result->hasError() ) {
+				$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $result->error() );
+				_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
+				return false;
 			}
-		}*/
+		}
 
 		return true;
 	}
