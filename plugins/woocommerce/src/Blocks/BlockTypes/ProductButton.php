@@ -82,6 +82,8 @@ class ProductButton extends AbstractBlock {
 		global $product;
 		$previous_product = $product;
 
+		// Try to load the product from the block context, if not available,
+		// use the global $product.
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$post    = $post_id ? wc_get_product( $post_id ) : null;
 		if ( $post instanceof \WC_Product ) {

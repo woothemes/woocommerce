@@ -107,6 +107,8 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 		global $product;
 		$previous_product = $product;
 
+		// Try to load the product from the block context, if not available,
+		// use the global $product.
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$post    = $post_id ? wc_get_product( $post_id ) : null;
 		if ( $post instanceof \WC_Product ) {
@@ -122,7 +124,7 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 			return '';
 		}
 
-		$is_stepper_style = 'stepper' === $attributes['quantitySelectorStyle'] && ! $product->is_sold_individually();
+		$is_stepper_style = isset( $attributes['quantitySelectorStyle'] ) && 'stepper' === $attributes['quantitySelectorStyle'] && ! $product->is_sold_individually();
 
 		ob_start();
 

@@ -108,6 +108,8 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 	},
 	{
 		visitPage: async ( { admin, editor, requestUtils, page } ) => {
+			// We will be able to simplify this logic one the blockified
+			// Add to Cart with Options block is the default.
 			await requestUtils.setFeatureFlag( 'experimental-blocks', true );
 			await requestUtils.setFeatureFlag( 'blockified-add-to-cart', true );
 			await admin.visitSiteEditor( {
@@ -122,10 +124,10 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 				isOnlyCurrentEntityDirty: true,
 			} );
 
-			await page.goto( '/product/cap' );
+			await page.goto( '/product/wordpress-pennant/' );
 		},
-		templateName: 'Simple Product Add to Cart with Options',
-		templatePath: 'simple-product-add-to-cart-with-options',
+		templateName: 'External Product Add to Cart with Options',
+		templatePath: 'external-product-add-to-cart-with-options',
 		templateType: 'wp_template_part',
 		canBeOverriddenByThemes: true,
 	},

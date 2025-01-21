@@ -102,8 +102,8 @@ class BlockTemplatesRegistry {
 	public function register_add_to_cart_with_options_template_part_area( $default_area_definitions ) {
 		$add_to_cart_with_options_template_part_area = array(
 			'area'        => 'add-to-cart-with-options',
-			'label'       => __( 'Add To Cart with Options', 'woocommerce' ),
-			'description' => __( 'The Add To Cart with Options templates allow defining a different layout for each product type.', 'woocommerce' ),
+			'label'       => __( 'Add to Cart with Options', 'woocommerce' ),
+			'description' => __( 'The Add to Cart with Options templates allow defining a different layout for each product type.', 'woocommerce' ),
 			'icon'        => 'add-to-cart-with-options',
 			'area_tag'    => 'add-to-cart-with-options',
 		);
