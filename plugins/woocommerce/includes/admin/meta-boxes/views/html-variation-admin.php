@@ -222,10 +222,10 @@ defined( 'ABSPATH' ) || exit;
 							'data_type'     => 'price',
 							'wrapper_class' => 'form-row form-row-first',
 							'desc_tip'      => true,
-							'description'   => __( 'Cost per item of this variation. Leave empty to use the default variation cost specified in the General tab.', 'woocommerce' ),
+							'description'   => __( 'Add the amount it costs you to buy or make this product. Leave blank to use the default value from "General".', 'woocommerce' ),
 							'placeholder'   =>
 								/* Translators: %s = cost of the item (monetary value) */
-								sprintf( __( '%s (default variation cost)', 'woocommerce' ), wc_format_localized_price( $base_cost ) ),
+								sprintf( __( '%s (default)', 'woocommerce' ), wc_format_localized_price( $base_cost ) ),
 						)
 					);
 					?>

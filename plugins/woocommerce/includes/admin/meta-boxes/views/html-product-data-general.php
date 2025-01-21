@@ -80,21 +80,18 @@ defined( 'ABSPATH' ) || exit;
 		<div class="options_group pricing show_if_simple show_if_external show_if_variable hidden">
 			<?php
 			$is_variable = $product_object instanceof WC_Product_Variable;
-			$label       = $is_variable ?
-				__( 'Default variation cost', 'woocommerce' ) :
-				__( 'Cost', 'woocommerce' );
 
 			woocommerce_wp_text_input(
 				array(
 					'id'          => '_cogs_value',
 					'value'       => $product_object->get_cogs_value() ?? 0,
-					'label'       => $label . ' (' . get_woocommerce_currency_symbol() . ')',
+					'label'       => __( 'Cost of goods', 'woocommerce' ) . ' (' . get_woocommerce_currency_symbol() . ')',
 					'data_type'   => 'price',
 					'desc_tip'    => 'true',
 					'description' =>
 						$is_variable ?
-						__( 'This is the default cost per item for each variation and will not be displayed in your store.', 'woocommerce' ) :
-						__( 'This is the cost per item and will not be displayed in your store.', 'woocommerce' ),
+						__( 'Add the amount it costs you to buy or make this product. This will be applied as the default value for variations.', 'woocommerce' ) :
+						__( 'Add the amount it costs you to buy or make this product.', 'woocommerce' ),
 				)
 			);
 			?>

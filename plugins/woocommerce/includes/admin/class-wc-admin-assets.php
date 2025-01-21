@@ -319,7 +319,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 					'i18n_edited_variations'              => esc_js( __( 'Save changes before changing page?', 'woocommerce' ) ),
 					'i18n_variation_count_single'         => esc_js( __( '1 variation', 'woocommerce' ) ),
 					'i18n_variation_count_plural'         => esc_js( __( '%qty% variations', 'woocommerce' ) ),
-					'i18n_variation_cost_remove_warning'  => esc_js( __( 'Are you sure that you want to revert the cost of all variations to the default value?', 'woocommerce' ) ),
+					'i18n_variation_cost_remove_warning'  => esc_js( __( 'The custom cost of goods sold will revert back to their default value for all the variations - would you like to continue?', 'woocommerce' ) ),
 					'variations_per_page'                 => absint( apply_filters( 'woocommerce_admin_meta_boxes_variations_per_page', 15 ) ),
 				);
 
