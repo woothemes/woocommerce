@@ -20,7 +20,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import PaymentMethodErrorBoundary from './payment-method-error-boundary';
-import { STORE_KEY as PAYMENT_STORE_KEY } from '../../../data/payment/constants';
+import { store as paymentStore } from '../../../data/payment';
 import { useExpressPaymentContext } from '../../cart-checkout-shared/payment-methods/express-payment/express-payment-context';
 
 const ExpressPaymentMethods = () => {
@@ -39,7 +39,7 @@ const ExpressPaymentMethods = () => {
 
 	const { activePaymentMethod, paymentMethodData } = useSelect(
 		( select ) => {
-			const store = select( PAYMENT_STORE_KEY );
+			const store = select( paymentStore );
 			return {
 				activePaymentMethod: store.getActivePaymentMethod(),
 				paymentMethodData: store.getPaymentMethodData(),
@@ -53,7 +53,7 @@ const ExpressPaymentMethods = () => {
 		__internalSetPaymentError,
 		__internalSetPaymentMethodData,
 		__internalSetExpressPaymentError,
-	} = useDispatch( PAYMENT_STORE_KEY );
+	} = useDispatch( paymentStore );
 	const { paymentMethods } = useExpressPaymentMethods();
 
 	const paymentMethodInterface = usePaymentMethodInterface();
