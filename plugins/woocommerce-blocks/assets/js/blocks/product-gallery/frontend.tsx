@@ -9,7 +9,8 @@ import {
 import { StorePart } from '@woocommerce/utils';
 
 export interface ProductGalleryContext {
-	selectedImageIndex: number;
+	// It's an actual image number, not an index, hence one-based!
+	selectedImageNumber: number;
 	firstMainImageId: string;
 	imageId: string;
 	visibleImagesIds: string[];
@@ -47,40 +48,56 @@ const getImageIndex = ( context: ProductGalleryContext, imageId: string ) => {
 
 const disableArrows = (
 	context: ProductGalleryContext,
-	nextImageIndex: number
+	newImageNumber: number
 ) => {
 	const imagesIds = getCurrentImages( context );
-	context.disableLeft = nextImageIndex === 1;
-	context.disableRight = nextImageIndex === imagesIds.length;
+	// One-based index so it ranges from 1 to imagesIds.length.
+	context.disableLeft = newImageNumber === 1;
+	context.disableRight = newImageNumber === imagesIds.length;
 };
 
 const selectImage = (
 	context: ProductGalleryContext,
-	type: 'prev' | 'next' | 'current' | 'first'
+	type: 'prev' | 'next' | 'current' | 'closeDialog'
 ) => {
-	const { selectedImageIndex, imageId, dialogVisibleImagesIds } = context;
-	let newImageIndex = 1;
+	const {
+		selectedImageNumber,
+		imageId,
+		dialogVisibleImagesIds,
+		visibleImagesIds,
+	} = context;
+	// Default to the current image.
+	let newImageNumber = 1;
 
-	if ( type === 'first' ) {
-		newImageIndex = 1;
-	}
-
+	// Current means the image that has been clicked.
 	if ( type === 'current' ) {
-		newImageIndex = getImageIndex( context, imageId ) + 1;
+		newImageNumber = getImageIndex( context, imageId ) + 1;
 	}
 
 	if ( type === 'prev' ) {
-		newImageIndex = Math.max( 1, selectedImageIndex - 1 );
+		newImageNumber = Math.max( 1, selectedImageNumber - 1 );
 	}
+
 	if ( type === 'next' ) {
-		newImageIndex = Math.min(
+		newImageNumber = Math.min(
 			dialogVisibleImagesIds.length,
-			selectedImageIndex + 1
+			selectedImageNumber + 1
 		);
 	}
 
-	context.selectedImageIndex = newImageIndex;
-	disableArrows( context, newImageIndex );
+	// Close dialog is a temporary case that will be removed.
+	// Currently, the number of images in the dialog may differ from the number of
+	// images in the gallery, so we're falling back to the first image if
+	// current one is unavailable in regular gallery.
+	if ( type === 'closeDialog' ) {
+		newImageNumber =
+			selectedImageNumber > visibleImagesIds.length
+				? 1
+				: selectedImageNumber;
+	}
+
+	context.selectedImageNumber = newImageNumber;
+	disableArrows( context, newImageNumber );
 };
 
 const closeDialog = ( context: ProductGalleryContext ) => {
@@ -92,16 +109,16 @@ const closeDialog = ( context: ProductGalleryContext ) => {
 		context.elementThatTriggeredDialogOpening = null;
 	}
 
-	selectImage( context, 'first' );
+	selectImage( context, 'closeDialog' );
 };
 
 const productGallery = {
 	state: {
 		get isSelected() {
 			const context = getContext();
-			const { selectedImageIndex, imageId } = context;
+			const { selectedImageNumber, imageId } = context;
 			const imageIndex = getImageIndex( context, imageId );
-			return selectedImageIndex === imageIndex + 1;
+			return selectedImageNumber === imageIndex + 1;
 		},
 		get disableLeft() {
 			return getContext().disableLeft;
@@ -146,7 +163,7 @@ const productGallery = {
 				return;
 			}
 
-			disableArrows( context, context.selectedImageIndex );
+			disableArrows( context, context.selectedImageNumber );
 			setTimeout( () => {
 				( dialogPreviousButton as HTMLButtonElement ).focus();
 			}, 100 );
@@ -238,7 +255,7 @@ const productGallery = {
 							context,
 							currentImageAttribute
 						);
-						context.selectedImageIndex = nextImageIndex + 1;
+						context.selectedImageNumber = nextImageIndex + 1;
 					}
 				}
 			} );
