@@ -12,7 +12,7 @@ import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import Noninteractive from '@woocommerce/base-components/noninteractive';
 import { GlobalPaymentMethod } from '@woocommerce/types';
 import { select } from '@wordpress/data';
-import { PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { paymentStore } from '@woocommerce/block-data';
 import { blocksConfig } from '@woocommerce/block-settings';
 import { trimCharacters, trimWords } from '@woocommerce/utils';
 
@@ -43,7 +43,7 @@ export const Edit = ( {
 		'globalPaymentMethods'
 	);
 	const incompatiblePaymentMethods =
-		select( PAYMENT_STORE_KEY ).getIncompatiblePaymentMethods();
+		select( paymentStore ).getIncompatiblePaymentMethods();
 
 	const incompatiblePaymentMethodMessage = __(
 		'Incompatible with block-based checkout',
