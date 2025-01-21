@@ -27,20 +27,19 @@ class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlo
 	 * @return string Row HTML
 	 */
 	private function get_product_row( $product_id, $attributes, $block ): string {
-		$product = wc_get_product( $product_id );
+		global $post;
+		$previous_post = $post;
+		
+		$post = get_post( $product_id );
 
 		// Get an instance of the current Post Template block.
 		$block_instance = $block->parsed_block;
-
-		// Set the block name to one that does not correspond to an existing registered block.
-		// This ensures that for the inner instances of the Post Template block, we do not render any block supports.
-		$block_instance['blockName'] = 'core/null';
 
 		$new_block = new WP_Block(
 			$block_instance,
 			array(
 				'postType' => 'product',
-				'postId'   => $product->get_ID(),
+				'postId'   => $post->ID,
 			),
 		);
 
@@ -48,37 +47,9 @@ class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlo
 		// `render_callback` and ensure that no wrapper markup is included.
 		$block_content = $new_block->render( array( 'dynamic' => false ) );
 
+		$post = $previous_post;
+
 		return $block_content;
-		// return $block->render( array( 'dynamic' => false ) );
-
-		// $interactive = array();
-
-		// $context = array(
-		// 	'productId' => $product->get_ID(),
-		// );
-
-		// $li_directives = '
-		// 	data-wc-interactive=\'' . wp_json_encode( $interactive, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
-		// 	data-wc-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
-		// 	data-wc-key="product-item-' . $product->get_ID() . '"
-		// ';
-
-		// // Wrap the render inner blocks in a `li` element with the appropriate post classes.
-		// $wrapper_attributes = get_block_wrapper_attributes( array_merge( $attributes, array( 'role' => 'listitem' ) ) );
-		
-		// return strtr(
-		// 	'<div
-		// 		{li_directives}
-		// 		{attributes}
-		// 	>
-		// 		{content}
-		// 	</div>',
-		// 	array(
-		// 		'{attributes}'    => $wrapper_attributes,
-		// 		'{li_directives}' => $li_directives,
-		// 		'{content}'       => $block_content,
-		// 	)
-		// );
 	}
 
 	/**
@@ -94,12 +65,9 @@ class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlo
 			return '';
 		}
 
-		global $product;
-		$previous_product = $product;
-		$product          = wc_get_product( $block->context['postId'] );
+		$product = wc_get_product( $block->context['postId'] );
 
 		if ( ! $product instanceof \WC_Product || ! $product->is_type( 'grouped' ) ) {
-			$product = $previous_product;
 			return '';
 		}
 
