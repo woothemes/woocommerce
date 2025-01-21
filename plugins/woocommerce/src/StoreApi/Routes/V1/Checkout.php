@@ -300,10 +300,6 @@ class Checkout extends AbstractCartRoute {
 			$this->cart_controller->validate_cart();
 		}
 
-		/**
-		 * Validate additional fields on request.
-		 */
-
 		$this->order->save();
 
 		return $this->prepare_item_for_response(
