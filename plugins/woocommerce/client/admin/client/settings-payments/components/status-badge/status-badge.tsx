@@ -123,23 +123,23 @@ export const StatusBadge = ( {
 						size={ 14 }
 						icon={ info }
 					/>
+					{ isPopoverVisible && (
+						<Popover
+							className="woocommerce-status-badge-popover"
+							position="top right"
+							noArrow={ true }
+							onClose={ () => setPopoverVisible( false ) }
+						>
+							<div
+								className={
+									'settings-payment-gateways__popover-container'
+								}
+							>
+								{ popoverContent }
+							</div>
+						</Popover>
+					) }
 				</span>
-			) }
-			{ isPopoverVisible && (
-				<Popover
-					className={ 'woocommerce-status-badge-popover' }
-					position="top right"
-					noArrow={ true }
-					onClose={ () => setPopoverVisible( false ) }
-				>
-					<div
-						className={
-							'settings-payment-gateways__popover-container'
-						}
-					>
-						{ popoverContent }
-					</div>
-				</Popover>
 			) }
 		</Pill>
 	);
