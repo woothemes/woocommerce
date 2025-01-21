@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { getContext, getElement, store } from '@woocommerce/interactivity';
+import { getContext, getElement, store } from '@wordpress/interactivity';
 
 type Notice = {
 	notice: string;

@@ -47,6 +47,8 @@ class StoreNotices extends AbstractBlock {
 
 		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
 
+		wp_enqueue_script_module( 'wc-store-notices-frontend' );
+
 		return sprintf(
 			'<div %1$s>%2$s%3$s</div>',
 			get_block_wrapper_attributes(

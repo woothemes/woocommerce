@@ -14,6 +14,8 @@ const {
 	getCartAndCheckoutFrontendConfig,
 } = require( './bin/webpack-configs.js' );
 
+const interactivityBlocksConfig = require( './bin/webpack-config-interactivity-blocks-frontend.js' );
+
 // Only options shared between all configs should be defined here.
 const sharedConfig = {
 	mode: NODE_ENV,
@@ -100,6 +102,11 @@ const SiteEditorConfig = {
 	...getSiteEditorConfig( { alias: getAlias() } ),
 };
 
+const InteractivityBlocksConfig = {
+	...sharedConfig,
+	...interactivityBlocksConfig,
+};
+
 module.exports = [
 	CartAndCheckoutFrontendConfig,
 	CoreConfig,
@@ -110,4 +117,5 @@ module.exports = [
 	SiteEditorConfig,
 	StylingConfig,
 	InteractivityConfig,
+	InteractivityBlocksConfig,
 ];
