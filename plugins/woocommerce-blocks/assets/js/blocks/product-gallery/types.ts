@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { ProductGalleryNextPreviousBlockAttributes } from './inner-blocks/product-gallery-large-image-next-previous/types';
 import { PagerDisplayModes } from './inner-blocks/product-gallery-pager/constants';
 import { ThumbnailsPosition } from './inner-blocks/product-gallery-thumbnails/constants';
 
@@ -66,5 +65,4 @@ export type ProductGalleryThumbnailsContext = Pick<
 
 export type ProductGalleryAttributes = ProductGalleryThumbnailsBlockAttributes &
 	ProductGalleryBlockAttributes &
-	ProductGalleryPagerBlockAttributes &
-	ProductGalleryNextPreviousBlockAttributes;
+	ProductGalleryPagerBlockAttributes;
