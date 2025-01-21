@@ -29,20 +29,20 @@ class AccordionItem extends AbstractBlock {
 			return $content;
 		}
 
-			$p         = new \WP_HTML_Tag_Processor( $content );
-			$unique_id = wp_unique_id( 'woocommerce-accordion-item-' );
+		$p         = new \WP_HTML_Tag_Processor( $content );
+		$unique_id = wp_unique_id( 'woocommerce-accordion-item-' );
 
-			// Initialize the state of the item on the server using a closure,
-			// since we need to get derived state based on the current context.
-			wc_initial_state(
-				'woocommerce/accordion',
-				array(
-					'isOpen' => function () {
-						$context = wp_interactivity_get_context();
-						return $context['openByDefault'];
-					},
-				)
-			);
+		// Initialize the state of the item on the server using a closure,
+		// since we need to get derived state based on the current context.
+		wc_initial_state(
+			'woocommerce/accordion',
+			array(
+				'isOpen' => function () {
+					$context = wp_interactivity_get_context();
+					return $context['openByDefault'];
+				},
+			)
+		);
 
 		if ( $p->next_tag( array( 'class_name' => 'wp-block-woocommerce-accordion-item' ) ) ) {
 			$interactivity_context = array(
@@ -71,7 +71,7 @@ class AccordionItem extends AbstractBlock {
 			}
 		}
 
-			return $content;
+		return $content;
 	}
 
 	/**
