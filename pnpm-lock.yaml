@@ -3383,7 +3383,7 @@ importers:
         version: 10.14.0
       '@wordpress/stylelint-config':
         specifier: ^21.36.0
-        version: 21.36.0(postcss@8.4.49)(stylelint@14.16.1)
+        version: 21.36.0(postcss@8.4.32)(stylelint@14.16.1)
       allure-commandline:
         specifier: ^2.25.0
         version: 2.25.0
@@ -3922,8 +3922,8 @@ importers:
         specifier: 4.44.0
         version: 4.44.0
       '@wordpress/dependency-extraction-webpack-plugin':
-        specifier: 4.28.0
-        version: 4.28.0(webpack@5.91.0)
+        specifier: 6.16.0
+        version: 6.16.0(webpack@5.91.0)
       '@wordpress/dom':
         specifier: 3.27.0
         version: 3.27.0
@@ -12019,11 +12019,11 @@ packages:
     peerDependencies:
       webpack: ^4.8.3 || ^5.0.0
 
-  '@wordpress/dependency-extraction-webpack-plugin@4.28.0':
-    resolution: {integrity: sha512-/qfcNv6+cp+8guuNO88/inlFWf21UqeqxxcmcD+41rRfDr8+xqsHMmLwRvSip4KbT8veR2i7Gvem5H5E5x8uVA==}
-    engines: {node: '>=14'}
+  '@wordpress/dependency-extraction-webpack-plugin@6.16.0':
+    resolution: {integrity: sha512-AU6SFATdbUJsd/hqD6wUaZxbikibJ4L7RGpQ2MPUsXxXZCJU8pfPE3WWIOM1VemG4dJRJO+jk0lG8uH9pwdsfA==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
-      webpack: ^4.8.3 || ^5.0.0
+      webpack: ^5.0.0
 
   '@wordpress/deprecated@2.12.3':
     resolution: {integrity: sha512-qr+yDfTQfI3M4h6oY6IeHWwoHr4jxbILjSlV+Ht6Jjto9Owap6OuzSqR13Ev4xqIoG4C7b5B3gZXVfwVDae1zg==}
@@ -43026,11 +43026,10 @@ snapshots:
       webpack: 5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
       webpack-sources: 3.2.3
 
-  '@wordpress/dependency-extraction-webpack-plugin@4.28.0(webpack@5.91.0)':
+  '@wordpress/dependency-extraction-webpack-plugin@6.16.0(webpack@5.91.0)':
     dependencies:
       json2php: 0.0.7
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
-      webpack-sources: 3.2.3
 
   '@wordpress/deprecated@2.12.3':
     dependencies:
