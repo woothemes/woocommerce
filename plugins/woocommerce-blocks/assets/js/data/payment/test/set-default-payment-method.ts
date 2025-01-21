@@ -9,7 +9,7 @@ import { select, dispatch } from '@wordpress/data';
  */
 import { setDefaultPaymentMethod } from '../utils/set-default-payment-method';
 import { PlainPaymentMethods } from '../../../types';
-import { PAYMENT_STORE_KEY } from '..';
+import { store as paymentStore } from '..';
 
 const originalSelect = jest.requireActual( '@wordpress/data' ).select;
 const originalDispatch = jest.requireActual( '@wordpress/data' ).dispatch;
@@ -41,7 +41,7 @@ describe( 'setDefaultPaymentMethod', () => {
 		const setActivePaymentMethodMock = jest.fn();
 		( select as jest.Mock ).mockImplementation( ( storeName ) => {
 			const originalStore = originalSelect( storeName );
-			if ( storeName === PAYMENT_STORE_KEY ) {
+			if ( storeName === paymentStore ) {
 				return {
 					...originalStore,
 					getAvailableExpressPaymentMethods: () => ( {
@@ -56,7 +56,7 @@ describe( 'setDefaultPaymentMethod', () => {
 		} );
 		( dispatch as jest.Mock ).mockImplementation( ( storeName ) => {
 			const originalStore = originalDispatch( storeName );
-			if ( storeName === PAYMENT_STORE_KEY ) {
+			if ( storeName === paymentStore ) {
 				return {
 					...originalStore,
 					__internalSetActivePaymentMethod:
@@ -74,7 +74,7 @@ describe( 'setDefaultPaymentMethod', () => {
 	it( 'correctly sets the saved payment method if one is available', async () => {
 		( select as jest.Mock ).mockImplementation( ( storeName ) => {
 			const originalStore = originalSelect( storeName );
-			if ( storeName === PAYMENT_STORE_KEY ) {
+			if ( storeName === paymentStore ) {
 				return {
 					...originalStore,
 					getAvailableExpressPaymentMethods: () => {
@@ -114,7 +114,7 @@ describe( 'setDefaultPaymentMethod', () => {
 		const setActivePaymentMethodMock = jest.fn();
 		( dispatch as jest.Mock ).mockImplementation( ( storeName ) => {
 			const originalStore = originalDispatch( storeName );
-			if ( storeName === PAYMENT_STORE_KEY ) {
+			if ( storeName === paymentStore ) {
 				return {
 					...originalStore,
 					__internalSetActivePaymentMethod:
