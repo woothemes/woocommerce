@@ -50,28 +50,35 @@ class ProductGalleryPager extends AbstractBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 		$post_id = $block->context['postId'] ?? '';
+
+		if ( ! $post_id ) {
+			return '';
+		}
+
 		$product = wc_get_product( $post_id );
 
-		if ( $product ) {
-			$product_gallery_images_ids = ProductGalleryUtils::get_product_gallery_image_ids( $product );
-			$total_images               = count( $product_gallery_images_ids );
-
-			if ( 0 === $total_images ) {
-				return '';
-			}
-
-			$styles_and_classes = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
-			$classes            = $styles_and_classes['classes'] ?? '';
-			$styles             = $styles_and_classes['styles'] ?? '';
-
-			return sprintf(
-				'<div class="wc-block-product-gallery-pager %1$s" style="%2$s">
-					<span class="wc-block-product-gallery-pager__current-index" data-wc-text="context.selectedImageIndex"></span>/<span class="wc-block-product-gallery-pager__total-images">%3$s</span>
-				</div>',
-				$classes,
-				$styles,
-				$total_images,
-			);
+		if ( ! $product ) {
+			return '';
 		}
+
+		$product_gallery_images_ids = ProductGalleryUtils::get_product_gallery_image_ids( $product );
+		$total_images               = count( $product_gallery_images_ids );
+
+		if ( 0 === $total_images ) {
+			return '';
+		}
+
+		$styles_and_classes = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
+		$classes            = $styles_and_classes['classes'] ?? '';
+		$styles             = $styles_and_classes['styles'] ?? '';
+
+		return sprintf(
+			'<div class="wc-block-product-gallery-pager %1$s" style="%2$s">
+				<span class="wc-block-product-gallery-pager__current-index" data-wc-text="context.selectedImageIndex"></span>/<span class="wc-block-product-gallery-pager__total-images">%3$s</span>
+			</div>',
+			$classes,
+			$styles,
+			$total_images,
+		);
 	}
 }
