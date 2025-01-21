@@ -447,3 +447,59 @@ export const localiseMonetaryValue = (
 
 	return number;
 };
+
+export const unformatLocalisedMonetaryValue = (
+	config: NumberConfig,
+	inputNumber: number | string | unknown
+) => {
+	if ( ! inputNumber ) {
+		throw new Error( 'Input value is undefined' );
+	}
+
+	if ( Number.isFinite( inputNumber ) ) {
+		return inputNumber;
+	}
+
+	if ( typeof inputNumber !== 'string' ) {
+		throw new Error( 'Input value is not a number or a numeric string' );
+	}
+
+	// Brackets signal a formula. Avoid unformatting these values.
+	if ( inputNumber.includes( '[' ) && inputNumber.includes( ']' ) ) {
+		throw new Error( 'Input value contains formula' );
+	}
+
+	// Check if the string contains any non-numeric characters except allowed separators and whitespace
+	const allowedChars = new RegExp(
+		`^\\s*[0-9${ escapeRegExp( config.thousandSeparator ) }${ escapeRegExp(
+			config.decimalSeparator
+		) }]+\\s*$`
+	);
+
+	if ( ! allowedChars.test( inputNumber ) ) {
+		throw new Error(
+			'Input value contains non-numeric characters and is not a formula'
+		);
+	}
+
+	if (
+		// check that there is only 1 decimal separator and it is not to the left of
+		// the thousands separator if there is a thousands separator in the value
+		inputNumber.split( config.decimalSeparator ).length > 2 ||
+		( inputNumber.includes( config.thousandSeparator ) &&
+			inputNumber.includes( config.decimalSeparator ) &&
+			inputNumber.indexOf( config.decimalSeparator ) <=
+				inputNumber.indexOf( config.thousandSeparator ) )
+	) {
+		throw new Error( 'Invalid decimal separator' );
+	}
+
+	const unformattedValue = inputNumber
+		.replace(
+			new RegExp( escapeRegExp( config.thousandSeparator ), 'g' ),
+			''
+		)
+		.replace( config.decimalSeparator, '.' );
+
+	return Number( unformattedValue );
+};

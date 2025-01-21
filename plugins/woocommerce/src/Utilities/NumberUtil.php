@@ -75,6 +75,23 @@ final class NumberUtil {
 			throw new \InvalidArgumentException( sprintf( __( '%s is not a valid numeric value. Allowed characters: %s', 'woocommerce' ), $value, $allowed_characters_regex ) );
 		}
 
+		// Validate decimal and thousand separator positions
+		$decimal_separator = wc_get_price_decimal_separator();
+		$thousand_separator = wc_get_price_thousand_separator();
+		
+		if (
+			// Check that there is only 1 decimal separator
+			substr_count( $value, $decimal_separator ) > 1 ||
+			(
+				// Check that decimal separator appears after thousand separator if both exist
+				str_contains( $value, $thousand_separator ) &&
+				str_contains( $value, $decimal_separator ) &&
+				strpos( $value, $decimal_separator ) <= strpos( $value, $thousand_separator )
+			)
+		) {
+			throw new \InvalidArgumentException( sprintf( __( '%s is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator.', 'woocommerce' ), $value ) );
+		}
+
 		/**
 		 * For context, as of 2025
 		 * The full set of thousands separators is PERIOD, COMMA, SPACE, APOSTROPHE.

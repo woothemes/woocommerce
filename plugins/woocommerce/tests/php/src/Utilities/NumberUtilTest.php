@@ -466,24 +466,6 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'CHF',
 				false
 			),
-
-			// 8. Multiple decimal separators (should error, these are unrecoverable since we don't know which ones are intended to be decimal separators)
-			'multiple periods in USD locale' => array(
-				'1,234.56.78',
-				'',
-				',',
-				'.',
-				'$',
-				true
-			),
-			'multiple commas in FR locale' => array(
-				'1 234,56,78',
-				'',
-				' ',
-				',',
-				'€',
-				true
-			),
 		);
 	}
 
@@ -524,5 +506,84 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 
 		$actual = NumberUtil::sanitize_cost_in_current_locale($input);
 		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * Data provider for test_sanitize_cost_in_current_locale_decimal_separator_validation
+	 */
+	public function data_provider_for_test_sanitize_cost_in_current_locale_decimal_separator_validation(): array {
+		return array(
+			'multiple decimal separators USD' => array(
+				'1,234.56.78',
+				',',
+				'.',
+				'$',
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+			),
+			'multiple decimal separators EUR' => array(
+				'1 234,56,78',
+				' ',
+				',',
+				'€',
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+			),
+			'multiple decimal separators' => array(
+				'1.234.56',
+				',',
+				'.',
+				'$',
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+			),
+			'decimal before thousand separator USD' => array(
+				'1.234,567',
+				',',
+				'.',
+				'$',
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+			),
+			'decimal before thousand separator EUR' => array(
+				'1,234.567',
+				'.',
+				',',
+				'€',
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+			),
+			'decimal before thousand separator CHF' => array(
+				'1.234\'567',
+				'\'',
+				'.',
+				'CHF',
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+			),
+		);
+	}
+
+	/**
+	 * @testdox sanitize_cost_in_current_locale should properly validate decimal separator placement
+	 *
+	 * @dataProvider data_provider_for_test_sanitize_cost_in_current_locale_decimal_separator_validation
+	 *
+	 * @param string $input Input value to test.
+	 * @param string $thousand_separator Thousand separator to use.
+	 * @param string $decimal_separator Decimal separator to use.
+	 * @param string $currency_symbol Currency symbol to use.
+	 * @param string $expected_error Expected error message.
+	 */
+	public function test_sanitize_cost_in_current_locale_decimal_separator_validation(
+		string $input,
+		string $thousand_separator,
+		string $decimal_separator,
+		string $currency_symbol,
+		string $expected_error
+	) {
+		// Set up locale settings
+		update_option('woocommerce_currency', $currency_symbol === '$' ? 'USD' : ($currency_symbol === '€' ? 'EUR' : 'CHF'));
+		update_option('woocommerce_price_thousand_sep', $thousand_separator);
+		update_option('woocommerce_price_decimal_sep', $decimal_separator);
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage($expected_error);
+		
+		NumberUtil::sanitize_cost_in_current_locale($input);
 	}
 }

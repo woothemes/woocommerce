@@ -366,29 +366,16 @@
 
 					numericValuesFields.forEach( function( field ) {
 						const formattedValue = data[ field ];
-						
-						if ( ! formattedValue ) {
-							return;
+
+						// this method runs for every field in the model, so we may encounter empty fields because
+						// the field may not be present in the form presented to the user.
+						// we don't throw the error since we expect any validation error to be handled in the backend
+						try {
+							const unformattedValue = window.wc.currency.unformatLocalisedMonetaryValue( config, formattedValue );
+							data[ field ] = unformattedValue;
+						} catch ( error ) {
+							return; // we leave the original data as-is by returning here
 						}
-
-						if ( Number.isFinite( formattedValue ) ) {
-							return;
-						}
-
-						// Brackets signal a formula. Avoid unformatting these values.
-						if ( formattedValue.includes( '[' ) && formattedValue.includes( ']' ) ) {
-							return;
-						}
-
-						// Create regex to match only numbers and configured separators
-						const regex = new RegExp(`[^0-9${config.thousandSeparator}${config.decimalSeparator}]`, 'g');
-						const strippedValue = formattedValue.replace(regex, '');
-
-						const unformattedValue = strippedValue
-							.replaceAll( config.thousandSeparator, '' )
-							.replace( config.decimalSeparator, '.' );
-
-						data[ field ] = unformattedValue;
 					} );
 
 					return data;
@@ -685,6 +672,14 @@
 						}
 
 						event.data.view.possiblyAddShippingClassLink( event );
+						if ( window.wc.wcSettings.CURRENCY && window.wc.currency.localiseMonetaryValue ) {
+							const config = window.wc.wcSettings.CURRENCY;
+							$('.wc-shipping-modal-price').on('blur', function() {
+								const value = $(this).val();
+								const formattedValue = window.wc.currency.localiseMonetaryValue( config, value );
+								$(this).val( formattedValue );
+							});
+						}
 					}
 				},
 				possiblyAddShippingClassLink: function( event ) {
