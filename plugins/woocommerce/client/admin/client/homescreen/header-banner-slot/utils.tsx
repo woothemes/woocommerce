@@ -46,7 +46,7 @@ export const WooHomescreenHeaderBannerItem = ( {
 WooHomescreenHeaderBannerItem.Slot = ( {
 	fillProps,
 }: {
-	fillProps: React.ComponentProps< typeof Slot >[ 'fillProps' ];
+	fillProps?: React.ComponentProps< typeof Slot >[ 'fillProps' ];
 } ) => (
 	<Slot
 		name={ EXPERIMENTAL_WC_HOMESCREEN_HEADER_BANNER_SLOT_NAME }

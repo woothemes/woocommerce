@@ -25,7 +25,7 @@ export const Footer: React.FC = () => {
 				'at-bottom': atBottom,
 			} ) }
 		>
-			<WooFooterItem.Slot fillProps={ undefined } />
+			<WooFooterItem.Slot />
 		</div>
 	);
 };

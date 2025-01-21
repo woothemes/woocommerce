@@ -24,7 +24,7 @@ export const WooHomescreenHeaderBanner = ( {
 	}
 	return (
 		<div className={ clsx( 'woocommerce-homescreen__header', className ) }>
-			<WooHomescreenHeaderBannerItem.Slot fillProps={ undefined } />
+			<WooHomescreenHeaderBannerItem.Slot />
 		</div>
 	);
 };
