@@ -5,7 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	CART_STORE_KEY,
-	VALIDATION_STORE_KEY,
+	validationStore,
 	CHECKOUT_STORE_KEY,
 } from '@woocommerce/block-data';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -26,23 +26,20 @@ export const useStoreCartCoupons = ( context = '' ): StoreCartCoupon => {
 	const { cartCoupons, cartIsLoading } = useStoreCart();
 	const { createErrorNotice } = useDispatch( 'core/notices' );
 	const { createNotice } = useDispatch( 'core/notices' );
-	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { setValidationErrors } = useDispatch( validationStore );
 
 	const {
 		isApplyingCoupon,
 		isRemovingCoupon,
 	}: Pick< StoreCartCoupon, 'isApplyingCoupon' | 'isRemovingCoupon' > =
-		useSelect(
-			( select ) => {
-				const store = select( CART_STORE_KEY );
+		useSelect( ( select ) => {
+			const store = select( CART_STORE_KEY );
 
-				return {
-					isApplyingCoupon: store.isApplyingCoupon(),
-					isRemovingCoupon: store.isRemovingCoupon(),
-				};
-			},
-			[ createErrorNotice, createNotice ]
-		);
+			return {
+				isApplyingCoupon: store.isApplyingCoupon(),
+				isRemovingCoupon: store.isRemovingCoupon(),
+			};
+		} );
 
 	const { applyCoupon, removeCoupon } = useDispatch( CART_STORE_KEY );
 	const orderId = useSelect( ( select ) =>

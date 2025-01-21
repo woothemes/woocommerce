@@ -46,6 +46,7 @@ class PaymentProviders {
 
 	public const CATEGORY_EXPRESS_CHECKOUT = 'express_checkout';
 	public const CATEGORY_BNPL             = 'bnpl';
+	public const CATEGORY_CRYPTO           = 'crypto';
 	public const CATEGORY_PSP              = 'psp';
 
 	/**
@@ -289,7 +290,10 @@ class PaymentProviders {
 					continue;
 				}
 
-				if ( empty( $preferred_apm ) && ExtensionSuggestions::TYPE_APM === $extension['_type'] ) {
+				// In the preferred APM slot we might surface APMs but also Express Checkouts (PayPal Wallet).
+				if ( empty( $preferred_apm ) &&
+					in_array( $extension['_type'], array( ExtensionSuggestions::TYPE_APM, ExtensionSuggestions::TYPE_EXPRESS_CHECKOUT ), true ) ) {
+
 					$preferred_apm = $extension;
 					continue;
 				}
@@ -304,11 +308,10 @@ class PaymentProviders {
 			}
 
 			// If there are no enabled ecommerce gateways (no PSP selected),
-			// we don't suggest express checkout or BNPL extensions.
-			if ( (
-					ExtensionSuggestions::TYPE_EXPRESS_CHECKOUT === $extension['_type'] ||
-					ExtensionSuggestions::TYPE_BNPL === $extension['_type']
-				) && ! $has_enabled_ecommerce_gateways ) {
+			// we don't suggest express checkout, BNPL, or crypto extensions.
+			if ( ! $has_enabled_ecommerce_gateways &&
+				in_array( $extension['_type'], array( ExtensionSuggestions::TYPE_EXPRESS_CHECKOUT, ExtensionSuggestions::TYPE_BNPL, ExtensionSuggestions::TYPE_CRYPTO ), true )
+			) {
 				continue;
 			}
 
@@ -464,8 +467,14 @@ class PaymentProviders {
 			'description' => esc_html__( 'Offer flexible payment options to your shoppers.', 'woocommerce' ),
 		);
 		$categories[] = array(
-			'id'          => self::CATEGORY_PSP,
+			'id'          => self::CATEGORY_CRYPTO,
 			'_priority'   => 30,
+			'title'       => esc_html__( 'Crypto Payments', 'woocommerce' ),
+			'description' => esc_html__( 'Offer cryptocurrency payment options to your shoppers.', 'woocommerce' ),
+		);
+		$categories[] = array(
+			'id'          => self::CATEGORY_PSP,
+			'_priority'   => 40,
 			'title'       => esc_html__( 'Payment Providers', 'woocommerce' ),
 			'description' => esc_html__( 'Give your shoppers additional ways to pay.', 'woocommerce' ),
 		);
@@ -899,6 +908,9 @@ class PaymentProviders {
 				break;
 			case ExtensionSuggestions::TYPE_BNPL:
 				$extension['category'] = self::CATEGORY_BNPL;
+				break;
+			case ExtensionSuggestions::TYPE_CRYPTO:
+				$extension['category'] = self::CATEGORY_CRYPTO;
 				break;
 			default:
 				$extension['category'] = '';

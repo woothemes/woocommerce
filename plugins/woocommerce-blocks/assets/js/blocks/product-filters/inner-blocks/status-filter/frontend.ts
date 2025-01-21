@@ -6,53 +6,79 @@ import { getContext, getElement, store } from '@woocommerce/interactivity';
 /**
  * Internal dependencies
  */
-import type { ProductFiltersContext } from '../../frontend';
+import { ProductFiltersStore } from '../../frontend';
 
-const filterStockStatusKey = 'filter_stock_status';
+type ProductFilterStatusContext = {
+	hasFilterOptions: boolean;
+	activeLabelTemplate: string;
+};
 
-store( 'woocommerce/product-filter-status', {
-	actions: {
-		toggleFilter: () => {
-			const productFiltersContext = getContext< ProductFiltersContext >(
+const { state, actions } = store( 'woocommerce/product-filter-status', {
+	state: {
+		get selectedFilters() {
+			const productFiltersStore = store< ProductFiltersStore >(
 				'woocommerce/product-filters'
 			);
-			const currentFilters =
-				productFiltersContext.params[ filterStockStatusKey ];
+			return ( productFiltersStore.state.activeFilters || [] )
+				.filter( ( item ) => item.type === 'status' )
+				.map( ( item ) => item.value )
+				.filter( Boolean );
+		},
+		get hasSelectedFilters(): boolean {
+			return state.selectedFilters.length > 0;
+		},
+		get isItemSelected(): boolean {
+			const { props } = getElement();
 
-			// split out the active filters into an array.
-			const filtersArr =
-				currentFilters === undefined ? [] : currentFilters.split( ',' );
+			if ( ! props.value ) return false;
 
-			const { ref } = getElement();
-			const value =
-				ref.getAttribute( 'data-target-value' ) ??
-				ref.getAttribute( 'value' );
+			return state.selectedFilters.includes( props.value );
+		},
+	},
+	actions: {
+		getActiveLabel( label: string ) {
+			const { activeLabelTemplate } =
+				getContext< ProductFilterStatusContext >();
+			return activeLabelTemplate.replace( '{{label}}', label );
+		},
+		toggleFilter: () => {
+			const { props } = getElement();
+			let filterItem = props[ 'data-filter-item' ];
 
-			const newFilterArr = filtersArr.includes( value )
-				? [ ...filtersArr.filter( ( filter ) => filter !== value ) ]
-				: [ ...filtersArr, value ];
+			if ( typeof filterItem === 'string' )
+				filterItem = JSON.parse( filterItem );
 
-			if ( newFilterArr.length === 0 ) {
-				delete productFiltersContext.params[ filterStockStatusKey ];
-				return;
+			const { ariaLabel, value } = filterItem;
+
+			if ( ! value || ! ariaLabel ) return;
+
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+
+			if ( state.selectedFilters.includes( value ) ) {
+				productFiltersStore.actions.removeActiveFilter(
+					'status',
+					value
+				);
+			} else {
+				productFiltersStore.actions.setActiveFilter( {
+					type: 'status',
+					value,
+					label: actions.getActiveLabel( ariaLabel ),
+				} );
 			}
 
-			productFiltersContext.params = {
-				...productFiltersContext.params,
-				[ filterStockStatusKey ]: newFilterArr.join( ',' ),
-			};
+			productFiltersStore.actions.navigate();
 		},
 		clearFilters: () => {
-			const productFiltersContext = getContext< ProductFiltersContext >(
+			const productFiltersStore = store< ProductFiltersStore >(
 				'woocommerce/product-filters'
 			);
-			const updatedParams = productFiltersContext.params;
 
-			delete updatedParams[ filterStockStatusKey ];
+			productFiltersStore.actions.removeActiveFiltersByType( 'status' );
 
-			productFiltersContext.params = {
-				...updatedParams,
-			};
+			productFiltersStore.actions.navigate();
 		},
 	},
 } );
