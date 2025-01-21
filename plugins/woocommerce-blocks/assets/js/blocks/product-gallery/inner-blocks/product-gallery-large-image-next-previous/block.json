@@ -14,6 +14,18 @@
 		"postId"
 	],
 	"textdomain": "woocommerce",
+	"supports": {
+		"layout": {
+			"default": {
+				"type": "flex",
+				"verticalAlignment": "bottom"
+			},
+			"allowVerticalAlignment": true,
+			"allowJustification": false,
+			"allowOrientation": false,
+			"allowInheriting": false
+		}
+	},
 	"ancestor": [
 		"woocommerce/product-gallery-large-image"
 	]

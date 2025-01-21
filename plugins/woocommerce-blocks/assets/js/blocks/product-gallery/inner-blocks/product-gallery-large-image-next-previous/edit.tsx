@@ -3,6 +3,7 @@
  */
 import { useBlockProps } from '@wordpress/block-editor';
 import clsx from 'clsx';
+import { BlockAttributes } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -10,11 +11,30 @@ import clsx from 'clsx';
 import './editor.scss';
 import { PrevButton, NextButton } from './icons';
 
-export const Edit = (): JSX.Element => {
+const getAlignmentStyle = ( alignment: string ): string => {
+	switch ( alignment ) {
+		case 'top':
+			return 'flex-start';
+		case 'center':
+			return 'center';
+		case 'bottom':
+			return 'flex-end';
+		default:
+			return 'flex-end';
+	}
+};
+
+export const Edit = ( {
+	attributes,
+}: {
+	attributes: BlockAttributes;
+} ): JSX.Element => {
 	const blockProps = useBlockProps( {
 		style: {
 			width: '100%',
-			alignItems: 'flex-end',
+			alignItems: getAlignmentStyle(
+				attributes.layout?.verticalAlignment
+			),
 		},
 		className: clsx(
 			'wc-block-editor-product-gallery-large-image-next-previous',
