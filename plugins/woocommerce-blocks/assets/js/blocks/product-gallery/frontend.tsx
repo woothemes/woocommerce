@@ -58,7 +58,7 @@ const disableArrows = (
 
 const selectImage = (
 	context: ProductGalleryContext,
-	type: 'prev' | 'next' | 'current' | 'closeDialog'
+	type: 'prev' | 'next' | 'current' | 'first' | 'closeDialog'
 ) => {
 	const {
 		selectedImageNumber,
@@ -66,7 +66,7 @@ const selectImage = (
 		dialogVisibleImagesIds,
 		visibleImagesIds,
 	} = context;
-	// Default to the current image.
+	// Default to the first image.
 	let newImageNumber = 1;
 
 	// Current means the image that has been clicked.
