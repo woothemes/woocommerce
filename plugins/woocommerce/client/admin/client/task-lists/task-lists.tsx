@@ -10,7 +10,6 @@ import {
 	ONBOARDING_STORE_NAME,
 	TaskListType,
 	TaskType,
-	WCDataSelector,
 } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 
