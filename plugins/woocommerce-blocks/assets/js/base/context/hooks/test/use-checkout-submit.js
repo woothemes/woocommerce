@@ -13,7 +13,7 @@ import {
 	config as checkoutStoreConfig,
 } from '../../../../data/checkout';
 import {
-	store as paymentStore,
+	PAYMENT_STORE_KEY,
 	config as paymentDataStoreConfig,
 } from '../../../../data/payment';
 
@@ -46,7 +46,7 @@ describe( 'useCheckoutSubmit', () => {
 	beforeEach( () => {
 		registry = createRegistry( {
 			[ CHECKOUT_STORE_KEY ]: checkoutStoreConfig,
-			[ paymentStore ]: paymentDataStoreConfig,
+			[ PAYMENT_STORE_KEY ]: paymentDataStoreConfig,
 		} );
 		renderer = null;
 	} );
