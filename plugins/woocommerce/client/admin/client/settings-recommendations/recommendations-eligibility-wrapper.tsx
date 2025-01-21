@@ -7,7 +7,11 @@ import { useUser, OPTIONS_STORE_NAME } from '@woocommerce/data';
 const SHOW_MARKETPLACE_SUGGESTION_OPTION =
 	'woocommerce_show_marketplace_suggestions';
 
-const RecommendationsEligibilityWrapper: React.FC = ( { children } ) => {
+const RecommendationsEligibilityWrapper = ( {
+	children,
+}: {
+	children: React.ReactNode;
+} ) => {
 	const { currentUserCan } = useUser();
 
 	const isMarketplaceSuggestionsEnabled = useSelect( ( select ) => {

@@ -30,12 +30,7 @@ export const SectionTabs = ( {
 	} = useLocation();
 
 	if ( tabs.length <= 1 ) {
-		return (
-			<>
-				<div className="woocommerce-settings-section-tabs woocommerce-settings-section-tabs--no-tabs" />
-				<div>{ children }</div>
-			</>
-		);
+		return <div>{ children }</div>;
 	}
 
 	const onSelect = ( tabName: string ) => {

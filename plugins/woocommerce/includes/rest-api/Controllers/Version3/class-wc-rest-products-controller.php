@@ -8,6 +8,8 @@
  * @since   2.6.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -191,6 +193,28 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$this->exclude_status = array();
 		}
 
+		// Filter downloadable products.
+		if ( isset( $request['downloadable'] ) ) {
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'   => '_downloadable',
+					'value' => wc_bool_to_string( $request['downloadable'] ),
+				)
+			);
+		}
+
+		// Filter virtual products.
+		if ( isset( $request['virtual'] ) ) {
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				$args,
+				array(
+					'key'   => '_virtual',
+					'value' => wc_bool_to_string( $request['virtual'] ),
+				)
+			);
+		}
+
 		// Taxonomy query to filter products by type, category,
 		// tag, shipping class, and attribute.
 		$tax_query = array();
@@ -214,11 +238,28 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Filter product type by slug.
-		if ( ! empty( $request['type'] ) ) {
+		$terms = array();
+		if ( ! empty( $request['include_types'] ) ) {
+			$terms = $request['include_types'];
+		} elseif ( ! empty( $request['type'] ) ) {
+			$terms[] = $request['type'];
+		}
+
+		if ( ! empty( $terms ) ) {
 			$tax_query[] = array(
 				'taxonomy' => 'product_type',
 				'field'    => 'slug',
-				'terms'    => $request['type'],
+				'terms'    => $terms,
+			);
+		}
+
+		// Add exclude types filter.
+		if ( ! empty( $request['exclude_types'] ) ) {
+			$tax_query[] = array(
+				'taxonomy' => 'product_type',
+				'field'    => 'slug',
+				'terms'    => $request['exclude_types'],
+				'operator' => 'NOT IN',
 			);
 		}
 
@@ -546,7 +587,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			$product = new WC_Product_Simple();
 		}
 
-		if ( 'variation' === $product->get_type() ) {
+		if ( ProductType::VARIATION === $product->get_type() ) {
 			return new WP_Error(
 				"woocommerce_rest_invalid_{$this->post_type}_id",
 				__( 'To manipulate product variations you should use the /products/&lt;product_id&gt;/variations/&lt;id&gt; endpoint.', 'woocommerce' ),
@@ -573,7 +614,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		// Post status.
 		if ( isset( $request['status'] ) ) {
-			$product->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : 'draft' );
+			$product->set_status( get_post_status_object( $request['status'] ) ? $request['status'] : ProductStatus::DRAFT );
 		}
 
 		// Post slug.
@@ -706,7 +747,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Sales and prices.
-		if ( in_array( $product->get_type(), array( 'variable', 'grouped' ), true ) ) {
+		if ( in_array( $product->get_type(), array( ProductType::VARIABLE, ProductType::GROUPED ), true ) ) {
 			$product->set_regular_price( '' );
 			$product->set_sale_price( '' );
 			$product->set_date_on_sale_to( '' );
@@ -769,19 +810,19 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				$product->set_backorders( $request['backorders'] );
 			}
 
-			if ( $product->is_type( 'grouped' ) ) {
+			if ( $product->is_type( ProductType::GROUPED ) ) {
 				$product->set_manage_stock( 'no' );
 				$product->set_backorders( 'no' );
 				$product->set_stock_quantity( '' );
 				$product->set_stock_status( $stock_status );
-			} elseif ( $product->is_type( 'external' ) ) {
+			} elseif ( $product->is_type( ProductType::EXTERNAL ) ) {
 				$product->set_manage_stock( 'no' );
 				$product->set_backorders( 'no' );
 				$product->set_stock_quantity( '' );
 				$product->set_stock_status( 'instock' );
 			} elseif ( $product->get_manage_stock() ) {
 				// Stock status is always determined by children so sync later.
-				if ( ! $product->is_type( 'variable' ) ) {
+				if ( ! $product->is_type( ProductType::VARIABLE ) ) {
 					$product->set_stock_status( $stock_status );
 				}
 
@@ -810,7 +851,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				$product->set_stock_status( $stock_status );
 				$product->set_low_stock_amount( '' );
 			}
-		} elseif ( ! $product->is_type( 'variable' ) ) {
+		} elseif ( ! $product->is_type( ProductType::VARIABLE ) ) {
 			$product->set_stock_status( $stock_status );
 		}
 
@@ -908,7 +949,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Product url and button text for external products.
-		if ( $product->is_type( 'external' ) ) {
+		if ( $product->is_type( ProductType::EXTERNAL ) ) {
 			if ( isset( $request['external_url'] ) ) {
 				$product->set_product_url( $request['external_url'] );
 			}
@@ -919,12 +960,12 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		}
 
 		// Save default attributes for variable products.
-		if ( $product->is_type( 'variable' ) ) {
+		if ( $product->is_type( ProductType::VARIABLE ) ) {
 			$product = $this->save_default_attributes( $product, $request );
 		}
 
 		// Set children for a grouped product.
-		if ( $product->is_type( 'grouped' ) && isset( $request['grouped_products'] ) ) {
+		if ( $product->is_type( ProductType::GROUPED ) && isset( $request['grouped_products'] ) ) {
 			$product->set_children( $request['grouped_products'] );
 		}
 
@@ -1034,15 +1075,15 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'type'                  => array(
 					'description' => __( 'Product type.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'simple',
+					'default'     => ProductType::SIMPLE,
 					'enum'        => array_keys( wc_get_product_types() ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'status'                => array(
 					'description' => __( 'Product status (post status).', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'publish',
-					'enum'        => array_merge( array_keys( get_post_statuses() ), array( 'future', 'auto-draft', 'trash' ) ),
+					'default'     => ProductStatus::PUBLISH,
+					'enum'        => array_merge( array_keys( get_post_statuses() ), array( ProductStatus::FUTURE, ProductStatus::AUTO_DRAFT, ProductStatus::TRASH ) ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'featured'              => array(
@@ -1661,7 +1702,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
-				'enum' => array_merge( array( 'any', 'trash' ), array_keys( get_post_statuses() ) ),
+				'enum' => array_merge( array( 'any', ProductStatus::FUTURE, ProductStatus::TRASH ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
 			'validate_callback' => 'rest_validate_request_arg',
@@ -1672,9 +1713,45 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
-				'enum' => array_merge( array( 'trash' ), array_keys( get_post_statuses() ) ),
+				'enum' => array_merge( array( ProductStatus::FUTURE, ProductStatus::TRASH ), array_keys( get_post_statuses() ) ),
 			),
 			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['include_types'] = array(
+			'description'       => __( 'Limit result set to products with any of the types.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_keys( wc_get_product_types() ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['exclude_types'] = array(
+			'description'       => __( 'Exclude products with any of the types from result set.', 'woocommerce' ),
+			'type'              => 'array',
+			'items'             => array(
+				'type' => 'string',
+				'enum' => array_keys( wc_get_product_types() ),
+			),
+			'sanitize_callback' => 'wp_parse_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['downloadable'] = array(
+			'description'       => __( 'Limit result set to downloadable products.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['virtual'] = array(
+			'description'       => __( 'Limit result set to virtual products.', 'woocommerce' ),
+			'type'              => 'boolean',
+			'sanitize_callback' => 'rest_sanitize_boolean',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 

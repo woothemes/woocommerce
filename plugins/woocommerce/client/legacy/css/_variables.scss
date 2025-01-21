@@ -35,4 +35,7 @@ $subtext:           #767676 !default;                                  // small,
 	--wc-highligh-text: #{$highlightext};
 	--wc-content-bg: #{$contentbg};
 	--wc-subtext: #{$subtext};
+	--wc-form-border-color: rgba(32, 7, 7, 0.8);
+	--wc-form-border-radius: 4px;
+	--wc-form-border-width: 1px;
 }

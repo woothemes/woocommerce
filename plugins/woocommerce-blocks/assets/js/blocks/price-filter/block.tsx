@@ -118,7 +118,7 @@ const PriceFilterBlock = ( {
 		{},
 		isObject
 	);
-	const { results, isLoading } = useCollectionData( {
+	const { data, isLoading } = useCollectionData( {
 		queryPrices: true,
 		queryState: {
 			...backendQueryState,
@@ -128,8 +128,8 @@ const PriceFilterBlock = ( {
 	} );
 
 	const currency = getCurrencyFromPriceResponse(
-		objectHasProp( results, 'price_range' )
-			? ( results.price_range as CurrencyResponse )
+		objectHasProp( data, 'price_range' )
+			? ( data.price_range as CurrencyResponse )
 			: undefined
 	);
 
@@ -147,16 +147,16 @@ const PriceFilterBlock = ( {
 
 	const { minConstraint, maxConstraint } = usePriceConstraints( {
 		minPrice:
-			objectHasProp( results, 'price_range' ) &&
-			objectHasProp( results.price_range, 'min_price' ) &&
-			isString( results.price_range.min_price )
-				? results.price_range.min_price
+			objectHasProp( data, 'price_range' ) &&
+			objectHasProp( data.price_range, 'min_price' ) &&
+			isString( data.price_range.min_price )
+				? data.price_range.min_price
 				: undefined,
 		maxPrice:
-			objectHasProp( results, 'price_range' ) &&
-			objectHasProp( results.price_range, 'max_price' ) &&
-			isString( results.price_range.max_price )
-				? results.price_range.max_price
+			objectHasProp( data, 'price_range' ) &&
+			objectHasProp( data.price_range, 'max_price' ) &&
+			isString( data.price_range.max_price )
+				? data.price_range.max_price
 				: undefined,
 		minorUnit: currency.minorUnit,
 	} );

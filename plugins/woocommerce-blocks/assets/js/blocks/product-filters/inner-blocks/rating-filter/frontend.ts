@@ -6,67 +6,80 @@ import { getContext, store, getElement } from '@woocommerce/interactivity';
 /**
  * Internal dependencies
  */
-import type { ProductFiltersContext } from '../../frontend';
+import type { ProductFiltersStore } from '../../frontend';
 
-const filterRatingKey = 'rating_filter';
+type ProductFilterRatingContext = {
+	hasFilterOptions: boolean;
+	activeLabelTemplate: string;
+};
 
-/**
- * Get the rating list (an array of strings)
- * from the product filters context.
- *
- * @param {ProductFiltersContext} context The context
- * @return {Array} The rating filters
- */
-function getRatingFilters( context: ProductFiltersContext ): Array< string > {
-	if ( ! context.params[ filterRatingKey ] ) {
-		return [];
-	}
-
-	return context.params[ filterRatingKey ].split( ',' );
-}
-
-store( 'woocommerce/product-filter-rating', {
-	actions: {
-		toggleFilter: () => {
-			const context = getContext< ProductFiltersContext >(
+const { state, actions } = store( 'woocommerce/product-filter-rating', {
+	state: {
+		get selectedFilters() {
+			const productFiltersStore = store< ProductFiltersStore >(
 				'woocommerce/product-filters'
 			);
 
-			// Pick out the active filters from the context
-			const filtersList = getRatingFilters( context );
+			return ( productFiltersStore.state.activeFilters || [] )
+				.filter( ( item ) => item.type === 'rating' )
+				.map( ( item ) => item.value )
+				.filter( Boolean );
+		},
+		get hasSelectedFilters(): boolean {
+			return state.selectedFilters.length > 0;
+		},
+		get isItemSelected(): boolean {
+			const { props } = getElement();
 
-			const { ref } = getElement();
-			const value =
-				ref.getAttribute( 'data-target-value' ) ??
-				ref.getAttribute( 'value' );
+			if ( ! props.value ) return false;
 
-			const updatedFiltersList = filtersList.includes( value )
-				? [ ...filtersList.filter( ( filter ) => filter !== value ) ]
-				: [ ...filtersList, value ];
+			return state.selectedFilters.includes( props.value );
+		},
+	},
+	actions: {
+		getActiveLabel( label: string ) {
+			const { activeLabelTemplate } =
+				getContext< ProductFilterRatingContext >();
+			return activeLabelTemplate.replace( '{{label}}', label );
+		},
+		toggleFilter: () => {
+			const { props } = getElement();
+			let filterItem = props[ 'data-filter-item' ];
 
-			if ( updatedFiltersList.length === 0 ) {
-				delete context.params[ filterRatingKey ];
-				return;
+			if ( typeof filterItem === 'string' )
+				filterItem = JSON.parse( filterItem );
+
+			const { ariaLabel, value } = filterItem;
+
+			if ( ! value || ! ariaLabel ) return;
+
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+
+			if ( state.selectedFilters.includes( value ) ) {
+				productFiltersStore.actions.removeActiveFilter(
+					'rating',
+					value
+				);
+			} else {
+				productFiltersStore.actions.setActiveFilter( {
+					type: 'rating',
+					value,
+					label: actions.getActiveLabel( ariaLabel ),
+				} );
 			}
 
-			// Populate the context with the new rating filters
-			context.params = {
-				...context.params,
-				[ filterRatingKey ]: updatedFiltersList.join( ',' ),
-			};
+			productFiltersStore.actions.navigate();
 		},
-
 		clearFilters: () => {
-			const context = getContext< ProductFiltersContext >(
+			const productFiltersStore = store< ProductFiltersStore >(
 				'woocommerce/product-filters'
 			);
-			const updatedParams = context.params;
 
-			delete updatedParams[ filterRatingKey ];
+			productFiltersStore.actions.removeActiveFiltersByType( 'rating' );
 
-			context.params = {
-				...updatedParams,
-			};
+			productFiltersStore.actions.navigate();
 		},
 	},
 } );

@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-fixed the opt in checkbox to respect the user choice when previously opted out

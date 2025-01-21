@@ -15,16 +15,23 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
+import type { FeaturesProps } from './edit';
+
 export enum QuantitySelectorStyle {
 	Input = 'input',
 	Stepper = 'stepper',
 }
 
-type AddToCartFormSettings = {
+type AddToCartFormSettingsProps = {
 	quantitySelectorStyle: QuantitySelectorStyle;
 	setAttributes: ( attributes: {
 		quantitySelectorStyle: QuantitySelectorStyle;
 	} ) => void;
+
+	features: FeaturesProps;
 };
 
 const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
@@ -42,36 +49,40 @@ const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
 	}
 };
 
-export const Settings = ( {
+export const AddToCartFormSettings = ( {
 	quantitySelectorStyle,
 	setAttributes,
-}: AddToCartFormSettings ) => {
+	features,
+}: AddToCartFormSettingsProps ) => {
+	const { isStepperLayoutFeatureEnabled } = features;
+
 	return (
 		<InspectorControls>
-			<PanelBody title={ __( 'Quantity Selector', 'woocommerce' ) }>
-				<ToggleGroupControl
-					className="wc-block-editor-quantity-selector-style"
-					__nextHasNoMarginBottom
-					value={ quantitySelectorStyle }
-					isBlock
-					onChange={ ( value: QuantitySelectorStyle ) => {
-						setAttributes( {
-							quantitySelectorStyle:
-								value as QuantitySelectorStyle,
-						} );
-					} }
-					help={ getHelpText( quantitySelectorStyle ) }
-				>
-					<ToggleGroupControlOption
-						label={ __( 'Input', 'woocommerce' ) }
-						value={ QuantitySelectorStyle.Input }
-					/>
-					<ToggleGroupControlOption
-						label={ __( 'Stepper', 'woocommerce' ) }
-						value={ QuantitySelectorStyle.Stepper }
-					/>
-				</ToggleGroupControl>
-			</PanelBody>
+			{ isStepperLayoutFeatureEnabled && (
+				<PanelBody title={ __( 'Quantity Selector', 'woocommerce' ) }>
+					<ToggleGroupControl
+						__nextHasNoMarginBottom
+						value={ quantitySelectorStyle }
+						isBlock
+						onChange={ ( value: QuantitySelectorStyle ) => {
+							setAttributes( {
+								quantitySelectorStyle:
+									value as QuantitySelectorStyle,
+							} );
+						} }
+						help={ getHelpText( quantitySelectorStyle ) }
+					>
+						<ToggleGroupControlOption
+							label={ __( 'Input', 'woocommerce' ) }
+							value={ QuantitySelectorStyle.Input }
+						/>
+						<ToggleGroupControlOption
+							label={ __( 'Stepper', 'woocommerce' ) }
+							value={ QuantitySelectorStyle.Stepper }
+						/>
+					</ToggleGroupControl>
+				</PanelBody>
+			) }
 		</InspectorControls>
 	);
 };

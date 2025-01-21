@@ -55,12 +55,21 @@ export const goToPostEditor = async ( { page } ) => {
 };
 
 export const insertBlock = async ( page, blockName ) => {
+	// Focus on "Empty block" element before inserting a new block.
+	// Otherwise, Gutenberg nightly (v19.9-nightly) would display "{Block name} can't be inserted."
+	const emptyBlock = ( await getCanvas( page ) ).getByLabel( 'Empty block' );
+	if ( await emptyBlock.isVisible() ) {
+		await emptyBlock.click();
+	}
+
+	// With Gutenberg active we have Block Inserter name
 	await page
 		.getByRole( 'button', {
-			name: 'Toggle block inserter',
+			name: /Toggle block inserter|Block Inserter/,
 			expanded: false,
 		} )
 		.click();
+
 	await page.getByPlaceholder( 'Search', { exact: true } ).fill( blockName );
 	await page.getByRole( 'option', { name: blockName, exact: true } ).click();
 

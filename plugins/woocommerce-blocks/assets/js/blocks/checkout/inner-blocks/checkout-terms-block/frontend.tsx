@@ -8,7 +8,7 @@ import { CheckboxControl } from '@woocommerce/blocks-components';
 import { useCheckoutSubmit } from '@woocommerce/base-context/hooks';
 import { withInstanceId } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -35,10 +35,10 @@ const FrontendBlock = ( {
 
 	const validationErrorId = 'terms-and-conditions-' + instanceId;
 	const { setValidationErrors, clearValidationError } =
-		useDispatch( VALIDATION_STORE_KEY );
+		useDispatch( validationStore );
 
 	const error = useSelect( ( select ) => {
-		return select( VALIDATION_STORE_KEY ).getValidationError(
+		return select( validationStore ).getValidationError(
 			validationErrorId
 		);
 	} );
@@ -100,6 +100,7 @@ const FrontendBlock = ( {
 							disabled={ isDisabled }
 						>
 							<span
+								className="wc-block-components-checkbox__label"
 								dangerouslySetInnerHTML={ {
 									__html: text || termsCheckboxDefaultText,
 								} }
@@ -108,6 +109,7 @@ const FrontendBlock = ( {
 					</>
 				) : (
 					<span
+						className="wc-block-components-checkbox__label"
 						dangerouslySetInnerHTML={ {
 							__html: text || termsConsentDefaultText,
 						} }

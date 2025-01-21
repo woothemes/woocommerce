@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { BlockEditProps } from '@wordpress/blocks';
+import type { BlockEditProps } from '@wordpress/blocks';
+import type { AttributeCount } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -23,11 +24,6 @@ export type BlockAttributes = {
 export interface EditProps extends BlockEditProps< BlockAttributes > {
 	debouncedSpeak: ( label: string ) => void;
 }
-
-type AttributeCount = {
-	term: number;
-	count: number;
-};
 
 export function isAttributeCounts(
 	target: unknown

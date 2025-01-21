@@ -76,7 +76,7 @@ const config = {
 	maxFailures: E2E_MAX_FAILURES ? Number( E2E_MAX_FAILURES ) : 0,
 	forbidOnly: !! CI,
 	use: {
-		baseURL: BASE_URL,
+		baseURL: `${ BASE_URL }/`.replace( /\/+$/, '/' ),
 		screenshot: { mode: 'only-on-failure', fullPage: true },
 		stateDir: `${ testsRootPath }/.state/`,
 		trace:
@@ -84,20 +84,19 @@ const config = {
 				? 'retain-on-first-failure'
 				: 'off',
 		video: 'retain-on-failure',
-		viewport: { width: 1280, height: 720 },
 		actionTimeout: 20 * 1000,
 		navigationTimeout: 20 * 1000,
+		channel: 'chrome',
+		...devices[ 'Desktop Chrome' ],
 	},
 	snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}',
 	projects: [
 		{
 			name: 'ui',
-			use: { ...devices[ 'Desktop Chrome' ] },
 			testIgnore: '**/api-tests/**',
 		},
 		{
 			name: 'api',
-			use: { ...devices[ 'Desktop Chrome' ] },
 			testMatch: '**/api-tests/**',
 		},
 	],

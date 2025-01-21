@@ -126,7 +126,7 @@ const AttributeFilterBlock = ( {
 		useQueryStateByKey( 'attributes', [] );
 
 	const { results: attributeTerms, isLoading: attributeTermsLoading } =
-		useCollection< AttributeTerm[] >( {
+		useCollection< AttributeTerm >( {
 			namespace: '/wc/store/v1',
 			resourceName: 'products/attributes/terms',
 			resourceValues: [ attributeObject?.id || 0 ],
@@ -139,7 +139,7 @@ const AttributeFilterBlock = ( {
 		{},
 		isObject
 	);
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',
@@ -549,6 +549,7 @@ const AttributeFilterBlock = ( {
 					<>
 						<FormTokenField
 							key={ remountKey }
+							label={ attributeObject.label }
 							className={ clsx( {
 								'single-selection': ! multiple,
 								'is-loading': isLoading,
@@ -670,6 +671,11 @@ const AttributeFilterBlock = ( {
 						isLoading={ isLoading }
 						disabled={ getIsApplyButtonDisabled() }
 						onClick={ () => onSubmit( checked ) }
+						screenReaderLabel={ sprintf(
+							/* translators: %s is the attribute label */
+							__( 'Apply attribute filter: %s', 'woocommerce' ),
+							attributeObject.label
+						) }
 					/>
 				) }
 			</div>

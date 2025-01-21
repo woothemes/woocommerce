@@ -9,8 +9,9 @@ import { recordEvent } from '@woocommerce/tracks';
  * Internal dependencies
  */
 import PaymentRecommendations from '../payment-recommendations';
+import { PaymentRecommendations as PaymentRecommendationsWrapper } from '../payment-recommendations-wrapper';
 import { isWCPaySupported } from '../../task-lists/fills/PaymentGatewaySuggestions/components/WCPay';
-import { createNoticesFromResponse } from '~/lib/notices';
+import { createNoticesFromResponse } from '../../lib/notices';
 
 jest.mock( '@woocommerce/tracks', () => ( { recordEvent: jest.fn() } ) );
 
@@ -56,7 +57,27 @@ jest.mock( '../../lib/notices', () => ( {
 	} ),
 } ) );
 
+declare global {
+	interface Window {
+		wcAdminFeatures: Record< string, boolean >;
+	}
+}
+
 describe( 'Payment recommendations', () => {
+	afterEach( () => {
+		window.wcAdminFeatures[ 'reactify-classic-payments-settings' ] = false;
+	} );
+
+	it( 'should not render paymentGatewaySuggestions if reactify-classic-payments-settings feature flag is on', () => {
+		window.wcAdminFeatures[ 'reactify-classic-payments-settings' ] = true;
+
+		const { container } = render(
+			<PaymentRecommendationsWrapper page="wc-settings" tab="checkout" />
+		);
+
+		expect( container.firstChild ).toBeNull();
+	} );
+
 	it( 'should render nothing with no paymentGatewaySuggestions and country not defined', () => {
 		( useSelect as jest.Mock ).mockReturnValue( {
 			installedPaymentGateways: {},

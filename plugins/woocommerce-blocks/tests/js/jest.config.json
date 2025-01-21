@@ -34,16 +34,16 @@
 		"@woocommerce/utils": "assets/js/utils",
 		"@woocommerce/interactivity": "assets/js/interactivity",
 		"^react$": "<rootDir>/node_modules/react",
-		"^react-dom$": "<rootDir>/node_modules/react-dom"
+		"^react-dom$": "<rootDir>/node_modules/react-dom",
+		"^(.+)/build-module/(.*)$": "$1/build/$2",
+		"^client-zip$": "<rootDir>/tests/js/mocks/client-zip.js"
 	},
 	"setupFiles": [
 		"@wordpress/jest-preset-default/scripts/setup-globals.js",
 		"<rootDir>/tests/js/setup-globals.js",
 		"<rootDir>/tests/js/setup-fetch.js"
 	],
-	"setupFilesAfterEnv": [
-		"<rootDir>/tests/js/setup-after-env.ts"
-	],
+	"setupFilesAfterEnv": [ "<rootDir>/tests/js/setup-after-env.ts" ],
 	"testPathIgnorePatterns": [
 		"<rootDir>/bin/",
 		"<rootDir>/build/",
@@ -52,7 +52,7 @@
 		"<rootDir>/vendor/",
 		"<rootDir>/tests/"
 	],
-	"transformIgnorePatterns": [ "node_modules/?!(simple-html-tokenizer|is-plain-obj|is-plain-object|memize)" ],
+	"resolver": "<rootDir>/tests/js/jest-resolver.js",
 	"testEnvironment": "jsdom",
 	"preset": "@wordpress/jest-preset-default",
 	"transform": {

@@ -1,16 +1,27 @@
-const { test, expect } = require( '@playwright/test' );
+const { test, expect, request } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
-const { addProductsToCart } = require( '../../utils/pdp' );
-const { addAProductToCart } = require( '../../utils/cart' );
-const { getOrderIdFromUrl } = require( '../../utils/order' );
+const { setOption } = require( '../../utils/options' );
+const { setComingSoon } = require( '../../utils/coming-soon' );
+/**
+ * External dependencies
+ */
+import {
+	addAProductToCart,
+	addOneOrMoreProductToCart,
+	getOrderIdFromUrl,
+} from '@woocommerce/e2e-utils-playwright';
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 
 const guestEmail = 'checkout-guest@example.com';
 
 test.describe(
 	'Checkout page',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		const singleProductPrice = '9.99';
 		const simpleProductName = 'Checkout Page Product';
@@ -20,12 +31,32 @@ test.describe(
 		let guestOrderId, customerOrderId, productId, shippingZoneId;
 
 		test.beforeAll( async ( { baseURL } ) => {
+			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
+			// Set field visibility options
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_phone_field',
+				'required'
+			);
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_company_field',
+				'optional'
+			);
+			await setOption(
+				request,
+				baseURL,
+				'woocommerce_checkout_address_2_field',
+				'optional'
+			);
 			// ensure store address is US
 			await api.post( 'settings/general/batch', {
 				update: [
@@ -124,229 +155,273 @@ test.describe(
 			} );
 		} );
 
-		test( 'should display cart items in order review', async ( {
-			page,
-		} ) => {
-			await addAProductToCart( page, productId );
+		test(
+			'should display cart items in order review',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 
-			await expect( page.locator( 'td.product-name' ) ).toContainText(
-				simpleProductName
-			);
-			await expect(
-				page.locator( 'strong.product-quantity' )
-			).toContainText( '1' );
-			let totalPrice = await page
-				.getByRole( 'row', { name: 'Total' } )
-				.last()
-				.locator( 'td' )
-				.textContent();
-			totalPrice = Number( totalPrice.replace( /\$([\d.]+).*/, '$1' ) );
-			await expect( totalPrice ).toBeGreaterThanOrEqual(
-				Number( singleProductPrice )
-			);
-		} );
+				await expect( page.locator( 'td.product-name' ) ).toContainText(
+					simpleProductName
+				);
+				await expect(
+					page.locator( 'strong.product-quantity' )
+				).toContainText( '1' );
+				let totalPrice = await page
+					.getByRole( 'row', { name: 'Total' } )
+					.last()
+					.locator( 'td' )
+					.textContent();
+				totalPrice = Number(
+					totalPrice.replace( /\$([\d.]+).*/, '$1' )
+				);
+				await expect( totalPrice ).toBeGreaterThanOrEqual(
+					Number( singleProductPrice )
+				);
+			}
+		);
 
-		test( 'allows customer to choose available payment methods', async ( {
-			page,
-		} ) => {
-			// this time we're going to add two products to the cart
-			await addProductsToCart( page, simpleProductName, '2' );
+		test(
+			'allows customer to choose available payment methods',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				// this time we're going to add two products to the cart
+				await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
-			await expect(
-				page.locator( 'strong.product-quantity' )
-			).toContainText( '2' );
-			let totalPrice = await page
-				.getByRole( 'row', { name: 'Total' } )
-				.last()
-				.locator( 'td' )
-				.textContent();
-			totalPrice = Number( totalPrice.replace( /\$([\d.]+).*/, '$1' ) );
-			await expect( totalPrice ).toBeGreaterThanOrEqual(
-				Number( twoProductPrice )
-			);
+				await page.goto( 'checkout/' );
+				await expect(
+					page.locator( 'strong.product-quantity' )
+				).toContainText( '2' );
+				let totalPrice = await page
+					.getByRole( 'row', { name: 'Total' } )
+					.last()
+					.locator( 'td' )
+					.textContent();
+				totalPrice = Number(
+					totalPrice.replace( /\$([\d.]+).*/, '$1' )
+				);
+				await expect( totalPrice ).toBeGreaterThanOrEqual(
+					Number( twoProductPrice )
+				);
 
-			// check the payment methods
-			await expect(
-				page.locator( '#payment_method_bacs' )
-			).toBeEnabled();
-			await expect( page.locator( '#payment_method_cod' ) ).toBeEnabled();
-		} );
+				// check the payment methods
+				await expect(
+					page.locator( '#payment_method_bacs' )
+				).toBeEnabled();
+				await expect(
+					page.locator( '#payment_method_cod' )
+				).toBeEnabled();
+			}
+		);
 
-		test( 'allows customer to fill billing details', async ( { page } ) => {
-			// this time we're going to add three products to the cart
-			await addProductsToCart( page, simpleProductName, '3' );
+		test(
+			'allows customer to fill billing details',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				// this time we're going to add three products to the cart
+				await addOneOrMoreProductToCart( page, simpleProductName, '3' );
 
-			await page.goto( '/checkout/' );
-			await expect(
-				page.locator( 'strong.product-quantity' )
-			).toContainText( '3' );
-			let totalPrice = await page
-				.getByRole( 'row', { name: 'Total' } )
-				.last()
-				.locator( 'td' )
-				.textContent();
-			totalPrice = Number( totalPrice.replace( /\$([\d.]+).*/, '$1' ) );
-			await expect( totalPrice ).toBeGreaterThanOrEqual(
-				Number( threeProductPrice )
-			);
+				await page.goto( 'checkout/' );
+				await expect(
+					page.locator( 'strong.product-quantity' )
+				).toContainText( '3' );
+				let totalPrice = await page
+					.getByRole( 'row', { name: 'Total' } )
+					.last()
+					.locator( 'td' )
+					.textContent();
+				totalPrice = Number(
+					totalPrice.replace( /\$([\d.]+).*/, '$1' )
+				);
+				await expect( totalPrice ).toBeGreaterThanOrEqual(
+					Number( threeProductPrice )
+				);
 
-			// asserting that you can fill in the billing details
-			await expect(
-				page.locator( '#billing_first_name' )
-			).toBeEditable();
-			await expect( page.locator( '#billing_last_name' ) ).toBeEditable();
-			await expect( page.locator( '#billing_company' ) ).toBeEditable();
-			await expect( page.locator( '#billing_country' ) ).toBeEnabled();
-			await expect( page.locator( '#billing_address_1' ) ).toBeEditable();
-			await expect( page.locator( '#billing_address_2' ) ).toBeEditable();
-			await expect( page.locator( '#billing_city' ) ).toBeEditable();
-			await expect( page.locator( '#billing_state' ) ).toBeEnabled();
-			await expect( page.locator( '#billing_postcode' ) ).toBeEditable();
-			await expect( page.locator( '#billing_phone' ) ).toBeEditable();
-			await expect( page.locator( '#billing_email' ) ).toBeEditable();
-		} );
+				// asserting that you can fill in the billing details
+				await expect(
+					page.locator( '#billing_first_name' )
+				).toBeEditable();
+				await expect(
+					page.locator( '#billing_last_name' )
+				).toBeEditable();
+				await expect(
+					page.locator( '#billing_company' )
+				).toBeEditable();
+				await expect(
+					page.locator( '#billing_country' )
+				).toBeEnabled();
+				await expect(
+					page.locator( '#billing_address_1' )
+				).toBeEditable();
+				await expect(
+					page.locator( '#billing_address_2' )
+				).toBeEditable();
+				await expect( page.locator( '#billing_city' ) ).toBeEditable();
+				await expect( page.locator( '#billing_state' ) ).toBeEnabled();
+				await expect(
+					page.locator( '#billing_postcode' )
+				).toBeEditable();
+				await expect( page.locator( '#billing_phone' ) ).toBeEditable();
+				await expect( page.locator( '#billing_email' ) ).toBeEditable();
+			}
+		);
 
-		test( 'warn when customer is missing required details', async ( {
-			page,
-		} ) => {
-			await addAProductToCart( page, productId );
+		test(
+			'warn when customer is missing required details',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				await addAProductToCart( page, productId );
 
-			await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 
-			// first try submitting the form with no fields complete
-			await page.getByRole( 'button', { name: 'Place order' } ).click();
-			await expect(
-				page.locator( 'form[name="checkout"]' ).getByRole( 'alert' )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Billing First name is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Billing Last name is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Billing Street address is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Billing Town / City is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Billing ZIP Code is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Billing Phone is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Billing Email address is a required field.',
-				} )
-			).toBeVisible();
+				// first try submitting the form with no fields complete
+				await page
+					.getByRole( 'button', { name: 'Place order' } )
+					.click();
+				await expect(
+					page.locator( 'form[name="checkout"]' ).getByRole( 'alert' )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Billing First name is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Billing Last name is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Billing Street address is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Billing Town / City is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Billing ZIP Code is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Billing Phone is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Billing Email address is a required field.',
+					} )
+				).toBeVisible();
 
-			// toggle ship to different address, fill out billing info and confirm error shown
-			await page.getByText( 'Ship to a different address?' ).click();
-			await page.locator( '#billing_first_name' ).fill( 'Homer' );
-			await page.locator( '#billing_last_name' ).fill( 'Simpson' );
-			await page
-				.locator( '#billing_address_1' )
-				.fill( '123 Evergreen Terrace' );
-			await page.locator( '#billing_city' ).fill( 'Springfield' );
-			await page.locator( '#billing_country' ).selectOption( 'US' );
-			await page.locator( '#billing_state' ).selectOption( 'OR' );
-			await page.locator( '#billing_postcode' ).fill( '97403' );
-			await page.locator( '#billing_phone' ).fill( '555 555-5555' );
-			await page.locator( '#billing_email' ).fill( customer.email );
-			await page.getByRole( 'button', { name: 'Place order' } ).click();
+				// toggle ship to different address, fill out billing info and confirm error shown
+				await page.getByText( 'Ship to a different address?' ).click();
+				await page.locator( '#billing_first_name' ).fill( 'Homer' );
+				await page.locator( '#billing_last_name' ).fill( 'Simpson' );
+				await page
+					.locator( '#billing_address_1' )
+					.fill( '123 Evergreen Terrace' );
+				await page.locator( '#billing_city' ).fill( 'Springfield' );
+				await page.locator( '#billing_country' ).selectOption( 'US' );
+				await page.locator( '#billing_state' ).selectOption( 'OR' );
+				await page.locator( '#billing_postcode' ).fill( '97403' );
+				await page.locator( '#billing_phone' ).fill( '555 555-5555' );
+				await page.locator( '#billing_email' ).fill( customer.email );
+				await page
+					.getByRole( 'button', { name: 'Place order' } )
+					.click();
 
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Shipping First name is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Shipping Last name is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Shipping Street address is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Shipping Town / City is a required field.',
-				} )
-			).toBeVisible();
-			await expect(
-				page.getByRole( 'link', {
-					name: 'Shipping ZIP Code is a required field.',
-				} )
-			).toBeVisible();
-		} );
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Shipping First name is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Shipping Last name is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Shipping Street address is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Shipping Town / City is a required field.',
+					} )
+				).toBeVisible();
+				await expect(
+					page.getByRole( 'link', {
+						name: 'Shipping ZIP Code is a required field.',
+					} )
+				).toBeVisible();
+			}
+		);
 
-		test( 'allows customer to fill shipping details', async ( {
-			page,
-		} ) => {
-			await addProductsToCart( page, simpleProductName, '2' );
+		test(
+			'allows customer to fill shipping details',
+			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+			async ( { page } ) => {
+				await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
-			await expect(
-				page.locator( 'strong.product-quantity' )
-			).toContainText( '2' );
-			let totalPrice = await page
-				.getByRole( 'row', { name: 'Total' } )
-				.last()
-				.locator( 'td' )
-				.textContent();
-			totalPrice = Number( totalPrice.replace( /\$([\d.]+).*/, '$1' ) );
-			await expect( totalPrice ).toBeGreaterThanOrEqual(
-				Number( twoProductPrice )
-			);
+				await page.goto( 'checkout/' );
+				await expect(
+					page.locator( 'strong.product-quantity' )
+				).toContainText( '2' );
+				let totalPrice = await page
+					.getByRole( 'row', { name: 'Total' } )
+					.last()
+					.locator( 'td' )
+					.textContent();
+				totalPrice = Number(
+					totalPrice.replace( /\$([\d.]+).*/, '$1' )
+				);
+				await expect( totalPrice ).toBeGreaterThanOrEqual(
+					Number( twoProductPrice )
+				);
 
-			await page.locator( '#ship-to-different-address' ).click();
+				await page.locator( '#ship-to-different-address' ).click();
 
-			// asserting that you can fill in the shipping details
-			await expect(
-				page.locator( '#shipping_first_name' )
-			).toBeEditable();
-			await expect(
-				page.locator( '#shipping_last_name' )
-			).toBeEditable();
-			await expect( page.locator( '#shipping_company' ) ).toBeEditable();
-			await expect( page.locator( '#shipping_country' ) ).toBeEnabled();
-			await expect(
-				page.locator( '#shipping_address_1' )
-			).toBeEditable();
-			await expect(
-				page.locator( '#shipping_address_2' )
-			).toBeEditable();
-			await expect( page.locator( '#shipping_city' ) ).toBeEditable();
-			await expect( page.locator( '#shipping_state' ) ).toBeEnabled();
-			await expect( page.locator( '#shipping_postcode' ) ).toBeEditable();
-		} );
+				// asserting that you can fill in the shipping details
+				await expect(
+					page.locator( '#shipping_first_name' )
+				).toBeEditable();
+				await expect(
+					page.locator( '#shipping_last_name' )
+				).toBeEditable();
+				await expect(
+					page.locator( '#shipping_company' )
+				).toBeEditable();
+				await expect(
+					page.locator( '#shipping_country' )
+				).toBeEnabled();
+				await expect(
+					page.locator( '#shipping_address_1' )
+				).toBeEditable();
+				await expect(
+					page.locator( '#shipping_address_2' )
+				).toBeEditable();
+				await expect( page.locator( '#shipping_city' ) ).toBeEditable();
+				await expect( page.locator( '#shipping_state' ) ).toBeEnabled();
+				await expect(
+					page.locator( '#shipping_postcode' )
+				).toBeEditable();
+			}
+		);
 
 		test( 'allows guest customer to place an order', async ( { page } ) => {
 			await test.step( 'Add 2 products to the cart', async () => {
-				await addProductsToCart( page, simpleProductName, '2' );
+				await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 			} );
 
 			await test.step( 'Go to checkout and confirm that products and totals are as expected', async () => {
-				await page.goto( '/checkout/' );
+				await page.goto( 'checkout/' );
 				await expect(
 					page.locator( 'strong.product-quantity' )
 				).toContainText( '2' );
@@ -365,23 +440,27 @@ test.describe(
 
 			await test.step( 'Complete the checkout form', async () => {
 				await page
-					.getByRole( 'textbox', { name: 'First name *' } )
+					.getByRole( 'textbox', { name: 'First name' } )
 					.fill( 'Lisa' );
 				await page
-					.getByRole( 'textbox', { name: 'Last name *' } )
+					.getByRole( 'textbox', { name: 'Last name' } )
 					.fill( 'Simpson' );
 				await page
-					.getByRole( 'textbox', { name: 'Street address *' } )
+					.getByRole( 'textbox', { name: 'Street address' } )
 					.fill( '123 Evergreen Terrace' );
 				await page
-					.getByRole( 'textbox', { name: 'Town / City *' } )
+					.getByRole( 'textbox', { name: 'Town / City' } )
 					.fill( 'Springfield' );
 				await page.locator( '#billing_state' ).selectOption( 'OR' );
 				await page
-					.getByRole( 'textbox', { name: 'ZIP Code *' } )
+					.getByRole( 'textbox', { name: 'ZIP Code' } )
 					.fill( '97403' );
-				await page.getByLabel( 'Phone *' ).fill( '555 555-5555' );
-				await page.getByLabel( 'Email address *' ).fill( guestEmail );
+				await page
+					.getByRole( 'textbox', { name: 'Phone' } )
+					.fill( '555 555-5555' );
+				await page
+					.getByRole( 'textbox', { name: 'Email address' } )
+					.fill( guestEmail );
 
 				await page.getByText( 'Cash on delivery' ).click();
 
@@ -418,7 +497,7 @@ test.describe(
 					0
 				);
 				await page.waitForTimeout( 2000 ); // needs some time before reload for change to take effect.
-				await page.reload( { waitForLoadState: 'networkidle' } );
+				await page.reload();
 				await expect(
 					page.getByText(
 						/confirm the email address linked to the order | verify the email address associated /
@@ -509,9 +588,9 @@ test.describe(
 				)
 			).toBeVisible();
 
-			await addProductsToCart( page, simpleProductName, '2' );
+			await addOneOrMoreProductToCart( page, simpleProductName, '2' );
 
-			await page.goto( '/checkout/' );
+			await page.goto( 'checkout/' );
 			await expect(
 				page.locator( 'strong.product-quantity' )
 			).toContainText( '2' );

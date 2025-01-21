@@ -17,12 +17,7 @@ import {
 import { isWpVersion } from '@woocommerce/settings';
 import classnames from 'classnames';
 import { MouseEvent } from 'react';
-import {
-	Button,
-	Popover,
-	/* @ts-expect-error missing types. */
-	ToolbarItem,
-} from '@wordpress/components';
+import { Button, Popover, ToolbarItem } from '@wordpress/components';
 // eslint-disable-next-line @woocommerce/dependency-group
 import {
 	store as preferencesStore,
@@ -89,7 +84,6 @@ export function HeaderToolbar( {
 			// @ts-expect-error These selectors are available in the block data store.
 			getBlockSelectionStart,
 		} = select( blockEditorStore );
-		// @ts-expect-error These selectors are available in the block data store.
 		const { get: getPreference } = select( preferencesStore );
 
 		return {
@@ -132,6 +126,7 @@ export function HeaderToolbar( {
 							ref={ inserterButton }
 							as={ Button }
 							className="woocommerce-iframe-editor__header-inserter-toggle"
+							// @ts-expect-error the prop variant is passed to the Button component
 							variant="primary"
 							isPressed={ isInserterOpened }
 							onMouseDown={ (
@@ -152,12 +147,16 @@ export function HeaderToolbar( {
 						{ isLargeViewport && (
 							<ToolbarItem
 								as={ ToolSelector }
+								// @ts-expect-error the prop size is passed to the ToolSelector component
 								disabled={ isTextModeEnabled }
 								size="compact"
 							/>
 						) }
+						{ /* @ts-expect-error the prop size is passed to the EditorHistoryUndo component */ }
 						<ToolbarItem as={ EditorHistoryUndo } size="compact" />
+						{ /* @ts-expect-error the prop size is passed to the EditorHistoryRedo component */ }
 						<ToolbarItem as={ EditorHistoryRedo } size="compact" />
+						{ /* @ts-expect-error the prop size is passed to the DocumentOverview component */ }
 						<ToolbarItem as={ DocumentOverview } size="compact" />
 					</div>
 				</NavigableToolbar>
@@ -174,7 +173,7 @@ export function HeaderToolbar( {
 							{ /* @ts-expect-error missing type */ }
 							<BlockToolbar hideDragHandle />
 						</div>
-						{ /* @ts-expect-error missing type */ }
+						{ /* @ts-expect-error name does exist on PopoverSlot see: https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/popover/index.tsx#L555 */ }
 						<Popover.Slot name="block-toolbar" />
 						{ hasBlockSelection && (
 							<Button

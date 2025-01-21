@@ -6,6 +6,7 @@ const {
 	isBlockProductEditorEnabled,
 	toggleBlockProductEditor,
 } = require( '../../../../utils/simple-products' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 const ALL_PRODUCTS_URL = 'wp-admin/edit.php?post_type=product';
 const NEW_EDITOR_ADD_PRODUCT_URL =
@@ -26,7 +27,7 @@ async function disableNewEditorIfEnabled( browser ) {
 
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'Enable block product editor', { tag: '@gutenberg' }, () => {
+test.describe( 'Enable block product editor', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Enabled', () => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 

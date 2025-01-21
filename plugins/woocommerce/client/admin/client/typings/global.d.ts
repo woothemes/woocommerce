@@ -8,7 +8,11 @@ declare global {
 			adminUrl: string;
 			currentUserId: number;
 			currentThemeIsFSETheme: boolean;
+			countries: Record< string, string >;
 			admin: {
+				woocommerce_payments_nox_profile?: {
+					business_country_code: string;
+				};
 				wcpay_welcome_page_connect_nonce: string;
 				currentUserData: {
 					first_name: string;
@@ -16,7 +20,7 @@ declare global {
 				plugins: {
 					activePlugins: string[];
 					installedPlugins: string[];
-				},
+				};
 				wcpayWelcomePageIncentive: {
 					id: string;
 					description: string;
@@ -25,6 +29,11 @@ declare global {
 				};
 				currency?: {
 					symbol: string;
+				};
+				preloadSettings?: {
+					general?: {
+						woocommerce_default_country: string;
+					};
 				};
 				currentUserId: number;
 				blueprint_upload_nonce?: string;
@@ -61,19 +70,22 @@ declare global {
 			'shipping-smart-defaults': boolean;
 			'shipping-setting-tour': boolean;
 			'launch-your-store': boolean;
-			'blueprint': boolean;
+			blueprint: boolean;
 			'reactify-classic-payments-settings': boolean;
-			"add-to-cart-with-options-stepper-layout": boolean
+			'add-to-cart-with-options-stepper-layout': boolean;
 		};
 		wp: {
 			updates?: {
-				ajax: ( action, data: {
-					slug?: string;
-					plugin?: string;
-					theme?: string;
-					success?: function;
-					error?: function;
-				} ) => JQuery.Promise;
+				ajax: (
+					action,
+					data: {
+						slug?: string;
+						plugin?: string;
+						theme?: string;
+						success?: function;
+						error?: function;
+					}
+				) => JQuery.Promise;
 			};
 			autosave?: {
 				server: {
@@ -84,7 +96,7 @@ declare global {
 				frames?: {
 					img_select?: wp.media.frame;
 				};
-				(options: wp.media.frameOptions): wp.media.frame;
+				( options: wp.media.frameOptions ): wp.media.frame;
 			};
 		};
 		tinymce?: {
@@ -100,8 +112,8 @@ declare global {
 			ajax_url: string;
 			nonces: {
 				gateway_toggle?: string;
-			}
-		},
+			};
+		};
 	}
 	namespace wp.media {
 		interface frame {

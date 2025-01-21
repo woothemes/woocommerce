@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const { variableProducts: utils } = require( '../../../../utils' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 const {
 	createVariableProduct,
 	showVariableProductTour,
@@ -27,7 +28,7 @@ let productId_indivEdit,
 	defaultVariation,
 	variationIds_indivEdit;
 
-test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
+test.describe( 'Update variations', { tag: tags.GUTENBERG }, () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
 
 	test.beforeAll( async ( { browser } ) => {
@@ -115,7 +116,7 @@ test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
 
 		await test.step( 'Go to the "Edit product" page.', async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId_indivEdit }&action=edit#variable_product_options`
+				`wp-admin/post.php?post=${ productId_indivEdit }&action=edit#variable_product_options`
 			);
 		} );
 
@@ -289,7 +290,7 @@ test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
 	test( 'can bulk edit variations', async ( { page } ) => {
 		await test.step( 'Go to the "Edit product" page.', async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId_bulkEdit }&action=edit#variable_product_options`
+				`wp-admin/post.php?post=${ productId_bulkEdit }&action=edit#variable_product_options`
 			);
 		} );
 
@@ -325,7 +326,7 @@ test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
 	test( 'can delete all variations', async ( { page } ) => {
 		await test.step( 'Go to the "Edit product" page.', async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId_deleteAll }&action=edit#variable_product_options`
+				`wp-admin/post.php?post=${ productId_deleteAll }&action=edit#variable_product_options`
 			);
 		} );
 
@@ -351,7 +352,7 @@ test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
 	test( 'can manage stock levels', async ( { page } ) => {
 		await test.step( 'Go to the "Edit product" page.', async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId_manageStock }&action=edit#variable_product_options`
+				`wp-admin/post.php?post=${ productId_manageStock }&action=edit#variable_product_options`
 			);
 		} );
 
@@ -435,7 +436,7 @@ test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
 	test( 'can set variation defaults', async ( { page } ) => {
 		await test.step( 'Go to the "Edit product" page.', async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId_variationDefaults }&action=edit#variable_product_options`
+				`wp-admin/post.php?post=${ productId_variationDefaults }&action=edit#variable_product_options`
 			);
 		} );
 
@@ -494,7 +495,7 @@ test.describe( 'Update variations', { tag: '@gutenberg' }, () => {
 	test( 'can remove a variation', async ( { page } ) => {
 		await test.step( 'Go to the "Edit product" page.', async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId_removeVariation }&action=edit#variable_product_options`
+				`wp-admin/post.php?post=${ productId_removeVariation }&action=edit#variable_product_options`
 			);
 		} );
 

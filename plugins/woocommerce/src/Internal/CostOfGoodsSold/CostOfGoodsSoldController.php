@@ -5,14 +5,11 @@ namespace Automattic\WooCommerce\Internal\CostOfGoodsSold;
 
 use Automattic\WooCommerce\Internal\Features\FeaturesController;
 use Automattic\WooCommerce\Internal\RegisterHooksInterface;
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 
 /**
  * Main controller for the Cost of Goods Sold feature.
  */
 class CostOfGoodsSoldController implements RegisterHooksInterface {
-
-	use AccessiblePrivateMethods;
 
 	/**
 	 * The instance of FeaturesController to use.
@@ -25,7 +22,7 @@ class CostOfGoodsSoldController implements RegisterHooksInterface {
 	 * Register hooks.
 	 */
 	public function register() {
-		self::add_action( 'woocommerce_register_feature_definitions', array( $this, 'add_feature_definition' ) );
+		add_action( 'woocommerce_register_feature_definitions', array( $this, 'add_feature_definition' ) );
 	}
 
 	/**
@@ -51,8 +48,10 @@ class CostOfGoodsSoldController implements RegisterHooksInterface {
 	 * Add the feature information for the features settings page.
 	 *
 	 * @param FeaturesController $features_controller The instance of FeaturesController to use.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function add_feature_definition( $features_controller ) {
+	public function add_feature_definition( $features_controller ) {
 		$definition = array(
 			'description'        => __( 'Allows entering cost of goods sold information for products. Feature under active development, enable only for testing purposes', 'woocommerce' ),
 			'is_experimental'    => true,

@@ -18,7 +18,7 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 /**
  * Internal dependencies
  */
-const { getEntryConfig } = require( './webpack-entries' );
+const { getEntryConfig, genericBlocks } = require( './webpack-entries' );
 const {
 	ASSET_CHECK,
 	NODE_ENV,
@@ -296,7 +296,10 @@ const getMainConfig = ( options = {} ) => {
 								.split( '/' )
 								.at( 1 );
 
-							if ( metadata.parent )
+							if (
+								metadata.parent &&
+								! genericBlocks[ blockName ]
+							)
 								return `./inner-blocks/${ blockName }/block.json`;
 							return `./${ blockName }/block.json`;
 						},

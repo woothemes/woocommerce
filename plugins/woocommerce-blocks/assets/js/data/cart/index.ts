@@ -1,7 +1,12 @@
 /**
  * External dependencies
  */
-import { register, subscribe, createReduxStore } from '@wordpress/data';
+import {
+	register,
+	subscribe,
+	createReduxStore,
+	dispatch as wpDispatch,
+} from '@wordpress/data';
 import { controls as dataControls } from '@wordpress/data-controls';
 
 /**
@@ -12,24 +17,48 @@ import * as selectors from './selectors';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
 import reducer from './reducers';
-import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 import { pushChanges, flushChanges } from './push-changes';
 import {
 	updatePaymentMethods,
 	debouncedUpdatePaymentMethods,
 } from './update-payment-methods';
-import { ResolveSelectFromMap } from '../mapped-types';
+import {
+	hasCartSession,
+	persistenceLayer,
+	isAddingToCart,
+} from './persistence-layer';
+import { defaultCartState } from './default-state';
 
-const store = createReduxStore( STORE_KEY, {
+export const config = {
 	reducer,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	actions: actions as any,
 	controls: dataControls,
 	selectors,
 	resolvers,
-} );
+	initialState: {
+		...defaultCartState,
+		cartData: {
+			...defaultCartState.cartData,
+			...( persistenceLayer.get() || {} ),
+		},
+	},
+};
+export const store = createReduxStore( STORE_KEY, config );
 
 register( store );
+
+// The resolver for getCartData fires off an API request. But if we know the cart is empty, we can skip the request.
+// Likewise, if we have a valid persistent cart, we can skip the request.
+// The only reliable way to check if the cart is empty is to check the cookies.
+window.addEventListener( 'load', () => {
+	if (
+		( ! hasCartSession() || persistenceLayer.get() ) &&
+		! isAddingToCart
+	) {
+		wpDispatch( store ).finishResolution( 'getCartData' );
+	}
+} );
 
 // Pushes changes whenever the store is updated.
 subscribe( pushChanges, store );
@@ -60,32 +89,3 @@ const unsubscribeUpdatePaymentMethods = subscribe( async () => {
 }, store );
 
 export const CART_STORE_KEY = STORE_KEY;
-
-declare module '@wordpress/data' {
-	function dispatch(
-		key: typeof STORE_KEY
-	): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap<
-		typeof selectors
-	> & {
-		hasFinishedResolution: ( selector: string ) => boolean;
-	};
-}
-
-/**
- * CartDispatchFromMap is a type that maps the cart store's action creators to the dispatch function passed to thunks.
- */
-export type CartDispatchFromMap = DispatchFromMap< typeof actions >;
-
-/**
- * CartResolveSelectFromMap is a type that maps the cart store's resolvers and selectors to the resolveSelect function
- * passed to thunks.
- */
-export type CartResolveSelectFromMap = ResolveSelectFromMap<
-	typeof resolvers & typeof selectors
->;
-
-/**
- * CartSelectFromMap is a type that maps the cart store's selectors to the select function passed to thunks.
- */
-export type CartSelectFromMap = SelectFromMap< typeof selectors >;

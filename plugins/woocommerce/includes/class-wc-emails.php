@@ -11,6 +11,7 @@
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -291,6 +292,20 @@ class WC_Emails {
 	 */
 	public function replace_placeholders( $string ) {
 		$domain = wp_parse_url( home_url(), PHP_URL_HOST );
+
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			$string = str_replace(
+				array(
+					'{store_address}',
+					'{store_email}',
+				),
+				array(
+					$this->get_store_address(),
+					$this->get_from_address(),
+				),
+				$string
+			);
+		}
 
 		return str_replace(
 			array(
@@ -671,6 +686,47 @@ class WC_Emails {
 	 */
 	private function get_blogname() {
 		return wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+	}
+
+	/**
+	 * Get store address formatted for emails.
+	 *
+	 * @return string
+	 */
+	private function get_store_address() {
+		add_filter(
+			'woocommerce_formatted_address_force_country_display',
+			array( $this, 'get_store_address_force_country_display' ),
+			5
+		);
+		$result = wp_specialchars_decode(
+			WC()->countries->get_formatted_address(
+				array(
+					'address_1' => WC()->countries->get_base_address(),
+					'address_2' => WC()->countries->get_base_address_2(),
+					'city'      => WC()->countries->get_base_city(),
+					'state'     => WC()->countries->get_base_state(),
+					'country'   => WC()->countries->get_base_country(),
+					'postcode'  => WC()->countries->get_base_postcode(),
+				)
+			)
+		);
+		// Replace newlines by commas.
+		$result = preg_replace( '/<br\/?>/i', ', ', $result );
+		remove_filter(
+			'woocommerce_formatted_address_force_country_display',
+			array( $this, 'get_store_address_force_country_display' )
+		);
+		return $result;
+	}
+
+	/**
+	 * Force country display, used by WC_Emails::get_store address() method
+	 *
+	 * @return bool
+	 */
+	public function get_store_address_force_country_display() {
+		return true;
 	}
 
 	/**

@@ -9,6 +9,8 @@
  * @version 2.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\DiscountsUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
@@ -630,6 +632,8 @@ class WC_Cart extends WC_Legacy_Cart {
 	/**
 	 * Empties the cart and optionally the persistent cart too.
 	 *
+	 * @since 9.7.0 Also clears shipping methods and packages since the items they are linked to are cleared.
+	 *
 	 * @param bool $clear_persistent_cart Should the persistent cart be cleared too. Defaults to true.
 	 */
 	public function empty_cart( $clear_persistent_cart = true ) {
@@ -649,6 +653,7 @@ class WC_Cart extends WC_Legacy_Cart {
 		}
 
 		$this->fees_api->remove_all_fees();
+		WC()->shipping()->reset_shipping();
 
 		do_action( 'woocommerce_cart_emptied', $clear_persistent_cart );
 	}
@@ -743,7 +748,7 @@ class WC_Cart extends WC_Legacy_Cart {
 		foreach ( $this->get_cart() as $cart_item_key => $values ) {
 			$product = $values['data'];
 
-			if ( ! $product || ! $product->exists() || 'trash' === $product->get_status() ) {
+			if ( ! $product || ! $product->exists() || ProductStatus::TRASH === $product->get_status() ) {
 				$this->set_quantity( $cart_item_key, 0 );
 				$return = new WP_Error( 'invalid', __( 'An item which is no longer available was removed from your cart.', 'woocommerce' ) );
 			}
@@ -827,7 +832,7 @@ class WC_Cart extends WC_Legacy_Cart {
 					$in_cart[]   = $values['product_id'];
 
 					// Add variations to the in cart array.
-					if ( $values['data']->is_type( 'variation' ) ) {
+					if ( $values['data']->is_type( ProductType::VARIATION ) ) {
 						$in_cart[] = $values['variation_id'];
 					}
 				}
@@ -1036,11 +1041,11 @@ class WC_Cart extends WC_Legacy_Cart {
 			$product_data = wc_get_product( $variation_id ? $variation_id : $product_id );
 			$quantity     = apply_filters( 'woocommerce_add_to_cart_quantity', $quantity, $product_id );
 
-			if ( $quantity <= 0 || ! $product_data || 'trash' === $product_data->get_status() ) {
+			if ( $quantity <= 0 || ! $product_data || ProductStatus::TRASH === $product_data->get_status() ) {
 				return false;
 			}
 
-			if ( $product_data->is_type( 'variation' ) ) {
+			if ( $product_data->is_type( ProductType::VARIATION ) ) {
 				$missing_attributes = array();
 				$parent_data        = wc_get_product( $product_data->get_parent_id() );
 
@@ -1132,7 +1137,7 @@ class WC_Cart extends WC_Legacy_Cart {
 			if (
 				0 < $variation_id && // Only check if there's any variation_id.
 				(
-					! $product_data->is_type( 'variation' ) || // Check if isn't a variation, it suppose to be a variation at this point.
+					! $product_data->is_type( ProductType::VARIATION ) || // Check if isn't a variation, it suppose to be a variation at this point.
 					$product_data->get_parent_id() !== $product_id // Check if belongs to the selected variable product.
 				)
 			) {
@@ -1170,7 +1175,7 @@ class WC_Cart extends WC_Legacy_Cart {
 					$message         = apply_filters( 'woocommerce_cart_product_cannot_add_another_message', $message, $product_data );
 					$wp_button_class = wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '';
 
-					throw new Exception( sprintf( '%s <a href="%s" class="button wc-forward%s">%s</a>', $message, wc_get_cart_url(), esc_attr( $wp_button_class ), __( 'View cart', 'woocommerce' ) ) );
+					throw new Exception( sprintf( '%s <a href="%s" class="button wc-forward%s">%s</a>', $message, esc_url( wc_get_cart_url() ), esc_attr( $wp_button_class ), __( 'View cart', 'woocommerce' ) ) );
 				}
 			}
 
@@ -1235,7 +1240,7 @@ class WC_Cart extends WC_Legacy_Cart {
 						'%s <a href="%s" class="button wc-forward%s">%s</a>',
 						/* translators: 1: quantity in stock 2: current quantity */
 						sprintf( __( 'You cannot add that amount to the cart &mdash; we have %1$s in stock and you already have %2$s in your cart.', 'woocommerce' ), wc_format_stock_quantity_for_display( $stock_quantity, $product_data ), wc_format_stock_quantity_for_display( $stock_quantity_in_cart, $product_data ) ),
-						wc_get_cart_url(),
+						esc_url( wc_get_cart_url() ),
 						esc_attr( $wp_button_class ),
 						__( 'View cart', 'woocommerce' )
 					);
@@ -1423,6 +1428,15 @@ class WC_Cart extends WC_Legacy_Cart {
 	/*
 	 * Shipping related functions.
 	 */
+
+	/**
+	 * Get selected shipping methods after calculation.
+	 *
+	 * @return array
+	 */
+	public function get_shipping_methods() {
+		return $this->shipping_methods;
+	}
 
 	/**
 	 * Uses the shipping class to calculate shipping then gets the totals when its finished.

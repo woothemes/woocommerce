@@ -160,4 +160,22 @@ class ExportWCShipping implements StepExporter {
 	public function get_step_name() {
 		return SetWCShipping::get_step_name();
 	}
+
+	/**
+	 * Return label used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_label() {
+		return __( 'Shipping', 'woocommerce' );
+	}
+
+	/**
+	 * Return description used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_description() {
+		return __( 'It includes shipping settings', 'woocommerce' );
+	}
 }

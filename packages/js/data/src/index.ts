@@ -31,11 +31,20 @@ export { EXPERIMENTAL_PRODUCT_FORM_STORE_NAME } from './product-form';
 export { EXPERIMENTAL_TAX_CLASSES_STORE_NAME } from './tax-classes';
 export { PaymentGateway } from './payment-gateways/types';
 export {
-	OfflinePaymentGateway,
-	RegisteredPaymentGateway,
+	PaymentProvider,
+	PaymentProviderType,
+	PaymentProviderState,
+	PaymentProviderOnboardingState,
+	PaymentGatewayProvider,
+	OfflinePaymentMethodProvider,
+	PaymentExtensionSuggestionProvider,
+	OfflinePmsGroupProvider,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
+	PaymentIncentive,
 	EnableGatewayResponse,
+	PaymentGatewayLink,
+	RecommendedPaymentMethod,
 } from './payment-settings/types';
 export { ShippingMethod } from './shipping-methods/types';
 
@@ -94,6 +103,9 @@ export {
 export * from './onboarding/types';
 export * from './plugins/types';
 export { PluginSelectors } from './plugins/selectors';
+export { PaymentSelectors } from './payment-gateways/selectors';
+export { OnboardingSelectors } from './onboarding/selectors';
+export { PaymentSettingsSelectors } from './payment-settings/selectors';
 export { ActionDispatchers as PluginActions } from './plugins/actions';
 export * from './products/types';
 export type {
