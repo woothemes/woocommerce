@@ -13,6 +13,7 @@ use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Admin\Analytics;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 use Automattic\WooCommerce\Internal\BrandingController;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -291,7 +292,7 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 				wp_enqueue_script( 'wc-admin-variation-meta-boxes' );
 
 				$params = array(
-					'post_id'                             => isset( $post->ID ) ? $post->ID : '',
+					'post_id'                             => $post->ID ?? '',
 					'plugin_url'                          => WC()->plugin_url(),
 					'ajax_url'                            => admin_url( 'admin-ajax.php' ),
 					'woocommerce_placeholder_img_src'     => wc_placeholder_img_src(),
@@ -322,6 +323,21 @@ if ( ! class_exists( 'WC_Admin_Assets', false ) ) :
 					'i18n_variation_cost_remove_warning'  => esc_js( __( 'The custom cost of goods sold will revert back to their default value for all the variations - would you like to continue?', 'woocommerce' ) ),
 					'variations_per_page'                 => absint( apply_filters( 'woocommerce_admin_meta_boxes_variations_per_page', 15 ) ),
 				);
+
+                $cogs_controller = wc_get_container()->get(CostOfGoodsSoldController::class);
+                if($cogs_controller->feature_is_enabled()) {
+                    $variation_cogs_count = null;
+
+                    $post_id = $post->ID ?? null;
+                    if(!is_null($post)) {
+                        $variation_cogs_count = $cogs_controller->get_variations_with_custom_cost_count($post_id);
+                    }
+
+                    $params['i18n_variation_cost_remove_warning'] =
+                        0 === ($variation_cogs_count ?? 0) ?
+                            esc_js( __( 'The custom cost of goods will revert back to their default value for all the variations - would you like to continue?', 'woocommerce' ) ) :
+                            esc_js( sprintf( __( 'A total of %d custom cost of goods values will revert back to their default value - would you like to continue?', 'woocommerce' ), $variation_cogs_count ) );
+                }
 
 				wp_localize_script( 'wc-admin-variation-meta-boxes', 'woocommerce_admin_meta_boxes_variations', $params );
 			}

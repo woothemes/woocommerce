@@ -64,4 +64,113 @@ class CostOfGoodsSoldController implements RegisterHooksInterface {
 			$definition
 		);
 	}
+
+	/**
+	 * Get the count of variations that have a custom Cost of Goods Sold value set.
+	 * For non-variable products this will always return zero.
+	 *
+	 * @param int $product_id Product id.
+	 * @return int|null Count of variations that have a custom Cost of Goods Sold value set, null in case of error.
+	 */
+	public function get_variations_with_custom_cost_count( int $product_id ): ?int {
+		try {
+			return self::get_variations_with_custom_cost_count_core( $product_id );
+		} catch ( \Exception $e ) {
+			return null;
+		}
+	}
+
+	/**
+	 * Core function to get the count of variations that have a custom Cost of Goods Sold value set
+	 * (doesn't catch exceptions).
+	 *
+	 * @param int $product_id Product id.
+	 * @return int|null Count of variations that have a custom Cost of Goods Sold value set, null in case of error.
+	 */
+	private function get_variations_with_custom_cost_count_core( int $product_id ): ?int {
+		$counts = get_transient( 'woocommerce_variations_with_custom_cost_counts' );
+		if ( false === $counts ) {
+			$counts = array();
+		}
+
+		$count = $counts[ $product_id ] ?? null;
+		if ( is_null( $count ) ) {
+			global $wpdb;
+
+			$count = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*) FROM {$wpdb->postmeta} pm
+					JOIN {$wpdb->posts} p ON pm.post_id=p.ID
+					WHERE p.post_parent=%d AND pm.meta_key='_cogs_total_value' AND post_type=%s",
+					$product_id,
+					'product_variation'
+				)
+			);
+
+			if ( ! is_null( $count ) ) {
+				$count                 = (int) $count;
+				$counts[ $product_id ] = $count;
+				set_transient( 'woocommerce_variations_with_custom_cost_counts', $counts, HOUR_IN_SECONDS );
+			}
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Remove the cached count of variations that have a custom Cost of Goods Sold value set,
+	 * if that value is actually cached.
+	 *
+	 * @param int $product_id Parent product or variation id.
+	 */
+	public function remove_cached_variations_with_custom_cost_count( int $product_id ): void {
+		try {
+			self::remove_cached_variations_with_custom_cost_count_core( $product_id );
+		} catch ( \Exception $e ) {
+			delete_transient( 'woocommerce_variations_with_custom_cost_counts' );
+		}
+	}
+
+	/**
+	 * Core function to remove the cached count of variations that have a custom Cost of Goods Sold value set
+	 * (doesn't catch exceptions).
+	 *
+	 * @param int $product_id Parent product or variation id.
+	 */
+	private function remove_cached_variations_with_custom_cost_count_core( int $product_id ): void {
+		$counts = get_transient( 'woocommerce_variations_with_custom_cost_counts' );
+		if ( false === $counts ) {
+			return;
+		}
+
+		global $wpdb;
+		$parent_id = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT id FROM wp_posts WHERE ID=%d and post_type='product'
+                union
+                SELECT post_parent as id FROM wp_posts WHERE id=%d and post_type='product_variation'",
+				$product_id,
+				$product_id
+			)
+		);
+
+		if ( is_null( $parent_id ) ) {
+			if ( $wpdb->last_error ) {
+				delete_transient( 'woocommerce_variations_with_custom_cost_counts' );
+			}
+			return;
+		}
+
+		$parent_id = (int) $parent_id;
+		if ( ! array_key_exists( $parent_id, $counts ) ) {
+			return;
+		}
+
+		unset( $counts[ $parent_id ] );
+		if ( empty( $counts ) ) {
+			delete_transient( 'woocommerce_variations_with_custom_cost_counts' );
+		} else {
+			set_transient( 'woocommerce_variations_with_custom_cost_counts', $counts, HOUR_IN_SECONDS );
+		}
+	}
 }
