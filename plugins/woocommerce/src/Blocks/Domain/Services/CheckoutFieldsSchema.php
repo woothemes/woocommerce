@@ -4,6 +4,7 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Admin\Features\Features;
+use Opis\JsonSchema\Validator;
 
 /**
  * Service class managing checkout field schema.
@@ -15,6 +16,184 @@ class CheckoutFieldsSchema {
 	 * @var string
 	 */
 	private $release_version = '9.8.0';
+
+	/**
+	 * Meta schema.
+	 *
+	 * @var string
+	 */
+	private $meta_schema_json = '{
+		"$schema": "http://json-schema.org/draft-07/schema#",
+		"$id": "http://json-schema.org/draft-07/schema#",
+		"title": "Core schema meta-schema",
+		"definitions": {
+			"schemaArray": {
+				"type": "array",
+				"minItems": 1,
+				"items": { "$ref": "#" }
+			},
+			"nonNegativeInteger": {
+				"type": "integer",
+				"minimum": 0
+			},
+			"nonNegativeIntegerDefault0": {
+				"allOf": [
+					{ "$ref": "#/definitions/nonNegativeInteger" },
+					{ "default": 0 }
+				]
+			},
+			"simpleTypes": {
+				"enum": [
+					"array",
+					"boolean",
+					"integer",
+					"null",
+					"number",
+					"object",
+					"string"
+				]
+			},
+			"stringArray": {
+				"type": "array",
+				"items": { "type": "string" },
+				"uniqueItems": true,
+				"default": []
+			}
+		},
+		"type": ["object", "boolean"],
+		"properties": {
+			"$id": {
+				"type": "string",
+				"format": "uri-reference"
+			},
+			"$schema": {
+				"type": "string",
+				"format": "uri"
+			},
+			"$ref": {
+				"type": "string",
+				"format": "uri-reference"
+			},
+			"$comment": {
+				"type": "string"
+			},
+			"title": {
+				"type": "string"
+			},
+			"description": {
+				"type": "string"
+			},
+			"default": true,
+			"readOnly": {
+				"type": "boolean",
+				"default": false
+			},
+			"writeOnly": {
+				"type": "boolean",
+				"default": false
+			},
+			"examples": {
+				"type": "array",
+				"items": true
+			},
+			"multipleOf": {
+				"type": "number",
+				"exclusiveMinimum": 0
+			},
+			"maximum": {
+				"type": "number"
+			},
+			"exclusiveMaximum": {
+				"type": "number"
+			},
+			"minimum": {
+				"type": "number"
+			},
+			"exclusiveMinimum": {
+				"type": "number"
+			},
+			"maxLength": { "$ref": "#/definitions/nonNegativeInteger" },
+			"minLength": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
+			"pattern": {
+				"type": "string",
+				"format": "regex"
+			},
+			"additionalItems": { "$ref": "#" },
+			"items": {
+				"anyOf": [
+					{ "$ref": "#" },
+					{ "$ref": "#/definitions/schemaArray" }
+				],
+				"default": true
+			},
+			"maxItems": { "$ref": "#/definitions/nonNegativeInteger" },
+			"minItems": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
+			"uniqueItems": {
+				"type": "boolean",
+				"default": false
+			},
+			"contains": { "$ref": "#" },
+			"maxProperties": { "$ref": "#/definitions/nonNegativeInteger" },
+			"minProperties": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
+			"required": { "$ref": "#/definitions/stringArray" },
+			"additionalProperties": { "$ref": "#" },
+			"definitions": {
+				"type": "object",
+				"additionalProperties": { "$ref": "#" },
+				"default": {}
+			},
+			"properties": {
+				"type": "object",
+				"additionalProperties": { "$ref": "#" },
+				"default": {}
+			},
+			"patternProperties": {
+				"type": "object",
+				"additionalProperties": { "$ref": "#" },
+				"propertyNames": { "format": "regex" },
+				"default": {}
+			},
+			"dependencies": {
+				"type": "object",
+				"additionalProperties": {
+					"anyOf": [
+						{ "$ref": "#" },
+						{ "$ref": "#/definitions/stringArray" }
+					]
+				}
+			},
+			"propertyNames": { "$ref": "#" },
+			"const": true,
+			"enum": {
+				"type": "array",
+				"items": true,
+				"minItems": 1,
+				"uniqueItems": true
+			},
+			"type": {
+				"anyOf": [
+					{ "$ref": "#/definitions/simpleTypes" },
+					{
+						"type": "array",
+						"items": { "$ref": "#/definitions/simpleTypes" },
+						"minItems": 1,
+						"uniqueItems": true
+					}
+				]
+			},
+			"format": { "type": "string" },
+			"contentMediaType": { "type": "string" },
+			"contentEncoding": { "type": "string" },
+			"if": { "$ref": "#" },
+			"then": { "$ref": "#" },
+			"else": { "$ref": "#" },
+			"allOf": { "$ref": "#/definitions/schemaArray" },
+			"anyOf": { "$ref": "#/definitions/schemaArray" },
+			"oneOf": { "$ref": "#/definitions/schemaArray" },
+			"not": { "$ref": "#" }
+		},
+		"default": true
+	}';
 
 	/**
 	 * Check if the checkout fields schema is enabled.
@@ -88,21 +267,59 @@ class CheckoutFieldsSchema {
 		}
 
 		if ( ! empty( $options['rules'] ) && ! is_array( $options['rules'] ) ) {
-			$message = sprintf( 'Unable to register field with id: "%s". %s', $id, 'The rules must be an array.' );
+			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], 'The rules must be an array.' );
 			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
 			return false;
 		}
 
-		$valid_rules = [ 'required', 'hidden', 'validation' ];
+		$valid_schema = [
+			'required'   => [],
+			'hidden'     => [],
+			'validation' => [ 'type', 'anyOf', 'oneOf', 'allOf' ],
+		];
 
-		foreach ( $valid_rules as $rule ) {
-			if ( ! empty( $options['rules'][ $rule ] ) && ! is_array( $options['rules'][ $rule ] ) ) {
+		$validator = new Validator();
+
+		if ( ! empty( $options['rules']['validation'] ) ) {
+			$result = $validator->validate(
+				[
+					'$schema'    => 'http://json-schema.org/draft-07/schema#',
+					'type'       => 'object',
+					'properties' => [
+						'test' => $options['rules']['validation'],
+					],
+					'required'   => [ 'test' ],
+				],
+				$this->meta_schema_json
+			);
+
+			if ( $result->hasError() ) {
+				$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $result->error() );
+				_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
+				return false;
+			}
+		}
+
+		/*
+		foreach ( $valid_schema as $rule => $valid_keywords ) {
+			if ( empty( $options['rules'][ $rule ] ) ) {
+				continue;
+			}
+			if ( ! is_array( $options['rules'][ $rule ] ) ) {
 				$property_error = sprintf( 'The %s rules must be an array.', $rule );
 				$message        = sprintf( 'Unable to register field with id: "%s". %s', $id, $property_error );
 				_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
 				return false;
 			}
-		}
+			foreach ( $options['rules'][ $rule ] as $keyword => $value ) {
+				if ( ! in_array( $keyword, $valid_keywords, true ) ) {
+					$property_error = sprintf( 'The %s rule must be an array with valid keywords.', $rule );
+					$message        = sprintf( 'Unable to register field with id: "%s". %s', $id, $property_error );
+					_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
+					return false;
+				}
+			}
+		}*/
 
 		return true;
 	}
