@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
@@ -79,7 +80,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		'tax_class'          => '',
 		'manage_stock'       => false,
 		'stock_quantity'     => null,
-		'stock_status'       => 'instock',
+		'stock_status'       => ProductStockStatus::IN_STOCK,
 		'backorders'         => 'no',
 		'low_stock_amount'   => '',
 		'sold_individually'  => false,
@@ -1013,13 +1014,13 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 *
 	 * @param string $status New status.
 	 */
-	public function set_stock_status( $status = 'instock' ) {
+	public function set_stock_status( $status = ProductStockStatus::IN_STOCK ) {
 		$valid_statuses = wc_get_product_stock_status_options();
 
 		if ( isset( $valid_statuses[ $status ] ) ) {
 			$this->set_prop( 'stock_status', $status );
 		} else {
-			$this->set_prop( 'stock_status', 'instock' );
+			$this->set_prop( 'stock_status', ProductStockStatus::IN_STOCK );
 		}
 	}
 
@@ -1433,11 +1434,11 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		$backorders_are_allowed                = ( 'no' !== $this->get_backorders() );
 
 		if ( $stock_is_above_notification_threshold ) {
-			$new_stock_status = 'instock';
+			$new_stock_status = ProductStockStatus::IN_STOCK;
 		} elseif ( $backorders_are_allowed ) {
-			$new_stock_status = 'onbackorder';
+			$new_stock_status = ProductStockStatus::ON_BACKORDER;
 		} else {
-			$new_stock_status = 'outofstock';
+			$new_stock_status = ProductStockStatus::OUT_OF_STOCK;
 		}
 
 		$this->set_stock_status( $new_stock_status );
@@ -1718,7 +1719,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_in_stock() {
-		return apply_filters( 'woocommerce_product_is_in_stock', 'outofstock' !== $this->get_stock_status(), $this );
+		return apply_filters( 'woocommerce_product_is_in_stock', ProductStockStatus::OUT_OF_STOCK !== $this->get_stock_status(), $this );
 	}
 
 	/**
@@ -1785,7 +1786,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_on_backorder( $qty_in_cart = 0 ) {
-		if ( 'onbackorder' === $this->get_stock_status() ) {
+		if ( ProductStockStatus::ON_BACKORDER === $this->get_stock_status() ) {
 			return true;
 		}
 

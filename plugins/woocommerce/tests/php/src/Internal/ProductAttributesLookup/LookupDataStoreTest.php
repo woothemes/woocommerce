@@ -9,6 +9,7 @@ use Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\DataRegenerator;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore;
 use Automattic\WooCommerce\Testing\Tools\FakeQueue;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Tests for the LookupDataStore class.
@@ -139,10 +140,10 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 		);
 
 		if ( $in_stock ) {
-			$product->set_stock_status( 'instock' );
+			$product->set_stock_status( ProductStockStatus::IN_STOCK );
 			$expected_in_stock = 1;
 		} else {
-			$product->set_stock_status( 'outofstock' );
+			$product->set_stock_status( ProductStockStatus::OUT_OF_STOCK );
 			$expected_in_stock = 0;
 		}
 		$this->save( $product );
@@ -239,7 +240,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				),
 			)
 		);
-		$product->set_stock_status( 'instock' );
+		$product->set_stock_status( ProductStockStatus::IN_STOCK );
 		$product->save();
 		$product_id = $product->get_id();
 
@@ -250,7 +251,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				$variation_attribute_2['name'] => 'term_3_1',
 			)
 		);
-		$variation_1->set_stock_status( 'instock' );
+		$variation_1->set_stock_status( ProductStockStatus::IN_STOCK );
 		$variation_1->set_parent_id( $product_id );
 		$variation_1->save();
 		$variation_1_id = $variation_1->get_id();
@@ -261,7 +262,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				$variation_attribute_1['name'] => 'term_2_2',
 			)
 		);
-		$variation_2->set_stock_status( 'outofstock' );
+		$variation_2->set_stock_status( ProductStockStatus::OUT_OF_STOCK );
 		$variation_2->set_parent_id( $product_id );
 		$variation_2->save();
 		$variation_2_id = $variation_2->get_id();
@@ -821,7 +822,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				'update',
 			),
 			array(
-				array( 'stock_status' => 'instock' ),
+				array( 'stock_status' => ProductStockStatus::IN_STOCK ),
 				'update',
 			),
 			array(
@@ -880,7 +881,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 		$another_attribute = self::$attributes[1];
 
 		$product = new \WC_Product_Simple();
-		$product->set_stock_status( 'instock' );
+		$product->set_stock_status( ProductStockStatus::IN_STOCK );
 		$this->set_product_attributes(
 			$product,
 			array(
@@ -972,7 +973,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				),
 			)
 		);
-		$product->set_stock_status( 'instock' );
+		$product->set_stock_status( ProductStockStatus::IN_STOCK );
 		$product->save();
 		$product_id = $product->get_id();
 
@@ -982,7 +983,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				$variation_attribute['name'] => 'term_2_1',
 			)
 		);
-		$variation->set_stock_status( 'instock' );
+		$variation->set_stock_status( ProductStockStatus::IN_STOCK );
 		$variation->set_parent_id( $product_id );
 		$variation->save();
 		$variation_id = $variation->get_id();
@@ -1081,7 +1082,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				),
 			)
 		);
-		$product->set_stock_status( 'instock' );
+		$product->set_stock_status( ProductStockStatus::IN_STOCK );
 		$product->save();
 		$product_id = $product->get_id();
 
@@ -1091,7 +1092,7 @@ class LookupDataStoreTest extends \WC_Unit_Test_Case {
 				$variation_attribute['name'] => 'term_2_1',
 			)
 		);
-		$variation->set_stock_status( 'instock' );
+		$variation->set_stock_status( ProductStockStatus::IN_STOCK );
 		$variation->set_parent_id( $product_id );
 		$variation->save();
 		$variation_id = $variation->get_id();

@@ -9,6 +9,8 @@ namespace Automattic\WooCommerce\Admin\API\Reports\Stock\Stats;
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Enums\ProductStockStatus;
+
 /**
  * REST API Reports stock stats controller class.
  *
@@ -90,7 +92,7 @@ class Controller extends \WC_REST_Reports_Controller {
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
 			),
-			'lowstock' => array(
+			ProductStockStatus::LOW_STOCK => array(
 				'description' => __( 'Number of low stock products.', 'woocommerce' ),
 				'type'        => 'integer',
 				'context'     => array( 'view', 'edit' ),

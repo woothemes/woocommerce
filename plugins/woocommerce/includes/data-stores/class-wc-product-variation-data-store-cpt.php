@@ -7,6 +7,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -501,8 +502,8 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 		if ( $force || array_intersect( array( 'stock_status' ), array_keys( $changes ) ) ) {
 			$terms = array();
 
-			if ( 'outofstock' === $product->get_stock_status() ) {
-				$terms[] = 'outofstock';
+			if ( ProductStockStatus::OUT_OF_STOCK === $product->get_stock_status() ) {
+				$terms[] = ProductStockStatus::OUT_OF_STOCK;
 			}
 
 			wp_set_post_terms( $product->get_id(), $terms, 'product_visibility', false );
