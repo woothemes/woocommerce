@@ -1,8 +1,4 @@
 /**
- * WARNING: This block is a copy of an upstream implementation: https://github.com/WordPress/gutenberg/pull/64119
- * Please keep changes to a minimum.
- */
-/**
  * WordPress dependencies
  */
 import { SVG, Path } from '@wordpress/components';
