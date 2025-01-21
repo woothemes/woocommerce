@@ -1520,7 +1520,7 @@
           "post_title": "Beta Testing",
           "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/testing/beta-testing.md",
-          "hash": "09be54c71d8805df451263a1cddd12d744b2b1d81f669fb539bd2f14cfdefeeb",
+          "hash": "fefc443d305a81703e63e812fab3ec5ccc8521893dd96031b40f78f7449b269b",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/testing/beta-testing.md",
           "id": "01f266904647aad0d44b5687fb5f143560dabc67"
         }
@@ -1915,5 +1915,5 @@
       "categories": []
     }
   ],
-  "hash": "541fa48f03c824c6b66c26ea761ad690aba0eda3084e9e28b0a8a5d26f5ffbc7"
+  "hash": "123ddfa050df61ec619604dd059bf25271eeb424725df2a70cf5009059784b7a"
 }
