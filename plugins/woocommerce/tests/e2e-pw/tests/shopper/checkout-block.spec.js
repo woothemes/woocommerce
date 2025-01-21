@@ -73,123 +73,143 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
-			// Set field visibility options
-			await setOption(
-				request,
-				baseURL,
-				'woocommerce_checkout_phone_field',
-				'optional'
-			);
-			await setOption(
-				request,
-				baseURL,
-				'woocommerce_checkout_company_field',
-				'optional'
-			);
-			await setOption(
-				request,
-				baseURL,
-				'woocommerce_checkout_address_2_field',
-				'optional'
-			);
-			// make sure the currency is USD
-			await api.put( 'settings/general/woocommerce_currency', {
-				value: 'USD',
+
+			await test.step( 'Disable Coming Soon option.', async () => {
+				await setComingSoon( { baseURL, enabled: 'no' } );
 			} );
-			// add product
-			await api
-				.post( 'products', {
-					name: simpleProductName,
-					description: simpleProductDesc,
-					type: 'simple',
-					regular_price: singleProductFullPrice,
-					sale_price: singleProductSalePrice,
-				} )
-				.then( ( response ) => {
-					productId = response.data.id;
+
+			await test.step( 'Set field visibility options', async () => {
+				await setOption(
+					request,
+					baseURL,
+					'woocommerce_checkout_phone_field',
+					'optional'
+				);
+				await setOption(
+					request,
+					baseURL,
+					'woocommerce_checkout_company_field',
+					'optional'
+				);
+				await setOption(
+					request,
+					baseURL,
+					'woocommerce_checkout_address_2_field',
+					'optional'
+				);
+			} );
+
+			await test.step( 'Make sure the currency is USD', async () => {
+				await api.put( 'settings/general/woocommerce_currency', {
+					value: 'USD',
 				} );
-			// enable logging through checkout
-			await api.put(
-				'settings/account/woocommerce_enable_checkout_login_reminder',
-				{
-					value: 'yes',
-				}
-			);
-			// enable creating account through checkout
-			await api.put(
-				'settings/account/woocommerce_enable_signup_and_login_from_checkout',
-				{
-					value: 'yes',
-				}
-			);
-			// add a shipping zone and method
-			await api
-				.post( 'shipping/zones', {
-					name: 'California and Oregon Shipping Zone',
-				} )
-				.then( ( response ) => {
-					shippingZoneId = response.data.id;
+			} );
+
+			await test.step( 'Add test product.', async () => {
+				await api
+					.post( 'products', {
+						name: simpleProductName,
+						description: simpleProductDesc,
+						type: 'simple',
+						regular_price: singleProductFullPrice,
+						sale_price: singleProductSalePrice,
+					} )
+					.then( ( response ) => {
+						productId = response.data.id;
+					} );
+			} );
+
+			await test.step( 'Enable logging through checkout', async () => {
+				await api.put(
+					'settings/account/woocommerce_enable_checkout_login_reminder',
+					{
+						value: 'yes',
+					}
+				);
+			} );
+
+			await test.step( 'Enable creating account through checkout', async () => {
+				await api.put(
+					'settings/account/woocommerce_enable_signup_and_login_from_checkout',
+					{
+						value: 'yes',
+					}
+				);
+			} );
+
+			await test.step( 'Add a shipping zone and method', async () => {
+				await api
+					.post( 'shipping/zones', {
+						name: 'California and Oregon Shipping Zone',
+					} )
+					.then( ( response ) => {
+						shippingZoneId = response.data.id;
+					} );
+				await api.put( `shipping/zones/${ shippingZoneId }/locations`, [
+					{
+						code: 'US:CA',
+						type: 'state',
+					},
+					{
+						code: 'US:OR',
+						type: 'state',
+					},
+				] );
+				await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
+					method_id: 'free_shipping',
+					settings: {
+						title: 'Free shipping',
+					},
 				} );
-			await api.put( `shipping/zones/${ shippingZoneId }/locations`, [
-				{
-					code: 'US:CA',
-					type: 'state',
-				},
-				{
-					code: 'US:OR',
-					type: 'state',
-				},
-			] );
-			await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
-				method_id: 'free_shipping',
-				settings: {
-					title: 'Free shipping',
-				},
+				await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
+					method_id: 'local_pickup',
+					settings: {
+						title: 'Local pickup',
+					},
+				} );
+				await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
+					method_id: 'flat_rate',
+					settings: {
+						title: 'Flat rate',
+						cost: singleProductSalePrice,
+					},
+				} );
 			} );
-			await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
-				method_id: 'local_pickup',
-				settings: {
-					title: 'Local pickup',
-				},
+
+			await test.step( 'Enable bank transfers and COD for payment', async () => {
+				await api.put( 'payment_gateways/bacs', {
+					enabled: true,
+				} );
+				await api.put( 'payment_gateways/cod', {
+					enabled: true,
+				} );
 			} );
-			await api.post( `shipping/zones/${ shippingZoneId }/methods`, {
-				method_id: 'flat_rate',
-				settings: {
-					title: 'Flat rate',
-					cost: singleProductSalePrice,
-				},
-			} );
-			// enable bank transfers and COD for payment
-			await api.put( 'payment_gateways/bacs', {
-				enabled: true,
-			} );
-			await api.put( 'payment_gateways/cod', {
-				enabled: true,
-			} );
-			// make sure our customer user has a pre-defined billing/shipping address
-			await api.put( `customers/${ process.env.CUSTOMER_USER_ID }`, {
-				shipping: {
-					first_name: 'Maggie',
-					last_name: 'Simpson',
-					company: '',
-					address_1: '123 Evergreen Terrace',
-					address_2: '',
-					city: 'Springfield',
-					state: 'OR',
-					postcode: '97403',
-					country: 'US',
-				},
-				billing: {
-					first_name: 'Maggie',
-					last_name: 'Simpson',
-					company: '',
-					address_1: '123 Evergreen Terrace',
-					address_2: '',
-					city: 'Springfield',
-					state: 'OR',
-					postcode: '97403',
-					country: 'US',
-				},
+
+			await test.step( 'Make sure our customer user has a pre-defined billing/shipping address', async () => {
+				await api.put( `customers/${ process.env.CUSTOMER_USER_ID }`, {
+					shipping: {
+						first_name: 'Maggie',
+						last_name: 'Simpson',
+						company: '',
+						address_1: '123 Evergreen Terrace',
+						address_2: '',
+						city: 'Springfield',
+						state: 'OR',
+						postcode: '97403',
+						country: 'US',
+					},
+					billing: {
+						first_name: 'Maggie',
+						last_name: 'Simpson',
+						company: '',
+						address_1: '123 Evergreen Terrace',
+						address_2: '',
+						city: 'Springfield',
+						state: 'OR',
+						postcode: '97403',
+						country: 'US',
+					},
+				} );
 			} );
 		} );
 
@@ -278,26 +298,28 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
-			// ensure the store address is always in the US
-			await api.post( 'settings/general/batch', {
-				update: [
-					{
-						id: 'woocommerce_store_address',
-						value: 'addr 1',
-					},
-					{
-						id: 'woocommerce_store_city',
-						value: 'San Francisco',
-					},
-					{
-						id: 'woocommerce_default_country',
-						value: 'US:CA',
-					},
-					{
-						id: 'woocommerce_store_postcode',
-						value: '94107',
-					},
-				],
+
+			await test.step( 'Ensure the store address is always in the US', async () => {
+				await api.post( 'settings/general/batch', {
+					update: [
+						{
+							id: 'woocommerce_store_address',
+							value: 'addr 1',
+						},
+						{
+							id: 'woocommerce_store_city',
+							value: 'San Francisco',
+						},
+						{
+							id: 'woocommerce_default_country',
+							value: 'US:CA',
+						},
+						{
+							id: 'woocommerce_store_postcode',
+							value: '94107',
+						},
+					],
+				} );
 			} );
 		} );
 
