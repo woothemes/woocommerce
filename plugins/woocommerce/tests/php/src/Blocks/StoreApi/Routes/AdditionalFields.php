@@ -2216,4 +2216,46 @@ class AdditionalFields extends MockeryTestCase {
 			)
 		);
 	}
+
+	/**
+	 * Ensure an error is triggered when a field is registered without an ID.
+	 */
+	public function test_invalid_schema() {
+		$doing_it_wrong_mocker = \Mockery::mock( 'ActionCallback' );
+		$doing_it_wrong_mocker->shouldReceive( 'doing_it_wrong_run' )->withArgs(
+			array(
+				'woocommerce_register_additional_checkout_field',
+				esc_html( 'Unable to register field with id: "namespace/test-id". The rules must be an array.' ),
+			)
+		)->once();
+
+		add_action(
+			'doing_it_wrong_run',
+			array(
+				$doing_it_wrong_mocker,
+				'doing_it_wrong_run',
+			),
+			10,
+			2
+		);
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'       => 'namespace/test-id',
+				'label'    => 'Test Field',
+				'location' => 'address',
+				'required' => true,
+				'rules'    => 'invalid-rules',
+			)
+		);
+		\remove_action(
+			'doing_it_wrong_run',
+			array(
+				$doing_it_wrong_mocker,
+				'doing_it_wrong_run',
+			)
+		);
+
+		// Ensures the field didn't register.
+		$this->assertEquals( \count( $this->controller->get_additional_fields() ), count( $this->fields ), \sprintf( 'An unexpected field is registered' ) );
+	}
 }
