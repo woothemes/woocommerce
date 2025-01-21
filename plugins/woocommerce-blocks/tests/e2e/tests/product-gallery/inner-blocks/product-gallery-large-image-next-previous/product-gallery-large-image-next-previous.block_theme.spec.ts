@@ -16,14 +16,10 @@ const blockData = {
 	selectors: {
 		frontend: {},
 		editor: {
-			leftArrow: {
-				insideTheImage:
-					'.wc-block-product-gallery-large-image-next-previous-left',
-			},
-			rightArrow: {
-				insideTheImage:
-					'.wc-block-product-gallery-large-image-next-previous-right',
-			},
+			leftArrow:
+				'.wc-block-product-gallery-large-image-next-previous-left',
+			rightArrow:
+				'.wc-block-product-gallery-large-image-next-previous-right',
 		},
 	},
 	slug: 'single-product',
@@ -144,10 +140,8 @@ test.describe( `${ blockData.name }`, () => {
 
 			const editorBoundingClientRect = await getBoundingClientRect( {
 				pageObject,
-				leftArrowSelector:
-					blockData.selectors.editor.leftArrow.insideTheImage,
-				rightArrowSelector:
-					blockData.selectors.editor.rightArrow.insideTheImage,
+				leftArrowSelector: blockData.selectors.editor.leftArrow,
+				rightArrowSelector: blockData.selectors.editor.rightArrow,
 				isFrontend: false,
 			} );
 
@@ -167,10 +161,8 @@ test.describe( `${ blockData.name }`, () => {
 
 			const frontendBoundingClientRect = await getBoundingClientRect( {
 				pageObject,
-				leftArrowSelector:
-					blockData.selectors.editor.leftArrow.insideTheImage,
-				rightArrowSelector:
-					blockData.selectors.editor.rightArrow.insideTheImage,
+				leftArrowSelector: blockData.selectors.editor.leftArrow,
+				rightArrowSelector: blockData.selectors.editor.rightArrow,
 				isFrontend: true,
 			} );
 
