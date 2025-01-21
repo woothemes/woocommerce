@@ -4,7 +4,6 @@
 import { useState } from '@wordpress/element';
 import { store as coreStore } from '@wordpress/core-data';
 import {
-	InnerBlocks,
 	useBlockProps,
 	useInnerBlocksProps,
 	store as blockEditorStore,
@@ -14,6 +13,7 @@ import {
 import { BlockInstance, type BlockEditProps } from '@wordpress/blocks';
 import { withProduct } from '@woocommerce/block-hocs';
 import {
+	InnerBlockLayoutContextProvider,
 	ProductDataContextProvider,
 	useProductDataContext,
 } from '@woocommerce/shared-context';
@@ -25,7 +25,7 @@ interface Attributes {
 }
 
 type ProductItemProps = {
-	attributes: { postId: number; postType: string };
+	attributes: { productId: number };
 	isLoading?: boolean;
 	product?: ProductResponseItem;
 	blocks: BlockInstance[];
@@ -50,7 +50,9 @@ const ProductItem = withProduct( function ProductItem( {
 	);
 
 	return (
-		<BlockContextProvider value={ attributes }>
+		<BlockContextProvider
+			value={ { postId: attributes.productId, postType: 'product' } }
+		>
 			<ProductDataContextProvider
 				product={ product as ProductResponseItem }
 				isLoading={ isLoading as boolean }
@@ -141,25 +143,26 @@ export default function ProductItemTemplateEdit(
 
 	return (
 		<div { ...blockProps }>
-			<div role="list">
-				{ products.map( ( productItem ) => (
-					<ProductItem
-						key={ productItem.id }
-						attributes={ {
-							postId: productItem.id,
-							postType: 'product',
-						} }
-						blocks={ blocks }
-						isSelected={
-							( selectedProductItem || products[ 0 ]?.id ) ===
-							productItem.id
-						}
-						onSelect={ () =>
-							setSelectedProductItem( productItem.id )
-						}
-					/>
-				) ) }
-			</div>
+			<InnerBlockLayoutContextProvider parentName="woocommerce/add-to-cart-with-options-grouped-product-selector-product-item-template">
+				<div role="list">
+					{ products.map( ( productItem ) => (
+						<ProductItem
+							key={ productItem.id }
+							attributes={ {
+								productId: productItem.id,
+							} }
+							blocks={ blocks }
+							isSelected={
+								( selectedProductItem || products[ 0 ]?.id ) ===
+								productItem.id
+							}
+							onSelect={ () =>
+								setSelectedProductItem( productItem.id )
+							}
+						/>
+					) ) }
+				</div>
+			</InnerBlockLayoutContextProvider>
 		</div>
 	);
 }
