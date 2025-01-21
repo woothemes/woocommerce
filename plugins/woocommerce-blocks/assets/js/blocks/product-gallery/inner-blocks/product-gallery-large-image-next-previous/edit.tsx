@@ -8,7 +8,6 @@ import { BlockAttributes } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './editor.scss';
 import { PrevButton, NextButton } from './icons';
 
 const getAlignmentStyle = ( alignment: string ): string => {
