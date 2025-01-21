@@ -24,4 +24,5 @@ export const config = {
 };
 
 export const store = createReduxStore( STORE_KEY, config );
+export type PaymentStoreDescriptor = typeof store;
 register( store );
