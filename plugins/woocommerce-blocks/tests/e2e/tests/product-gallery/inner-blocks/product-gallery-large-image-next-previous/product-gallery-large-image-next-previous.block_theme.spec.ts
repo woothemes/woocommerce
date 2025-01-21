@@ -85,7 +85,6 @@ test.describe( `${ blockData.name }`, () => {
 		} );
 	} );
 
-	// eslint-disable-next-line playwright/no-skipped-test
 	test( 'Renders Next/Previous Button block on the editor side', async ( {
 		editor,
 		pageObject,
@@ -101,7 +100,6 @@ test.describe( `${ blockData.name }`, () => {
 		await expect( block ).toBeVisible();
 	} );
 
-	// eslint-disable-next-line playwright/no-skipped-test
 	test( 'Renders Next/Previous Button block on the frontend side', async ( {
 		admin,
 		editor,
@@ -124,7 +122,6 @@ test.describe( `${ blockData.name }`, () => {
 	} );
 
 	test.describe( `${ blockData.name } Settings`, () => {
-		// eslint-disable-next-line playwright/no-skipped-test
 		test( 'Show button inside of the image', async ( {
 			page,
 			editor,
@@ -186,7 +183,6 @@ test.describe( `${ blockData.name }`, () => {
 			);
 		} );
 
-		// eslint-disable-next-line playwright/no-skipped-test
 		test( 'Show buttons at the bottom of the image by default', async ( {
 			page,
 			editor,
