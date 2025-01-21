@@ -31,6 +31,12 @@ exports.test = base.test.extend( {
 		await use( wcAdminApi );
 	},
 
+	/**
+	 * Fixture for interacting with the [WordPress REST API](https://developer.wordpress.org/rest-api/reference/) endpoints.
+	 *
+	 * @param {{baseURL: string}} fixtures
+	 * @param {(fixture: base.APIRequestContext)} use
+	 */
 	wpApi: async ( { baseURL }, use ) => {
 		const wpApi = await base.request.newContext( {
 			baseURL,
