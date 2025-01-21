@@ -7,7 +7,7 @@ import { PlainPaymentMethods } from '@woocommerce/types';
 /**
  * Internal dependencies
  */
-import { store as paymentStore } from '../store-config';
+import { store as paymentStore } from '../index';
 
 export const setDefaultPaymentMethod = async (
 	paymentMethods: PlainPaymentMethods

@@ -23,7 +23,7 @@ import { previewCart } from '@woocommerce/resource-previews';
  * Internal dependencies
  */
 import { STORE_KEY as CART_STORE_KEY } from '../../cart/constants';
-import { store as paymentStore } from '../store-config';
+import { store as paymentStore } from '../index';
 import { noticeContexts } from '../../../base/context/event-emit';
 import {
 	EMPTY_CART_ERRORS,

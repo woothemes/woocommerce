@@ -7,7 +7,7 @@ import { debounce } from '@woocommerce/base-utils';
 /**
  * Internal dependencies
  */
-import { store as paymentStore } from '../payment/store-config';
+import { store as paymentStore } from '../payment';
 import { store as cartStore } from './index';
 
 /**

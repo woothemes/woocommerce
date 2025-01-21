@@ -16,7 +16,7 @@ import { checkoutStore } from '@woocommerce/block-data';
 /**
  * Internal dependencies
  */
-import { store as paymentStore } from '../payment/store-config';
+import { store as paymentStore } from '../payment';
 import { removeNoticesByStatus } from '../../utils/notices';
 import {
 	getPaymentResultFromCheckoutResponse,
