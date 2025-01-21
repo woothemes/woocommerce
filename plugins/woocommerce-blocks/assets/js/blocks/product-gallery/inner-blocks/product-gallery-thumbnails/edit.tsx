@@ -16,7 +16,6 @@ import type {
 	ProductGalleryThumbnailsBlockAttributes,
 	ProductGalleryContext,
 } from '../../types';
-import { ThumbnailsPosition } from './constants';
 
 interface EditProps
 	extends BlockEditProps< ProductGalleryThumbnailsBlockAttributes > {
