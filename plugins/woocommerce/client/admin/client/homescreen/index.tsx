@@ -40,6 +40,7 @@ const Homescreen = ( {
 
 	const query = useQuery();
 
+	// @ts-expect-error -- TODO: convert Layout to TS component
 	return <Layout query={ query } />;
 };
 

@@ -19,13 +19,12 @@ export const WooHomescreenHeaderBanner = ( {
 } ) => {
 	const slot = useSlot( EXPERIMENTAL_WC_HOMESCREEN_HEADER_BANNER_SLOT_NAME );
 	const hasFills = Boolean( slot?.fills?.length );
-
 	if ( ! hasFills ) {
 		return null;
 	}
 	return (
 		<div className={ clsx( 'woocommerce-homescreen__header', className ) }>
-			<WooHomescreenHeaderBannerItem.Slot />
+			<WooHomescreenHeaderBannerItem.Slot fillProps={ undefined } />
 		</div>
 	);
 };

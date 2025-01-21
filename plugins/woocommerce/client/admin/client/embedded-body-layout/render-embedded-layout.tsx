@@ -46,11 +46,14 @@ const renderHydratedLayout = (
 	let HydratedEmbedLayout = withSettingsHydration(
 		settingsGroup,
 		window.wcSettings?.admin
-	)( EmbedLayout );
+	)( EmbedLayout as React.ComponentType< Record< string, unknown > > );
 
 	if ( hydrateUser ) {
-		HydratedEmbedLayout =
-			withCurrentUserHydration( hydrateUser )( HydratedEmbedLayout );
+		HydratedEmbedLayout = withCurrentUserHydration( hydrateUser )(
+			HydratedEmbedLayout as React.ComponentType<
+				Record< string, unknown >
+			>
+		);
 	}
 
 	createRoot( embeddedRoot ).render( <HydratedEmbedLayout /> );
