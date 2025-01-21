@@ -3,8 +3,8 @@
  */
 import { debounce } from '@woocommerce/base-utils';
 import { select, dispatch } from '@wordpress/data';
-import isShallowEqual from '@wordpress/is-shallow-equal';
 import type { AdditionalValues } from '@woocommerce/settings';
+import { ApiErrorResponse } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -55,12 +55,6 @@ const updateCheckoutData = (): void => {
 		additionalFields: store.getAdditionalFields(),
 	};
 
-	// Do we need to push anything?
-	if ( isShallowEqual( localState.checkoutData, newCheckoutData ) ) {
-		localState.doingPush = false;
-		return;
-	}
-
 	// Figure out which additional fields have changed and only send those to the server
 	const changedFields = Object.keys( newCheckoutData.additionalFields )
 		.filter( ( key ) => {
@@ -94,7 +88,7 @@ const updateCheckoutData = (): void => {
 		.then( () => {
 			localState.doingPush = false;
 		} )
-		.catch( ( response ) => {
+		.catch( ( response: ApiErrorResponse ) => {
 			localState.doingPush = false;
 			processErrorResponse( response );
 		} );
