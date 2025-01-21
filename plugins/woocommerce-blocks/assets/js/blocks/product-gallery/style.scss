@@ -174,7 +174,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 #{$next-previous} {
 	display: flex;
 	align-items: flex-end;
-	position: absolute;
 	flex-direction: row;
 	justify-content: space-between;
 	width: 100%;
