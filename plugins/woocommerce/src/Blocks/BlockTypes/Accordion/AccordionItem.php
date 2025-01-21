@@ -89,6 +89,6 @@ class AccordionItem extends AbstractBlock {
 	 * @return array|string|null
 	 */
 	protected function get_block_type_script( $key = null ) {
-        return null;
+    	return null;
     }
 }
