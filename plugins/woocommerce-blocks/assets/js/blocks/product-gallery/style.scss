@@ -237,6 +237,10 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		margin-top: 15px;
 		margin-bottom: 15px;
 	}
+
+	svg {
+		z-index: 1;
+	}
 }
 
 // Pager
