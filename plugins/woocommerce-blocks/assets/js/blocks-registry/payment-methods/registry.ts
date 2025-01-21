@@ -11,6 +11,11 @@ import type {
 	ExpressPaymentMethods,
 } from '@woocommerce/types';
 import { dispatch } from '@wordpress/data';
+import {
+	ActionCreatorsOf,
+	ConfigOf,
+	DispatchReturn,
+} from '@wordpress/data/build-types/types';
 
 /**
  * Internal dependencies
@@ -18,7 +23,8 @@ import { dispatch } from '@wordpress/data';
 import { default as PaymentMethodConfig } from './payment-method-config';
 import { default as ExpressPaymentMethodConfig } from './express-payment-method-config';
 import { canMakePaymentExtensionsCallbacks } from './extensions-config';
-import { STORE_KEY as PAYMENT_STORE_KEY } from '../../data/payment/constants'; // Must continue to use store key here as importing the config results in a circular dependency.
+import { STORE_KEY as PAYMENT_STORE_KEY } from '../../data/payment/constants';
+import type { PaymentStoreDescriptor } from '../../data/payment';
 
 type LegacyRegisterPaymentMethodFunction = ( config: unknown ) => unknown;
 type LegacyRegisterExpressPaymentMethodFunction = (
@@ -114,8 +120,11 @@ export const __experimentalDeRegisterPaymentMethod = (
 	paymentMethodName: string
 ): void => {
 	delete paymentMethods[ paymentMethodName ];
-	const { __internalRemoveAvailablePaymentMethod } =
-		dispatch( PAYMENT_STORE_KEY );
+	const {
+		__internalRemoveAvailablePaymentMethod,
+	}: DispatchReturn< PaymentStoreDescriptor > = dispatch(
+		PAYMENT_STORE_KEY
+	) as ActionCreatorsOf< ConfigOf< PaymentStoreDescriptor > >;
 	__internalRemoveAvailablePaymentMethod( paymentMethodName );
 };
 
@@ -123,8 +132,9 @@ export const __experimentalDeRegisterExpressPaymentMethod = (
 	paymentMethodName: string
 ): void => {
 	delete expressPaymentMethods[ paymentMethodName ];
-	const { __internalRemoveAvailableExpressPaymentMethod } =
-		dispatch( PAYMENT_STORE_KEY );
+	const { __internalRemoveAvailableExpressPaymentMethod } = dispatch(
+		PAYMENT_STORE_KEY
+	) as ActionCreatorsOf< ConfigOf< PaymentStoreDescriptor > >;
 	__internalRemoveAvailableExpressPaymentMethod( paymentMethodName );
 };
 
