@@ -233,6 +233,7 @@ export const WooPaymentsMethodsLogos: React.FC< {
 					{ isPopoverVisible && (
 						<Popover
 							position="top right"
+							className="woocommerce-woopayments-payment-methods-logos-popover"
 							noArrow={ true }
 							onClose={ () => setIsPopoverVisible( false ) }
 						>
