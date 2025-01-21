@@ -191,10 +191,18 @@ const blocks = {
  * Blocks that are generic and will likely be pushed up to Gutenberg or a public block registry.
  */
 const genericBlocks = {
-	'accordion-group': {},
-	'accordion-header': {},
-	'accordion-item': {},
-	'accordion-panel': {},
+	'accordion-group': {
+		customDir: 'accordion/accordion-group',
+	},
+	'accordion-header': {
+		customDir: 'accordion/inner-blocks/accordion-header',
+	},
+	'accordion-item': {
+		customDir: 'accordion/inner-blocks/accordion-item',
+	},
+	'accordion-panel': {
+		customDir: 'accordion/inner-blocks/accordion-panel',
+	},
 };
 
 // Intentional separation of cart and checkout entry points to allow for better code splitting.
