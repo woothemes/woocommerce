@@ -4449,6 +4449,13 @@ table.wc_shipping {
 				right: 12px;
 			}
 		}
+
+		#woocommerce_free_shipping_min_amount,
+		#woocommerce_flat_rate_cost {
+			&.wc-shipping-zone-method-fields-error {
+				border: 1px solid #f00;
+			}
+		}
 	}
 
 	.wc-backbone-modal-action-inactive {

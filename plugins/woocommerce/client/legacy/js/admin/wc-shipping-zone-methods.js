@@ -349,7 +349,33 @@
 
 					shippingMethodView.highlightOnFocus( '.wc-shipping-modal-price' );
 
+					$( '.wc-shipping-modal-price' ).on( 'blur', function() {
+						shippingMethodView.validateShippingMethodPrice( this );
+					} );
+
 					$( document.body ).trigger( 'init_tooltips' );
+				},
+				replaceSeparators: function( value ) {
+					if ( ! window.wc.wcSettings.CURRENCY ) {
+						return value;
+					}
+
+					if ( Number.isFinite( value ) ) {
+						return value;
+					}
+
+					const config = window.wc.wcSettings.CURRENCY ;
+
+					// Brackets signal a formula. Avoid unsformatting these values.
+					if ( value.includes( '[' ) && value.includes( ']' ) ) {
+						return value;;
+					}
+
+					const unformattedValue = value
+						.replaceAll( config.thousandSeparator, '' )
+						.replace( config.decimalSeparator, '.' );
+
+					return unformattedValue;
 				},
 				// Cost values need to be stripped of their thousandth separators and made sure
 				// the decimal separator is a ".".
@@ -392,6 +418,16 @@
 					} );
 
 					return data;
+				},
+				validateShippingMethodPrice: function( target ) {
+					const { value } = target;
+					const numberValue = shippingMethodView.replaceSeparators( value );
+
+					if ( Number( numberValue ) || Number( numberValue ) === 0 ) {
+						target.classList.remove( 'wc-shipping-zone-method-fields-error' );
+					} else {
+						target.classList.add( 'wc-shipping-zone-method-fields-error' );
+					}
 				},
 				onConfigureShippingMethodSubmitted: function( event, target, posted_data ) {
 					if ( 'wc-modal-shipping-method-settings' === target ) {
