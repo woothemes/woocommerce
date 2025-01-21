@@ -12,7 +12,7 @@ import {
 	usePaymentMethodInterface,
 	useStoreEvents,
 } from '@woocommerce/base-context/hooks';
-import { PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { paymentStore } from '@woocommerce/block-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { getPaymentMethods } from '@woocommerce/blocks-registry';
 import { isNull } from '@woocommerce/types';
@@ -71,15 +71,14 @@ const getDefaultLabel = ( {
 const SavedPaymentMethodOptions = () => {
 	const { activeSavedToken, activePaymentMethod, savedPaymentMethods } =
 		useSelect( ( select ) => {
-			const store = select( PAYMENT_STORE_KEY );
+			const store = select( paymentStore );
 			return {
 				activeSavedToken: store.getActiveSavedToken(),
 				activePaymentMethod: store.getActivePaymentMethod(),
 				savedPaymentMethods: store.getSavedPaymentMethods(),
 			};
 		} );
-	const { __internalSetActivePaymentMethod } =
-		useDispatch( PAYMENT_STORE_KEY );
+	const { __internalSetActivePaymentMethod } = useDispatch( paymentStore );
 	const canMakePaymentArg = getCanMakePaymentArg();
 	const paymentMethods = getPaymentMethods();
 	const paymentMethodInterface = usePaymentMethodInterface();
