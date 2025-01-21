@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix: Stepper input style is broken when form has additional fields
