@@ -3,14 +3,21 @@
  */
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
+import clsx from 'clsx';
 import {
 	PaymentProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
 	WC_ADMIN_NAMESPACE,
 } from '@woocommerce/data';
 import { useDispatch } from '@wordpress/data';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
+import { Popover } from '@wordpress/components';
+import { Link } from '@woocommerce/components';
+import { getAdminLink } from '@woocommerce/settings';
+import InfoOutline from 'gridicons/dist/info-outline';
+import interpolateComponents from '@automattic/interpolate-components';
+
 /**
  * Internal dependencies
  */
@@ -51,6 +58,11 @@ export const PaymentGateways = ( {
 	setBusinessRegistrationCountry,
 }: PaymentGatewaysProps ) => {
 	const { invalidateResolution } = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
+	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
+	const storeCountryCode = (
+		window.wcSettings?.admin?.preloadSettings?.general
+			?.woocommerce_default_country || 'US'
+	).split( ':' )[ 0 ]; // Retrieve the default store country code, by removing the state code if present.
 
 	/**
 	 * Generates a list of country options from the WooCommerce settings.
@@ -65,13 +77,22 @@ export const PaymentGateways = ( {
 			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 	}, [] );
 
+	const isBaseCountryDiffrent =
+		storeCountryCode !== businessRegistrationCountry;
+	const selectContainerClass = clsx(
+		'settings-payment-gateways__header-select-container',
+		{
+			'has-alert': isBaseCountryDiffrent,
+		}
+	);
+
 	return (
 		<div className="settings-payment-gateways">
 			<div className="settings-payment-gateways__header">
 				<div className="settings-payment-gateways__header-title">
 					{ __( 'Payment providers', 'woocommerce' ) }
 				</div>
-				<div className="settings-payment-gateways__header-select-container">
+				<div className={ selectContainerClass }>
 					<CountrySelector
 						className="woocommerce-select-control__country"
 						label={ __( 'Business location :', 'woocommerce' ) }
@@ -99,6 +120,60 @@ export const PaymentGateways = ( {
 							} );
 						} }
 					/>
+					{ isBaseCountryDiffrent && (
+						<div
+							className="settings-payment-gateways__header-select-container--indicator"
+							onClick={ () =>
+								setIsPopoverVisible( ! isPopoverVisible )
+							}
+							onMouseEnter={ () => setIsPopoverVisible( true ) }
+							onMouseLeave={ () => setIsPopoverVisible( false ) }
+							tabIndex={ 0 }
+							role="button"
+							onKeyDown={ ( event ) => {
+								if (
+									event.key === 'Enter' ||
+									event.key === ' '
+								) {
+									setIsPopoverVisible( ! isPopoverVisible );
+								}
+							} }
+						>
+							<div className="settings-payment-gateways__header-select-container--indicator-icon">
+								<InfoOutline />
+							</div>
+
+							{ isPopoverVisible && (
+								<Popover
+									position="top left"
+									noArrow={ true }
+									onClose={ () =>
+										setIsPopoverVisible( false )
+									}
+								>
+									<div className="settings-payment-gateways__header-select-container--indicator-popover">
+										{ interpolateComponents( {
+											mixedString: __(
+												'Your business location does not match your store location. {{link}}Edit store location.{{/link}}',
+												'woocommerce'
+											),
+											components: {
+												link: (
+													<Link
+														href={ getAdminLink(
+															'admin.php?page=wc-settings&tab=general'
+														) }
+														target="_blank"
+														type="external"
+													/>
+												),
+											},
+										} ) }
+									</div>
+								</Popover>
+							) }
+						</div>
+					) }
 				</div>
 			</div>
 			{ isFetching ? (

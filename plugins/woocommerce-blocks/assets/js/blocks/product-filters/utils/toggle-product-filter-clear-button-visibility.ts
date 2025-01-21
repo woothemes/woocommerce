@@ -16,10 +16,6 @@ import { getProductFilterClearButtonBlock } from './get-product-filter-clear-but
 import { getInnerBlockByName } from './get-inner-block-by-name';
 import { getClientIdByBlockName } from './get-client-id-by-block-name';
 
-const clearButtonDefaultAttributes = {
-	lock: { remove: true, move: false },
-};
-
 interface ToggleProductFilterClearButtonVisibility extends Function {
 	previousClearButtonBlockPosition?: BlockPosition | undefined;
 }
@@ -78,10 +74,7 @@ export const toggleProductFilterClearButtonVisibilityFactory = () => {
 					parentBlockId: clearButtonParentBlockId,
 				} = previousClearButtonBlockPosition;
 				insertBlock(
-					createBlock(
-						'woocommerce/product-filter-clear-button',
-						clearButtonDefaultAttributes
-					),
+					createBlock( 'woocommerce/product-filter-clear-button' ),
 					clearButtonBlockPosition,
 					clearButtonParentBlockId,
 					false
@@ -105,10 +98,7 @@ export const toggleProductFilterClearButtonVisibilityFactory = () => {
 				return false;
 			}
 			insertBlock(
-				createBlock(
-					'woocommerce/product-filter-clear-button',
-					clearButtonDefaultAttributes
-				),
+				createBlock( 'woocommerce/product-filter-clear-button' ),
 				positionIndexToInsertBlock,
 				parentClientIdToInsertBlock,
 				false
@@ -136,10 +126,7 @@ export const toggleProductFilterClearButtonVisibilityFactory = () => {
 				filterBlockHeader.innerBlocks.length;
 			if ( Boolean( filterBlockHeading ) ) {
 				insertBlock(
-					createBlock(
-						'woocommerce/product-filter-clear-button',
-						clearButtonDefaultAttributes
-					),
+					createBlock( 'woocommerce/product-filter-clear-button' ),
 					lastFilterBlockHeaderPosition,
 					filterBlockHeader?.clientId,
 					false
@@ -153,10 +140,7 @@ export const toggleProductFilterClearButtonVisibilityFactory = () => {
 
 		function insertClearButtonToTheFirstPosition() {
 			insertBlock(
-				createBlock(
-					'woocommerce/product-filter-clear-button',
-					clearButtonDefaultAttributes
-				),
+				createBlock( 'woocommerce/product-filter-clear-button' ),
 				0,
 				clientId,
 				false
@@ -171,9 +155,7 @@ export const toggleProductFilterClearButtonVisibilityFactory = () => {
 			showClearButton === false &&
 			Boolean( clearButtonBlock?.clientId )
 		) {
-			updateBlockAttributes( clearButtonBlock?.clientId, {
-				lock: { remove: false, move: false },
-			} );
+			updateBlockAttributes( clearButtonBlock?.clientId );
 			removeBlock( clearButtonBlock?.clientId, false );
 			setPreviousClearButtonBlockPosition(
 				currentClearButtonBlockPosition

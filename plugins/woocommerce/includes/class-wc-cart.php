@@ -1430,6 +1430,15 @@ class WC_Cart extends WC_Legacy_Cart {
 	 */
 
 	/**
+	 * Get selected shipping methods after calculation.
+	 *
+	 * @return array
+	 */
+	public function get_shipping_methods() {
+		return $this->shipping_methods;
+	}
+
+	/**
 	 * Uses the shipping class to calculate shipping then gets the totals when its finished.
 	 */
 	public function calculate_shipping() {

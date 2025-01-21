@@ -43,10 +43,10 @@ When the checkout process begins, it will check if this data store has any entri
 
 ## Usage
 
-To utilize this store you will import the `VALIDATION_STORE_KEY` in any module referencing it. Assuming `@woocommerce/block-data` is registered as an external pointing to `wc.wcBlocksData` you can import the key via:
+To utilize this store you will import the `validationStore` `StoreDescriptor` in any module referencing it. Assuming `@woocommerce/block-data` is registered as an external pointing to `wc.wcBlocksData` you can import the `StoreDescriptor` via:
 
 ```js
-const { VALIDATION_STORE_KEY } = window.wc.wcBlocksData;
+const { validationStore } = window.wc.wcBlocksData;
 ```
 
 ## Example
@@ -121,7 +121,7 @@ export const ValidationInputError = ( {
 	elementId = '',
 }: ValidationInputErrorProps ): JSX.Element | null => {
 	const { validationError, validationErrorId } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
+		const store = select( validationStore );
 		return {
 			validationError: store.getValidationError( propertyName ),
 			validationErrorId: store.getValidationErrorId( elementId ),
@@ -169,7 +169,7 @@ Clears a validation error.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = dispatch( VALIDATION_STORE_KEY );
+const store = dispatch( validationStore );
 store.clearValidationError( 'billing-first-name' );
 ```
 
@@ -186,18 +186,18 @@ Clears multiple validation errors at once. If no error IDs are passed, all valid
 1. This will clear only the validation errors passed in the array.
 
 ```js
-const store = dispatch( VALIDATION_STORE_KEY );
+const store = dispatch( validationStore );
 store.clearValidationErrors( [
 	'billing-first-name',
 	'billing-last-name',
 	'terms-and-conditions',
 ] );
 ```
-
+<!-- markdownlint-disable MD029 -->
 2. This will clear all validation errors.
 
 ```js
-const store = dispatch( VALIDATION_STORE_KEY );
+const store = dispatch( validationStore );
 store.clearValidationErrors();
 ```
 
@@ -213,7 +213,7 @@ Sets the validation errors. The entries in _errors_ will be _added_ to the list 
 
 ```js
 const { dispatch } = wp.data;
-const { setValidationErrors } = dispatch( VALIDATION_STORE_KEY );
+const { setValidationErrors } = dispatch( validationStore );
 
 setValidationErrors( {
 	'billing-first-name': {
@@ -239,7 +239,7 @@ Hides a validation error by setting the `hidden` property to `true`. This will _
 
 ```js
 const { dispatch } = wp.data;
-const { hideValidationError } = dispatch( VALIDATION_STORE_KEY );
+const { hideValidationError } = dispatch( validationStore );
 
 hideValidationError( 'billing-first-name' );
 ```
@@ -256,7 +256,7 @@ Shows a validation error by setting the `hidden` property to `false`.
 
 ```js
 const { dispatch } = wp.data;
-const { showValidationError } = dispatch( VALIDATION_STORE_KEY );
+const { showValidationError } = dispatch( validationStore );
 
 showValidationError( 'billing-first-name' );
 ```
@@ -269,7 +269,7 @@ Shows all validation errors by setting the `hidden` property to `false`.
 
 ```js
 const { dispatch } = wp.data;
-const { showAllValidationErrors } = dispatch( VALIDATION_STORE_KEY );
+const { showAllValidationErrors } = dispatch( validationStore );
 
 showAllValidationErrors();
 ```
@@ -281,7 +281,7 @@ Clears all validation errors by removing them from the store.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const { clearAllValidationErrors } = dispatch( VALIDATION_STORE_KEY );
+const { clearAllValidationErrors } = dispatch( validationStore );
 clearAllValidationErrors();
 ```
 
@@ -302,7 +302,7 @@ Returns the validation error.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( VALIDATION_STORE_KEY );
+const store = select( validationStore );
 const billingFirstNameError = store.getValidationError( 'billing-first-name' );
 ```
 
@@ -321,7 +321,7 @@ Gets a validation error ID for use in HTML which can be used as a CSS selector, 
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( VALIDATION_STORE_KEY );
+const store = select( validationStore );
 const billingFirstNameErrorId =
 	store.getValidationErrorId( 'billing-first-name' );
 ```
@@ -337,7 +337,7 @@ Returns true if validation errors occurred, and false otherwise.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( VALIDATION_STORE_KEY );
+const store = select( validationStore );
 const hasValidationErrors = store.hasValidationErrors();
 ```
 

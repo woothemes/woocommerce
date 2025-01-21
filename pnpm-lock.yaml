@@ -1583,7 +1583,7 @@ importers:
     dependencies:
       '@automattic/puppeteer-utils':
         specifier: github:Automattic/puppeteer-utils#0f3ec50
-        version: https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))
+        version: https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50
       '@woocommerce/api':
         specifier: ^0.2.0
         version: 0.2.0
@@ -3623,8 +3623,8 @@ importers:
         specifier: 9.36.0
         version: 9.36.0
       '@wordpress/notices':
-        specifier: 3.12.0
-        version: 3.12.0(react@18.3.1)
+        specifier: 5.15.1
+        version: 5.15.1(react@18.3.1)
       '@wordpress/plugins':
         specifier: 4.10.0
         version: 4.10.0(react@18.3.1)
@@ -3864,9 +3864,6 @@ importers:
       '@types/wordpress__editor':
         specifier: ^13.6.7
         version: 13.6.7(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__notices':
-        specifier: ^3.27.6
-        version: 3.27.6(react@18.3.1)
       '@types/wordpress__wordcount':
         specifier: ^2.4.5
         version: 2.4.5
@@ -4156,8 +4153,8 @@ importers:
         specifier: ^14.16.1
         version: 14.16.1
       terser-webpack-plugin:
-        specifier: 5.3.6
-        version: 5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
+        specifier: 5.3.11
+        version: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
       typescript:
         specifier: 5.7.x
         version: 5.7.2
@@ -11567,6 +11564,10 @@ packages:
     resolution: {integrity: sha512-fp7C0Ofy95a+jzK126CxAXV+uXSFQs2Clm6PCeE9Y1BowUiL9l7juUCh1R+2NDAKATxH4r3QplxVftDqn+ctUw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
+  '@wordpress/a11y@4.16.0':
+    resolution: {integrity: sha512-i3zrNFx+N+dNivQxUeQXWKGT1ccWePXcqPkVTqjdO+lACv+MtJoyE9PXZCmaxHWq00g1RTvIpLtrzV5L4gzZkA==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
+
   '@wordpress/api-fetch@3.23.1':
     resolution: {integrity: sha512-dmeigLuvqYAzpQ2hWUQT1P5VQAjkj9hS1z7PgNi1CcULFPbY8BWW+KiBETUu6Wm+rlSbUL2dC8qrA4JDv9ja5A==}
 
@@ -12060,6 +12061,10 @@ packages:
     resolution: {integrity: sha512-qpadyGMRvLf7zOe4XtoIo409ZRJ7IrBI36fdEXjRWV8E+Cmcx3ldr5/2iLKJ2cqYg9geQWXDeiykSWOClNJx+w==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
+  '@wordpress/dom-ready@4.16.0':
+    resolution: {integrity: sha512-rlp7gZRRPsob8z+//tS8bHHRTlkRiOfbKA1SJmyfakU/p4fcEXskLfdq/0wGPZtoHnia6kLKUyFMWhIBe8SuYQ==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
+
   '@wordpress/dom@2.18.0':
     resolution: {integrity: sha512-tM2WeQuSObl3nzWjUTF0/dyLnA7sdl/MXaSe32D64OF89bjSyJvjUipI7gjKzI3kJ7ddGhwcTggGvSB06MOoCQ==}
 
@@ -12296,6 +12301,10 @@ packages:
     resolution: {integrity: sha512-LcorV5Z9XoJCKyj5Ulgw1HPHyM2mxsSInC7wl5cuIgDFmuwPTfRndUDGWz/v86GX1GnUIB0h/ggd53vx1HiW4A==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
+  '@wordpress/hooks@4.16.0':
+    resolution: {integrity: sha512-W82L1PdIhJPNpEb2F+0NWzrDoUqZo6NnYID7qHCexBiagq4+QS4uydM6anyFvUNrpL51CmkCNu31Xi8HjpSTGg==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
+
   '@wordpress/html-entities@3.24.0':
     resolution: {integrity: sha512-rwvx8aEJb9gRCj/pJ0v7vh6sT7R6G922LQzHc5cObcSm5cmzPz/Wz07+AZkHA1cmCDQdPiDd3yB8X8l+yeFy0A==}
     engines: {node: '>=12'}
@@ -12337,6 +12346,11 @@ packages:
 
   '@wordpress/i18n@5.10.0':
     resolution: {integrity: sha512-HZ6UcMHsjOocDI0zVAuP4JIl97LRmpGo/lVxzVIreaLoYitmYVDUzji02u1o7sEdRWc1Hpkm2/oO/9275rJg1w==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
+    hasBin: true
+
+  '@wordpress/i18n@5.16.0':
+    resolution: {integrity: sha512-O4ZUvjS8AlYzTxvw7fmp3xk51rpKv1h2/dGFc/L+IB97UrCBAiC9HBv6FIHRF1gci4Vdu/QnCDw3qpC+N/2gCw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     hasBin: true
 
@@ -12542,8 +12556,8 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-  '@wordpress/notices@5.10.0':
-    resolution: {integrity: sha512-7FNcLsX2yV6VHtiJa+Hv++LnC9MgGT5VFHiufnBy6dUmEglwuI7cAgTeWqkL9HY2+eZcwEPU/0zoImCF93Lx+A==}
+  '@wordpress/notices@5.15.1':
+    resolution: {integrity: sha512-GozlClo8uWJ582WaAtGio2qfGns9IPRJxRI8tY7hPf8DQC9Uebz4CbVUHVndIEXULcDbUJQIQX3k3ZA5SDgmtA==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       react: ^18.0.0
@@ -23995,6 +24009,10 @@ packages:
     resolution: {integrity: sha512-L0jRsrPpjdckP3oPug3/VxNKt2trR8TcabrM6FOAAlvC/9Phcmm+cuAgTlxBqdBR1WJx7Naj9WHw+aOmheSVbw==}
     engines: {node: '>= 12.13.0'}
 
+  schema-utils@4.3.0:
+    resolution: {integrity: sha512-Gf9qqc58SpCA/xdziiHz35F4GNIWYWZrEshUc/G/r5BnLph6xpKuLeoJoQuj5WfBIx/eQLf+hmVPYHaxJu7V2g==}
+    engines: {node: '>= 10.13.0'}
+
   scoped-regex@2.1.0:
     resolution: {integrity: sha512-g3WxHrqSWCZHGHlSrF51VXFdjImhwvH8ZO/pryFH56Qi0cDsZfylQa/t0jCzVQFNbNvM00HfHjkDPEuarKDSWQ==}
     engines: {node: '>=8'}
@@ -24064,6 +24082,9 @@ packages:
 
   serialize-javascript@6.0.1:
     resolution: {integrity: sha512-owoXEFjWRllis8/M1Q+Cw5k8ZH40e3zhp/ovX+Xr/vi1qj6QesbyXXViFbpNvWvPNAD62SutwEXavefrLJWj7w==}
+
+  serialize-javascript@6.0.2:
+    resolution: {integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==}
 
   serve-favicon@2.5.0:
     resolution: {integrity: sha512-FMW2RvqNr03x+C0WxTyu6sOv21oOjkq5j8tjquWccwa6ScNyGFOGJVpuS1NmTVGBAHS07xnSKotgf2ehQmf9iA==}
@@ -24966,8 +24987,8 @@ packages:
     peerDependencies:
       webpack: ^4.0.0 || ^5.0.0
 
-  terser-webpack-plugin@5.3.10:
-    resolution: {integrity: sha512-BKFPWlPDndPs+NGGCr1U59t0XScL5317Y0UReNrHaw9/FwhPENlq6bfgs+4yPfyP51vqC1bQ4rp1EfXW5ZSH9w==}
+  terser-webpack-plugin@5.3.11:
+    resolution: {integrity: sha512-RVCsMfuD0+cTt3EwX8hSl2Ks56EbFHWmhluwcqoPKtBnfjiT6olaq7PRIRfhyU8nnC2MrnDrBLfrD/RGE+cVXQ==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
       '@swc/core': '*'
@@ -24998,22 +25019,6 @@ packages:
       uglify-js:
         optional: true
 
-  terser-webpack-plugin@5.3.9:
-    resolution: {integrity: sha512-ZuXsqE07EcggTWQjXUj+Aot/OMcD0bMKGgF63f7UxYcu5/AJF53aIpK1YoP5xR9l6s/Hy2b+t1AM0bLNPRuhwA==}
-    engines: {node: '>= 10.13.0'}
-    peerDependencies:
-      '@swc/core': '*'
-      esbuild: '*'
-      uglify-js: '*'
-      webpack: ^5.1.0
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      esbuild:
-        optional: true
-      uglify-js:
-        optional: true
-
   terser@4.8.1:
     resolution: {integrity: sha512-4GnLC0x667eJG0ewJTa6z/yXrbLGv80D9Ru6HIpCQmO+Q4PfEtBFi0ObSckqwL6VyQv/7ENJieXHo2ANmdQwgw==}
     engines: {node: '>=6.0.0'}
@@ -25021,11 +25026,6 @@ packages:
 
   terser@5.26.0:
     resolution: {integrity: sha512-dytTGoE2oHgbNV9nTzgBEPaqAWvcJNl66VZ0BkJqlvp71IjO8CxdBx/ykCNb47cLnCmCvRZ6ZR0tLkqvZCdVBQ==}
-    engines: {node: '>=10'}
-    hasBin: true
-
-  terser@5.31.6:
-    resolution: {integrity: sha512-PQ4DAriWzKj+qgehQ7LK5bQqCFNMmlhjR2PFFLuqGCpuCAauxemVBWwWOxo3UIwWQx8+Pr61Df++r76wDmkQBg==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -26968,6 +26968,25 @@ snapshots:
       - supports-color
 
   '@automattic/material-design-icons@1.0.0': {}
+
+  '@automattic/puppeteer-utils@https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50':
+    dependencies:
+      '@babel/cli': 7.23.4(@babel/core@7.23.5)
+      '@babel/core': 7.23.5
+      '@babel/preset-env': 7.23.5(@babel/core@7.23.5)
+      '@slack/web-api': 5.15.0
+      '@wordpress/e2e-test-utils': 3.0.0(jest@24.9.0)(puppeteer@2.1.1)
+      config: 3.3.7
+      eslint: 6.7.2
+      jest: 24.9.0
+      prettier: wp-prettier@1.19.1
+      puppeteer: 2.1.1
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - react-native
+      - supports-color
+      - utf-8-validate
 
   '@automattic/puppeteer-utils@https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))':
     dependencies:
@@ -33867,7 +33886,9 @@ snapshots:
       source-map: 0.6.1
       string-length: 2.0.0
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   '@jest/reporters@25.5.1':
     dependencies:
@@ -37274,7 +37295,7 @@ snapshots:
       semver: 7.6.3
       style-loader: 3.3.3(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20))
       swc-loader: 0.2.3(@swc/core@1.3.100)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20))
-      terser-webpack-plugin: 5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20))
       ts-dedent: 2.2.0
       url: 0.11.3
       util: 0.12.5
@@ -37323,7 +37344,7 @@ snapshots:
       semver: 7.6.3
       style-loader: 3.3.3(webpack@5.91.0)
       swc-loader: 0.2.3(@swc/core@1.3.100)(webpack@5.91.0)
-      terser-webpack-plugin: 5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
       ts-dedent: 2.2.0
       url: 0.11.3
       util: 0.12.5
@@ -41072,7 +41093,7 @@ snapshots:
 
   '@woocommerce/e2e-environment@0.3.0(@babel/core@7.23.5)(react@18.3.1)':
     dependencies:
-      '@automattic/puppeteer-utils': https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))
+      '@automattic/puppeteer-utils': https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50
       '@jest/test-sequencer': 25.5.4
       '@slack/web-api': 6.10.0
       '@woocommerce/api': 0.2.0
@@ -41158,6 +41179,12 @@ snapshots:
       '@babel/runtime': 7.25.7
       '@wordpress/dom-ready': 4.10.0
       '@wordpress/i18n': 5.10.0
+
+  '@wordpress/a11y@4.16.0':
+    dependencies:
+      '@babel/runtime': 7.25.7
+      '@wordpress/dom-ready': 4.16.0
+      '@wordpress/i18n': 5.16.0
 
   '@wordpress/api-fetch@3.23.1(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))':
     dependencies:
@@ -41480,7 +41507,7 @@ snapshots:
       '@wordpress/is-shallow-equal': 5.10.0
       '@wordpress/keyboard-shortcuts': 5.10.0(react@18.3.1)
       '@wordpress/keycodes': 4.10.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/preferences': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/rich-text': 7.14.0(react@18.3.1)
@@ -41538,7 +41565,7 @@ snapshots:
       '@wordpress/is-shallow-equal': 5.10.0
       '@wordpress/keyboard-shortcuts': 5.10.0(react@18.3.1)
       '@wordpress/keycodes': 4.10.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/preferences': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/rich-text': 7.14.0(react@18.3.1)
@@ -43072,6 +43099,10 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
 
+  '@wordpress/dom-ready@4.16.0':
+    dependencies:
+      '@babel/runtime': 7.25.7
+
   '@wordpress/dom@2.18.0':
     dependencies:
       '@babel/runtime': 7.26.0
@@ -43154,6 +43185,18 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@wordpress/e2e-test-utils@3.0.0(jest@24.9.0)(puppeteer@2.1.1)':
+    dependencies:
+      '@babel/runtime': 7.26.0
+      '@wordpress/keycodes': 2.19.3
+      '@wordpress/url': 2.22.2(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))
+      jest: 24.9.0
+      lodash: 4.17.21
+      node-fetch: 1.7.3
+      puppeteer: 2.1.1
+    transitivePeerDependencies:
+      - react-native
+
   '@wordpress/e2e-test-utils@3.0.0(jest@24.9.0)(puppeteer@2.1.1)(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))':
     dependencies:
       '@babel/runtime': 7.26.0
@@ -43183,7 +43226,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.23.5
       '@wordpress/keycodes': 2.19.3
-      '@wordpress/url': 2.22.2(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))
+      '@wordpress/url': 2.22.2(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))
       jest: 29.7.0(@types/node@22.9.1)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))
       lodash: 4.17.21
       node-fetch: 2.7.0(encoding@0.1.13)
@@ -43196,7 +43239,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.23.5
       '@wordpress/keycodes': 2.19.3
-      '@wordpress/url': 2.22.2(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))
+      '@wordpress/url': 2.22.2(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))
       jest: 25.5.4
       lodash: 4.17.21
       node-fetch: 2.7.0(encoding@0.1.13)
@@ -43409,7 +43452,7 @@ snapshots:
       '@wordpress/icons': 10.11.0
       '@wordpress/keyboard-shortcuts': 5.10.0(react@18.3.1)
       '@wordpress/keycodes': 4.10.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/patterns': 2.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/plugins': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/preferences': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -43637,7 +43680,7 @@ snapshots:
       '@wordpress/keyboard-shortcuts': 5.10.0(react@18.3.1)
       '@wordpress/keycodes': 4.10.0
       '@wordpress/media-utils': 5.10.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/patterns': 2.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.0.10)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/plugins': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/preferences': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -43939,7 +43982,7 @@ snapshots:
       '@wordpress/html-entities': 4.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/patterns': 2.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.0.10)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/primitives': 4.11.0(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
@@ -43972,7 +44015,7 @@ snapshots:
       '@wordpress/html-entities': 4.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/patterns': 2.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/primitives': 4.11.0(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
@@ -44003,6 +44046,10 @@ snapshots:
       '@babel/runtime': 7.26.0
 
   '@wordpress/hooks@4.10.0':
+    dependencies:
+      '@babel/runtime': 7.25.7
+
+  '@wordpress/hooks@4.16.0':
     dependencies:
       '@babel/runtime': 7.25.7
 
@@ -44067,6 +44114,15 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/hooks': 4.10.0
+      gettext-parser: 1.4.0
+      memize: 2.1.0
+      sprintf-js: 1.1.3
+      tannin: 1.2.0
+
+  '@wordpress/i18n@5.16.0':
+    dependencies:
+      '@babel/runtime': 7.25.7
+      '@wordpress/hooks': 4.16.0
       gettext-parser: 1.4.0
       memize: 2.1.0
       sprintf-js: 1.1.3
@@ -44487,10 +44543,10 @@ snapshots:
       '@wordpress/data': 10.0.2(react@18.3.1)
       react: 18.3.1
 
-  '@wordpress/notices@5.10.0(react@18.3.1)':
+  '@wordpress/notices@5.15.1(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.7
-      '@wordpress/a11y': 4.10.0
+      '@wordpress/a11y': 4.16.0
       '@wordpress/data': 10.0.2(react@18.3.1)
       react: 18.3.1
 
@@ -44542,7 +44598,7 @@ snapshots:
       '@wordpress/html-entities': 4.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/url': 4.10.0
       react: 18.3.1
@@ -44569,7 +44625,7 @@ snapshots:
       '@wordpress/html-entities': 4.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/url': 4.10.0
       react: 18.3.1
@@ -44930,7 +44986,7 @@ snapshots:
       '@wordpress/element': 6.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/url': 4.10.0
       react: 18.3.1
@@ -44954,7 +45010,7 @@ snapshots:
       '@wordpress/element': 6.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/url': 4.10.0
       react: 18.3.1
@@ -45270,7 +45326,7 @@ snapshots:
       sass-loader: 12.6.0(sass@1.69.5)(webpack@5.91.0)
       source-map-loader: 3.0.2(webpack@5.91.0)
       stylelint: 14.16.1
-      terser-webpack-plugin: 5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.91.0))(webpack@5.91.0)
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-bundle-analyzer: 4.7.0
@@ -45362,7 +45418,7 @@ snapshots:
       schema-utils: 4.2.0
       source-map-loader: 3.0.2(webpack@5.97.1)
       stylelint: 16.11.0(typescript@5.7.2)
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1)
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.91.0))(webpack@5.97.1)
       webpack: 5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
       webpack-bundle-analyzer: 4.10.2
@@ -53003,7 +53059,7 @@ snapshots:
       he: 1.2.0
       param-case: 3.0.4
       relateurl: 0.2.7
-      terser: 5.31.6
+      terser: 5.36.0
 
   html-react-parser@3.0.4(react@18.3.1):
     dependencies:
@@ -54973,7 +55029,9 @@ snapshots:
       pretty-format: 24.9.0
       throat: 4.1.0
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   jest-jasmine2@25.5.4:
     dependencies:
@@ -61825,6 +61883,13 @@ snapshots:
       ajv-formats: 2.1.1(ajv@8.17.1)
       ajv-keywords: 5.1.0(ajv@8.17.1)
 
+  schema-utils@4.3.0:
+    dependencies:
+      '@types/json-schema': 7.0.15
+      ajv: 8.17.1
+      ajv-formats: 2.1.1(ajv@8.17.1)
+      ajv-keywords: 5.1.0(ajv@8.17.1)
+
   scoped-regex@2.1.0: {}
 
   section-matter@1.0.0:
@@ -61914,6 +61979,10 @@ snapshots:
       randombytes: 2.1.0
 
   serialize-javascript@6.0.1:
+    dependencies:
+      randombytes: 2.1.0
+
+  serialize-javascript@6.0.2:
     dependencies:
       randombytes: 2.1.0
 
@@ -63270,94 +63339,127 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 5.0.1
       source-map: 0.6.1
-      terser: 5.31.6
+      terser: 5.36.0
       webpack: 4.47.0(webpack-cli@3.3.12)
       webpack-sources: 1.4.3
     transitivePeerDependencies:
       - bluebird
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)):
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)
+    optionalDependencies:
+      '@swc/core': 1.3.100
+      esbuild: 0.18.20
+
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)
     optionalDependencies:
       '@swc/core': 1.3.100
       esbuild: 0.18.20
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0):
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
     optionalDependencies:
       '@swc/core': 1.3.100
       esbuild: 0.18.20
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1):
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
       webpack: 5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
     optionalDependencies:
       '@swc/core': 1.3.100
       esbuild: 0.18.20
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4)):
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.89.0(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack-cli@4.10.0)
+    optionalDependencies:
+      '@swc/core': 1.3.100
+      uglify-js: 3.17.4
+
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
       webpack: 5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4)
     optionalDependencies:
       '@swc/core': 1.3.100
       uglify-js: 3.17.4
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(webpack@5.91.0):
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(webpack@5.70.0):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.70.0(@swc/core@1.3.100)(webpack-cli@3.3.12)
+    optionalDependencies:
+      '@swc/core': 1.3.100
+
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(webpack@5.89.0(@swc/core@1.3.100)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.89.0(@swc/core@1.3.100)
+    optionalDependencies:
+      '@swc/core': 1.3.100
+
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(webpack@5.89.0):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.89.0(@swc/core@1.3.100)(webpack-cli@3.3.12)
+    optionalDependencies:
+      '@swc/core': 1.3.100
+
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(webpack@5.91.0):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
       webpack: 5.91.0(@swc/core@1.3.100)(webpack-cli@3.3.12)
     optionalDependencies:
       '@swc/core': 1.3.100
-
-  terser-webpack-plugin@5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.20
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
-
-  terser-webpack-plugin@5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.20
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
 
   terser-webpack-plugin@5.3.6(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0):
     dependencies:
@@ -63371,63 +63473,6 @@ snapshots:
       '@swc/core': 1.3.100
       uglify-js: 3.17.4
 
-  terser-webpack-plugin@5.3.6(@swc/core@1.3.100)(webpack@5.70.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.20
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.70.0(@swc/core@1.3.100)(webpack-cli@3.3.12)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-
-  terser-webpack-plugin@5.3.9(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
-
-  terser-webpack-plugin@5.3.9(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack-cli@4.10.0)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      uglify-js: 3.17.4
-
-  terser-webpack-plugin@5.3.9(@swc/core@1.3.100)(webpack@5.89.0(@swc/core@1.3.100)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(@swc/core@1.3.100)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-
-  terser-webpack-plugin@5.3.9(@swc/core@1.3.100)(webpack@5.89.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(@swc/core@1.3.100)(webpack-cli@3.3.12)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-
   terser@4.8.1:
     dependencies:
       acorn: 8.12.1
@@ -63439,13 +63484,6 @@ snapshots:
     dependencies:
       '@jridgewell/source-map': 0.3.5
       acorn: 8.11.2
-      commander: 2.20.3
-      source-map-support: 0.5.21
-
-  terser@5.31.6:
-    dependencies:
-      '@jridgewell/source-map': 0.3.6
-      acorn: 8.12.1
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -65236,7 +65274,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.6(@swc/core@1.3.100)(webpack@5.70.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.70.0)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -65269,7 +65307,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(@swc/core@1.3.100)(webpack@5.89.0(@swc/core@1.3.100))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.89.0(@swc/core@1.3.100))
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -65300,7 +65338,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.89.0(@swc/core@1.3.100)(esbuild@0.18.20))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.89.0(@swc/core@1.3.100)(esbuild@0.18.20))
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -65331,7 +65369,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -65364,7 +65402,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(@swc/core@1.3.100)(webpack@5.89.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.89.0)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -65397,7 +65435,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(@swc/core@1.3.100)(webpack@5.89.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.89.0)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -65430,7 +65468,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -65461,7 +65499,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -65494,7 +65532,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -65527,7 +65565,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(webpack@5.91.0)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.91.0)
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -65559,7 +65597,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1)
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1)
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -65591,7 +65629,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     transitivePeerDependencies:

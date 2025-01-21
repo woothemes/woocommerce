@@ -24,6 +24,7 @@
 		"typeRoots": [ "./node_modules/@types" ],
 		"types": [ "jest", "jquery" ],
 		"paths": {
+			"@wordpress/notices": ["./node_modules/@wordpress/notices/build-types"],
 			"@wordpress/data": ["./node_modules/@wordpress/data/build-types"],
 			"@woocommerce/atomic-blocks": [ "assets/js/base/atomic/blocks" ],
 			"@woocommerce/atomic-blocks/*": [

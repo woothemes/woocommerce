@@ -17,7 +17,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	CHECKOUT_STORE_KEY,
 	PAYMENT_STORE_KEY,
-	VALIDATION_STORE_KEY,
+	validationStore,
 } from '@woocommerce/block-data';
 
 /**
@@ -141,7 +141,7 @@ export const CheckoutEventsProvider = ( {
 		__internalSetRedirectUrl( redirectUrl );
 	}
 
-	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { setValidationErrors } = useDispatch( validationStore );
 	const { dispatchCheckoutEvent } = useStoreEvents();
 
 	const checkoutContexts = Object.values( noticeContexts ).filter(
