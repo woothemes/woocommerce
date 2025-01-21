@@ -6,6 +6,7 @@ import { store as coreStore } from '@wordpress/core-data';
 import {
 	InnerBlocks,
 	useBlockProps,
+	useInnerBlocksProps,
 	store as blockEditorStore,
 	__experimentalUseBlockPreview as useBlockPreview,
 	BlockContextProvider,
@@ -43,6 +44,10 @@ const ProductItem = withProduct( function ProductItem( {
 	const blockPreviewProps = useBlockPreview( {
 		blocks,
 	} );
+	const innerBlocksProps = useInnerBlocksProps(
+		{ role: 'listitem' },
+		{ templateLock: 'insert' }
+	);
 
 	return (
 		<BlockContextProvider value={ attributes }>
@@ -50,26 +55,20 @@ const ProductItem = withProduct( function ProductItem( {
 				product={ product as ProductResponseItem }
 				isLoading={ isLoading as boolean }
 			>
-				{ isSelected ? (
-					<InnerBlocks
-						templateLock="insert"
-						__unstableDisableLayoutClassNames={ true }
-						role="listitem"
-					/>
-				) : (
-					<></>
-				) }
+				{ isSelected ? <div { ...innerBlocksProps } /> : <></> }
 
 				<div
-					{ ...blockPreviewProps }
-					role="button"
-					tabIndex={ 0 }
-					onClick={ onSelect }
-					onKeyDown={ onSelect }
-					style={ {
-						display: isSelected ? 'none' : undefined,
-					} }
-				/>
+					role="listitem"
+					style={ { display: isSelected ? 'none' : undefined } }
+				>
+					<div
+						{ ...blockPreviewProps }
+						role="button"
+						tabIndex={ 0 }
+						onClick={ onSelect }
+						onKeyDown={ onSelect }
+					/>
+				</div>
 			</ProductDataContextProvider>
 		</BlockContextProvider>
 	);
@@ -141,22 +140,26 @@ export default function ProductItemTemplateEdit(
 		useState< number >();
 
 	return (
-		<div { ...blockProps } role="list">
-			{ products.map( ( productItem ) => (
-				<ProductItem
-					key={ productItem.id }
-					attributes={ {
-						postId: productItem.id,
-						postType: 'product',
-					} }
-					blocks={ blocks }
-					isSelected={
-						( selectedProductItem || products[ 0 ]?.id ) ===
-						productItem.id
-					}
-					onSelect={ () => setSelectedProductItem( productItem.id ) }
-				/>
-			) ) }
+		<div { ...blockProps }>
+			<div role="list">
+				{ products.map( ( productItem ) => (
+					<ProductItem
+						key={ productItem.id }
+						attributes={ {
+							postId: productItem.id,
+							postType: 'product',
+						} }
+						blocks={ blocks }
+						isSelected={
+							( selectedProductItem || products[ 0 ]?.id ) ===
+							productItem.id
+						}
+						onSelect={ () =>
+							setSelectedProductItem( productItem.id )
+						}
+					/>
+				) ) }
+			</div>
 		</div>
 	);
 }

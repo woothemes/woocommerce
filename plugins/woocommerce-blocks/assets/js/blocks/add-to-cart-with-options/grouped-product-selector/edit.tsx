@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useProductDataContext } from '@woocommerce/shared-context';
-import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
 import { type BlockEditProps } from '@wordpress/blocks';
 
 /**
@@ -27,17 +27,14 @@ export default function AddToCartWithOptionsGroupedProductSelectorEdit(
 	const blockProps = useBlockProps( {
 		className,
 	} );
+	const innerBlocksProps = useInnerBlocksProps( blockProps, {
+		template: GROUPED_PRODUCT_ITEM_TEMPLATE,
+		templateLock: 'all',
+	} );
 
 	if ( productType !== 'grouped' ) {
 		return null;
 	}
 
-	return (
-		<div { ...blockProps }>
-			<InnerBlocks
-				template={ GROUPED_PRODUCT_ITEM_TEMPLATE }
-				templateLock="all"
-			/>
-		</div>
-	);
+	return <div { ...innerBlocksProps } />;
 }
