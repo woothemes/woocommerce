@@ -1,4 +1,0 @@
-Significance: patch
-Type: update
-
-Update WC Blocks to use the StoreDescriptor when accessing the validation data store. The documentation for the validation data store is also updated.
