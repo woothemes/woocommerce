@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Allow order notes to be split onto multiple lines and display correctly in admin and in emails.
