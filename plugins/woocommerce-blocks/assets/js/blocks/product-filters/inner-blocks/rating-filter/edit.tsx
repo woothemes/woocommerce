@@ -134,7 +134,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 			? collectionFilters.rating_counts
 					.sort( ( a, b ) => b.rating - a.rating )
 					.filter( ( { rating } ) => rating >= minimumRating )
-					.map( ( { rating, count } ) => ( {
+					.map( ( { rating, count }, index ) => ( {
 						label: (
 							<Rating
 								key={ rating }
@@ -143,6 +143,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 							/>
 						),
 						value: rating?.toString(),
+						selected: index === 0,
 					} ) )
 			: [];
 
