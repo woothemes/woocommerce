@@ -29,10 +29,6 @@ import { ThumbnailsPosition } from '../constants';
 import type { ProductGalleryThumbnailsSettingsProps } from '../../../types';
 
 const positionHelp: Record< ThumbnailsPosition, string > = {
-	[ ThumbnailsPosition.OFF ]: __(
-		'No thumbnails will be displayed.',
-		'woocommerce'
-	),
 	[ ThumbnailsPosition.LEFT ]: __(
 		'A strip of small images will appear to the left of the main gallery image.',
 		'woocommerce'
