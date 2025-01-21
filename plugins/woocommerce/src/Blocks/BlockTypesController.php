@@ -520,10 +520,10 @@ final class BlockTypesController {
 				$block_types[] = 'AddToCartWithOptionsVariationSelector';
 			}
 			// Generic blocks that will be pushed upstream.
-			$block_types[] = 'AccordionGroup';
-			$block_types[] = 'AccordionItem';
-			$block_types[] = 'AccordionPanel';
-			$block_types[] = 'AccordionHeader';
+			$block_types[] = 'Accordion\AccordionGroup';
+			$block_types[] = 'Accordion\AccordionItem';
+			$block_types[] = 'Accordion\AccordionPanel';
+			$block_types[] = 'Accordion\AccordionHeader';
 		}
 
 		/**

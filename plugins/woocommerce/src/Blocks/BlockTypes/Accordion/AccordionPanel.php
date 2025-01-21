@@ -1,5 +1,7 @@
 <?php
-namespace Automattic\WooCommerce\Blocks\BlockTypes;
+namespace Automattic\WooCommerce\Blocks\BlockTypes\Accordion;
+
+use Automattic\WooCommerce\Blocks\BlockTypes\AbstractBlock;
 
 /**
  * AccordionPanel class.
