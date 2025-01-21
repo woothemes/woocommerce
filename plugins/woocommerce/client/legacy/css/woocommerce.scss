@@ -599,6 +599,10 @@ p.demo_store,
 	.woocommerce-ordering {
 		margin: 0 0 1em;
 
+		> label {
+			margin-right: 0.25rem;
+		}
+
 		select {
 			vertical-align: top;
 		}

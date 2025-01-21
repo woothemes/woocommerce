@@ -16,10 +16,7 @@ import { StoreNoticesContainer } from '@woocommerce/blocks-components';
 import { SlotFillProvider } from '@woocommerce/blocks-checkout';
 import withScrollToTop from '@woocommerce/base-hocs/with-scroll-to-top';
 import { useDispatch, useSelect } from '@wordpress/data';
-import {
-	CHECKOUT_STORE_KEY,
-	VALIDATION_STORE_KEY,
-} from '@woocommerce/block-data';
+import { checkoutStore, validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -50,7 +47,7 @@ const Checkout = ( {
 	children: React.ReactChildren;
 } ): JSX.Element => {
 	const { hasOrder, customerId } = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			hasOrder: store.hasOrder(),
 			customerId: store.getCustomerId(),
@@ -94,20 +91,21 @@ const ScrollOnError = ( {
 } ): null => {
 	const { hasError: checkoutHasError, isIdle: checkoutIsIdle } = useSelect(
 		( select ) => {
-			const store = select( CHECKOUT_STORE_KEY );
+			const store = select( checkoutStore );
 			return {
 				isIdle: store.isIdle(),
 				hasError: store.hasError(),
 			};
-		}
+		},
+		[]
 	);
 	const { hasValidationErrors } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
+		const store = select( validationStore );
 		return {
 			hasValidationErrors: store.hasValidationErrors(),
 		};
 	} );
-	const { showAllValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { showAllValidationErrors } = useDispatch( validationStore );
 
 	const hasErrorsToDisplay =
 		checkoutIsIdle && checkoutHasError && hasValidationErrors;
