@@ -29,7 +29,7 @@ const Placeholder = memo( () => {
 	);
 } );
 
-export const Edit = (): JSX.Element => {
+export const Edit = () => {
 	const innerBlocksProps = useInnerBlocksProps(
 		{
 			className: 'wc-block-product-gallery-large-image__inner-blocks',
