@@ -26,19 +26,6 @@ class AccordionGroup extends AbstractBlock {
 		}
 	
 		$suffix = wp_scripts_get_suffix();
-		if ( defined( 'IS_GUTENBERG_PLUGIN' ) && IS_GUTENBERG_PLUGIN ) {
-			$module_url = gutenberg_url( '/build-module/block-library/accordion-group/view.min.js' );
-		}
-	
-		$script_data = $this->asset_api->get_script_data( $this->asset_api->get_block_asset_build_path( $this->block_name . '-frontend' ), array(  ) );
-		wp_register_script(
-			'wc-accordion-group-frontend',
-			$script_data['src'],
-			$script_data['dependencies'],
-			$script_data['version']
-		);
-	
-		wp_enqueue_script( 'wc-accordion-group-frontend' );
 	
 		$p         = new \WP_HTML_Tag_Processor( $content );
 		$autoclose = $attributes['autoclose'] ? 'true' : 'false';

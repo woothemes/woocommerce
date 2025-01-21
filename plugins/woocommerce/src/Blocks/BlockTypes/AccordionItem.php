@@ -76,7 +76,7 @@ class AccordionItem extends AbstractBlock {
 	 * @return string[]|null
 	 */
 	protected function get_block_type_style() {
-		return [ 'wc-blocks-style' ];
+		return null;
 	}
 
     /**
