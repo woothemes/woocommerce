@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import {
 	useBlockProps,
@@ -26,11 +26,14 @@ export default function Edit( { attributes: { autoclose }, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls key="setting">
-				<PanelBody title={ __( 'Settings' ) } initialOpen>
+				<PanelBody
+					title={ __( 'Settings', 'woocommerce' ) }
+					initialOpen
+				>
 					<ToggleControl
 						isBlock
 						__nextHasNoMarginBottom
-						label={ __( 'Auto-close' ) }
+						label={ __( 'Auto-close', 'woocommerce' ) }
 						onChange={ ( value ) => {
 							setAttributes( {
 								autoclose: value,
@@ -38,7 +41,8 @@ export default function Edit( { attributes: { autoclose }, setAttributes } ) {
 						} }
 						checked={ autoclose }
 						help={ __(
-							'Automatically close accordions when a new one is opened.'
+							'Automatically close accordions when a new one is opened.',
+							'woocommerce'
 						) }
 					/>
 				</PanelBody>

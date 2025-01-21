@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import {
 	useBlockProps,
@@ -9,9 +9,6 @@ import {
 	__experimentalGetSpacingClassesAndStyles as useSpacingProps,
 	__experimentalGetShadowClassesAndStyles as useShadowProps,
 } from '@wordpress/block-editor';
-/**
- * External dependencies
- */
 import clsx from 'clsx';
 
 export default function Edit( { attributes } ) {

@@ -2,9 +2,6 @@
  * External dependencies
  */
 import clsx from 'clsx';
-/**
- * WordPress dependencies
- */
 import {
 	useBlockProps,
 	__experimentalGetBorderClassesAndStyles as getBorderClassesAndStyles,
@@ -13,6 +10,7 @@ import {
 	__experimentalGetShadowClassesAndStyles as getShadowClassesAndStyles,
 	RichText,
 } from '@wordpress/block-editor';
+
 /**
  * Internal dependencies
  */

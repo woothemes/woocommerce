@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import {
 	InnerBlocks,
@@ -9,9 +9,6 @@ import {
 	__experimentalGetSpacingClassesAndStyles as getSpacingClassesAndStyles,
 	__experimentalGetShadowClassesAndStyles as getShadowClassesAndStyles,
 } from '@wordpress/block-editor';
-/**
- * External dependencies
- */
 import clsx from 'clsx';
 
 export default function save( { attributes } ) {

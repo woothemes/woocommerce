@@ -2,9 +2,6 @@
  * External dependencies
  */
 import clsx from 'clsx';
-/**
- * WordPress dependencies
- */
 import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
@@ -70,12 +67,12 @@ export default function Edit( { attributes, setAttributes } ) {
 				</ToolbarGroup>
 			</BlockControls>
 			<InspectorControls key="setting">
-				<PanelBody title={ __( 'Settings' ) }>
+				<PanelBody title={ __( 'Settings', 'woocommerce' ) }>
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 						isBlock
-						label={ __( 'Icon' ) }
+						label={ __( 'Icon', 'woocommerce' ) }
 						value={ icon }
 						onChange={ ( value ) =>
 							setAttributes( { icon: value } )
@@ -115,7 +112,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 						isBlock
-						label={ __( 'Icon Position' ) }
+						label={ __( 'Icon Position', 'woocommerce' ) }
 						value={ iconPosition }
 						onChange={ ( value ) => {
 							setAttributes( { iconPosition: value } );
@@ -164,7 +161,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						onChange={ ( newTitle ) =>
 							setAttributes( { title: newTitle } )
 						}
-						placeholder={ __( 'Accordion title' ) }
+						placeholder={ __( 'Accordion title', 'woocommerce' ) }
 					/>
 					<span
 						className={ clsx( `accordion-item__toggle-icon`, {

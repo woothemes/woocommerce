@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { __ } from '@wordpress/i18n';
 import {
@@ -11,9 +11,6 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { PanelBody, ToggleControl } from '@wordpress/components';
-/**
- * External dependencies
- */
 import clsx from 'clsx';
 
 const ACCORDION_HEADER_BLOCK_NAME = 'woocommerce/accordion-header';
@@ -86,9 +83,9 @@ export default function Edit( {
 	return (
 		<>
 			<InspectorControls key="setting">
-				<PanelBody title={ __( 'Settings' ) }>
+				<PanelBody title={ __( 'Settings', 'woocommerce' ) }>
 					<ToggleControl
-						label={ __( 'Open by default' ) }
+						label={ __( 'Open by default', 'woocommerce' ) }
 						__nextHasNoMarginBottom
 						onChange={ ( value ) => {
 							setAttributes( {
@@ -102,7 +99,8 @@ export default function Edit( {
 						} }
 						checked={ openByDefault }
 						help={ __(
-							'Accordion content will be displayed by default.'
+							'Accordion content will be displayed by default.',
+							'woocommerce'
 						) }
 					/>
 				</PanelBody>

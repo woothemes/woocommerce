@@ -1,8 +1,9 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { SVG, Path } from '@wordpress/components';
 import { registerBlockType } from '@wordpress/blocks';
+
 /**
  * Internal dependencies
  */
