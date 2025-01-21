@@ -38,6 +38,10 @@ const blocks = {
 	},
 	'attribute-filter': {},
 	breadcrumbs: {},
+	'blockified-product-details': {
+		isExperimental: true,
+		customDir: 'product-details',
+	},
 	'catalog-sorting': {},
 	'coming-soon': {},
 	'customer-account': {},
