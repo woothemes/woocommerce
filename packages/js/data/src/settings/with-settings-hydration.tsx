@@ -12,7 +12,10 @@ import { STORE_NAME } from './constants';
 import { Settings } from './types';
 
 export const withSettingsHydration = ( group: string, settings: Settings ) =>
-	createHigherOrderComponent< Record< string, unknown > >(
+	createHigherOrderComponent<
+		React.ComponentType< Record< string, unknown > >,
+		React.ComponentType< Record< string, unknown > >
+	>(
 		( OriginalComponent ) => ( props ) => {
 			const settingsRef = useRef( settings );
 
