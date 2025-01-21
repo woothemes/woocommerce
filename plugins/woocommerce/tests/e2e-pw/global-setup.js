@@ -283,6 +283,24 @@ module.exports = async ( config ) => {
 		`HPOS configuration (woocommerce_custom_orders_table_enabled): ${ dataValue } - ${ enabledOption }`
 	);
 
+	// Save customer ID and make it available across all tests.
+	console.log( 'Saving customer ID...' );
+	process.env.CUSTOMER_USER_ID = await api
+		.get(
+			'customers',
+			{
+				_fields: [ 'id', 'username', 'email', 'role' ],
+			},
+			{
+				email: customer.email,
+				role: 'all',
+			}
+		)
+		.then( ( { data: customer_list } ) => {
+			return customer_list[ 0 ].id;
+		} );
+	console.log( 'Customer ID saved.' );
+
 	await site.useCartCheckoutShortcodes( baseURL, userAgent, admin );
 
 	await browser.close();
