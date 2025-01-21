@@ -28,7 +28,7 @@ class AccordionItem extends AbstractBlock {
 			}
 		
 			$p         = new \WP_HTML_Tag_Processor( $content );
-			$unique_id = wp_unique_id( 'accordion-item-' );
+			$unique_id = wp_unique_id( 'woocommerce-accordion-item-' );
 		
 			// Initialize the state of the item on the server using a closure,
 			// since we need to get derived state based on the current context.
@@ -60,6 +60,7 @@ class AccordionItem extends AbstractBlock {
 					if ( $p->next_tag( array( 'class_name' => 'wp-block-woocommerce-accordion-panel' ) ) ) {
 						$p->set_attribute( 'id', $unique_id . '-panel' );
 						$p->set_attribute( 'aria-labelledby', $unique_id );
+						$p->set_attribute( 'role', 'region' );
 						$p->set_attribute( 'data-wc-bind--inert', '!state.isOpen' );
 		
 						// Only modify content if all directives have been set.
