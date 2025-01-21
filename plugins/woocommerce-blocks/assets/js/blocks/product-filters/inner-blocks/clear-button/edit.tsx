@@ -45,7 +45,6 @@ const Edit = ( props: EditProps ) => {
 					],
 				],
 			] }
-			templateLock="insert"
 		/>
 	);
 };
