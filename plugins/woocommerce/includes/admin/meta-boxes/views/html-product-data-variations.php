@@ -114,7 +114,6 @@ $arrow_img_url          = WC_ADMIN_IMAGES_FOLDER_URL . '/product_data/no-variati
 					</optgroup>
 					<?php if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) : ?>
 						<optgroup label="<?php esc_attr_e( 'Costs', 'woocommerce' ); ?>">
-							<option value="variable_set_cogs_value"><?php esc_html_e( 'Set cost value', 'woocommerce' ); ?></option>
 							<option value="variable_unset_cogs_value"><?php esc_html_e( 'Unset cost value (revert to default value)', 'woocommerce' ); ?></option>
 						</optgroup>
 					<?php endif; ?>

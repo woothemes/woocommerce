@@ -1288,36 +1288,8 @@ jQuery( function ( $ ) {
 						cancel = true;
 					}
 					break;
-				case 'variable_set_cogs_value':
-					value = window.prompt(
-						woocommerce_admin_meta_boxes_variations.i18n_enter_variations_cost_value
-					);
-					if( value == null ) {
-						cancel = true;
-						break;
-					}
-
-					value = value.trim().replace( ',', '.' );
-					if ( value.trim() == '' ) {
-						window.alert(
-							woocommerce_admin_meta_boxes_variations.i18n_variation_cost_cant_be_empty
-						);
-						cancel = true;
-					}
-					else if( isNaN(value) || isNaN( parseFloat( value ) ) ) {
-						window.alert(
-							woocommerce_admin_meta_boxes_variations.i18n_invalid_number
-						);
-						cancel = true;
-					}
-					else if ( value != null ) {
-						data.value = value;
-					} else {
-						cancel = true;
-					}
-					break;
 				case 'variable_unset_cogs_value':
-					if( 
+					if(
 						! window.confirm(
 							woocommerce_admin_meta_boxes_variations.i18n_variation_cost_remove_warning
 							)
