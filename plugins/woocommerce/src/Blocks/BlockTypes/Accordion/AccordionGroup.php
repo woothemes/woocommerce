@@ -30,11 +30,10 @@ class AccordionGroup extends AbstractBlock {
 		$suffix = wp_scripts_get_suffix();
 	
 		$p         = new \WP_HTML_Tag_Processor( $content );
-		$autoclose = $attributes['autoclose'] ? 'true' : 'false';
 	
 		if ( $p->next_tag( array( 'class_name' => 'wp-block-woocommerce-accordion-group' ) ) ) {
             $interactivity_context = array(
-                'autoclose' => $autoclose,
+                'autoclose' => $attributes['autoclose'],
                 'isOpen' => array()
             );
 			$p->set_attribute( 'data-wc-interactive', wp_json_encode( array( 'namespace' => 'woocommerce/accordion' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) );

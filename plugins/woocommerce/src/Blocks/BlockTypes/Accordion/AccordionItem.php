@@ -43,10 +43,9 @@ class AccordionItem extends AbstractBlock {
 			);
 
 			if ( $p->next_tag( array( 'class_name' => 'wp-block-woocommerce-accordion-item' ) ) ) {
-                $open_by_default = $attributes['openByDefault'] ? 'true' : 'false';
                 $interactivity_context = array(
                     'id' => $unique_id,
-                    'openByDefault' => $open_by_default
+                    'openByDefault' => $attributes['openByDefault']
                 );
                 $p->set_attribute( 'data-wc-context', wp_json_encode( $interactivity_context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) );
 				$p->set_attribute( 'data-wc-class--is-open', 'state.isOpen' );
