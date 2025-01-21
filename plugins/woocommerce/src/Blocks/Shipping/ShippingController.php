@@ -7,6 +7,7 @@ use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use WC_Tracks;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 /**
  * ShippingController class.
@@ -185,7 +186,7 @@ class ShippingController {
 							'tax_status' => array(
 								'description' => __( 'If a cost is defined, this controls if taxes are applied to that cost.', 'woocommerce' ),
 								'type'        => 'string',
-								'enum'        => array( 'taxable', 'none' ),
+								'enum'        => array( ProductTaxStatus::TAXABLE, ProductTaxStatus::NONE ),
 							),
 							'cost'       => array(
 								'description' => __( 'Optional cost to charge for local pickup.', 'woocommerce' ),

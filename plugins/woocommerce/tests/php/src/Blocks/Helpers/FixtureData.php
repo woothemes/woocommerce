@@ -5,6 +5,8 @@
 
 namespace Automattic\WooCommerce\Tests\Blocks\Helpers;
 
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
+
 /**
  * FixtureData class.
  */
@@ -328,7 +330,7 @@ class FixtureData {
 			'title'        => 'Flat rate',
 			'availability' => 'all',
 			'countries'    => '',
-			'tax_status'   => 'taxable',
+			'tax_status'   => ProductTaxStatus::TAXABLE,
 			'cost'         => $cost,
 		);
 		update_option( 'woocommerce_flat_rate_settings', $flat_rate_settings );
@@ -348,7 +350,7 @@ class FixtureData {
 			'title'        => 'Flat rate',
 			'availability' => 'all',
 			'countries'    => '',
-			'tax_status'   => 'taxable',
+			'tax_status'   => ProductTaxStatus::TAXABLE,
 			'cost'         => $cost,
 		);
 		update_option( 'woocommerce_flat_rate_settings', $flat_rate_settings );

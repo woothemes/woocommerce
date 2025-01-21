@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
+
 /**
  * Local Pickup Shipping Method.
  *
@@ -119,10 +121,10 @@ class WC_Shipping_Local_Pickup extends WC_Shipping_Method {
 				'title'   => __( 'Tax status', 'woocommerce' ),
 				'type'    => 'select',
 				'class'   => 'wc-enhanced-select',
-				'default' => 'taxable',
+				'default' => ProductTaxStatus::TAXABLE,
 				'options' => array(
-					'taxable' => __( 'Taxable', 'woocommerce' ),
-					'none'    => _x( 'None', 'Tax status', 'woocommerce' ),
+					ProductTaxStatus::TAXABLE => __( 'Taxable', 'woocommerce' ),
+					ProductTaxStatus::NONE    => _x( 'None', 'Tax status', 'woocommerce' ),
 				),
 			),
 			'cost'       => array(

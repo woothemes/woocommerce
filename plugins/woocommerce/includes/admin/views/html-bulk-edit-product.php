@@ -4,6 +4,7 @@
  */
 
 use Automattic\WooCommerce\Utilities\I18nUtil;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -75,9 +76,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php
 						$options = array(
 							''         => __( '— No change —', 'woocommerce' ),
-							'taxable'  => __( 'Taxable', 'woocommerce' ),
-							'shipping' => __( 'Shipping only', 'woocommerce' ),
-							'none'     => _x( 'None', 'Tax status', 'woocommerce' ),
+							ProductTaxStatus::TAXABLE  => __( 'Taxable', 'woocommerce' ),
+							ProductTaxStatus::SHIPPING => __( 'Shipping only', 'woocommerce' ),
+							ProductTaxStatus::NONE     => _x( 'None', 'Tax status', 'woocommerce' ),
 						);
 						foreach ( $options as $key => $value ) {
 							echo '<option value="' . esc_attr( $key ) . '">' . esc_html( $value ) . '</option>';
