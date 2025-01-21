@@ -29,7 +29,7 @@ type Props = {
 	/**
 	 * Help text to be appended beneath the input.
 	 */
-	help?: string | JSX.Element;
+	help?: React.ReactNode;
 	/**
 	 * Render tags inside input, otherwise render below input.
 	 */
