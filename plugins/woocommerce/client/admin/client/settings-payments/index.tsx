@@ -24,6 +24,7 @@ import {
 import { getHistory, getNewPath } from '@woocommerce/navigation';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -216,6 +217,7 @@ const SettingsPaymentsMethods = () => {
 
 		if ( location.pathname === '/payment-methods' ) {
 			hideWooCommerceNavTab( 'none' );
+			recordEvent( 'wcpay_settings_payment_methods_pageview' );
 		}
 	}, [ location ] );
 
