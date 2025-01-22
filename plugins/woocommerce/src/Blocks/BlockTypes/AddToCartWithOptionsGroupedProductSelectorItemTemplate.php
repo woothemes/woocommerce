@@ -8,7 +8,8 @@ use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
 use WP_Block;
 
 /**
- * Block type for grouped product selector in add to cart with options.
+ * Block type for grouped product selector item in add to cart with options.
+ * It's responsible to render each child product in a form of a list item.
  */
 class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlock {
 	/**
@@ -16,7 +17,7 @@ class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlo
 	 *
 	 * @var string
 	 */
-	protected $block_name = 'add-to-cart-with-options-grouped-product-selector-product-item-template';
+	protected $block_name = 'add-to-cart-with-options-grouped-product-selector-item';
 
 	/**
 	 * Get product row HTML.

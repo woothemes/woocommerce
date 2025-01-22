@@ -5,7 +5,7 @@ import type { TemplateArray } from '@wordpress/blocks';
 
 export const GROUPED_PRODUCT_ITEM_TEMPLATE: TemplateArray = [
 	[
-		'woocommerce/add-to-cart-with-options-grouped-product-selector-product-item-template',
+		'woocommerce/add-to-cart-with-options-grouped-product-selector-item',
 		{},
 		[
 			[

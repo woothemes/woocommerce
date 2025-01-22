@@ -114,7 +114,7 @@ export default function ProductItemTemplateEdit(
 
 	return (
 		<div { ...blockProps }>
-			<InnerBlockLayoutContextProvider parentName="woocommerce/add-to-cart-with-options-grouped-product-selector-product-item-template">
+			<InnerBlockLayoutContextProvider parentName="woocommerce/add-to-cart-with-options-grouped-product-selector-item">
 				<div role="list">
 					{ products.map( ( productItem ) => (
 						<ProductItem
