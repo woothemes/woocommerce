@@ -102,6 +102,10 @@ test.describe( 'Merchant → Additional Checkout Fields', () => {
 			.getByLabel( 'Can a truck fit down your road?' )
 			.uncheck();
 
+		await checkoutPageObject.page
+			.getByLabel( 'Test required checkbox' )
+			.check();
+
 		await checkoutPageObject.placeOrder();
 
 		const orderId = checkoutPageObject.getOrderId();
@@ -237,6 +241,10 @@ test.describe( 'Merchant → Additional Checkout Fields', () => {
 			} )
 			.getByLabel( 'Can a truck fit down your road?' )
 			.uncheck();
+
+		await checkoutPageObject.page
+			.getByLabel( 'Test required checkbox' )
+			.check();
 
 		await checkoutPageObject.placeOrder();
 
