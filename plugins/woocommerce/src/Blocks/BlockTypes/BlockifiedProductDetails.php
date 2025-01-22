@@ -97,7 +97,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 		/**
 		 * Filter the product tabs in the product details block.
 		 *
-		 * @since $VID:$
+		 * @since 3.3.0
 		 * @param array $tabs Array of product tabs.
 		 */
 		$product_tabs = apply_filters(
