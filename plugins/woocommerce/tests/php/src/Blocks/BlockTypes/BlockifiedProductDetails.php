@@ -49,7 +49,7 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 
 		$serialized_blocks = do_blocks( $template );
 
-		$expected_serialized_blocks = '<div data-block-name="woocommerce/blockified-product-details" class="wp-block-woocommerce-blockified-product-details">
+		$expected_serialized_blocks                    = '<div data-block-name="woocommerce/blockified-product-details" class="wp-block-woocommerce-blockified-product-details">
    <div data-block-name="woocommerce/accordion-group" data-wc-context="{&quot;autoclose&quot;:false,&quot;isOpen&quot;:[]}" data-wc-interactive="{&quot;namespace&quot;:&quot;woocommerce\/accordion&quot;}" class="wp-block-woocommerce-accordion-group is-layout-flow wp-block-woocommerce-accordion-group-is-layout-flow">
       <div data-block-name="woocommerce/accordion-item" data-wc-class--is-open="state.isOpen" data-wc-context="{&quot;id&quot;:&quot;woocommerce-accordion-item-2&quot;,&quot;openByDefault&quot;:false}" data-wc-init="callbacks.initIsOpen" class="wp-block-woocommerce-accordion-item is-layout-flow wp-block-woocommerce-accordion-item-is-layout-flow">
          <h3 class="wp-block-woocommerce-accordion-header accordion-item__heading is-layout-flow wp-block-woocommerce-accordion-header-is-layout-flow">
