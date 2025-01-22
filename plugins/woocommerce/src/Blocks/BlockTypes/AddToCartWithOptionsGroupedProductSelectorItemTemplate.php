@@ -74,8 +74,10 @@ class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlo
 
 		$content = '';
 
-		foreach ( $product->get_children() as $child_id ) {
-			$content .= $this->get_product_row( $child_id, $attributes, $block );
+		$children = array_filter( array_map( 'wc_get_product', $product->get_children() ), 'wc_products_array_filter_visible_grouped' );
+
+		foreach ( $children as $child ) {
+			$content .= $this->get_product_row( $child->get_id(), $attributes, $block );
 		}
 
 		return $content;
