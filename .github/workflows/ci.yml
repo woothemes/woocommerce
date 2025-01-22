@@ -78,7 +78,6 @@ jobs:
         id: checkout_base_sha
         shell: bash
         run: |
-          git rev-list --no-merges -n ${{ steps.checkout_depth.outputs.value }} HEAD
           value=$(git rev-list --no-merges -n ${{ steps.checkout_depth.outputs.value }} HEAD | tail -1)
           echo "value=$value" >> $GITHUB_OUTPUT
       # Now let's get to generating the build matrix itself.
