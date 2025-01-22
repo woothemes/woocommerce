@@ -147,11 +147,10 @@ class OrderActionsRestController extends RestApiControllerBase {
 	 * Get the accepted arguments for the POST request.
 	 *
 	 * @param string $action_slug The endpoint slug for the order action.
-	 * @param string $method      The endpoint method. E.g. GET, POST.
 	 *
 	 * @return array[]
 	 */
-	private function get_args_for_order_actions( string $action_slug, string $method ): array {
+	private function get_args_for_order_actions( string $action_slug ): array {
 		$args = array(
 			'email'              => array(
 				'description'       => __( 'Email address to send the order details to.', 'woocommerce' ),
