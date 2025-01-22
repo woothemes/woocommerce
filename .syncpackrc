@@ -70,6 +70,7 @@
 				"@wordpress/stylelint-config",
 				"@wordpress/url",
 				"@wordpress/wordcount",
+				"@wordpress/interactivity",
 				"babel*",
 				"eslint*",
 				"glob*",
