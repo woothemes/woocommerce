@@ -12,6 +12,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
+
 /**
  * WC_Cart_Fees class.
  *
@@ -35,7 +37,7 @@ final class WC_Cart_Fees {
 		'id'        => '',
 		'name'      => '',
 		'tax_class' => '',
-		'taxable'   => false,
+		ProductTaxStatus::TAXABLE   => false,
 		'amount'    => 0,
 		'total'     => 0,
 	);

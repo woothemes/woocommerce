@@ -8,6 +8,7 @@
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 /**
  * Class Functions.
@@ -1390,7 +1391,7 @@ class WC_Tests_Order_Functions extends WC_Unit_Test_Case {
 		$fee->set_props(
 			array(
 				'name'       => 'Some Fee',
-				'tax_status' => 'taxable',
+				'tax_status' => ProductTaxStatus::TAXABLE,
 				'total'      => '10',
 				'tax_class'  => '',
 			)

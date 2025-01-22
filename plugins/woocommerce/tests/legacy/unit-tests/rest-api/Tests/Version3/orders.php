@@ -12,6 +12,7 @@ require_once __DIR__ . '/date-filtering.php';
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\CouponHelper;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 /**
  * Class WC_Tests_API_Orders
@@ -586,7 +587,7 @@ class WC_Tests_API_Orders extends WC_REST_Unit_Test_Case {
 		$fee->set_props(
 			array(
 				'name'       => 'Some Fee',
-				'tax_status' => 'taxable',
+				'tax_status' => ProductTaxStatus::TAXABLE,
 				'total'      => '100',
 				'tax_class'  => '',
 			)

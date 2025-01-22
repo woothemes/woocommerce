@@ -7,6 +7,7 @@
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 /**
  * Test class for WC_Product_CSV_Importer.
@@ -233,7 +234,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'2017-01-01',
 				'2030-01-01 0:00:00',
-				'taxable',
+				ProductTaxStatus::TAXABLE,
 				'standard',
 				'1',
 				'5',
@@ -281,7 +282,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'Jul 8, 2023',
 				'1689239400',
-				'taxable',
+				ProductTaxStatus::TAXABLE,
 				'standard',
 				'1',
 				'',
@@ -345,7 +346,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'description'           => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'     => '2017-01-01',
 				'date_on_sale_to'       => '2030-01-01 0:00:00',
-				'tax_status'            => 'taxable',
+				'tax_status'            => ProductTaxStatus::TAXABLE,
 				'tax_class'             => 'standard',
 				'stock_status'          => 'instock',
 				'stock_quantity'        => 5,
@@ -389,7 +390,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'description'           => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'     => 'Jul 8, 2023',
 				'date_on_sale_to'       => '2023-07-13T09:10:00Z',
-				'tax_status'            => 'taxable',
+				'tax_status'            => ProductTaxStatus::TAXABLE,
 				'tax_class'             => 'standard',
 				'stock_status'          => 'instock',
 				'stock_quantity'        => '',
@@ -442,7 +443,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'description'        => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'  => '2023-07-08 05:10:15',
 				'date_on_sale_to'    => '2023/07/13',
-				'tax_status'         => 'taxable',
+				'tax_status'         => ProductTaxStatus::TAXABLE,
 				'tax_class'          => 'standard',
 				'stock_status'       => 'instock',
 				'stock_quantity'     => '',
@@ -530,7 +531,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'description'        => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'  => null,
 				'date_on_sale_to'    => null,
-				'tax_status'         => 'taxable',
+				'tax_status'         => ProductTaxStatus::TAXABLE,
 				'tax_class'          => 'standard',
 				'stock_status'       => 'instock',
 				'stock_quantity'     => 6,
@@ -575,7 +576,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'description'        => 'Lorem ipsum dolor sit amet, at exerci civibus appetere sit, iuvaret hendrerit mea no. Eam integre feugait liberavisse an.',
 				'date_on_sale_from'  => null,
 				'date_on_sale_to'    => null,
-				'tax_status'         => 'taxable',
+				'tax_status'         => ProductTaxStatus::TAXABLE,
 				'tax_class'          => 'standard',
 				'stock_status'       => 'instock',
 				'stock_quantity'     => 10,

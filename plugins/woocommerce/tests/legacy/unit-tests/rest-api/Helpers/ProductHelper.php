@@ -14,6 +14,7 @@ use WC_Product_Variable;
 use WC_Product_Variation;
 use WC_Product_Attribute;
 use WC_Cache_Helper;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 /**
  * Class ProductHelper.
@@ -58,7 +59,7 @@ class ProductHelper {
 				'price'         => 10,
 				'sku'           => 'DUMMY SKU' . self::$sku_counter,
 				'manage_stock'  => false,
-				'tax_status'    => 'taxable',
+				'tax_status'    => ProductTaxStatus::TAXABLE,
 				'downloadable'  => false,
 				'virtual'       => false,
 				'stock_status'  => 'instock',

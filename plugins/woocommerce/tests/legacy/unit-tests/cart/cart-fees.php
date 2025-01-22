@@ -1,5 +1,7 @@
 <?php
 
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
+
 /**
  * Class WC_Cart_Fees.
  * @package WooCommerce\Tests\Cart
@@ -41,7 +43,7 @@ class WC_Tests_WC_Cart_Fees extends WC_Unit_Test_Case {
 				'name'      => 'newfee2',
 				'amount'    => 10,
 				'tax_class' => 'Reduced rate',
-				'taxable'   => true,
+				ProductTaxStatus::TAXABLE   => true,
 			),
 		);
 		$cart_fees->set_fees( $args );

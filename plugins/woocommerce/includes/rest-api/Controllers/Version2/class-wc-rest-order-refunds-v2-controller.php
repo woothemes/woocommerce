@@ -11,6 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\Internal\Utilities\Types;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 /**
  * REST API Order Refunds controller class.
@@ -780,7 +781,7 @@ class WC_REST_Order_Refunds_V2_Controller extends WC_REST_Orders_V2_Controller {
 								'description' => __( 'Tax status of fee.', 'woocommerce' ),
 								'type'        => 'string',
 								'context'     => array( 'view', 'edit' ),
-								'enum'        => array( 'taxable', 'none' ),
+								'enum'        => array( ProductTaxStatus::TAXABLE, ProductTaxStatus::NONE ),
 							),
 							'total'      => array(
 								'description' => __( 'Line total (after discounts).', 'woocommerce' ),
