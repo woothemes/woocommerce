@@ -17,7 +17,6 @@
 		"thumbnailsPosition": "thumbnailsPosition",
 		"thumbnailsNumberOfThumbnails": "thumbnailsNumberOfThumbnails",
 		"productGalleryClientId": "productGalleryClientId",
-		"pagerDisplayMode": "pagerDisplayMode",
 		"hoverZoom": "hoverZoom",
 		"fullScreenOnClick": "fullScreenOnClick",
 		"mode": "mode",
@@ -32,10 +31,6 @@
 		"thumbnailsNumberOfThumbnails": {
 			"type": "number",
 			"default": 3
-		},
-		"pagerDisplayMode": {
-			"type": "string",
-			"default": "dots"
 		},
 		"productGalleryClientId": {
 			"type": "string",

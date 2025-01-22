@@ -139,7 +139,6 @@ export const Edit = ( {
 					setAttributes={ setAttributes }
 					context={ {
 						productGalleryClientId: clientId,
-						pagerDisplayMode: attributes.pagerDisplayMode,
 						thumbnailsPosition: attributes.thumbnailsPosition,
 						thumbnailsNumberOfThumbnails:
 							attributes.thumbnailsNumberOfThumbnails,

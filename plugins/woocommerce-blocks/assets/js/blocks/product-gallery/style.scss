@@ -243,38 +243,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-// Pager
-.wc-block-product-gallery-pager__pager {
-	display: flex;
-	justify-content: center;
-	list-style: none;
-	gap: $gap-small;
-	margin-top: 0;
-	margin-bottom: 0;
-	padding: 0;
-
-	button {
-		border: none;
-		background: none;
-		color: inherit;
-		font-size: inherit;
-		font-weight: inherit;
-		padding: 0;
-		cursor: pointer;
-	}
-}
-
-.wc-block-product-gallery-pager__pager-item {
-	@include font-size(regular);
-	color: $gray-600;
-	cursor: pointer;
-}
-
-.wc-block-product-gallery-pager__pager-item--is-active {
-	font-weight: bold;
-	color: $black;
-}
-
 // Thumbnails
 #{$thumbnails} {
 	display: flex;

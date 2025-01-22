@@ -1,4 +1,0 @@
-Significance: minor
-Type: fix
-
-Ensure GTIN,UPC, EAN, or ISBN field never starts or ends with a dash
