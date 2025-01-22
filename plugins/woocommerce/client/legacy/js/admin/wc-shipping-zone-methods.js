@@ -362,19 +362,24 @@
 					const numericValuesFields = [
 						'woocommerce_free_shipping_min_amount',
 						'woocommerce_flat_rate_cost',
+						'woocommerce_flat_rate_no_class_cost',
 					];
+					const flatRateClassCostIdPrefix = 'woocommerce_flat_rate_class_cost_';
 
-					numericValuesFields.forEach( function( field ) {
-						const formattedValue = data[ field ];
+					Object.keys( data ).forEach( ( key ) => {
+						if ( numericValuesFields.includes( key ) || key.startsWith( flatRateClassCostIdPrefix ) ) {
+							const formattedValue = data[ key ];
 
-						// this method runs for every field in the model, so we may encounter empty fields because
-						// the field may not be present in the form presented to the user.
-						// we don't throw the error since we expect any validation error to be handled in the backend
-						try {
-							const unformattedValue = window.wc.currency.unformatLocalisedMonetaryValue( config, formattedValue );
-							data[ field ] = unformattedValue;
-						} catch ( error ) {
-							return; // we leave the original data as-is by returning here
+							// this method runs for every field in the model, so we may encounter empty fields because
+							// the field may not be present in the form presented to the user.
+							// we don't throw the error since we expect any validation error to be handled in the backend
+
+							try {
+								const unformattedValue = window.wc.currency.unformatLocalisedMonetaryValue( config, formattedValue );
+								data[ key ] = unformattedValue;
+							} catch ( error ) {
+								return; // we leave the original data as-is by returning here
+							}
 						}
 					} );
 
