@@ -1,4 +1,3 @@
-const webpack = require( 'webpack' );
 const WPDependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const packages = require( '../assets/packages' );
 
