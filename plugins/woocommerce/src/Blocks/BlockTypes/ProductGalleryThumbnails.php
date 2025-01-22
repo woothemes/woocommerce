@@ -121,7 +121,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		if ( ! isset( $block->context ) || ! isset( $block->context['thumbnailsPosition'] ) || '' !== $block->context['thumbnailsPosition'] ) {
+		if ( ! isset( $block->context ) || ! isset( $block->context['thumbnailsPosition'] ) || '' === $block->context['thumbnailsPosition'] ) {
 			return '';
 		}
 
