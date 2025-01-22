@@ -3,7 +3,7 @@
  */
 import { dispatch, select } from '@wordpress/data';
 import { KeyedFormField, ShippingAddress } from '@woocommerce/settings';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { __, sprintf } from '@wordpress/i18n';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 
@@ -32,7 +32,7 @@ export const validateState = (
 ) => {
 	const validationErrorId = `${ addressType }_state`;
 	const hasValidationError =
-		select( VALIDATION_STORE_KEY ).getValidationError( validationErrorId );
+		select( validationStore ).getValidationError( validationErrorId );
 	const isRequired = stateField.required;
 
 	const lastAddress =
@@ -46,12 +46,12 @@ export const validateState = (
 	if ( hasValidationError ) {
 		if ( ! isRequired || values.state ) {
 			// Validation error has been set, but it's no longer required, or the state was provided, clear the error.
-			dispatch( VALIDATION_STORE_KEY ).clearValidationError(
+			dispatch( validationStore ).clearValidationError(
 				validationErrorId
 			);
 		} else if ( ! addressChanged ) {
 			// Validation error has been set, there has not been an address change so show the error.
-			dispatch( VALIDATION_STORE_KEY ).showValidationError(
+			dispatch( validationStore ).showValidationError(
 				validationErrorId
 			);
 		}
@@ -62,7 +62,7 @@ export const validateState = (
 		values.country
 	) {
 		// No validation has been set yet, if it's required, there is a country set and no state, set the error.
-		dispatch( VALIDATION_STORE_KEY ).setValidationErrors( {
+		dispatch( validationStore ).setValidationErrors( {
 			[ validationErrorId ]: {
 				message: sprintf(
 					/* translators: %s will be the state field label in lowercase e.g. "state" */

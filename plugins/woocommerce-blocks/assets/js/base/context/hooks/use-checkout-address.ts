@@ -10,7 +10,7 @@ import {
 } from '@woocommerce/settings';
 import { useCallback } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -52,19 +52,18 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		editingBillingAddress,
 		editingShippingAddress,
 	} = useSelect( ( select ) => ( {
-		useShippingAsBilling:
-			select( CHECKOUT_STORE_KEY ).getUseShippingAsBilling(),
-		prefersCollection: select( CHECKOUT_STORE_KEY ).prefersCollection(),
+		useShippingAsBilling: select( checkoutStore ).getUseShippingAsBilling(),
+		prefersCollection: select( checkoutStore ).prefersCollection(),
 		editingBillingAddress:
-			select( CHECKOUT_STORE_KEY ).getEditingBillingAddress(),
+			select( checkoutStore ).getEditingBillingAddress(),
 		editingShippingAddress:
-			select( CHECKOUT_STORE_KEY ).getEditingShippingAddress(),
+			select( checkoutStore ).getEditingShippingAddress(),
 	} ) );
 	const {
 		__internalSetUseShippingAsBilling,
 		setEditingBillingAddress,
 		setEditingShippingAddress,
-	} = useDispatch( CHECKOUT_STORE_KEY );
+	} = useDispatch( checkoutStore );
 	const {
 		billingAddress,
 		setBillingAddress,
