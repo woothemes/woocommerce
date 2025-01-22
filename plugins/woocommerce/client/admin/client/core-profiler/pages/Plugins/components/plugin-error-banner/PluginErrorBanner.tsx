@@ -43,7 +43,7 @@ export const PluginErrorBanner = ( {
 				);
 			break;
 	}
-	console.log( pluginsSlugToName );
+
 	const failedPluginNames = [
 		...new Set(
 			( pluginsInstallationErrors || [] ).map(

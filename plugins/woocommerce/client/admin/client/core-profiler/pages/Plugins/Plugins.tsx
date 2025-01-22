@@ -167,7 +167,7 @@ export const Plugins = ( {
 			}, {} as Record< string, string > ),
 		[ context.pluginsAvailable ]
 	);
-	console.log( context );
+
 	return (
 		<div
 			className="woocommerce-profiler-plugins"
