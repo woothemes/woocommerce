@@ -78,7 +78,8 @@ class Controller extends AbstractBlock {
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
 		// Hook the store notices block to ensure woocommerce/product-button can add error notices client-side.
-		add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback_store_notice' ), 1, 4 );
+		$filter = $this->block_hooks_support_post_content() ? 'block_hook_fallback_post_content_support' : 'block_hook_fallback_no_post_content_support';
+		add_filter( 'hooked_block_types', array( $this, $filter ), 1, 4 );
 		add_filter( 'hooked_block_woocommerce/store-notices', array( $this, 'augment_hooked_store_notices_block' ), 10, 5 );
 
 		$this->register_core_collections_and_set_handler_store();
@@ -86,15 +87,38 @@ class Controller extends AbstractBlock {
 
 	/**
 	 * Hook the store notices block to post-content/before to ensure that error notices can be shown
-	 * client-side even when the store notices block is not present as part of the template.
+	 * client-side even when the store notices block is not present as part of the template. This hook
+	 * is not called in WordPress 6.8+ where post_content is supported by block hooks.
+	 * 
+	 * @param array  $hooked_blocks The array of hooked blocks.
+	 * @param string $position The position of the block.
+	 * @param string $anchor_block The anchor block.
+	 * @return array The array of hooked blocks.
+	 */
+	public function block_hook_fallback_no_post_content_support( $hooked_blocks, $position, $anchor_block ) {
+		// In WordPress versions prior to 6.8, contents of post_content was not available on the context,
+		// so it's hard to detect if the product collection block is being rendered. As a workaround,
+		// we don't hook the block in admin in this case, so that the only negative side effect
+		// on the frontend is that an empty store notices block will be rendered.
+		if ( ! is_admin() && 'core/post-content' === $anchor_block && 'before' === $position ) {
+			$hooked_blocks[] = 'woocommerce/store-notices';
+		}
+
+		return $hooked_blocks;
+	}
+
+	/**
+	 * Hook the store notices block to post-content/first_child to ensure that error notices can be shown
+	 * client-side even when the store notices block is not present as part of the template. This hook is
+	 * only called in WordPress 6.8+ where post_content is supported by block hooks.
 	 *
 	 * @param array  $hooked_blocks The array of hooked blocks.
 	 * @param string $position The position of the block.
 	 * @param string $anchor_block The anchor block.
 	 * @return array The array of hooked blocks.
 	 */
-	public function block_hook_fallback_store_notice( $hooked_blocks, $position, $anchor_block ) {
-		if ( 'core/post-content' === $anchor_block && 'before' === $position ) {
+	public function block_hook_fallback_post_content_support( $hooked_blocks, $position, $anchor_block ) {		
+		if ( 'core/post-content' === $anchor_block && 'first_child' === $position ) {
 			$hooked_blocks[] = 'woocommerce/store-notices';
 		}
 
@@ -112,11 +136,38 @@ class Controller extends AbstractBlock {
 	 *                                                             or pattern that the anchor block belongs to.
 	 * @return array|null
 	 */
-	public function augment_hooked_store_notices_block( $parsed_hooked_block, $hooked_block_type, $relative_position, $parsed_anchor_block, $context ) {
+	public function augment_hooked_store_notices_block( $parsed_hooked_block, $hooked_block_type, $relative_position, $parsed_anchor_block, $context ) {		
+		// Don't hook the block if there is not a product collection block in the content.
+		if ( $context instanceof \WP_Post && ! str_contains( $context->post_content, 'woocommerce/product-collection' ) ) {
+			return null;
+		}
+
+		
 		// Do not default to wide, as it will break the layout for this fallback block.
 		$parsed_hooked_block['attrs']['align'] = '';
 
 		return $parsed_hooked_block;
+	}
+
+	public function block_hooks_support_post_content() {
+		if ( is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
+			$gutenberg_version = '';
+
+			if ( defined( 'GUTENBERG_VERSION' ) ) {
+				$gutenberg_version = GUTENBERG_VERSION;
+			}
+
+			if ( ! $gutenberg_version ) {
+				$gutenberg_data    = get_file_data(
+					WP_PLUGIN_DIR . '/gutenberg/gutenberg.php',
+					array( 'Version' => 'Version' )
+				);
+				$gutenberg_version = $gutenberg_data['Version'];
+			}
+			return version_compare( $gutenberg_version, '20.0', '>=' );
+		}
+
+		return version_compare( get_bloginfo( 'version' ), '6.8', '>=' );
 	}
 
 	/**
