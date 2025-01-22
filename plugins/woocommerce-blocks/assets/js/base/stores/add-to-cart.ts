@@ -30,6 +30,7 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 	{
 		actions: {
 			// Question: Should we name this `addCartItem` to match the Store API naming?
+			// Question: Should we use regular arguments or wrap them in an object?
 			*addToCart( id, quantity ) {
 				let item = state.cart.items.find(
 					( { id: productId } ) => id === productId
@@ -99,5 +100,3 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 		},
 	}
 );
-
-window.wooActions = actions;

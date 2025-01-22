@@ -84,6 +84,7 @@ class ProductButton extends AbstractBlock {
 		$product = wc_get_product( $post_id );
 
 		// Initialize the "Add To Cart" store part.
+		// Question: Is this ok for 3PD or should we use a global function like `woocommerce_interactivity_use_add_to_cart_store()`.
 		$state = Store::add_to_cart();
 
 		wc_initial_state(
@@ -174,12 +175,12 @@ class ProductButton extends AbstractBlock {
 				$this->prevent_cache();
 			}
 
-
 			// Todo: replace data-wc-interactive JSON with a simple 'woocommerce/product-button' string.
 			$interactive = array( 'namespace' => 'woocommerce/product-button' );
 			$div_directives = '
 				data-wc-interactive=\'' . wp_json_encode( $interactive, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
 				data-wc-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
+				data-wc-init="actions.refreshCart"
 			';
 
 			$button_directives = 'data-wc-on--click="actions.addToCart"';
