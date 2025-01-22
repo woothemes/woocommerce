@@ -172,7 +172,7 @@ const SettingsPaymentsMain = () => {
 /**
  * Renders the recommended payment methods settings page with a fallback while loading.
  */
-const SettingsPaymentsMethods = () => {
+export const SettingsPaymentsMethods = () => {
 	const location = useLocation();
 	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
 	const [ isCompleted, setIsCompleted ] = useState( false );
