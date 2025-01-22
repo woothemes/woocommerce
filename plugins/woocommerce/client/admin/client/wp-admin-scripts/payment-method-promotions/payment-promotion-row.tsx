@@ -59,10 +59,12 @@ export const PaymentPromotionRow: React.FC< PaymentPromotionRowProps > = ( {
 	const { gatewayIsActive, paymentGateway } = useSelect( ( select ) => {
 		const { getPaymentGateway } = select( PAYMENT_GATEWAYS_STORE_NAME );
 		const activePlugins: string[] =
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			select( PLUGINS_STORE_NAME ).getActivePlugins();
 		const isActive = activePlugins && activePlugins.includes( pluginSlug );
 		let paymentGatewayData;
 		if ( isActive ) {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			paymentGatewayData = getPaymentGateway(
 				pluginSlug.replace( /\-/g, '_' )
 			);
@@ -72,7 +74,7 @@ export const PaymentPromotionRow: React.FC< PaymentPromotionRowProps > = ( {
 			gatewayIsActive: isActive,
 			paymentGateway: paymentGatewayData,
 		};
-	} );
+	}, [] );
 
 	useEffect( () => {
 		if (

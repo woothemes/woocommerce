@@ -49,24 +49,30 @@ const useShowShippingTour = () => {
 
 		return {
 			isLoading:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					CREATED_DEFAULTS_OPTION,
 				] ) &&
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					REVIEWED_DEFAULTS_OPTION,
 				] ) &&
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					'woocommerce_default_country',
 				] ),
 			hasCreatedDefaultShippingZones:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( CREATED_DEFAULTS_OPTION ) === 'yes',
 			hasReviewedDefaultShippingOptions:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( REVIEWED_DEFAULTS_OPTION ) === 'yes',
 			businessCountry: getCountryCode(
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( 'woocommerce_default_country' ) as string
 			),
 		};
-	} );
+	}, [] );
 
 	return {
 		isLoading,

@@ -26,19 +26,28 @@ export const ReportDateTour: React.FC< {
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { updateOptions } = useDispatch( OPTIONS_STORE_NAME );
 
-	const { shouldShowTour, isResolving } = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } =
-			select( OPTIONS_STORE_NAME );
-		return {
-			shouldShowTour:
-				getOption( optionName ) !== 'yes' &&
-				getOption( DATE_TYPE_OPTION ) === false,
-			isResolving: ! (
-				hasFinishedResolution( 'getOption', [ optionName ] ) &&
-				hasFinishedResolution( 'getOption', [ DATE_TYPE_OPTION ] )
-			),
-		};
-	} );
+	const { shouldShowTour, isResolving } = useSelect(
+		( select ) => {
+			const { getOption, hasFinishedResolution } =
+				select( OPTIONS_STORE_NAME );
+
+			return {
+				shouldShowTour:
+					// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+					getOption( optionName ) !== 'yes' &&
+					// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+					getOption( DATE_TYPE_OPTION ) === false,
+				isResolving:
+					// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+					! hasFinishedResolution( 'getOption', [ optionName ] ) ||
+					// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+					! hasFinishedResolution( 'getOption', [
+						DATE_TYPE_OPTION,
+					] ),
+			};
+		},
+		[ optionName ]
+	);
 
 	if ( isDismissed || ! shouldShowTour || isResolving ) {
 		return null;

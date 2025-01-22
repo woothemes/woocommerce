@@ -25,21 +25,27 @@ const useShowStoreLocationTour = () => {
 
 		return {
 			isLoading:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					STORE_ADDRESS_SETTINGS_OPTION,
 				] ) ||
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					STORE_CITY_SETTINGS_OPTION,
 				] ) ||
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					STORE_POSTCODE_SETTINGS_OPTION,
 				] ),
 			hasFilledStoreAddress:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( STORE_ADDRESS_SETTINGS_OPTION ) !== '' &&
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( STORE_CITY_SETTINGS_OPTION ) !== '' &&
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( STORE_POSTCODE_SETTINGS_OPTION ) !== '',
 		};
-	} );
+	}, [] );
 
 	return {
 		isLoading,
