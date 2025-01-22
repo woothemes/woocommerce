@@ -328,6 +328,11 @@ class CheckoutSchema extends AbstractSchema {
 				$field_schema['type'] = 'boolean';
 			}
 
+			if ( 'checkbox' === $field['type'] && true === $field['required'] ) {
+				$field_schema['enum'][] = true;
+			}
+
+
 			$schema[ $key ] = $field_schema;
 		}
 		return $schema;
