@@ -14,14 +14,14 @@ import {
 /**
  * Internal dependencies
  */
-import { STORE_KEY as VALIDATION_STORE_KEY } from '../validation/constants';
+import { store as validationStoreDescriptor } from '../validation';
 
 export const mapCartResponseToCart = ( responseCart: CartResponse ): Cart => {
 	return camelCaseKeys( responseCart ) as unknown as Cart;
 };
 
 export const shippingAddressHasValidationErrors = () => {
-	const validationStore = select( VALIDATION_STORE_KEY );
+	const validationStore = select( validationStoreDescriptor );
 	// Check if the shipping address form has validation errors - if not then we know the full required
 	// address has been pushed to the server.
 	const stateValidationErrors =
@@ -97,7 +97,7 @@ export const validateDirtyProps = ( dirtyProps: {
 	billingAddress: BaseAddressKey[];
 	shippingAddress: BaseAddressKey[];
 } ): boolean => {
-	const validationStore = select( VALIDATION_STORE_KEY );
+	const validationStore = select( validationStoreDescriptor );
 
 	const invalidProps = [
 		...dirtyProps.billingAddress.filter( ( key ) => {

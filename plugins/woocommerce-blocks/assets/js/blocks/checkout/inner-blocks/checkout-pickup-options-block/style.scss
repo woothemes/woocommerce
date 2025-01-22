@@ -3,7 +3,7 @@
 	.wc-block-components-local-pickup-rates-control {
 		.wc-block-components-radio-control__option {
 			margin: 0;
-			padding: em($gap-small) em($gap-small) em($gap-small) em($gap-huge);
+			padding: em($gap) em($gap-small) em($gap) em($gap-huge);
 		}
 		.wc-block-components-shipping-rates-control__no-results-notice {
 			margin: em($gap-small) 0;
@@ -12,7 +12,6 @@
 		.wc-block-components-radio-control__input {
 			top: auto;
 			transform: none;
-			margin-top: 1px;
 		}
 		.wc-block-components-radio-control__option-layout {
 			display: block;
@@ -31,42 +30,26 @@
 				font-style: inherit;
 			}
 		}
-
-		.wc-block-components-radio-control__option-checked {
-			.wc-block-components-radio-control__description-group {
-				.read-more-content {
-					margin-left: em($gap-small * 0.25);
-					position: initial;
-					visibility: visible;
-					z-index: initial;
-					hyphens: auto;
-					word-break: normal;
-				}
-			}
-		}
-
 		.wc-block-components-radio-control__description-group {
 			display: block;
 			width: calc(100% + em($gap-huge / 0.875));
 			box-sizing: border-box;
 			border-radius: $universal-border-radius;
-			padding: 1px em($gap-small);
+			padding: 0 em($gap);
 			margin-left: -(em($gap-huge));
-			margin-top: em($gap-smaller);
+			margin-top: em($gap);
 			@include font-size(regular);
-
-			.read-more-content {
-				position: absolute;
-				visibility: hidden;
-				z-index: -1;
-			}
 		}
 		.wc-block-components-radio-control__description,
 		.wc-block-components-radio-control__secondary-description {
 			width: 100%;
 			text-align: left;
-			margin: em($gap-small) 0;
+			margin: 0;
 			display: block;
+			@include font-size(regular);
+		}
+		.wc-block-components-radio-control__description + .wc-block-components-radio-control__secondary-description {
+			margin-top: em($gap-small);
 		}
 		.wc-block-components-radio-control__description {
 			color: $gray-700;
@@ -79,6 +62,18 @@
 				vertical-align: middle;
 				margin-top: -4px;
 				fill: currentColor;
+			}
+		}
+		.wc-block-components-radio-control__description-group {
+			.wc-block-components-radio-control__secondary-description {
+				display: none;
+			}
+		}
+		.wc-block-components-radio-control__option-checked {
+			.wc-block-components-radio-control__description-group {
+				.wc-block-components-radio-control__secondary-description {
+					display: block;
+				}
 			}
 		}
 	}

@@ -19,7 +19,6 @@ import {
 	Button,
 	BaseControl,
 	Tooltip,
-	// @ts-expect-error `__experimentalInputControl` does exist.
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -55,14 +54,15 @@ export function NameBlockEdit( {
 		useState( false );
 
 	const productId = useEntityId( 'postType', 'product' );
-	const product: Product = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		select( 'core' ).getEditedEntityRecord(
-			'postType',
-			'product',
-			productId
-		)
+	const product: Product = useSelect(
+		( select ) =>
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			select( 'core' ).getEditedEntityRecord(
+				'postType',
+				'product',
+				productId
+			),
+		[ productId ]
 	);
 
 	const [ sku, setSku ] = useEntityProp( 'postType', 'product', 'sku' );
@@ -201,7 +201,9 @@ export function NameBlockEdit( {
 							'e.g. 12 oz Coffee Mug',
 							'woocommerce'
 						) }
-						onChange={ setName }
+						onChange={ ( nextValue ) => {
+							setName( nextValue ?? '' );
+						} }
 						value={ name && name !== AUTO_DRAFT_NAME ? name : '' }
 						autoComplete="off"
 						data-1p-ignore

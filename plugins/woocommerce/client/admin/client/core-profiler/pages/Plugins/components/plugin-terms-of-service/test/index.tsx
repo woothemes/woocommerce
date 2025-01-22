@@ -17,8 +17,8 @@ describe( 'PluginsTermsOfService', () => {
 			<PluginsTermsOfService
 				selectedPlugins={ [
 					{
-						key: 'woocommerce-payments',
-						name: 'WooCommerce Payments',
+						key: 'test-plugin',
+						name: 'test-plugin',
 						description: '',
 						image_url: '',
 						manage_url: '',

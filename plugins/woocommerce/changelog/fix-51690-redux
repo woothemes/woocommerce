@@ -1,5 +1,0 @@
-Significance: patch
-Type: tweak
-Comment: This change slightly relaxes a check that was introduced in a prior change (and for which a changelog entry already exists).
-
-

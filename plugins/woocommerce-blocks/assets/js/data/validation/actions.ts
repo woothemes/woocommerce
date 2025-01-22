@@ -8,7 +8,6 @@ import { FieldValidationStatus } from '@woocommerce/types';
  * Internal dependencies
  */
 import { ACTION_TYPES as types } from './action-types';
-import { ReturnOrGeneratorYieldUnion } from '../mapped-types';
 
 export const setValidationErrors = (
 	errors: Record< string, FieldValidationStatus >
@@ -58,13 +57,3 @@ export const showValidationError = ( error: string ) => ( {
 export const showAllValidationErrors = () => ( {
 	type: types.SHOW_ALL_VALIDATION_ERRORS,
 } );
-
-export type ValidationAction = ReturnOrGeneratorYieldUnion<
-	| typeof setValidationErrors
-	| typeof clearAllValidationErrors
-	| typeof clearValidationError
-	| typeof clearValidationErrors
-	| typeof hideValidationError
-	| typeof showValidationError
-	| typeof showAllValidationErrors
->;

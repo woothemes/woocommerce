@@ -8,6 +8,7 @@ import {
 	useEffect,
 	useMemo,
 } from '@wordpress/element';
+import { BlockInstance } from '@wordpress/blocks';
 import { Spinner } from '@wordpress/components';
 import { store as coreStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
@@ -29,6 +30,7 @@ import { FlowType } from '~/customize-store/types';
 import { footerTemplateId } from '~/customize-store/data/homepageTemplates';
 
 import './style.scss';
+import { PatternWithBlocks } from '~/customize-store/types/pattern';
 
 const SUPPORTED_FOOTER_PATTERNS = [
 	'woocommerce-blocks/footer-with-3-menus',
@@ -111,7 +113,7 @@ export const SidebarNavigationScreenFooter = ( {
 	}, [ blocks, footerPatterns ] );
 
 	const onClickFooterPattern = useCallback(
-		( pattern, selectedBlocks ) => {
+		( pattern: PatternWithBlocks, selectedBlocks: BlockInstance[] ) => {
 			setSelectedPattern( pattern );
 			onChange( [ ...blocks.slice( 0, -1 ), selectedBlocks[ 0 ] ], {
 				selection: {},

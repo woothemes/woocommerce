@@ -16,10 +16,13 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 
 /**
  * Executes the e-mail header.
@@ -28,6 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
+<?php echo $email_improvements_enabled ? '<div class="email-introduction">' : ''; ?>
 <?php /* translators: %s: Customer first name */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $order->get_billing_first_name() ) ); ?></p>
 
@@ -75,6 +79,10 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 	</p>
 	<?php
 }
+?>
+<?php echo $email_improvements_enabled ? '</div>' : ''; ?>
+
+<?php
 
 /**
  * Hook for the woocommerce_email_order_details.
@@ -105,7 +113,9 @@ do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_
  * Show user-defined additional content - this is set in each email's settings.
  */
 if ( $additional_content ) {
+	echo $email_improvements_enabled ? '<div class="email-additional-content">' : '';
 	echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) );
+	echo $email_improvements_enabled ? '</div>' : '';
 }
 
 /**

@@ -10,6 +10,7 @@
 
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\OrderInternalStatus;
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
@@ -118,7 +119,7 @@ class WC_Post_Data {
 	 * @param WP_Post $post       Post data.
 	 */
 	public static function transition_post_status( $new_status, $old_status, $post ) {
-		if ( ( 'publish' === $new_status || 'publish' === $old_status ) && in_array( $post->post_type, array( 'product', 'product_variation' ), true ) ) {
+		if ( ( ProductStatus::PUBLISH === $new_status || ProductStatus::PUBLISH === $old_status ) && in_array( $post->post_type, array( 'product', 'product_variation' ), true ) ) {
 			self::delete_product_query_transients();
 		}
 	}
@@ -276,7 +277,7 @@ class WC_Post_Data {
 					$data['post_parent'] = 0;
 					break;
 			}
-		} elseif ( 'product' === $data['post_type'] && 'auto-draft' === $data['post_status'] ) {
+		} elseif ( 'product' === $data['post_type'] && ProductStatus::AUTO_DRAFT === $data['post_status'] ) {
 			$data['post_title'] = 'AUTO-DRAFT';
 		} elseif ( 'shop_coupon' === $data['post_type'] ) {
 			// Coupons should never allow unfiltered HTML.

@@ -6,6 +6,7 @@
  * @version     3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,7 +54,7 @@ class WC_Admin_Duplicate_Product {
 			$the_product = wc_get_product( $post );
 		}
 
-		if ( 'publish' === $post->post_status && $the_product && 0 < $the_product->get_total_sales() ) {
+		if ( $the_product && ProductStatus::PUBLISH === $the_product->get_status() && 0 < $the_product->get_total_sales() ) {
 			$actions['trash'] = sprintf(
 				'<a href="%s" class="submitdelete trash-product" aria-label="%s">%s</a>',
 				get_delete_post_link( $the_product->get_id(), '', false ),
@@ -161,7 +162,7 @@ class WC_Admin_Duplicate_Product {
 		if ( '' !== $product->get_global_unique_id( 'edit' ) ) {
 			$duplicate->set_global_unique_id( '' );
 		}
-		$duplicate->set_status( 'draft' );
+		$duplicate->set_status( ProductStatus::DRAFT );
 		$duplicate->set_date_created( null );
 		$duplicate->set_slug( '' );
 		$duplicate->set_rating_counts( 0 );

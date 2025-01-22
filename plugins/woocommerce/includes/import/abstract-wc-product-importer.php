@@ -6,6 +6,7 @@
  * @version  3.1.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
@@ -260,7 +261,7 @@ abstract class WC_Product_Importer implements WC_Importer_Interface {
 			}
 
 			if ( 'importing' === $object->get_status() ) {
-				$object->set_status( 'publish' );
+				$object->set_status( ProductStatus::PUBLISH );
 				$object->set_slug( '' );
 			}
 

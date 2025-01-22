@@ -25,6 +25,9 @@ export const DragHandleContext = createContext< DragHandleContextType >( {
 
 export const useDragHandle = () => useContext( DragHandleContext );
 
+/**
+ * A default drag handle component that integrates with the `useDragHandle` hook. Displays a draggable icon.
+ */
 export const DefaultDragHandle = () => {
 	const { attributes, listeners } = useDragHandle();
 
