@@ -468,14 +468,13 @@ class ShippingController {
 	 * @return array
 	 */
 	public function remove_shipping_if_no_address( $packages ) {
-		$customer    = wc()->customer;
-		$has_address = $customer->has_shipping_address();
+		$has_full_address = $this->has_full_shipping_address();
 
 		remove_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 		$option_checked = wc_string_to_bool( get_option( 'woocommerce_shipping_cost_requires_address', 'no' ) );
 		add_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 
-		if ( ! $has_address && $option_checked ) {
+		if ( ! $has_full_address && $option_checked ) {
 			$packages = array_map(
 				function ( $package ) {
 					if ( isset( $package['rates'] ) && ! is_array( $package['rates'] ) ) {
