@@ -2,9 +2,12 @@
  * External dependencies
  */
 import { store, getContext as getContextFn } from '@woocommerce/interactivity';
+import type { store as StoreType } from '@wordpress/interactivity'; // Todo: if we ever release this, make sure we are not bundling the `@wordpress/interactivity` package.
+
 // Todo: remove once we import from `@wordpress/interactivity`.
-// Todo: if we ever release this, make sure we are not bundling the `@wordpress/interactivity` package.
-import type { store as StoreType } from '@wordpress/interactivity';
+/**
+ * Internal dependencies
+ */
 import type { Store as WooStore } from '../../../../base/stores/add-to-cart';
 
 interface Context {

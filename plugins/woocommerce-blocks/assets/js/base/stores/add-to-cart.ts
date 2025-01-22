@@ -2,8 +2,7 @@
  * External dependencies
  */
 import { store } from '@woocommerce/interactivity';
-// Todo: remove once we import from `@wordpress/interactivity`.
-import type { store as StoreType } from '@wordpress/interactivity';
+import type { store as StoreType } from '@wordpress/interactivity'; // Todo: remove once we import from `@wordpress/interactivity`.
 
 export interface Store {
 	state: {
