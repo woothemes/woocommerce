@@ -261,75 +261,52 @@ class CheckoutFieldsSchema {
 	 *
 	 * @param array $options The field options.
 	 * @return bool
+	 * @throws \Exception If the field options are not valid.
 	 */
 	public function validate_schema( $options ) {
 		if ( ! $this->is_enabled() ) {
 			return true;
 		}
 
-		if ( ! empty( $options['rules'] ) && ! is_array( $options['rules'] ) ) {
-			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], 'The rules must be an array.' );
+		try {
+
+			if ( ! empty( $options['rules'] ) && ! is_array( $options['rules'] ) ) {
+				throw new \Exception( 'The rules must be an array.' );
+			}
+
+			// Validate schemas.
+			$validator    = new Validator();
+			$test_schemas = [ 'required', 'hidden', 'validation' ];
+
+			foreach ( $test_schemas as $rule ) {
+				if ( empty( $options['rules'][ $rule ] ) ) {
+					continue;
+				}
+				if ( ! is_array( $options['rules'][ $rule ] ) ) {
+					throw new \Exception( sprintf( 'The %s rules must be an array.', $rule ) );
+				}
+				$result = $validator->validate(
+					Helper::toJSON(
+						[
+							'$schema'    => 'http://json-schema.org/draft-07/schema#',
+							'type'       => 'object',
+							'properties' => [
+								'test' => $options['rules'][ $rule ],
+							],
+							'required'   => [ 'test' ],
+						]
+					),
+					$this->meta_schema_json
+				);
+
+				if ( $result->hasError() ) {
+					throw new \Exception( (string) $result->error() );
+				}
+			}
+		} catch ( \Exception $e ) {
+			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $e->getMessage() );
 			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
 			return false;
-		}
-
-		$validator = new Validator();
-
-		if ( ! empty( $options['rules']['validation'] ) ) {
-			$result = $validator->validate(
-				Helper::toJSON(
-					[
-						'$schema'    => 'http://json-schema.org/draft-07/schema#',
-						'type'       => 'object',
-						'properties' => [
-							'test' => $options['rules']['validation'],
-						],
-						'required'   => [ 'test' ],
-					]
-				),
-				$this->meta_schema_json
-			);
-
-			if ( $result->hasError() ) {
-				$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $result->error() );
-				_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
-				return false;
-			}
-		}
-
-		$other_schema = [
-			'required',
-			'hidden',
-		];
-
-		foreach ( $other_schema as $rule ) {
-			if ( empty( $options['rules'][ $rule ] ) ) {
-				continue;
-			}
-			if ( ! is_array( $options['rules'][ $rule ] ) ) {
-				$property_error = sprintf( 'The %s rules must be an array.', $rule );
-				$message        = sprintf( 'Unable to register field with id: "%s". %s', $id, $property_error );
-				_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
-				return false;
-			}
-			$result = $validator->validate(
-				Helper::toJSON(
-					[
-						'$schema'    => 'http://json-schema.org/draft-07/schema#',
-						'type'       => 'object',
-						'properties' => [
-							'test' => $options['rules'][ $rule ],
-						],
-						'required'   => [ 'test' ],
-					]
-				),
-				$this->meta_schema_json
-			);
-			if ( $result->hasError() ) {
-				$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $result->error() );
-				_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
-				return false;
-			}
 		}
 
 		return true;
