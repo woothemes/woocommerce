@@ -67,7 +67,7 @@ const getButtonText = (
 // The `getContextFn` function is wrapped just to avoid prettier issues.
 const getContext = ( ns?: string ) => getContextFn< Context >( ns );
 
-const { state } = ( store as StoreType )< Store >(
+const { state } = ( store as typeof StoreType )< Store >(
 	'woocommerce/product-button',
 	{
 		state: {
