@@ -434,6 +434,8 @@ class ShippingController {
 	}
 
 	/**
+	 * Checks whether the address is "full" in the sense that it contains all required fields to calculate shipping rates.
+	 *
 	 * @return bool Whether the customer has a full shipping address (address_1, city, state, postcode, country).
 	 * Only required fields are checked.
 	 */
