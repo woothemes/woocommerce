@@ -423,7 +423,7 @@ class CheckoutFields {
 
 		if ( isset( $options['required'] ) && null === filter_var( $options['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ) {
 			$message = sprintf( 'The required property for field with id: "%s" must be a boolean, you passed %s. The field will not be registered.', $id, gettype( $options['required'] ) );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.6.0' );
+			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.8.0' );
 			return false;
 		}
 
@@ -435,13 +435,13 @@ class CheckoutFields {
 
 		if ( ( ! isset( $options['required'] ) || false === $options['required'] ) && ! empty( $options['error_message'] ) ) {
 			$message = sprintf( 'Passing an error message to a non-required checkbox "%s" will have no effect. The error message has been removed from the field.', $id );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.6.0' );
+			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.8.0' );
 			unset( $field_data['error_message'] );
 		}
 
 		if ( isset( $options['error_message'] ) && ! is_string( $options['error_message'] ) ) {
 			$message = sprintf( 'The error_message property for field with id: "%s" must be a string, you passed %s. A default message will be shown.', $id, gettype( $options['error_message'] ) );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.6.0' );
+			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.8.0' );
 			unset( $field_data['error_message'] );
 		}
 
