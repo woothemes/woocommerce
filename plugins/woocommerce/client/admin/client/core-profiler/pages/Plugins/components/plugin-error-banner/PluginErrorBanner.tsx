@@ -4,7 +4,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import interpolateComponents from '@automattic/interpolate-components';
-import { Extension } from '@woocommerce/data';
 
 /**
  * Internal dependencies
