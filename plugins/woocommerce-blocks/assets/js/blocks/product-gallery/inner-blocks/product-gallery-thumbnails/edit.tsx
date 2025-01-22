@@ -59,8 +59,6 @@ export const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
 				<InspectorControls>
 					<PanelBody>
 						<ProductGalleryThumbnailsBlockSettings
-							attributes={ attributes }
-							setAttributes={ setAttributes }
 							context={ context }
 						/>
 					</PanelBody>
