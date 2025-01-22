@@ -442,7 +442,6 @@ class ShippingController {
 
 		// These are the important fields required to get the shipping rates.
 		$shipping_address = array(
-			'shipping_address_1'  => $customer->get_shipping_address_1(),
 			'shipping_city'       => $customer->get_shipping_city(),
 			'shipping_state'      => $customer->get_shipping_state(),
 			'shipping_postcode'   => $customer->get_shipping_postcode(),
