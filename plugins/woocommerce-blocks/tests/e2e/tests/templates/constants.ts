@@ -108,7 +108,7 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 	},
 	{
 		visitPage: async ( { admin, editor, requestUtils, page } ) => {
-			// We will be able to simplify this logic one the blockified
+			// We will be able to simplify this logic once the blockified
 			// Add to Cart with Options block is the default.
 			await requestUtils.setFeatureFlag( 'experimental-blocks', true );
 			await requestUtils.setFeatureFlag( 'blockified-add-to-cart', true );

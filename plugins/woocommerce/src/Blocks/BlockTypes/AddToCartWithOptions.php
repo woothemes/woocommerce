@@ -111,8 +111,7 @@ class AddToCartWithOptions extends AbstractBlock {
 			}
 
 			if ( '' === $template_part_contents ) {
-				$template_part_contents = // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-					do_blocks( file_get_contents( Package::get_path() . 'templates/' . BlockTemplateUtils::DIRECTORY_NAMES['TEMPLATE_PARTS'] . '/' . $slug . '.html' ) );
+				$template_part_contents = do_blocks( file_get_contents( Package::get_path() . 'templates/' . BlockTemplateUtils::DIRECTORY_NAMES['TEMPLATE_PARTS'] . '/' . $slug . '.html' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			}
 
 			$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
