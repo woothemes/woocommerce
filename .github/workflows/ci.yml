@@ -62,16 +62,24 @@ jobs:
       test-jobs: ${{ steps.project-jobs.outputs.test-jobs }}
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
+      # Shallow copy of the branch is fast, but needs a bit of creativity about depth calculation and finding out proper base sha. 
       - name: Setup - calculate checkout depth
         id: checkout_depth
         shell: bash
         run: |
-          fetch_commits=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
-          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
+          value=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
+          echo "value=$value" >> $GITHUB_OUTPUT
       - name: Setup - checkout
         uses: 'actions/checkout@v4'
         with:
-          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
+          fetch-depth: ${{ steps.checkout_depth.outputs.value }}
+      - name: Setup - calculate base sha
+        id: checkout_base_sha
+        shell: bash
+        run: |
+          value=$(git rev-list --no-merges -n ${{ steps.checkout_depth.outputs.value }} HEAD | tail -1)
+          echo "value=$value" >> $GITHUB_OUTPUT
+      # Now let's get to generating the build matrix itself.
       - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
       - name: Setup - spawn linting and testing jobs
@@ -84,7 +92,7 @@ jobs:
             // - Pushes: run CI jobs aiming pushes without filtering based on the content changes
 
             let baseRef   = '';
-            const baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
+            const baseSha = ${{ toJson( github.event_name == 'pull_request' && steps.checkout_depth.checkout_base_sha.value ) }};
             if ( baseSha ) {
               // Use-case: trigger is pull request
               baseRef = `--base-ref ${ baseSha }`;
