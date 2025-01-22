@@ -64,7 +64,7 @@ class StoreNotices extends AbstractBlock {
 	 * can be added client-side.
 	 */
 	protected function render_interactivity_notices_region() {
-		$namespace = array( 'namespace' => 'woocommerce/store-notices' );
+		$namespace = wp_json_encode( array( 'namespace' => 'woocommerce/store-notices' ), JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
 
 		wc_initial_state(
 			'woocommerce/store-notices',
@@ -76,7 +76,7 @@ class StoreNotices extends AbstractBlock {
 		ob_start();
 		// Adding the is-layout-constrained class to the wrapper is a hack, to ensure the notice looks the same as it used to when prepended to post content.
 		?>
-		<div data-wc-interactive="<?php echo esc_attr( wp_json_encode( $namespace ) ); ?>" class="woocommerce-notices-wrapper">
+		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="woocommerce-notices-wrapper">
 			<template
 				data-wc-each--notice="state.notices"
 				data-wc-each-key="context.notice.id"
