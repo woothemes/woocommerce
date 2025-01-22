@@ -434,6 +434,32 @@ class ShippingController {
 	}
 
 	/**
+	 * @return bool Whether the customer has a full shipping address (address_1, city, state, postcode, country).
+	 * Only required fields are checked.
+	 */
+	public function has_full_shipping_address() {
+		$customer = WC()->customer;
+
+		// These are the important fields required to get the shipping rates.
+		$shipping_address = array(
+			'shipping_address_1'  => $customer->get_shipping_address_1(),
+			'shipping_city'       => $customer->get_shipping_city(),
+			'shipping_state'      => $customer->get_shipping_state(),
+			'shipping_postcode'   => $customer->get_shipping_postcode(),
+			'shipping_country'    => $customer->get_shipping_country()
+		);
+		$address_fields = WC()->countries->get_address_fields( $shipping_address['country'] ?? '', 'shipping_' );
+
+		// For all fields in $shipping_address, check if they are required in $address_fields and if so, check if they are not empty.
+		foreach ( $shipping_address as $key => $value ) {
+			if ( isset( $address_fields[ $key ] ) && $address_fields[ $key ]['required'] && empty( $value ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Remove shipping (i.e. delivery, not local pickup) if
 	 * "Hide shipping costs until an address is entered" is enabled,
 	 * and no address has been entered yet.
