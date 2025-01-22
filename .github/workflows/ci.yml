@@ -92,7 +92,7 @@ jobs:
             // - Pushes: run CI jobs aiming pushes without filtering based on the content changes
 
             let baseRef   = '';
-            const baseSha = ${{ toJson( github.event_name == 'pull_request' && steps.checkout_depth.checkout_base_sha.value ) }};
+            const baseSha = ${{ toJson( github.event_name == 'pull_request' && steps.checkout_base_sha.outputs.value ) }};
             if ( baseSha ) {
               // Use-case: trigger is pull request
               baseRef = `--base-ref ${ baseSha }`;
