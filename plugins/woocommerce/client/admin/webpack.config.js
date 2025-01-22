@@ -259,9 +259,14 @@ const webpackConfig = {
 		! process.env.STORYBOOK &&
 			new WooCommerceDependencyExtractionWebpackPlugin( {
 				requestToExternal( request ) {
-					if ( request === '@wordpress/components/build/ui' ) {
+					switch ( request ) {
 						// The external wp.components does not include ui components, so we need to skip requesting to external here.
-						return null;
+						case '@wordpress/components/build/ui':
+							return null;
+						// TODO: the updated base plugin handles those by default - the override here to ensure no changes in generated zip.
+						case 'react/jsx-runtime':
+						case 'react/jsx-dev-runtime':
+							return null;
 					}
 
 					if ( request.startsWith( '@wordpress/dataviews' ) ) {
