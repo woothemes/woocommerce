@@ -19,14 +19,18 @@ export interface Store {
 	};
 	actions: {
 		addToCart: ( id: number, quantity: number ) => void;
+		refreshCart: () => void;
 	};
 }
+
+let pendingRefresh = false;
 
 // Todo: Remove the type cast once we import from `@wordpress/interactivity`.
 export const { state, actions } = ( store as typeof StoreType )< Store >(
 	'woocommerce',
 	{
 		actions: {
+			// Question: Should we name this `addCartItem` to match the Store API naming?
 			*addToCart( id, quantity ) {
 				let item = state.cart.items.find(
 					( { id: productId } ) => id === productId
@@ -55,6 +59,11 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 							body: JSON.stringify( item ),
 						}
 					);
+
+					if ( ! res.status.toString().startsWith( '2' ) )
+						// Question: what error string should we use? Is there a standard in Woo?
+						throw new Error( 'Failed to add item to cart.' );
+
 					state.cart = yield res.json();
 				} catch ( error ) {
 					// Todo: Handle error using the new Store Notices block.
@@ -65,6 +74,31 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 					item.quantity = previousQuantity;
 				}
 			},
+			// Question: Is `refreshCart` the best name for this action?
+			*refreshCart() {
+				// Skips if there's a pending request.
+				if ( pendingRefresh ) return;
+
+				pendingRefresh = true;
+
+				try {
+					const res: Response = yield fetch(
+						`${ state.restUrl }wc/store/v1/cart`,
+						{ headers: { 'Content-Type': 'application/json' } }
+					);
+					state.cart = yield res.json();
+
+					if ( ! res.status.toString().startsWith( '2' ) )
+						// Question: what error string should we use? Is there a standard in Woo?
+						throw new Error( 'Failed to refresh the cart.' );
+				} catch ( error ) {
+					// Question: what should we do if this fails? Should we retry? Inform the user?
+				} finally {
+					pendingRefresh = false;
+				}
+			},
 		},
 	}
 );
+
+window.wooActions = actions;

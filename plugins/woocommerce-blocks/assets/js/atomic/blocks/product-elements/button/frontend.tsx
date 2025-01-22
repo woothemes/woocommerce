@@ -36,6 +36,7 @@ interface Store {
 	};
 	actions: {
 		addToCart: () => void;
+		refreshCart: () => void;
 		handleAnimationEnd: ( event: AnimationEvent ) => void;
 	};
 	callbacks: {
@@ -103,17 +104,24 @@ const { state } = ( store as typeof StoreType )< Store >(
 				const { productId, quantityToAdd } = context;
 
 				// Todo: move the addToCart store to its own module.
-				const {
-					actions: { addToCart },
-				} = ( yield import(
+				const { actions } = ( yield import(
 					'../../../../base/stores/add-to-cart'
 				) ) as WooStore;
 
-				addToCart(
+				actions.addToCart(
 					productId,
 					// Question: is quantityToAdd available in the cart or we need to pass it down?
 					state.quantity + quantityToAdd
 				);
+			},
+			*refreshCart() {
+				// Question: use `splitTask` here? Does it make sense?
+				// Question: does it make sense to use a dynamic import instead of a static one?
+				// Todo: move the addToCart store to its own module.
+				const { actions } = ( yield import(
+					'../../../../base/stores/add-to-cart'
+				) ) as WooStore;
+				actions.refreshCart();
 			},
 			handleAnimationEnd( event: AnimationEvent ) {
 				const context = getContext();
