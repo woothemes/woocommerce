@@ -89,7 +89,8 @@ class CheckoutFields {
 	/**
 	 * Sets up core fields.
 	 *
-	 * @param AssetDataRegistry $asset_data_registry Instance of the asset data registry.
+	 * @param AssetDataRegistry    $asset_data_registry Instance of the asset data registry.
+	 * @param CheckoutFieldsSchema $schema Instance of the checkout fields schema.
 	 */
 	public function __construct( AssetDataRegistry $asset_data_registry, CheckoutFieldsSchema $schema ) {
 		$this->asset_data_registry = $asset_data_registry;
