@@ -139,7 +139,7 @@ const { state } = ( store as typeof StoreType )< Store >(
 
 					// If the user deleted the hooked store notice block, the store won't be present
 					// and we should not add a notice.
-					if ( noticesStore ) {
+					if ( 'addNotice' in noticesStore.actions ) {
 						// The old implementation always overwrites the last notice, so
 						// we remove the last notice before adding a new one.
 						if ( state.noticeId !== '' ) {
