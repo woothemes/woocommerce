@@ -1,0 +1,24 @@
+name: Build Docs Playground
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Generate docs playground blueprint
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { run } = require('./.github/workflows/scripts/generate-docs-playground-blueprint');
+            run({ github, context, core });
+
+      - name: Create docs playground artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs-playground
+          path: docs-playground-blueprint.json
+          retention-days: 1

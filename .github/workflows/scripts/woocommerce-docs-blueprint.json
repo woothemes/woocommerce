@@ -1,0 +1,71 @@
+{
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+    "login": true,
+    "landingPage": "/wp-admin/?markdown-file-path=docs/contributors/accessibility-testing.md",
+    "steps": [
+      {
+        "step": "unzip",
+        "extractToPath": "/tmp",
+        "zipFile": {
+          "resource": "url",
+          "url": "https://github-proxy.com/proxy/?repo=adamziel/playground-content-converters&branch=explore-markdown-editor-setup&directory=src",
+          "caption": "Downloading Markdown editing plugin"
+        }
+      },
+      {
+        "step": "mkdir",
+        "path": "/wordpress/wp-content/static-content"
+      },
+      {
+        "step": "unzip",
+        "extractToPath": "/wordpress/wp-content/static-content",
+        "zipFile": {
+          "resource": "url",
+          "url": "https://github-proxy.com/proxy/?repo=woocommerce/woocommerce&directory=docs/testing",
+          "caption": "Importing WooCommerce testing docs"
+        }
+      },
+      {
+        "step": "defineWpConfigConsts",
+        "consts": {
+          "STATIC_FILES_ROOT": "/wordpress/wp-content/static-content"
+        }
+      },
+      {
+        "step": "mv",
+        "fromPath": "/tmp/src/convert-markdown-to-blocks-in-js",
+        "toPath": "/wordpress/wp-content/plugins/convert-markdown-to-blocks-in-js"
+      },
+      {
+        "step": "mv",
+        "fromPath": "/tmp/src/import-static-files",
+        "toPath": "/wordpress/wp-content/plugins/import-static-files"
+      },
+      {
+        "step": "mv",
+        "fromPath": "/tmp/src/store-markdown-as-post-meta",
+        "toPath": "/wordpress/wp-content/plugins/store-markdown-as-post-meta"
+      },
+      {
+        "step": "mv",
+        "fromPath": "/tmp/src/save-pages-as-static-files",
+        "toPath": "/wordpress/wp-content/plugins/save-pages-as-static-files"
+      },
+      {
+        "step": "activatePlugin",
+        "pluginPath": "import-static-files/import-static-files.php"
+      },
+      {
+        "step": "activatePlugin",
+        "pluginPath": "store-markdown-as-post-meta/index.php"
+      },
+      {
+        "step": "activatePlugin",
+        "pluginPath": "convert-markdown-to-blocks-in-js/convert-markdown-to-blocks-in-js.php"
+      },
+      {
+        "step": "activatePlugin",
+        "pluginPath": "save-pages-as-static-files/index.php"
+      }
+    ]
+  }
