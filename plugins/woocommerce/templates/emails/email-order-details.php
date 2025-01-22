@@ -129,7 +129,7 @@ do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plai
 				<tr class="order-customer-note">
 					<td class="td text-align-left" colspan="3">
 						<b><?php esc_html_e( 'Customer note', 'woocommerce' ); ?></b><br>
-						<?php echo wp_kses( nl2br( wptexturize( $order->get_customer_note() ) ), array() ); ?>
+						<?php echo wp_kses( nl2br( wptexturize( $order->get_customer_note() ) ), array( 'br' => array() ) ); ?>
 					</td>
 				</tr>
 				<?php
