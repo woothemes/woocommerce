@@ -17,9 +17,13 @@ import './dismissable-list.scss';
 // using a context provider for the option name so that the option name prop doesn't need to be passed to the `DismissableListHeading` too
 const OptionNameContext = createContext( '' );
 
-export const DismissableListHeading: React.FC< {
+export const DismissableListHeading = ( {
+	onDismiss = () => null,
+	children,
+}: {
+	children: React.ReactNode;
 	onDismiss?: () => void;
-} > = ( { children, onDismiss = () => null } ) => {
+} ) => {
 	const { updateOptions } = useDispatch( OPTIONS_STORE_NAME );
 	const dismissOptionName = useContext( OptionNameContext );
 
@@ -51,22 +55,32 @@ export const DismissableListHeading: React.FC< {
 	);
 };
 
-export const DismissableList: React.FC< {
-	dismissOptionName: string;
+export const DismissableList = ( {
+	children,
+	className,
+	dismissOptionName,
+}: {
+	children: React.ReactNode;
 	className?: string;
-} > = ( { children, className, dismissOptionName } ) => {
-	const isVisible = useSelect( ( select ) => {
-		const { getOption, hasFinishedResolution } =
-			select( OPTIONS_STORE_NAME );
+	dismissOptionName: string;
+} ) => {
+	const isVisible = useSelect(
+		( select ) => {
+			const { getOption, hasFinishedResolution } =
+				select( OPTIONS_STORE_NAME );
 
-		const hasFinishedResolving = hasFinishedResolution( 'getOption', [
-			dismissOptionName,
-		] );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const hasFinishedResolving = hasFinishedResolution( 'getOption', [
+				dismissOptionName,
+			] );
 
-		const isDismissed = getOption( dismissOptionName ) === 'yes';
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const isDismissed = getOption( dismissOptionName ) === 'yes';
 
-		return hasFinishedResolving && ! isDismissed;
-	} );
+			return hasFinishedResolving && ! isDismissed;
+		},
+		[ dismissOptionName ]
+	);
 
 	if ( ! isVisible ) {
 		return null;
