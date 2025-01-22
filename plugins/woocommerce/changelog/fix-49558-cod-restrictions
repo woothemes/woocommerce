@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-
-If Cash on Delivery is enabled with shipping method restrictions, made it available by default until shipping methods are available to check.

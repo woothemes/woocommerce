@@ -107,39 +107,41 @@ export const StatusBadge = ( {
 		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
 			{ message || getStatusMessage() }
 			{ popoverContent && (
-				<span className="woocommerce-status-badge__icon-container">
-					<Icon
-						onClick={ () => {
+				<span
+					className="woocommerce-status-badge__icon-container"
+					onClick={ () => setPopoverVisible( ! isPopoverVisible ) }
+					onMouseEnter={ () => setPopoverVisible( true ) }
+					onMouseLeave={ () => setPopoverVisible( false ) }
+					onKeyDown={ ( event ) => {
+						if ( event.key === 'Enter' || event.key === ' ' ) {
 							setPopoverVisible( ! isPopoverVisible );
-						} }
-						onKeyDown={ ( event ) => {
-							if ( event.key === 'Enter' || event.key === ' ' ) {
-								setPopoverVisible( ! isPopoverVisible );
-							}
-						} }
-						tabIndex={ 0 }
-						role="button"
-						className={ 'woocommerce-status-badge-icon' }
+						}
+					} }
+					tabIndex={ 0 }
+					role="button"
+				>
+					<Icon
+						className="woocommerce-status-badge-icon"
 						size={ 14 }
 						icon={ info }
 					/>
+					{ isPopoverVisible && (
+						<Popover
+							className="woocommerce-status-badge-popover"
+							position="top right"
+							noArrow={ true }
+							onClose={ () => setPopoverVisible( false ) }
+						>
+							<div
+								className={
+									'settings-payment-gateways__popover-container'
+								}
+							>
+								{ popoverContent }
+							</div>
+						</Popover>
+					) }
 				</span>
-			) }
-			{ isPopoverVisible && (
-				<Popover
-					className={ 'woocommerce-status-badge-popover' }
-					position="top right"
-					noArrow={ true }
-					onClose={ () => setPopoverVisible( false ) }
-				>
-					<div
-						className={
-							'settings-payment-gateways__popover-container'
-						}
-					>
-						{ popoverContent }
-					</div>
-				</Popover>
 			) }
 		</Pill>
 	);
