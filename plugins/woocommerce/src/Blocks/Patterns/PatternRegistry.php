@@ -152,7 +152,12 @@ class PatternRegistry {
 
 		$pattern_data_from_dictionary = $this->get_pattern_from_dictionary( $dictionary, $pattern_data['slug'] );
 
-		if ( file_exists( $source ) ) {
+		global $wp_filesystem;
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		\WP_Filesystem();
+
+		if ( $wp_filesystem->exists( $source ) ) {
 			// The actual pattern content is the output of the file.
 			ob_start();
 
