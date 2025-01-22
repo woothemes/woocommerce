@@ -25,11 +25,6 @@ export const ProductGalleryBlockSettings = ( {
 	return (
 		<InspectorControls>
 			<PanelBody title={ __( 'Gallery Navigation', 'woocommerce' ) }>
-				<ProductGalleryNextPreviousBlockSettings
-					context={ {
-						productGalleryClientId,
-					} }
-				/>
 				<ProductGalleryThumbnailsBlockSettings
 					context={ {
 						productGalleryClientId,
