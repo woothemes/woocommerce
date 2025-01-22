@@ -2,7 +2,8 @@
  * External dependencies
  */
 import * as wpDataFunctions from '@wordpress/data';
-import { CART_STORE_KEY, VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, validationStore } from '@woocommerce/block-data';
+import type { StoreDescriptor } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -62,39 +63,47 @@ jest.mock( '../update-payment-methods', () => ( {
 
 describe( 'pushChanges', () => {
 	beforeEach( () => {
-		wpDataFunctions.select.mockImplementation( ( storeName: string ) => {
-			if ( storeName === CART_STORE_KEY ) {
-				return {
-					...jest
-						.requireActual( '@wordpress/data' )
-						.select( storeName ),
-					hasFinishedResolution: () => true,
-					getCustomerData: getCustomerDataMock,
-				};
+		wpDataFunctions.select.mockImplementation(
+			( storeNameOrDescriptor: StoreDescriptor | string ) => {
+				if ( storeNameOrDescriptor === CART_STORE_KEY ) {
+					return {
+						...jest
+							.requireActual( '@wordpress/data' )
+							.select( storeNameOrDescriptor ),
+						hasFinishedResolution: () => true,
+						getCustomerData: getCustomerDataMock,
+					};
+				}
+				if ( storeNameOrDescriptor === validationStore ) {
+					return {
+						...jest
+							.requireActual( '@wordpress/data' )
+							.select( storeNameOrDescriptor ),
+						getValidationError: jest
+							.fn()
+							.mockReturnValue( undefined ),
+					};
+				}
+				return jest
+					.requireActual( '@wordpress/data' )
+					.select( storeNameOrDescriptor );
 			}
-			if ( storeName === VALIDATION_STORE_KEY ) {
-				return {
-					...jest
-						.requireActual( '@wordpress/data' )
-						.select( storeName ),
-					getValidationError: jest.fn().mockReturnValue( undefined ),
-				};
+		);
+		wpDataFunctions.dispatch.mockImplementation(
+			( storeNameOrDescriptor: StoreDescriptor | string ) => {
+				if ( storeNameOrDescriptor === CART_STORE_KEY ) {
+					return {
+						...jest
+							.requireActual( '@wordpress/data' )
+							.dispatch( storeNameOrDescriptor ),
+						updateCustomerData: updateCustomerDataMock,
+					};
+				}
+				return jest
+					.requireActual( '@wordpress/data' )
+					.dispatch( storeNameOrDescriptor );
 			}
-			return jest.requireActual( '@wordpress/data' ).select( storeName );
-		} );
-		wpDataFunctions.dispatch.mockImplementation( ( storeName: string ) => {
-			if ( storeName === CART_STORE_KEY ) {
-				return {
-					...jest
-						.requireActual( '@wordpress/data' )
-						.dispatch( storeName ),
-					updateCustomerData: updateCustomerDataMock,
-				};
-			}
-			return jest
-				.requireActual( '@wordpress/data' )
-				.dispatch( storeName );
-		} );
+		);
 	} );
 	it( 'Keeps props dirty if data did not persist due to an error', async () => {
 		// Run this without changing anything because the first run does not push data (the first run is populating what was received on page load).

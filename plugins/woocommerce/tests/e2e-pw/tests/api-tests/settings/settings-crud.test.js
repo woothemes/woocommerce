@@ -1958,10 +1958,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject',
 						label: 'Subject',
 						description:
-							'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+							'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -1972,10 +1972,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading',
 						label: 'Email heading',
 						description:
-							'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+							'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -1986,10 +1986,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 						type: 'textarea',
 						default: 'Congratulations on the sale.',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 						value: 'Congratulations on the sale.',
 					} ),
 				] )
@@ -2062,10 +2062,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 							id: 'subject',
 							label: 'Subject',
 							description:
-								'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+								'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 							type: 'text',
 							default: '',
-							tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 							value: '',
 						} ),
 					] )
@@ -2076,10 +2076,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 							id: 'heading',
 							label: 'Email heading',
 							description:
-								'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+								'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 							type: 'text',
 							default: '',
-							tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 							value: '',
 						} ),
 					] )
@@ -2090,11 +2090,11 @@ test.describe( 'Settings API tests: CRUD', () => {
 							id: 'additional_content',
 							label: 'Additional content',
 							description:
-								'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+								'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 							type: 'textarea',
 							default:
 								'Hopefully they’ll be back. Read more about <a href="https://woocommerce.com/document/managing-orders/">troubleshooting failed payments</a>.',
-							tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 							value: 'Hopefully they’ll be back. Read more about <a href="https://woocommerce.com/document/managing-orders/">troubleshooting failed payments</a>.',
 						} ),
 					] )
@@ -2151,10 +2151,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject',
 						label: 'Subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2165,10 +2165,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading',
 						label: 'Email heading',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2179,11 +2179,11 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'textarea',
 						default:
 							'We look forward to fulfilling your order soon.',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: 'We look forward to fulfilling your order soon.',
 					} ),
 				] )
@@ -2238,10 +2238,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject',
 						label: 'Subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2252,10 +2252,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading',
 						label: 'Email heading',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2266,10 +2266,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'textarea',
 						default: 'Thanks for using {site_url}!',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: 'Thanks for using {site_url}!',
 					} ),
 				] )
@@ -2324,10 +2324,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject',
 						label: 'Subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2338,10 +2338,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading',
 						label: 'Email heading',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2352,10 +2352,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'textarea',
 						default: 'Thanks for shopping with us.',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: 'Thanks for shopping with us.',
 					} ),
 				] )
@@ -2410,10 +2410,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject_full',
 						label: 'Full refund subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2424,10 +2424,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject_partial',
 						label: 'Partial refund subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2438,10 +2438,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading_full',
 						label: 'Full refund email heading',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2452,10 +2452,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading_partial',
 						label: 'Partial refund email heading',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2467,10 +2467,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'textarea',
 						default: 'We hope to see you again soon.',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: 'We hope to see you again soon.',
 					} ),
 				] )
@@ -2514,10 +2514,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject',
 						label: 'Subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2528,10 +2528,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject_paid',
 						label: 'Subject (paid)',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2542,10 +2542,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading_paid',
 						label: 'Email heading (paid)',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2557,10 +2557,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'textarea',
 						default: 'Thanks for using {site_url}!',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: 'Thanks for using {site_url}!',
 					} ),
 				] )
@@ -2615,10 +2615,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject',
 						label: 'Subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2629,10 +2629,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading',
 						label: 'Email heading',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: '',
 					} ),
 				] )
@@ -2643,10 +2643,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						type: 'textarea',
 						default: 'Thanks for reading.',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}&lt;/code&gt;, &lt;code&gt;{order_date}&lt;/code&gt;, &lt;code&gt;{order_number}</code>',
 						value: 'Thanks for reading.',
 					} ),
 				] )
@@ -2701,10 +2701,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject',
 						label: 'Subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						value: '',
 					} ),
 				] )
@@ -2715,10 +2715,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading',
 						label: 'Email heading',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						value: '',
 					} ),
 				] )
@@ -2729,10 +2729,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						type: 'textarea',
 						default: 'Thanks for reading.',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						value: 'Thanks for reading.',
 					} ),
 				] )
@@ -2787,10 +2787,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'subject',
 						label: 'Subject',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						value: '',
 					} ),
 				] )
@@ -2801,10 +2801,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'heading',
 						label: 'Email heading',
 						description:
-							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+							'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						type: 'text',
 						default: '',
-						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+						tip: 'Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						value: '',
 					} ),
 				] )
@@ -2815,10 +2815,10 @@ test.describe( 'Settings API tests: CRUD', () => {
 						id: 'additional_content',
 						label: 'Additional content',
 						description:
-							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+							'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						type: 'textarea',
 						default: 'We look forward to seeing you soon.',
-						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}</code>',
+						tip: 'Text to appear below the main email content. Available placeholders: <code>{site_title}&lt;/code&gt;, &lt;code&gt;{site_address}&lt;/code&gt;, &lt;code&gt;{site_url}&lt;/code&gt;, &lt;code&gt;{store_email}</code>',
 						value: 'We look forward to seeing you soon.',
 					} ),
 				] )

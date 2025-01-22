@@ -30,8 +30,8 @@ final class ProductFilterRating extends AbstractBlock {
 	protected function initialize() {
 		parent::initialize();
 
-		add_filter( 'collection_filter_query_param_keys', array( $this, 'get_filter_query_param_keys' ), 10, 2 );
-		add_filter( 'collection_active_filters_data', array( $this, 'register_active_filters_data' ), 10, 2 );
+		add_filter( 'woocommerce_blocks_product_filters_param_keys', array( $this, 'get_filter_query_param_keys' ), 10, 2 );
+		add_filter( 'woocommerce_blocks_product_filters_selected_items', array( $this, 'prepare_selected_filters' ), 10, 2 );
 	}
 
 	/**
@@ -57,15 +57,15 @@ final class ProductFilterRating extends AbstractBlock {
 	}
 
 	/**
-	 * Register the active filters data.
+	 * Prepare the active filter items.
 	 *
-	 * @param array $data   The active filters data.
+	 * @param array $items  The active filter items.
 	 * @param array $params The query param parsed from the URL.
-	 * @return array Active filters data.
+	 * @return array Active filters items.
 	 */
-	public function register_active_filters_data( $data, $params ) {
+	public function prepare_selected_filters( $items, $params ) {
 		if ( empty( $params[ self::RATING_FILTER_QUERY_VAR ] ) ) {
-			return $data;
+			return $items;
 		}
 
 		$active_ratings = array_filter(
@@ -73,29 +73,19 @@ final class ProductFilterRating extends AbstractBlock {
 		);
 
 		if ( empty( $active_ratings ) ) {
-			return $data;
+			return $items;
 		}
 
-		$active_ratings = array_map(
-			function ( $rating ) {
-				return array(
-					/* translators: %d is the rating value. */
-					'title'      => sprintf( __( 'Rated %d out of 5', 'woocommerce' ), $rating ),
-					'attributes' => array(
-						'data-wc-on--click' => esc_attr( "{$this->get_full_block_name()}::actions.toggleFilter" ),
-						'value'             => esc_attr( $rating ),
-					),
-				);
-			},
-			$active_ratings
-		);
+		foreach ( $active_ratings as $rating ) {
+			$items[] = array(
+				'type'  => 'rating',
+				'value' => $rating,
+				/* translators: %s is referring to rating value. Example: Rated 4 out of 5. */
+				'label' => sprintf( __( 'Rating: Rated %d out of 5', 'woocommerce' ), $rating ),
+			);
+		}
 
-		$data['rating'] = array(
-			'type'  => __( 'Rating', 'woocommerce' ),
-			'items' => $active_ratings,
-		);
-
-		return $data;
+		return $items;
 	}
 
 	/**
@@ -112,40 +102,56 @@ final class ProductFilterRating extends AbstractBlock {
 			return '';
 		}
 
-		$rating_counts = $this->get_rating_counts( $block );
-
-		// Pick the selected ratings from the query string.
+		$rating_counts   = $this->get_rating_counts( $block );
 		$filter_params   = $block->context['filterParams'] ?? array();
 		$rating_query    = $filter_params[ self::RATING_FILTER_QUERY_VAR ] ?? '';
 		$selected_rating = array_filter( explode( ',', $rating_query ) );
 
-		/*
-		 * Get the rating items
-		 * based on the selected ratings and the rating counts.
-		 */
-		$items = $this->get_rating_items( $rating_counts, $selected_rating, $attributes['showCounts'] ?? false );
+		$filter_options = array_map(
+			function ( $rating ) use ( $selected_rating, $attributes ) {
+				$value       = (string) $rating['rating'];
+				$count_label = $attributes['showCounts'] ? "({$rating['count']})" : '';
+
+				$aria_label = sprintf(
+					/* translators: %s is referring to rating value. Example: Rated 4 out of 5. */
+					__( 'Rated %s out of 5', 'woocommerce' ),
+					$value,
+				);
+
+				return array(
+					'id'        => 'rating-' . $value,
+					'selected'  => in_array( $value, $selected_rating, true ),
+					'label'     => $this->render_rating_label( (int) $value, $count_label ),
+					'ariaLabel' => $aria_label,
+					'value'     => $value,
+					'type'      => 'rating',
+					'data'      => $rating,
+				);
+			},
+			$rating_counts
+		);
 
 		$filter_context = array(
-			'filterData'         => array(
-				'items'   => $items,
-				'actions' => array(
-					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
-				),
-			),
-			'hasSelectedFilters' => count( $selected_rating ) > 0,
+			'items'  => $filter_options,
+			'parent' => $this->get_full_block_name(),
 		);
 
 		$wrapper_attributes = array(
 			'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-context'      => wp_json_encode(
 				array(
-					'hasSelectedFilters' => $filter_context['hasSelectedFilters'],
-					'hasFilterOptions'   => ! empty( $items ),
+					'hasFilterOptions'    => ! empty( $filter_options ),
+					/* translators: {{labe}} is the rating filter item label. */
+					'activeLabelTemplate' => __( 'Rating: {{label}}', 'woocommerce' ),
 				),
 				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 			),
 			'data-wc-bind--hidden' => '!context.hasFilterOptions',
 		);
+
+		if ( empty( $filter_options ) ) {
+			$wrapper_attributes['hidden'] = true;
+		}
 
 		return sprintf(
 			'<div %1$s>%2$s</div>',
@@ -153,7 +159,7 @@ final class ProductFilterRating extends AbstractBlock {
 			array_reduce(
 				$block->parsed_block['innerBlocks'],
 				function ( $carry, $parsed_block ) use ( $filter_context ) {
-					$carry .= ( new \WP_Block( $parsed_block, array( 'filterData' => $filter_context['filterData'] ) ) )->render();
+					$carry .= ( new \WP_Block( $parsed_block, array( 'filterData' => $filter_context ) ) )->render();
 					return $carry;
 				},
 				''
@@ -190,90 +196,6 @@ final class ProductFilterRating extends AbstractBlock {
 		</div>
 		<?php
 		return ob_get_clean();
-	}
-
-	/**
-	 * Get the Rating list items.
-	 *
-	 * @param array $ratings     - The rating counts.
-	 * @param array $selected    - an array of selected ratings.
-	 * @param bool  $with_counts - Whether to show the counts.
-	 * @return array The rating items.
-	 */
-	private function get_rating_items( $ratings, $selected, $with_counts ) {
-		return array_map(
-			function ( $rating ) use ( $selected, $with_counts ) {
-				$value       = (string) $rating['rating'];
-				$count_label = $with_counts ? "({$rating['count']})" : '';
-
-				$aria_label = sprintf(
-					/* translators: %1$d is referring to rating value. Example: Rated 4 out of 5. */
-					__( 'Rated %s out of 5', 'woocommerce' ),
-					$value,
-				);
-
-				return array(
-					'id'         => 'rating-' . $value,
-					'selected'   => in_array( $value, $selected, true ),
-					'label'      => $this->render_rating_label( (int) $value, $count_label ),
-					'aria_label' => $aria_label,
-					'value'      => $value,
-				);
-			},
-			$ratings
-		);
-	}
-
-	/**
-	 * Get the dropdown props.
-	 *
-	 * @param mixed  $rating_counts The rating counts.
-	 * @param mixed  $selected_ratings_query The url query param for selected ratings.
-	 * @param bool   $show_counts Whether to show the counts.
-	 * @param string $select_type The select type. (single|multiple).
-	 * @return array<array-key, array>
-	 */
-	private function get_dropdown_props( $rating_counts, $selected_ratings_query, $show_counts, $select_type ) {
-		$ratings_array    = explode( ',', $selected_ratings_query );
-		$placeholder_text = 'single' === $select_type ? __( 'Select a rating', 'woocommerce' ) : __( 'Select ratings', 'woocommerce' );
-
-		$selected_items = array_reduce(
-			$rating_counts,
-			function ( $carry, $rating ) use ( $ratings_array, $show_counts ) {
-				if ( in_array( (string) $rating['rating'], $ratings_array, true ) ) {
-					$count       = $rating['count'];
-					$count_label = $show_counts ? "($count)" : '';
-					$rating_str  = (string) $rating['rating'];
-					$carry[]     = array(
-						/* translators: %d is referring to the average rating value. Example: Rated 4 out of 5. */
-						'label' => sprintf( __( 'Rated %d out of 5', 'woocommerce' ), $rating_str ) . ' ' . $count_label,
-						'value' => $rating['rating'],
-					);
-				}
-				return $carry;
-			},
-			array()
-		);
-
-		return array(
-			'items'          => array_map(
-				function ( $rating ) use ( $show_counts ) {
-					$count = $rating['count'];
-					$count_label = $show_counts ? "($count)" : '';
-					$rating_str = (string) $rating['rating'];
-					return array(
-						/* translators: %d is referring to the average rating value. Example: Rated 4 out of 5. */
-						'label' => sprintf( __( 'Rated %d out of 5', 'woocommerce' ), $rating_str ) . ' ' . $count_label,
-						'value' => $rating['rating'],
-					);
-				},
-				$rating_counts
-			),
-			'select_type'    => $select_type,
-			'selected_items' => $selected_items,
-			'action'         => "{$this->get_full_block_name()}::actions.onDropdownChange",
-			'placeholder'    => $placeholder_text,
-		);
 	}
 
 	/**
