@@ -131,22 +131,21 @@ class ProductGalleryThumbnails extends AbstractBlock {
 			return $content;
 		}
 
-			$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
-
-			$post_id = $block->context['postId'];
+		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes );
+		$post_id            = $block->context['postId'];
 
 		if ( ! $post_id ) {
 			return '';
 		}
 
-			$product = wc_get_product( $post_id );
+		$product = wc_get_product( $post_id );
 
 		if ( ! $product ) {
 			return '';
 		}
 
-			$crop_images            = $block->context['cropImages'] ?? false;
-			$product_gallery_images = ProductGalleryUtils::get_product_gallery_images( $post_id, 'full', array(), 'wc-block-product-gallery-thumbnails__thumbnail', $crop_images );
+		$crop_images            = $block->context['cropImages'] ?? false;
+		$product_gallery_images = ProductGalleryUtils::get_product_gallery_images( $post_id, 'full', array(), 'wc-block-product-gallery-thumbnails__thumbnail', $crop_images );
 
 		if ( $product_gallery_images && count( $product_gallery_images ) > 1 ) {
 			$html                 = '';
@@ -169,7 +168,6 @@ class ProductGalleryThumbnails extends AbstractBlock {
 					$processor = new \WP_HTML_Tag_Processor( $product_gallery_image_html );
 
 					if ( $processor->next_tag( 'img' ) ) {
-
 						$processor->set_attribute( 'data-wc-on--keydown', 'actions.onThumbnailKeyDown' );
 						$processor->set_attribute( 'tabindex', '0' );
 						$processor->set_attribute(
@@ -186,8 +184,8 @@ class ProductGalleryThumbnails extends AbstractBlock {
 
 			return sprintf(
 				'<div class="wc-block-product-gallery-thumbnails wp-block-woocommerce-product-gallery-thumbnails %1$s" style="%2$s" data-wc-interactive=\'%4$s\'>
-							%3$s
-						</div>',
+					%3$s
+				</div>',
 				esc_attr( $classes_and_styles['classes'] ),
 				esc_attr( $classes_and_styles['styles'] ),
 				wp_kses_post( $html ),
