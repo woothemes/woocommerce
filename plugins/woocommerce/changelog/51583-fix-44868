@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Added verification for variable product without a specified variation when programmatically calling add_to_cart()
