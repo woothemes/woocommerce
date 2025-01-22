@@ -94,6 +94,12 @@ class BlockifiedProductDetails extends AbstractBlock {
 			return $content;
 		}
 
+		/**
+		 * Filter the product tabs in the product details block.
+		 *
+		 * @since $VID:$
+		 * @param array $tabs Array of product tabs.
+		 */
 		$product_tabs = apply_filters(
 			'woocommerce_product_tabs',
 			array()
