@@ -260,12 +260,14 @@ const webpackConfig = {
 			new WooCommerceDependencyExtractionWebpackPlugin( {
 				requestToExternal( request ) {
 					switch ( request ) {
-						// The external wp.components does not include ui components, so we need to skip requesting to external here.
 						case '@wordpress/components/build/ui':
+							// The external wp.components does not include ui components, so we need to skip requesting to external here.
 							return null;
-						// TODO: the updated base plugin handles those by default - the override here to ensure no changes in generated zip.
 						case 'react/jsx-runtime':
 						case 'react/jsx-dev-runtime':
+							// @wordpress/dependency-extraction-webpack-plugin version bump related, which added 'react-jsx-runtime' dependency.
+							// See https://github.com/WordPress/gutenberg/pull/61692 for more details about the dependency in general.
+							// For backward compatibility reasons we need to skip requesting to external here.
 							return null;
 					}
 
