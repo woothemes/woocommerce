@@ -89,7 +89,7 @@ class Controller extends AbstractBlock {
 	 * Hook the store notices block to post-content/before to ensure that error notices can be shown
 	 * client-side even when the store notices block is not present as part of the template. This hook
 	 * is not called in WordPress 6.8+ where post_content is supported by block hooks.
-	 * 
+	 *
 	 * @param array  $hooked_blocks The array of hooked blocks.
 	 * @param string $position The position of the block.
 	 * @param string $anchor_block The anchor block.
@@ -117,7 +117,7 @@ class Controller extends AbstractBlock {
 	 * @param string $anchor_block The anchor block.
 	 * @return array The array of hooked blocks.
 	 */
-	public function block_hook_fallback_post_content_support( $hooked_blocks, $position, $anchor_block ) {		
+	public function block_hook_fallback_post_content_support( $hooked_blocks, $position, $anchor_block ) {
 		if ( 'core/post-content' === $anchor_block && 'first_child' === $position ) {
 			$hooked_blocks[] = 'woocommerce/store-notices';
 		}
@@ -136,13 +136,12 @@ class Controller extends AbstractBlock {
 	 *                                                             or pattern that the anchor block belongs to.
 	 * @return array|null
 	 */
-	public function augment_hooked_store_notices_block( $parsed_hooked_block, $hooked_block_type, $relative_position, $parsed_anchor_block, $context ) {		
+	public function augment_hooked_store_notices_block( $parsed_hooked_block, $hooked_block_type, $relative_position, $parsed_anchor_block, $context ) {
 		// Don't hook the block if there is not a product collection block in the content.
 		if ( $context instanceof \WP_Post && ! str_contains( $context->post_content, 'woocommerce/product-collection' ) ) {
 			return null;
 		}
 
-		
 		// Do not default to wide, as it will break the layout for this fallback block.
 		$parsed_hooked_block['attrs']['align'] = '';
 
