@@ -51,7 +51,7 @@ const generateNoticeId = () => {
 		.substring( 2, 15 ) }`;
 };
 
-const { state } = ( store as typeof StoreType )< StoreNoticesStore >(
+const { state, actions } = ( store as typeof StoreType )< StoreNoticesStore >(
 	'woocommerce/store-notices',
 	{
 		actions: {
@@ -67,18 +67,19 @@ const { state } = ( store as typeof StoreType )< StoreNoticesStore >(
 			},
 
 			removeNotice: ( noticeId: string ) => {
-				state.notices = state.notices.filter(
-					( notice ) => notice.id !== noticeId
+				const index = state.notices.findIndex(
+					( { id } ) => id === noticeId
 				);
+
+				if ( index !== -1 ) {
+					state.notices.splice( index, 1 );
+				}
 			},
 		},
 		callbacks: {
 			dismissNotice: () => {
 				const context = getContext< { notice: NoticeWithId } >();
-
-				state.notices = state.notices.filter(
-					( notice ) => notice.id !== context.notice.id
-				);
+				actions.removeNotice( context.notice.id );
 			},
 
 			getNoticeClass: () => {
