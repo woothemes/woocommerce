@@ -3,6 +3,8 @@
  * A class of utilities for dealing with numbers.
  */
 
+declare( strict_types=1 );
+
 namespace Automattic\WooCommerce\Utilities;
 
 /**
@@ -24,7 +26,7 @@ final class NumberUtil {
 	 *
 	 * @return float The value rounded to the given precision as a float, or the supplied default value.
 	 */
-	public static function round( $val, int $precision = 0, int $mode = PHP_ROUND_HALF_UP ) : float {
+	public static function round( $val, int $precision = 0, int $mode = PHP_ROUND_HALF_UP ): float {
 		if ( ! is_numeric( $val ) ) {
 			$val = floatval( $val );
 		}
@@ -51,18 +53,18 @@ final class NumberUtil {
 	}
 
 	/**
-	 * Accepts a cost using the current locale and returns it expressed as a numeric string.
+	 * Sanitize a cost value based on the current locale decimal and thousand separators.
 	 *
-	 * @param string $value The cost to sanitize, containing only numbers and the current locale's separators.
-	 * @return string The sanitized cost as a numeric string (passing is_numeric()).
-	 * @throws \InvalidArgumentException If the value contains invalid characters (including "." or " " if they are not the current locale's separators).
+	 * @param string $value               The value to sanitize.
+	 * @return string The sanitized value, or empty string if invalid.
+	 * @throws \InvalidArgumentException If the value is not a valid numeric value.
 	 */
 	public static function sanitize_cost_in_current_locale( $value ): string {
-		$value = is_null( $value ) ? '' : $value;
-		$value = wp_kses_post( trim( wp_unslash( $value ) ) );
-		$currency_symbol_encoded = get_woocommerce_currency_symbol();
+		$value                      = is_null( $value ) ? '' : $value;
+		$value                      = wp_kses_post( trim( wp_unslash( $value ) ) );
+		$currency_symbol_encoded    = get_woocommerce_currency_symbol();
 		$currency_symbol_variations = array( $currency_symbol_encoded, wp_kses_normalize_entities( $currency_symbol_encoded ), html_entity_decode( $currency_symbol_encoded ) );
-		
+
 		$value = str_replace( $currency_symbol_variations, '', $value );
 
 		$allowed_characters_regex = sprintf(
@@ -72,28 +74,30 @@ final class NumberUtil {
 		);
 
 		if ( 1 !== preg_match( $allowed_characters_regex, $value ) ) {
-			throw new \InvalidArgumentException( sprintf( __( '%s is not a valid numeric value. Allowed characters: %s', 'woocommerce' ), $value, $allowed_characters_regex ) );
+			/* translators: %s: Invalid value that was input by the user */
+			throw new \InvalidArgumentException( sprintf( esc_html__( '%s is not a valid numeric value. Allowed characters are numbers and the thousand and decimal separators.', 'woocommerce' ), esc_html( $value ) ) );
 		}
 
-		// Validate decimal and thousand separator positions
-		$decimal_separator = wc_get_price_decimal_separator();
+		// Validate decimal and thousand separator positions.
+		$decimal_separator  = wc_get_price_decimal_separator();
 		$thousand_separator = wc_get_price_thousand_separator();
-		
+
 		if (
-			// Check that there is only 1 decimal separator
+			// Check that there is only 1 decimal separator.
 			substr_count( $value, $decimal_separator ) > 1 ||
 			(
-				// Check that decimal separator appears after thousand separator if both exist
+				// Check that decimal separator appears after thousand separator if both exist.
 				str_contains( $value, $thousand_separator ) &&
 				str_contains( $value, $decimal_separator ) &&
 				strpos( $value, $decimal_separator ) <= strpos( $value, $thousand_separator )
 			)
 		) {
-			throw new \InvalidArgumentException( sprintf( __( '%s is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator.', 'woocommerce' ), $value ) );
+			/* translators: %s: Invalid value that was input by the user */
+			throw new \InvalidArgumentException( sprintf( esc_html__( '%s is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator.', 'woocommerce' ), esc_html( $value ) ) );
 		}
 
 		/**
-		 * For context, as of 2025
+		 * For context, as of 2025.
 		 * The full set of thousands separators is PERIOD, COMMA, SPACE, APOSTROPHE.
 		 * And the full set of decimal separators is PERIOD, COMMA.
 		 * There are no locales that use the same thousands and decimal separators.
@@ -103,7 +107,8 @@ final class NumberUtil {
 		$value = str_replace( wc_get_price_decimal_separator(), '.', $value );
 
 		if ( $value && ! is_numeric( $value ) ) {
-			throw new \InvalidArgumentException( sprintf( __( '%s is not a valid numeric value', 'woocommerce' ), $value ) );
+			/* translators: %s: Invalid value that was input by the user */
+			throw new \InvalidArgumentException( sprintf( esc_html__( '%s is not a valid numeric value', 'woocommerce' ), esc_html( $value ) ) );
 		}
 
 		return $value;

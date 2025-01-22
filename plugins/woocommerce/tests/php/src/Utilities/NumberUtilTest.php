@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types=1 );
+
 namespace Automattic\WooCommerce\Tests\Utilities;
 
 use Automattic\WooCommerce\Utilities\NumberUtil;
@@ -156,28 +158,28 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 	 */
 	public function data_provider_for_test_sanitize_cost_in_current_locale(): array {
 		return array(
-			'simple integer' => array(
+			'simple integer'                   => array(
 				'1234',
 				'1234',
 				',',
 				'.',
 				'$',
 			),
-			'decimal number' => array(
+			'decimal number'                   => array(
 				'12.34',
 				'12.34',
 				',',
 				'.',
 				'$',
 			),
-			'number with thousand separator' => array(
+			'number with thousand separator'   => array(
 				'1,234.56',
 				'1234.56',
 				',',
 				'.',
 				'$',
 			),
-			'number with currency symbol' => array(
+			'number with currency symbol'      => array(
 				'$1234.56',
 				'1234.56',
 				',',
@@ -191,42 +193,42 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'.',
 				'$',
 			),
-			'european format' => array(
+			'european format'                  => array(
 				'1.234,56',
 				'1234.56',
 				'.',
 				',',
 				'€',
 			),
-			'zero value' => array(
+			'zero value'                       => array(
 				'0',
 				'0',
 				',',
 				'.',
 				'$',
 			),
-			'zero with decimal' => array(
+			'zero with decimal'                => array(
 				'0.00',
 				'0.00',
 				',',
 				'.',
 				'$',
 			),
-			'empty string' => array(
+			'empty string'                     => array(
 				'',
 				'',
 				',',
 				'.',
 				'$',
 			),
-			'null value' => array(
+			'null value'                       => array(
 				null,
 				'',
 				',',
 				'.',
 				'$',
 			),
-			'whitespace padded' => array(
+			'whitespace padded'                => array(
 				'  123.45  ',
 				'123.45',
 				',',
@@ -248,8 +250,8 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 	 * @param string $currency_symbol Currency symbol to use.
 	 */
 	public function test_sanitize_cost_in_current_locale( $input, string $expected, string $thousand_separator, string $decimal_separator, string $currency_symbol ) {
-		// Set up locale settings via WordPress options
-		update_option( 'woocommerce_currency', $currency_symbol === '$' ? 'USD' : 'EUR' );
+		// Set up locale settings via WordPress options.
+		update_option( 'woocommerce_currency', '$' === $currency_symbol ? 'USD' : 'EUR' );
 		update_option( 'woocommerce_price_thousand_sep', $thousand_separator );
 		update_option( 'woocommerce_price_decimal_sep', $decimal_separator );
 
@@ -266,7 +268,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 		update_option( 'woocommerce_price_thousand_sep', ',' );
 		update_option( 'woocommerce_price_decimal_sep', '.' );
 
-		$actual = NumberUtil::sanitize_cost_in_current_locale( "1\\,234\\.56" );
+		$actual = NumberUtil::sanitize_cost_in_current_locale( '1\\,234\\.56' );
 		$this->assertEquals( '1234.56', $actual );
 	}
 
@@ -301,58 +303,58 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 	 */
 	public function data_provider_for_test_sanitize_cost_in_current_locale_with_special_thousand_separators(): array {
 		return array(
-			// 1. Special chars present but not used in current locale (should error)
-			'space in USD locale' => array(
-				'1 234.56',  // Input with space
-				'',          // Expected output (empty as it should error)
-				',',         // Locale thousand sep
-				'.',         // Locale decimal sep
-				'$',         // Currency
-				true         // Should throw error
+			// 1. Special chars present but not used in current locale (should error).
+			'space in USD locale'                        => array(
+				'1 234.56',  // Input with space.
+				'',          // Expected output (empty as it should error).
+				',',         // Locale thousand sep.
+				'.',         // Locale decimal sep.
+				'$',         // Currency.
+				true,        // Should throw error.
 			),
-			'apostrophe in USD locale' => array(
+			'apostrophe in USD locale'                   => array(
 				"1'234.56",
 				'',
 				',',
 				'.',
 				'$',
-				true
+				true,
 			),
 
-			// 2. Special chars present and correctly used in appropriate locales
-			'space correctly used in FR locale' => array(
+			// 2. Special chars present and correctly used in appropriate locales.
+			'space correctly used in FR locale'          => array(
 				'1 234,56',
 				'1234.56',
 				' ',
 				',',
 				'€',
-				false
+				false,
 			),
-			'apostrophe correctly used in CH locale' => array(
+			'apostrophe correctly used in CH locale'     => array(
 				"1'234.56",
 				'1234.56',
 				"'",
 				'.',
 				'CHF',
-				false
+				false,
 			),
 
 			// 3. Special chars present but incorrectly used
-			'incorrect space position in FR locale' => array(
+			'incorrect space position in FR locale'      => array(
 				'12 34,56',
 				'1234.56',
 				' ',
 				',',
 				'€',
-				false // This is a borderline edge case but I think it's recoverable and is more likely to result in false positives if we error here
+				false, // This is a borderline edge case but I think it's recoverable and is more likely to result in false positives if we error here.
 			),
-			'mixed separators in FR locale' => array(
+			'mixed separators in FR locale'              => array(
 				"1'234,56",
 				'',
 				' ',
 				',',
 				'€',
-				true
+				true,
 			),
 			'incorrect apostrophe position in CH locale' => array(
 				"12'34.56",
@@ -360,51 +362,51 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				"'",
 				'.',
 				'CHF',
-				false // This is a borderline edge case but I think it's recoverable and is more likely to result in false positives if we error here
+				false, // This is a borderline edge case but I think it's recoverable and is more likely to result in false positives if we error here.
 			),
-			'mixed separators in CH locale' => array(
+			'mixed separators in CH locale'              => array(
 				'1 234.56',
 				'',
 				"'",
 				'.',
 				'CHF',
-				true
+				true,
 			),
 
-			// 4. Decimal separator without thousands separator
-			'decimal only in USD locale' => array(
+			// 4. Decimal separator without thousands separator.
+			'decimal only in USD locale'                 => array(
 				'1234.56',
 				'1234.56',
 				',',
 				'.',
 				'$',
-				false
+				false,
 			),
-			'decimal only in FR locale' => array(
+			'decimal only in FR locale'                  => array(
 				'1234,56',
 				'1234.56',
 				' ',
 				',',
 				'€',
-				false
+				false,
 			),
 
 			// 5. Thousands separator with decimal
-			'thousands and decimal in USD locale' => array(
+			'thousands and decimal in USD locale'        => array(
 				'1,234.56',
 				'1234.56',
 				',',
 				'.',
 				'$',
-				false
+				false,
 			),
-			'space thousands and decimal in FR locale' => array(
+			'space thousands and decimal in FR locale'   => array(
 				'1 234,56',
 				'1234.56',
 				' ',
 				',',
 				'€',
-				false
+				false,
 			),
 			'apostrophe thousands and decimal in CH locale' => array(
 				"1'234.56",
@@ -412,66 +414,66 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				"'",
 				'.',
 				'CHF',
-				false
+				false,
 			),
 
 			// 6. Multiple thousands separators
-			'multiple commas in USD locale' => array(
+			'multiple commas in USD locale'              => array(
 				'1,234,567.89',
 				'1234567.89',
 				',',
 				'.',
 				'$',
-				false
+				false,
 			),
-			'multiple spaces in FR locale' => array(
+			'multiple spaces in FR locale'               => array(
 				'1 234 567,89',
 				'1234567.89',
 				' ',
 				',',
 				'€',
-				false
+				false,
 			),
-			'multiple apostrophes in CH locale' => array(
+			'multiple apostrophes in CH locale'          => array(
 				"1'234'567.89",
 				'1234567.89',
 				"'",
 				'.',
 				'CHF',
-				false
+				false,
 			),
 
 			// 7. Invalid multiple separators (Technically invalid but I think it is recoverable and is more likely to result in false positives if we error)
-			'invalid multiple commas in USD locale' => array(
+			'invalid multiple commas in USD locale'      => array(
 				'1,23,4.56',
 				'1234.56',
 				',',
 				'.',
 				'$',
-				false
+				false,
 			),
-			'invalid multiple spaces in FR locale' => array(
+			'invalid multiple spaces in FR locale'       => array(
 				'1 23 4,56',
 				'1234.56',
 				' ',
 				',',
 				'€',
-				false
+				false,
 			),
-			'invalid multiple apostrophes in CH locale' => array(
+			'invalid multiple apostrophes in CH locale'  => array(
 				"1'23'4.56",
 				'1234.56',
 				"'",
 				'.',
 				'CHF',
-				false
+				false,
 			),
 		);
 	}
 
 	/**
 	 * @testdox sanitize_cost_in_current_locale should properly handle special thousand separators (space and apostrophe)
-	 * 
+	 *
 	 * @dataProvider data_provider_for_test_sanitize_cost_in_current_locale_with_special_thousand_separators
 	 *
 	 * @param string  $input              Input value to test.
@@ -489,23 +491,23 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 		string $currency_symbol,
 		bool $should_throw
 	) {
-		// Set up locale settings via WordPress options
-		update_option('woocommerce_currency', $currency_symbol === '$' ? 'USD' : ($currency_symbol === '€' ? 'EUR' : 'CHF'));
-		update_option('woocommerce_price_thousand_sep', $thousand_separator);
-		update_option('woocommerce_price_decimal_sep', $decimal_separator);
+		// Set up locale settings via WordPress options.
+		update_option( 'woocommerce_currency', '$' === $currency_symbol ? 'USD' : ( '€' === $currency_symbol ? 'EUR' : 'CHF' ) );
+		update_option( 'woocommerce_price_thousand_sep', $thousand_separator );
+		update_option( 'woocommerce_price_decimal_sep', $decimal_separator );
 
-		if ($should_throw) {
+		if ( $should_throw ) {
 			try {
-				$actual = NumberUtil::sanitize_cost_in_current_locale($input);
-				$this->fail('Expected exception was not thrown');
-			} catch (\Exception $e) {
-				$this->assertStringContainsString('is not a valid numeric value', $e->getMessage());
+				$actual = NumberUtil::sanitize_cost_in_current_locale( $input );
+				$this->fail( 'Expected exception was not thrown' );
+			} catch ( \Exception $e ) {
+				$this->assertStringContainsString( 'is not a valid numeric value', $e->getMessage() );
 				return;
 			}
 		}
 
-		$actual = NumberUtil::sanitize_cost_in_current_locale($input);
-		$this->assertEquals($expected, $actual);
+		$actual = NumberUtil::sanitize_cost_in_current_locale( $input );
+		$this->assertEquals( $expected, $actual );
 	}
 
 	/**
@@ -513,47 +515,47 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 	 */
 	public function data_provider_for_test_sanitize_cost_in_current_locale_decimal_separator_validation(): array {
 		return array(
-			'multiple decimal separators USD' => array(
+			'multiple decimal separators USD'       => array(
 				'1,234.56.78',
 				',',
 				'.',
 				'$',
-				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator',
 			),
-			'multiple decimal separators EUR' => array(
+			'multiple decimal separators EUR'       => array(
 				'1 234,56,78',
 				' ',
 				',',
 				'€',
-				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator',
 			),
-			'multiple decimal separators' => array(
+			'multiple decimal separators'           => array(
 				'1.234.56',
 				',',
 				'.',
 				'$',
-				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator',
 			),
 			'decimal before thousand separator USD' => array(
 				'1.234,567',
 				',',
 				'.',
 				'$',
-				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator',
 			),
 			'decimal before thousand separator EUR' => array(
 				'1,234.567',
 				'.',
 				',',
 				'€',
-				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator',
 			),
 			'decimal before thousand separator CHF' => array(
 				'1.234\'567',
 				'\'',
 				'.',
 				'CHF',
-				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator'
+				'is not a valid numeric value: there should be one decimal separator and it has to be after the thousands separator',
 			),
 		);
 	}
@@ -576,14 +578,14 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 		string $currency_symbol,
 		string $expected_error
 	) {
-		// Set up locale settings
-		update_option('woocommerce_currency', $currency_symbol === '$' ? 'USD' : ($currency_symbol === '€' ? 'EUR' : 'CHF'));
-		update_option('woocommerce_price_thousand_sep', $thousand_separator);
-		update_option('woocommerce_price_decimal_sep', $decimal_separator);
+		// Set up locale settings.
+		update_option( 'woocommerce_currency', '$' === $currency_symbol ? 'USD' : ( '€' === $currency_symbol ? 'EUR' : 'CHF' ) );
+		update_option( 'woocommerce_price_thousand_sep', $thousand_separator );
+		update_option( 'woocommerce_price_decimal_sep', $decimal_separator );
 
-		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessage($expected_error);
-		
-		NumberUtil::sanitize_cost_in_current_locale($input);
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( $expected_error );
+
+		NumberUtil::sanitize_cost_in_current_locale( $input );
 	}
 }
