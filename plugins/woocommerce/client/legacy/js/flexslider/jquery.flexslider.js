@@ -106,8 +106,8 @@
         slider.started = false;
         slider.startTimeout = null;
         // TOUCH/USECSS:
-        slider.transitions = !slider.vars.video && !fade && slider.vars.useCSS;
-        if (slider.transitions) slider.prop = "transform";
+        slider.transforms = slider.transitions = !slider.vars.video && !fade && slider.vars.useCSS;
+        if (slider.transforms) slider.prop = "transform";
         slider.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
         slider.ensureAnimationEnd = '';
         // CONTROLSCONTAINER:
@@ -815,7 +815,7 @@
       dur = (dur !== undefined) ? (dur/1000) + "s" : "0s";
       slider.container.css("transition-duration", dur);
 
-      if (slider.transitions) {
+      if (slider.transforms) {
         target = (vertical) ? "translate3d(0," + target + ",0)" : "translate3d(" + (parseInt(target)+'px') + ",0,0)";
       } else {
         slider.container.css("transition-timing-function", easing);
@@ -1063,7 +1063,7 @@
     pauseOnAction: true,            //Boolean: Pause the slideshow when interacting with control elements, highly recommended.
     pauseOnHover: false,            //Boolean: Pause the slideshow when hovering over slider, then resume when no longer hovering
     pauseInvisible: true,   		//{NEW} Boolean: Pause the slideshow when tab is invisible, resume when visible. Provides better UX, lower CPU usage.
-    useCSS: true,                   //{NEW} Boolean: Slider will use CSS3 transitions if available
+    useCSS: true,                   //{NEW} Boolean: Slider will use CSS3 3D Transforms
     touch: true,                    //{NEW} Boolean: Allow touch swipe navigation of the slider on touch-enabled devices
     video: false,                   //{NEW} Boolean: If using video in the slider, will prevent CSS3 3D Transforms to avoid graphical glitches
 

@@ -14,7 +14,9 @@ export const useBlockEditorTourOptions = () => {
 			select( OPTIONS_STORE_NAME );
 
 		const wasTourShown =
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getOption( BLOCK_EDITOR_TOUR_SHOWN_OPTION ) === 'yes' ||
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			! hasFinishedResolution( 'getOption', [
 				BLOCK_EDITOR_TOUR_SHOWN_OPTION,
 			] );
@@ -22,7 +24,7 @@ export const useBlockEditorTourOptions = () => {
 		return {
 			shouldTourBeShown: ! wasTourShown,
 		};
-	} );
+	}, [] );
 
 	const dismissModal = () => {
 		updateOptions( {

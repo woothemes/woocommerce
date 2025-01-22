@@ -209,6 +209,7 @@ class WC_Admin {
 
 			try {
 				$message = $email_preview->render();
+				$message = $email_preview->ensure_links_open_in_new_tab( $message );
 			} catch ( Throwable $e ) {
 				wp_die( esc_html__( 'There was an error rendering an email preview.', 'woocommerce' ), 404 );
 			}

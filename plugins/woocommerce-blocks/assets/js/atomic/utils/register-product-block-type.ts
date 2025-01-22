@@ -31,25 +31,29 @@ type ProductBlockSettings = {
  * Internal block config type used by the BlockRegistrationManager
  *
  * @typedef {Object} ProductBlockConfig
+ * @template T Extends BlockAttributes to define the block's attribute types
  * @property {string}                      blockName            - The name of the block
  * @property {Partial<BlockConfiguration>} settings             - Block settings configuration
  * @property {ProductBlockSettings}        productBlockSettings - Product block settings
  */
-type ProductBlockConfig = ProductBlockSettings & {
+type ProductBlockConfig< T extends BlockAttributes > = ProductBlockSettings & {
 	blockName: string;
-	settings: Partial< BlockConfiguration >;
+	settings: Partial< BlockConfiguration< T > >;
 };
 
 /**
  * Configuration object for registering a product block type.
  *
  * @typedef {Object} ProductBlockRegistrationConfig
+ * @template T Extends BlockAttributes to define the block's attribute types
  * @property {Partial<BlockConfiguration>} settings                - Block settings configuration
  * @property {boolean}                     [isVariationBlock]      - Whether this block is a variation
  * @property {string}                      [variationName]         - The name of the variation if applicable
  * @property {boolean}                     isAvailableOnPostEditor - Whether the block should be available in post editor
  */
-type ProductBlockRegistrationConfig = Partial< BlockConfiguration > &
+type ProductBlockRegistrationConfig< T extends BlockAttributes > = Partial<
+	BlockConfiguration< T >
+> &
 	ProductBlockSettings;
 
 /**
@@ -60,7 +64,8 @@ export class BlockRegistrationManager {
 	/** Singleton instance of the manager */
 	private static instance: BlockRegistrationManager;
 	/** Map storing block configurations keyed by block name or variation name */
-	private blocks: Map< string, ProductBlockConfig > = new Map();
+	private blocks: Map< string, ProductBlockConfig< BlockAttributes > > =
+		new Map();
 	/** Current template ID being edited */
 	private currentTemplateId: string | undefined;
 	/** Flag indicating if the manager has been initialized */
@@ -141,9 +146,7 @@ export class BlockRegistrationManager {
 				subscribe( () => {
 					const previousTemplateId = this.currentTemplateId;
 					this.currentTemplateId = this.parseTemplateId(
-						editSiteStore.getEditedPostId<
-							string | number | undefined
-						>()
+						editSiteStore.getEditedPostId()
 					);
 
 					if ( previousTemplateId !== this.currentTemplateId ) {
@@ -216,9 +219,12 @@ export class BlockRegistrationManager {
 	 * Unregisters a block or block variation.
 	 * Handles both regular blocks and variations with error handling.
 	 *
-	 * @param {ProductBlockConfig} config - Configuration of the block to unregister
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to unregister
 	 */
-	private unregisterBlock( config: ProductBlockConfig ): void {
+	private unregisterBlock< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const { blockName, isVariationBlock, variationName } = config;
 
 		try {
@@ -243,9 +249,12 @@ export class BlockRegistrationManager {
 	 * Handles different registration requirements for various contexts.
 	 * Includes checks to prevent recursive registration.
 	 *
-	 * @param {ProductBlockConfig} config - Configuration of the block to register
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to register
 	 */
-	private registerBlock( config: ProductBlockConfig ): void {
+	private registerBlock< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const {
 			blockName,
 			settings,
@@ -301,11 +310,14 @@ export class BlockRegistrationManager {
 	 * Registers a new block configuration with the manager.
 	 * Main entry point for adding new blocks to be managed.
 	 *
-	 * @param {ProductBlockConfig} config - Configuration for the block to register
+	 * @template T The type of block attributes
+	 * @param {ProductBlockConfig<T>} config - Configuration of the block to register
 	 */
-	public registerBlockConfig( config: ProductBlockConfig ): void {
+	public registerBlockConfig< T extends BlockAttributes >(
+		config: ProductBlockConfig< T >
+	): void {
 		const key = config.variationName || config.blockName;
-		this.blocks.set( key, config );
+		this.blocks.set( key, config as ProductBlockConfig< BlockAttributes > );
 		this.registerBlock( config );
 	}
 }
@@ -331,6 +343,11 @@ export class BlockRegistrationManager {
  * with no ancestor constraints. The `isAvailableOnPostEditor` flag can be used to make
  * the block available in regular post editing contexts as well where ancestor constraints are enforced.
  *
+ * @template T Extends BlockAttributes to define the block's attribute types
+ * @param {string | Partial<BlockConfiguration<T>>}               blockNameOrMetadata - Either a string block name or block metadata object
+ * @param {ProductBlockRegistrationConfig<BlockConfiguration<T>>} [settings]          - Optional settings for block registration
+ * @return {void}
+ *
  * @example
  * ```typescript
  * registerProductBlockType({
@@ -343,12 +360,10 @@ export class BlockRegistrationManager {
  *     isAvailableOnPostEditor: true
  * });
  * ```
- *
- * @return {void}
  */
 export const registerProductBlockType = < T extends BlockAttributes >(
 	blockNameOrMetadata: string | Partial< BlockConfiguration< T > >,
-	settings?: ProductBlockRegistrationConfig
+	settings?: ProductBlockRegistrationConfig< BlockConfiguration< T > >
 ): void => {
 	const blockName =
 		typeof blockNameOrMetadata === 'string'
@@ -381,9 +396,11 @@ export const registerProductBlockType = < T extends BlockAttributes >(
 		...( settings || {} ),
 	};
 
-	const internalConfig: ProductBlockConfig = {
+	const internalConfig: ProductBlockConfig< T > = {
 		blockName,
-		settings: { ...settingsWithoutCustomProperties },
+		settings: {
+			...settingsWithoutCustomProperties,
+		} as BlockConfiguration< T >,
 		isVariationBlock: isVariationBlock ?? false,
 		variationName: variationName ?? undefined,
 		isAvailableOnPostEditor: isAvailableOnPostEditor ?? false,

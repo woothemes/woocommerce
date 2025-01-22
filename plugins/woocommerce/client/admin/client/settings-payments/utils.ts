@@ -64,7 +64,7 @@ export const isIncentiveDismissedInContext = (
 };
 
 /**
- * Handles enabling WooCommerce Payments and redirection based on Jetpack connection status.
+ * Handles enabling WooPayments and redirection based on Jetpack connection status.
  */
 export const parseScriptTag = ( elementId: string ) => {
 	const scriptTag = document.getElementById( elementId );

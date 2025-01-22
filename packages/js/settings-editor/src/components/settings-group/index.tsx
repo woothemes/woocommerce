@@ -15,7 +15,7 @@ import { SettingsItem } from '../settings-item';
 const ALLOWED_TAGS = [ 'a', 'b', 'em', 'i', 'strong', 'p', 'br' ];
 const ALLOWED_ATTR = [ 'target', 'href', 'rel', 'name', 'download' ];
 
-export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
+export const SettingsGroup = ( { group }: { group: GroupSettingsField } ) => {
 	const sanitizeHTML = ( html: string ) => {
 		return {
 			__html: sanitize( html, { ALLOWED_TAGS, ALLOWED_ATTR } ),
@@ -30,15 +30,13 @@ export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
 				/>
 			</div>
 			<div className="woocommerce-settings-group-content">
-				{ group.settings.map( ( setting ) => {
-					const key =
-						setting.id +
-						'-' +
-						( setting.title ?? '' ).replace( /\s+/g, '-' ) +
-						'-' +
-						setting.type +
-						'-group';
-					return <SettingsItem key={ key } setting={ setting } />;
+				{ group.settings.map( ( setting, index ) => {
+					return (
+						<SettingsItem
+							key={ `${ setting.type }-${ index }-group` }
+							setting={ setting }
+						/>
+					);
 				} ) }
 			</div>
 		</fieldset>

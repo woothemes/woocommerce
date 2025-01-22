@@ -3,6 +3,7 @@
 namespace Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks;
 
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Task;
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingProfile;
 
@@ -196,7 +197,7 @@ class Products extends Task {
 	private static function count_user_products() {
 		$args = array(
 			'post_type'   => 'product',
-			'post_status' => 'publish',
+			'post_status' => ProductStatus::PUBLISH,
 			'fields'      => 'ids',
 			'meta_query'  => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				'relation' => 'OR',

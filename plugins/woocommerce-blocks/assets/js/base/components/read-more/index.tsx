@@ -12,33 +12,33 @@ import { clampLines } from './utils';
 
 export interface ReadMoreProps {
 	/**
-	 * The entire content to clamp
+	 * The entire content to clamp.
 	 */
 	children: ReactNode;
 	/**
-	 * Class names for the wrapped component
+	 * Class names for the wrapped component.
 	 */
 	className: string;
 	/**
-	 * What symbol to show after the allowed lines are reached
+	 * What symbol to show after the allowed lines are reached.
 	 *
 	 * @default '&hellip';
 	 */
 	ellipsis: string;
 	/**
-	 * The string to show to collapse the entire text into its clamped form
+	 * The string to show to collapse the entire text into its clamped form.
 	 *
 	 * @default 'Read less'
 	 */
 	lessText: string;
 	/**
-	 * How many lines to show before the text is clamped
+	 * How many lines to show before the text is clamped.
 	 *
 	 * @default 3
 	 */
 	maxLines: number;
 	/**
-	 * The string to show to expande the entire text
+	 * The string to show to expand the entire text.
 	 *
 	 * @default 'Read more'
 	 */
