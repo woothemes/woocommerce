@@ -89,7 +89,7 @@ class StoreNotices extends AbstractBlock {
 						<span data-wc-init="callbacks.renderNoticeContent"></span>
 					</div>
 					<button
-						data-wc-bind--hidden="!callbacks.isNoticeDismissible"
+						data-wc-bind--hidden="!context.notice.dismissible"
 						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
 						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
 						data-wc-on--click="callbacks.dismissNotice"
@@ -104,14 +104,5 @@ class StoreNotices extends AbstractBlock {
 		</div>
 		<?php
 		return ob_get_clean();
-	}
-
-	/**
-	 * Get the frontend style handle for this block type.
-	 *
-	 * @return null
-	 */
-	protected function get_block_type_style() {
-		return null;
 	}
 }

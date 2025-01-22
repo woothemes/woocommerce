@@ -4,6 +4,11 @@
 import { getContext, getElement, store } from '@woocommerce/interactivity';
 import type { store as StoreType } from '@wordpress/interactivity';
 
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
 type Notice = {
 	notice: string;
 	type: 'error' | 'success' | 'notice';
@@ -110,11 +115,6 @@ const { state, actions } = ( store as typeof StoreType )< StoreNoticesStore >(
 				}
 
 				return 'status';
-			},
-
-			isNoticeDismissible: () => {
-				const context = getContext< { notice: NoticeWithId } >();
-				return context.notice.dismissible;
 			},
 
 			renderNoticeContent: () => {
