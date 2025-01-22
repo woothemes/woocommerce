@@ -104,8 +104,6 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
    </div>
 </div>
 ';
-
-
 		$serialized_blocks_without_whitespace          = wp_strip_all_tags( $serialized_blocks, true );
 		$expected_serialized_blocks_without_whitespace = wp_strip_all_tags( $expected_serialized_blocks, true );
 		$this->assertEquals( $serialized_blocks_without_whitespace, $expected_serialized_blocks_without_whitespace, '' );
