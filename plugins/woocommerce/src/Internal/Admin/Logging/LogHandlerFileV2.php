@@ -25,10 +25,10 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 	private $settings;
 
 	/** @var int */
-	private $max_normalize_depth = 9;
+	private static $max_normalize_depth = 9;
 
 	/** @var int */
-	private $max_normalize_item_count = 1000;
+	private static $max_normalize_item_count = 1000;
 
 	/**
 	 * LogHandlerFileV2 class.
@@ -94,7 +94,7 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 		unset( $context_for_entry['source'] );
 
 		if ( ! empty( $context_for_entry ) ) {
-			$formatted_context = wp_json_encode( $this->normalize( $context_for_entry ), JSON_UNESCAPED_UNICODE );
+			$formatted_context = wp_json_encode( self::normalize( $context_for_entry ), JSON_UNESCAPED_UNICODE );
 			$message          .= stripslashes( " CONTEXT: $formatted_context" );
 		}
 
@@ -120,9 +120,9 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 	 *
 	 * @return null|scalar|array<mixed[]|scalar|null>
 	 */
-	private function normalize( $data, int $depth = 0 ) {
-		if ( $depth > $this->max_normalize_depth ) {
-			return 'Over ' . $this->max_normalize_depth . ' levels deep, aborting normalization';
+	private static function normalize( $data, int $depth = 0 ) {
+		if ( $depth > self::$max_normalize_depth ) {
+			return 'Over ' . self::$max_normalize_depth . ' levels deep, aborting normalization';
 		}
 
 		if ( null === $data || \is_scalar( $data ) ) {
@@ -143,12 +143,12 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 
 			$count = 1;
 			foreach ( $data as $key => $value ) {
-				if ( $count++ > $this->max_normalize_item_count ) {
-					$normalized['...'] = 'Over ' . $this->max_normalize_item_count . ' items (' . \count( $data ) . ' total), aborting normalization';
+				if ( $count++ > self::$max_normalize_item_count ) {
+					$normalized['...'] = 'Over ' . self::$max_normalize_item_count . ' items (' . \count( $data ) . ' total), aborting normalization';
 					break;
 				}
 
-				$normalized[ $key ] = $this->normalize( $value, $depth + 1 );
+				$normalized[ $key ] = self::normalize( $value, $depth + 1 );
 			}
 
 			return $normalized;
@@ -159,8 +159,8 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 		}
 
 		if ( \is_object( $data ) ) {
-			if ( $data instanceof Throwable ) {
-				return $this->normalize_exception( $data, $depth );
+			if ( $data instanceof \Throwable ) {
+				return self::normalize_exception( $data, $depth );
 			}
 
 			if ( $data instanceof \JsonSerializable ) {
@@ -173,7 +173,7 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 				try {
 					/** @var string $value */
 					$value = $data->__toString();
-				} catch ( \Throwable ) {
+				} catch ( \Throwable $t ) {
 					// if the toString method is failing, use the default behavior
 					/** @var null|scalar|array<mixed[]|scalar|null> $value */
 					$value = json_decode( wp_json_encode( $data, JSON_UNESCAPED_UNICODE ), true );
@@ -197,9 +197,9 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 	/**
 	 * @return array<array-key, string|int|array<string|int|array<string>>>
 	 */
-	private function normalize_exception( Throwable $e, int $depth = 0 ) {
-		if ( $depth > $this->max_normalize_depth ) {
-			return array( 'Over ' . $this->max_normalize_depth . ' levels deep, aborting normalization' );
+	private static function normalize_exception( \Throwable $e, int $depth = 0 ) {
+		if ( $depth > self::$max_normalize_depth ) {
+			return array( 'Over ' . self::$max_normalize_depth . ' levels deep, aborting normalization' );
 		}
 
 		if ( $e instanceof \JsonSerializable ) {
@@ -242,7 +242,7 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 		}
 
 		if ( ( $previous = $e->getPrevious() ) instanceof \Throwable ) {
-			$data['previous'] = $this->normalize_exception( $previous, $depth + 1 );
+			$data['previous'] = self::normalize_exception( $previous, $depth + 1 );
 		}
 
 		return $data;
@@ -384,7 +384,7 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 
 		$files = array_filter(
 			$files,
-			function( $file ) use ( $timestamp ) {
+			function ( $file ) use ( $timestamp ) {
 				/**
 				 * Allows preventing an expired log file from being deleted.
 				 *
