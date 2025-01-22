@@ -57,13 +57,11 @@ const { state } = ( store as typeof StoreType )< StoreNoticesStore >(
 		actions: {
 			addNotice: ( notice: Notice ) => {
 				const noticeId = generateNoticeId();
-				state.notices = [
-					...state.notices,
-					{
-						...notice,
-						id: noticeId,
-					},
-				];
+				const noticeWithId = {
+					...notice,
+					id: noticeId,
+				};
+				state.notices.push( noticeWithId );
 
 				return noticeId;
 			},
