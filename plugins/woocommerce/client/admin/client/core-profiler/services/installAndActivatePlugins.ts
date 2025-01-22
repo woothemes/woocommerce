@@ -38,7 +38,6 @@ export type InstallationCompletedResult = {
 };
 
 export type PluginInstallError = {
-	/** Slug of the plugin that failed to install */
 	plugin: string;
 	error: string;
 	errorDetails: Pick< InstallAndActivateErrorResponse, 'data' >;
