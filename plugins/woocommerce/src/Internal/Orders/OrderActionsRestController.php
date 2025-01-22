@@ -337,7 +337,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 	}
 
 	/**
-	 * Callback to run for GET wc/v3/orders/(?P<id>[\d]+)/actions/email.
+	 * Callback to run for GET wc/v3/orders/(?P<id>[\d]+)/actions/email_templates.
 	 *
 	 * @param WP_REST_Request $request The incoming HTTP REST request.
 	 *
@@ -360,7 +360,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 	}
 
 	/**
-	 * Callback to run for POST wc/v3/orders/(?P<id>[\d]+)/actions/email.
+	 * Callback to run for POST wc/v3/orders/(?P<id>[\d]+)/actions/send_email.
 	 *
 	 * @param WP_REST_Request $request The incoming HTTP REST request.
 	 *
@@ -381,7 +381,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 			$messages[] = $message;
 		}
 
-		if ( ! $order->get_billing_email() ) {
+		if ( ! is_email( $order->get_billing_email() ) ) {
 			return new WP_Error(
 				'woocommerce_rest_missing_email',
 				__( 'Order does not have an email address.', 'woocommerce' ),
@@ -455,7 +455,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 		$user_agent = esc_html( $request->get_header( 'User-Agent' ) );
 		$messages[] = sprintf(
 			// translators: 1. The name of an email template; 2. Email address; 3. User-agent that requested the action.
-			__( 'Email template "%1$s" sent to %2$s, via %3$s.', 'woocommerce' ),
+			esc_html__( 'Email template "%1$s" sent to %2$s, via %3$s.', 'woocommerce' ),
 			esc_html( $template->get_title() ),
 			esc_html( $order->get_billing_email() ),
 			$user_agent ? $user_agent : 'REST API'
@@ -477,11 +477,17 @@ class OrderActionsRestController extends RestApiControllerBase {
 	 * @return array|WP_Error Request response or an error.
 	 */
 	protected function send_order_details( WP_REST_Request $request ) {
-		$order = wc_get_order( $request->get_param( 'id' ) );
+		$order    = wc_get_order( $request->get_param( 'id' ) );
+		$email    = $request->get_param( 'email' );
+		$force    = wp_validate_boolean( $request->get_param( 'force_email_update' ) );
+		$messages = array();
 
-		$email = $request->get_param( 'email' );
 		if ( $email ) {
-			$order->set_billing_email( $email );
+			$message = $this->maybe_update_billing_email( $order, $email, $force );
+			if ( is_wp_error( $message ) ) {
+				return $message;
+			}
+			$messages[] = $message;
 		}
 
 		if ( ! is_email( $order->get_billing_email() ) ) {
@@ -501,20 +507,23 @@ class OrderActionsRestController extends RestApiControllerBase {
 		WC()->mailer()->customer_invoice( $order );
 
 		$user_agent = esc_html( $request->get_header( 'User-Agent' ) );
-		$note       = sprintf(
+		$messages[] = sprintf(
 			// translators: %1$s is the customer email, %2$s is the user agent that requested the action.
 			esc_html__( 'Order details sent to %1$s, via %2$s.', 'woocommerce' ),
 			esc_html( $order->get_billing_email() ),
 			$user_agent ? $user_agent : 'REST API'
 		);
-		$order->add_order_note( $note, false, true );
+
+		foreach ( $messages as $message ) {
+			$order->add_order_note( $message, false, true );
+		}
 
 		// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingSinceComment
 		/** This action is documented in includes/admin/meta-boxes/class-wc-meta-box-order-actions.php */
 		do_action( 'woocommerce_after_resend_order_email', $order, 'customer_invoice' );
 
 		return array(
-			'message' => __( 'Order details email sent to customer.', 'woocommerce' ),
+			'message' => implode( ' ', $messages ),
 		);
 	}
 
