@@ -12,7 +12,7 @@ import {
 import clsx from 'clsx';
 import { isObject } from '@woocommerce/types';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import type { InputHTMLAttributes, ReactElement } from 'react';
 
 /**
@@ -90,14 +90,19 @@ const ValidatedCheckboxControl = forwardRef<
 		const errorIdString = errorId || textInputId;
 
 		const { setValidationErrors, clearValidationError } =
-			useDispatch( VALIDATION_STORE_KEY );
+			useDispatch( validationStore );
 
 		// Ref for validation callback.
 		const customValidationRef = useRef( customValidation );
 
+		// Update ref when validation callback changes.
+		useEffect( () => {
+			customValidationRef.current = customValidation;
+		}, [ customValidation ] );
+
 		const { validationError, validationErrorId } = useSelect(
 			( select ) => {
-				const store = select( VALIDATION_STORE_KEY );
+				const store = select( validationStore );
 				return {
 					validationError: store.getValidationError( errorIdString ),
 					validationErrorId:
@@ -109,7 +114,6 @@ const ValidatedCheckboxControl = forwardRef<
 
 		const validateInput = useCallback(
 			( errorsHidden = true ) => {
-				customValidationRef.current = customValidation;
 				const inputObject = inputRef.current || null;
 
 				if ( inputObject === null ) {
@@ -141,7 +145,6 @@ const ValidatedCheckboxControl = forwardRef<
 				setValidationErrors,
 				label,
 				customValidityMessage,
-				customValidation,
 			]
 		);
 
