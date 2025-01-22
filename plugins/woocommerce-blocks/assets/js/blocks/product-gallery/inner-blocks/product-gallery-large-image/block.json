@@ -10,7 +10,6 @@
         "WooCommerce"
     ],
     "usesContext": [
-        "nextPreviousButtonsPosition",
         "postId",
         "hoverZoom",
         "fullScreenOnClick",

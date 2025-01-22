@@ -9,7 +9,6 @@ export type BlockAttributes = {
 	displayStyle: string;
 	isPreview: boolean;
 	hideEmpty: boolean;
-	clearButton: boolean;
 };
 
 export interface DisplayOption {
