@@ -19,8 +19,8 @@ export const GROUPED_PRODUCT_ITEM_TEMPLATE: TemplateArray = [
 					style: {
 						spacing: {
 							margin: {
-								top: '10px',
-								bottom: '10px',
+								top: '1rem',
+								bottom: '1rem',
 							},
 						},
 					},
@@ -32,8 +32,8 @@ export const GROUPED_PRODUCT_ITEM_TEMPLATE: TemplateArray = [
 					[
 						'core/post-title',
 						{
-							level: 4,
-							fontSize: 'small',
+							level: 2,
+							fontSize: 'medium',
 							style: {
 								layout: {
 									selfStretch: 'fill',
@@ -54,7 +54,8 @@ export const GROUPED_PRODUCT_ITEM_TEMPLATE: TemplateArray = [
 					[
 						'woocommerce/product-price',
 						{
-							fontSize: 'small',
+							fontSize: 'medium',
+							textAlign: 'right',
 							style: {
 								typography: {
 									fontWeight: 400,
