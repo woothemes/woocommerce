@@ -14,12 +14,12 @@ import { joinWithAnd, composeListFormatParts } from '../../Plugins';
 export const PluginErrorBanner = ( {
 	pluginsInstallationPermissionsFailure,
 	pluginsInstallationErrors,
-	pluginsSlugToName,
+	pluginsSlugToName = {},
 	onClick,
 }: {
 	pluginsInstallationPermissionsFailure?: boolean;
 	pluginsInstallationErrors?: PluginInstallError[];
-	pluginsSlugToName: Record< string, string >;
+	pluginsSlugToName?: Record< string, string >;
 	onClick?: () => void;
 } ) => {
 	let installationErrorMessage;
