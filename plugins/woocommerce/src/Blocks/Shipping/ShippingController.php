@@ -442,11 +442,12 @@ class ShippingController {
 
 		// These are the important fields required to get the shipping rates.
 		$shipping_address = array(
-			'shipping_city'       => $customer->get_shipping_city(),
-			'shipping_state'      => $customer->get_shipping_state(),
-			'shipping_postcode'   => $customer->get_shipping_postcode(),
-			'shipping_country'    => $customer->get_shipping_country()
+			'shipping_city'     => $customer->get_shipping_city(),
+			'shipping_state'    => $customer->get_shipping_state(),
+			'shipping_postcode' => $customer->get_shipping_postcode(),
+			'shipping_country'  => $customer->get_shipping_country(),
 		);
+
 		$address_fields = WC()->countries->get_address_fields( $shipping_address['country'] ?? '', 'shipping_' );
 
 		// For all fields in $shipping_address, check if they are required in $address_fields and if so, check if they are not empty.
