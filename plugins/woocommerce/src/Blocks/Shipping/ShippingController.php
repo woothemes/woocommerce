@@ -449,8 +449,7 @@ class ShippingController {
 			'shipping_postcode' => $customer->get_shipping_postcode(),
 			'shipping_country'  => $customer->get_shipping_country(),
 		);
-
-		$address_fields = WC()->countries->get_address_fields( $shipping_address['country'] ?? '', 'shipping_' );
+		$address_fields   = WC()->countries->get_country_locale();
 
 		// For all fields in $shipping_address, check if they are required in $address_fields and if so, check if they are not empty.
 		foreach ( $shipping_address as $key => $value ) {
@@ -470,13 +469,19 @@ class ShippingController {
 	 * @return array
 	 */
 	public function remove_shipping_if_no_address( $packages ) {
-		$has_full_address = $this->has_full_shipping_address();
-
 		remove_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
-		$option_checked = wc_string_to_bool( get_option( 'woocommerce_shipping_cost_requires_address', 'no' ) );
+		$shipping_cost_requires_address = wc_string_to_bool( get_option( 'woocommerce_shipping_cost_requires_address', 'no' ) );
 		add_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 
-		if ( ! $has_full_address && $option_checked ) {
+		// Return early here if we don't need to hide shipping costs until an address is entered. Saves us busting the
+		// locale cache in `has_full_shipping_address`.
+		if ( ! $shipping_cost_requires_address ) {
+			return $packages;
+		}
+
+		$has_full_address = $this->has_full_shipping_address();
+
+		if ( ! $has_full_address ) {
 			$packages = array_map(
 				function ( $package ) {
 					if ( isset( $package['rates'] ) && ! is_array( $package['rates'] ) ) {
