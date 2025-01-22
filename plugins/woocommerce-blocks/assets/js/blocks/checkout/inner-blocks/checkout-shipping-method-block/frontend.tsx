@@ -12,6 +12,7 @@ import {
 	SHIPPING_METHODS_EXIST,
 } from '@woocommerce/block-settings';
 import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
+import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -48,6 +49,11 @@ const FrontendBlock = ( {
 			};
 		}
 	);
+
+	const shippingCostRequiresAddress = getSetting< boolean >(
+		'shippingCostRequiresAddress',
+		false
+	);
 	const { setPrefersCollection } = useDispatch( checkoutStoreDescriptor );
 	const {
 		shippingRates,
@@ -59,12 +65,13 @@ const FrontendBlock = ( {
 	// Note that display logic is also found in plugins/woocommerce-blocks/assets/js/blocks/checkout/inner-blocks/register-components.ts
 	// where the block is not registered if the conditions are not met.
 	if (
-		! needsShipping ||
-		! hasCalculatedShipping ||
-		! shippingRates ||
-		! isCollectable ||
-		! LOCAL_PICKUP_ENABLED ||
-		! SHIPPING_METHODS_EXIST
+		( ! needsShipping ||
+			! hasCalculatedShipping ||
+			! isCollectable ||
+			! LOCAL_PICKUP_ENABLED ||
+			! SHIPPING_METHODS_EXIST ) &&
+		! shippingRates &&
+		! shippingCostRequiresAddress
 	) {
 		return null;
 	}
