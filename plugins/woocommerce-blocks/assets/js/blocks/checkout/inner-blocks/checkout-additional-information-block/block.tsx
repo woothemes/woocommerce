@@ -4,20 +4,20 @@
 import { noticeContexts } from '@woocommerce/base-context';
 import { StoreNoticesContainer } from '@woocommerce/blocks-components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 import { ORDER_FORM_KEYS } from '@woocommerce/block-settings';
 import { Form } from '@woocommerce/base-components/cart-checkout';
 import type { FunctionComponent } from 'react';
 
 const Block: FunctionComponent = () => {
 	const { additionalFields } = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			additionalFields: store.getAdditionalFields(),
 		};
 	} );
 
-	const { setAdditionalFields } = useDispatch( CHECKOUT_STORE_KEY );
+	const { setAdditionalFields } = useDispatch( checkoutStore );
 
 	const onChangeForm = ( additionalValues ) => {
 		setAdditionalFields( additionalValues );

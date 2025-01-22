@@ -239,10 +239,10 @@ test.describe( `${ blockData.name }`, () => {
 	} );
 
 	test.describe( 'with pager', () => {
-		test( 'should change the image when the user click on a pager item', async ( {
-			page,
-			editor,
+		test( 'pager should change when clicking on a next button or thumbnail', async ( {
 			pageObject,
+			editor,
+			page,
 		} ) => {
 			await pageObject.addProductGalleryBlock( { cleanContent: true } );
 
@@ -252,61 +252,26 @@ test.describe( `${ blockData.name }`, () => {
 
 			await page.goto( blockData.productPage );
 
-			const initialVisibleLargeImageId = await getVisibleLargeImageId(
-				await pageObject.getMainImageBlock( {
-					page: 'frontend',
-				} )
-			);
+			const pagerBlock = await pageObject.getPagerBlock( {
+				page: 'frontend',
+			} );
 
-			const secondImageThumbnailId = await getThumbnailImageIdByNth(
-				1,
-				await pageObject.getThumbnailsBlock( {
-					page: 'frontend',
-				} )
-			);
+			await expect( pagerBlock ).toHaveText( '1/3' );
 
-			const thirdImageThumbnailId = await getThumbnailImageIdByNth(
-				2,
-				await pageObject.getThumbnailsBlock( {
-					page: 'frontend',
-				} )
-			);
+			const nextButton = page.getByRole( 'button', {
+				name: 'Next image',
+			} );
+			await nextButton.click();
 
-			expect( initialVisibleLargeImageId ).not.toBe(
-				secondImageThumbnailId
-			);
-			expect( initialVisibleLargeImageId ).not.toBe(
-				thirdImageThumbnailId
-			);
+			await expect( pagerBlock ).toHaveText( '2/3' );
 
-			const pagerBlock = pageObject.getPagerBlock( { page: 'frontend' } );
-			const thirdPagerItem = ( await pagerBlock )
-				.locator( '.wc-block-product-gallery-pager__pager-item' )
-				.nth( 2 );
-			await thirdPagerItem.click();
+			const thumbnailsLocator = await pageObject.getThumbnailsBlock( {
+				page: 'frontend',
+			} );
+			const firstThumbnail = thumbnailsLocator.locator( 'img' ).nth( 0 );
+			await firstThumbnail.click();
 
-			let currentVisibleLargeImageId = await getVisibleLargeImageId(
-				await pageObject.getMainImageBlock( {
-					page: 'frontend',
-				} )
-			);
-
-			expect( currentVisibleLargeImageId ).toBe( thirdImageThumbnailId );
-
-			const firstPagerItem = ( await pagerBlock )
-				.locator( '.wc-block-product-gallery-pager__pager-item' )
-				.first();
-			await firstPagerItem.click();
-
-			currentVisibleLargeImageId = await getVisibleLargeImageId(
-				await pageObject.getMainImageBlock( {
-					page: 'frontend',
-				} )
-			);
-
-			expect( currentVisibleLargeImageId ).toBe(
-				initialVisibleLargeImageId
-			);
+			await expect( pagerBlock ).toHaveText( '1/3' );
 		} );
 	} );
 
