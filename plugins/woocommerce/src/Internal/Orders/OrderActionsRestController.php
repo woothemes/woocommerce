@@ -32,22 +32,41 @@ class OrderActionsRestController extends RestApiControllerBase {
 	public function register_routes(): void {
 		register_rest_route(
 			$this->route_namespace,
-			'/orders/(?P<id>[\d]+)/actions/email',
+			'/orders/(?P<id>[\d]+)/actions/email_templates',
 			array(
+				'args'   => array(
+					'id' => array(
+						'description' => __( 'Unique identifier of the order.', 'woocommerce' ),
+						'type'        => 'integer',
+					),
+				),
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => fn( $request ) => $this->run( $request, 'get_email_templates' ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => $this->get_args_for_order_actions( 'email', WP_REST_Server::READABLE ),
-					'schema'              => $this->get_schema_for_order_actions(),
+					'args'                => array(),
+				),
+				'schema' => array( $this, 'get_schema_for_email_templates' ),
+			)
+		);
+
+		register_rest_route(
+			$this->route_namespace,
+			'/orders/(?P<id>[\d]+)/actions/send_email',
+			array(
+				'args'   => array(
+					'id' => array(
+						'description' => __( 'Unique identifier of the order.', 'woocommerce' ),
+						'type'        => 'integer',
+					),
 				),
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => fn( $request ) => $this->run( $request, 'send_email' ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
-					'args'                => $this->get_args_for_order_actions( 'email', WP_REST_Server::CREATABLE ),
-					'schema'              => $this->get_schema_for_order_actions(),
+					'args'                => $this->get_args_for_order_actions( 'send_email', WP_REST_Server::CREATABLE ),
 				),
+				'schema' => array( $this, 'get_schema_for_order_actions' ),
 			)
 		);
 
@@ -55,13 +74,19 @@ class OrderActionsRestController extends RestApiControllerBase {
 			$this->route_namespace,
 			'/orders/(?P<id>[\d]+)/actions/send_order_details',
 			array(
+				'args'   => array(
+					'id' => array(
+						'description' => __( 'Unique identifier of the order.', 'woocommerce' ),
+						'type'        => 'integer',
+					),
+				),
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => fn( $request ) => $this->run( $request, 'send_order_details' ),
 					'permission_callback' => fn( $request ) => $this->check_permissions( $request ),
 					'args'                => $this->get_args_for_order_actions( 'send_order_details', WP_REST_Server::CREATABLE ),
-					'schema'              => $this->get_schema_for_order_actions(),
 				),
+				'schema' => array( $this, 'get_schema_for_order_actions' ),
 			)
 		);
 	}
@@ -128,12 +153,6 @@ class OrderActionsRestController extends RestApiControllerBase {
 	 */
 	private function get_args_for_order_actions( string $action_slug, string $method ): array {
 		$args = array(
-			'id'                 => array(
-				'description' => __( 'Unique identifier of the order.', 'woocommerce' ),
-				'type'        => 'integer',
-				'context'     => array( 'view', 'edit' ),
-				'readonly'    => true,
-			),
 			'email'              => array(
 				'description'       => __( 'Email address to send the order details to.', 'woocommerce' ),
 				'type'              => 'string',
@@ -152,7 +171,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 			),
 		);
 
-		if ( 'email' === $action_slug ) {
+		if ( 'send_email' === $action_slug ) {
 			$args['template_id'] = array(
 				'description'       => __( 'The ID of the template to use for sending the email.', 'woocommerce' ),
 				'type'              => 'string',
@@ -162,23 +181,63 @@ class OrderActionsRestController extends RestApiControllerBase {
 			);
 		}
 
-		return rest_get_endpoint_args_for_schema( $args, $method );
+		return $args;
 	}
 
 	/**
-	 * Get the schema for both the GET and the POST requests.
+	 * Get the schema for the email_templates action.
 	 *
-	 * @return array[]
+	 * @return array
 	 */
-	private function get_schema_for_order_actions(): array {
-		$schema['properties'] = array(
-			'message' => array(
-				'description' => __( 'A message indicating that the action completed successfully.', 'woocommerce' ),
-				'type'        => 'string',
-				'context'     => array( 'view', 'edit' ),
-				'readonly'    => true,
+	public function get_schema_for_email_templates(): array {
+		$schema = array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => __( 'Email Templates', 'woocommerce' ),
+			'type'       => 'object',
+			'properties' => array(
+				'templates' => array(
+					'description'          => __( 'List of email templates that can be sent for this order.', 'woocommerce' ),
+					'type'                 => 'object',
+					'context'              => array( 'view' ),
+					'readonly'             => true,
+					'additionalProperties' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'title'       => array(
+								'type' => 'string',
+							),
+							'description' => array(
+								'type' => 'string',
+							),
+						),
+					),
+				),
 			),
 		);
+
+		return $schema;
+	}
+
+	/**
+	 * Get the schema for all order actions that don't have a separate schema.
+	 *
+	 * @return array
+	 */
+	public function get_schema_for_order_actions(): array {
+		$schema = array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => __( 'Order Actions', 'woocommerce' ),
+			'type'       => 'object',
+			'properties' => array(
+				'message'   => array(
+					'description' => __( 'A message indicating that the action completed successfully.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'edit' ),
+					'readonly'    => true,
+				),
+			),
+		);
+
 		return $schema;
 	}
 
