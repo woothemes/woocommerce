@@ -81,9 +81,16 @@ class StoreNotices extends AbstractBlock {
 				data-wc-each--notice="state.notices"
 				data-wc-each-key="context.notice.id"
 			>
-				<div data-wc-init="callbacks.scrollIntoView" data-wc-bind--class="callbacks.getNoticeClass" data-wc-bind--role="callbacks.getNoticeRole" >
+				<div
+					class="wc-block-components-notice-banner"
+					data-wc-init="callbacks.scrollIntoView"
+					data-wc-class--is-error="state.isError"
+  					data-wc-class--is-success ="state.isSuccess"
+  					data-wc-class--is-info="state.isInfo"
+					data-wc-bind--role="state.role"
+				>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-						<path data-wc-bind--d="callbacks.getNoticeIconPath"></path>
+						<path data-wc-bind--d="state.iconPath"></path>
 					</svg>
 					<div class="wc-block-components-notice-banner__content">
 						<span data-wc-init="callbacks.renderNoticeContent"></span>
@@ -92,7 +99,7 @@ class StoreNotices extends AbstractBlock {
 						data-wc-bind--hidden="!context.notice.dismissible"
 						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
 						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
-						data-wc-on--click="callbacks.dismissNotice"
+						data-wc-on--click="actions.dismissNotice"
 						hidden
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
