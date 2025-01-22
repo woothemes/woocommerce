@@ -15,7 +15,6 @@ import { withProduct } from '@woocommerce/block-hocs';
 import {
 	InnerBlockLayoutContextProvider,
 	ProductDataContextProvider,
-	useProductDataContext,
 } from '@woocommerce/shared-context';
 import { useSelect } from '@wordpress/data';
 import type { ProductResponseItem } from '@woocommerce/types';
@@ -81,54 +80,26 @@ export default function ProductItemTemplateEdit(
 ) {
 	const { clientId } = props;
 	const { className } = props.attributes;
-	const { product } = useProductDataContext();
 
 	const blockProps = useBlockProps( {
 		className,
 	} );
 
-	const { products } = useSelect(
-		( select ) => {
-			const postType = 'product';
-			const { getEntityRecords } = select( coreStore );
+	const { products } = useSelect( ( select ) => {
+		const postType = 'product';
+		const { getEntityRecords } = select( coreStore );
 
-			if ( product.id === 0 ) {
-				return {
-					products:
-						getEntityRecords< ProductResponseItem >(
-							'postType',
-							postType,
-							{
-								postType,
-								per_page: 3,
-							}
-						) ?? [],
-				};
-			}
-
-			if ( product.type !== 'grouped' ) {
-				return {
-					products: [],
-				};
-			}
-
-			const query: Record< string, unknown > = {
-				postType,
-				per_page: -1,
-				includes: product.grouped_products,
-			};
-
-			return {
-				products:
-					getEntityRecords< ProductResponseItem >(
-						'postType',
-						postType,
-						query
-					) ?? [],
-			};
-		},
-		[ product ]
-	);
+		return {
+			products:
+				// This is an arbitrary 3 products to show in the editor. Once
+				// the product endpoint return the grouped product ids then
+				// their should be used to retrieve the children products instead.
+				getEntityRecords< ProductResponseItem >( 'postType', postType, {
+					postType,
+					per_page: 3,
+				} ) ?? [],
+		};
+	}, [] );
 
 	const { blocks } = useSelect(
 		( select ) => {
