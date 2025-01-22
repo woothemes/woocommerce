@@ -3,7 +3,7 @@
  */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useRef } from '@wordpress/element';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -21,9 +21,9 @@ export const useCheckoutExtensionData = (): {
 		value: unknown
 	) => void;
 } => {
-	const { __internalSetExtensionData } = useDispatch( CHECKOUT_STORE_KEY );
+	const { __internalSetExtensionData } = useDispatch( checkoutStore );
 	const extensionData = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).getExtensionData()
+		select( checkoutStore ).getExtensionData()
 	);
 	const extensionDataRef = useRef( extensionData );
 

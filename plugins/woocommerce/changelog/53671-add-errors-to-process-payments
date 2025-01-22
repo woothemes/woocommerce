@@ -1,4 +1,0 @@
-Significance: minor
-Type: update
-
-Accept a `message` in the payment result when processing payment, as well as convert error notices on failure.

@@ -21,7 +21,7 @@ import {
 import './style.scss';
 
 const WC_ANALYTICS_PRODUCT_URL =
-	'https://woocommerce.com/products/woocommerce-analytics';
+	'https://wordpress.org/plugins/woocommerce-analytics';
 
 /**
  * The banner to prompt users to install the Order Attribution extension.
