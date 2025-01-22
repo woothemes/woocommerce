@@ -3,14 +3,236 @@
     {
       "post_title": "WooCommerce developer documentation",
       "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/README.md",
-      "hash": "e2fcc6ad9781cad5abc6ae17f31eae7c930fc07c37848d7a8141fa5bbe13110f", 
+      "hash": "e2fcc6ad9781cad5abc6ae17f31eae7c930fc07c37848d7a8141fa5bbe13110f",
       "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/README.md",
       "id": "65f434b31529b2793f7f7adcadfec487c797bdd2",
       "links": {
-        "getting-started/developer-tools.md": "2ed3659ae0153c8fb3252c417bb0eb43ea60f862"
+        "getting-started/developer-tools.md": "2ed3659ae0153c8fb3252c417bb0eb43ea60f862",
+        "extension-development/building-your-first-extension.md": "278c2822fe06f1ab72499a757ef0c4981cfbffb5",
+        "extension-development/how-to-design-a-simple-extension.md": "375f7e18a2e656e662d3189041caeb9c80e7c9e3",
+        "contributing-docs/style-guide.md": "5020907d57ae845a6477a36f59ec8c2f5f7b4b01"
       }
     }
   ],
-  "categories": [],
+  "categories": [
+    {
+      "content": "\nAccess a collection of useful code snippets to customize and enhance your WooCommerce store's functionality.\n",
+      "category_slug": "code-snippets",
+      "category_title": "Code Snippets",
+      "posts": [
+        {
+          "post_title": "Using NGINX server to protect your upload directory",
+          "menu_title": "NGINX server to protect upload directory",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/using_nginx_server_to_protect_your_uploads_directory.md",
+          "hash": "5039ec5e7804fba4095faabc5404d7d62a74fb059696e3f6359fd42e20803014",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/using_nginx_server_to_protect_your_uploads_directory.md",
+          "id": "8b325d3483f9a8d09961ca1082839752137faebf"
+        },
+        {
+          "post_title": "Useful core functions",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/useful-functions.md",
+          "hash": "3d102e671585a2de818fd5fdb84110c99ca55b5adc2698d07118beac27e59c94",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/useful-functions.md",
+          "id": "0d99f1dee7c104b5899fd62b96157fb6709ebfb8"
+        },
+        {
+          "post_title": "Uninstall and remove all WooCommerce Data",
+          "menu_title": "Uninstalling and removing data",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/uninstall_remove_all_woocommerce_data.md",
+          "hash": "9bb8da9a3fba1397c0309280bbd69fecac2215a3ff0205869ce363cf8eb47849",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/uninstall_remove_all_woocommerce_data.md",
+          "id": "36b571fcf2471737729ab4769e2c721b2248187f"
+        },
+        {
+          "post_title": "Unhook and remove WooCommerce emails",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/unhook--remove-woocommerce-emails.md",
+          "hash": "9b10cc18f64970b1c919dc1b320497e66444befcae6733d2dc7c8ec07b564e6d",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/unhook--remove-woocommerce-emails.md",
+          "id": "0fdfe3b483ae74a9e5dc1fc21b80814462222ec3"
+        },
+        {
+          "post_title": "SSL and HTTPS and WooCommerce",
+          "menu_title": "SSL and HTTPS and WooCommerce",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/ssl_and_https_and_woocommerce_websites_behind_load_balanacers_or_reverse_proxies.md",
+          "hash": "a3e5c103b7c929fd7914d872956eb8075a25aade50754f00ca5def0b99cdcd90",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/ssl_and_https_and_woocommerce_websites_behind_load_balanacers_or_reverse_proxies.md",
+          "id": "78d5b5a20ce6471b74f809386eff41fffe2d1adb"
+        },
+        {
+          "post_title": "Shipping Method API",
+          "menu_title": "Shipping method API",
+          "tags": "shipping, API",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/shipping_method_api.md",
+          "hash": "bd7cbc361fe94acaa40fbc5befa8d14f302705a9d700dd7d7e78a482b003fe0b",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/shipping_method_api.md",
+          "id": "a419b97e5594918a015c61227ad9226c509eb314"
+        },
+        {
+          "post_title": "Rename a country",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/rename-a-country.md",
+          "hash": "80086f76587535c16e79d987ba00544766b167fe33fd435544c8b80683c5f946",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/rename-a-country.md",
+          "id": "67a49394f2e8ad0f8f81333207679be770bc8038"
+        },
+        {
+          "post_title": "Override loop template and show quantities next to add to cart buttons",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/override-loop-template-show-quantities-next-add-cart.md",
+          "hash": "74e65b25a438b44a6707e0b86dc569d63006535b917ca54a8a3955f82cb5eb52",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/override-loop-template-show-quantities-next-add-cart.md",
+          "id": "db325d34a3bd0be528afbd5ad5f3ebd7de8e1168"
+        },
+        {
+          "post_title": "Change number of related products displayed",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/number-of-products-per-row.md",
+          "hash": "58287de9fc0318daa8a604602d1384a7298d1227f9b99063c5402ccd521f8549",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/number-of-products-per-row.md",
+          "id": "7369dc328c49206771a2f8d0da5d920c480b5207"
+        },
+        {
+          "post_title": "Making your translation upgrade safe",
+          "menu_title": "Translation upgrade safety",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/making_translations_upgrade_safe.md",
+          "hash": "ad688decb538ac2b0cf32cbdb60b347e203dfa4c2c17bd687e839cb65e54f72d",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/making_translations_upgrade_safe.md",
+          "id": "0c1add87ef9f5452b4c8404bb55021ad8265c171"
+        },
+        {
+          "post_title": "Add link to logged data",
+          "menu_title": "Add link to logged data",
+          "tags": "code-snippets",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/link-to-logged-data.md",
+          "hash": "4e51c120a6ea7b14c0e43f11e8eb1b785e4447fbe2b997f5789f10b57c485137",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/link-to-logged-data.md",
+          "id": "34da337f79be5ce857024f541a99d302174ca37d"
+        },
+        {
+          "post_title": "Advanced settings and customization for legacy Local Pickup",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/legacy_local_pickup_advacned_settings_and_customization.md",
+          "hash": "dad4a05008807f4d16d5f3b283354889114db7394817e2e6468c8ff34f0ed6d2",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/legacy_local_pickup_advacned_settings_and_customization.md",
+          "id": "c4d4a2276fc251082a80a8330eea1eb62a97c3bb"
+        },
+        {
+          "post_title": "Free Shipping Customizations",
+          "menu_title": "Free shipping customizations",
+          "tags": "code-snippets",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/free_shipping_customization.md",
+          "hash": "1711cff54da5c39385d06ff8d8e0a055d3d25f68ee4855d93fefa940c8ffc916",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/free_shipping_customization.md",
+          "id": "cac6f1ccd661588e9a5fa7405643e9c6d4da388e"
+        },
+        {
+          "post_title": "Displaying Custom Fields in Your Theme or Site",
+          "menu_title": "Displaying custom fields in theme",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/displaying_custom_fields_in_your_theme_or_site.md",
+          "hash": "a98f7e6a8d51c7317473ea6c15a1a9bb983f3e78fe39601a8999ac403da70d1a",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/displaying_custom_fields_in_your_theme_or_site.md",
+          "id": "3e3fd004afda355cf9dbb05f0967523d6d0da1ce",
+          "links": {
+            "./_media/custom-field-value.png": "5cb89aed1378d83bb33df02266a61e83f0e274d1"
+          }
+        },
+        {
+          "post_title": "Disabling Marketplace Suggestions Programmatically",
+          "menu_title": "Disabling marketplace suggestions",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/disabling_marketplace_suggestions_programmatically.md",
+          "hash": "e3bdbf4f1754e32608ff55dd54c1f6f717a11178cc7d8028ccd88ff98b07cb36",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/disabling_marketplace_suggestions_programmatically.md",
+          "id": "94a7a28e5dd3d9394650e66abec2429445e87028"
+        },
+        {
+          "post_title": "Customizing checkout fields using actions and filters",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/customising-checkout-fields.md",
+          "hash": "a18c788943a1841be742aaa34669c436aaebf266d3492959ade0d0d0654b0275",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/customising-checkout-fields.md",
+          "id": "83097d3b7414557fc80dcf9f8f1a708bbdcdd884",
+          "links": {
+            "../cart-and-checkout-blocks/additional-checkout-fields.md": "cb5dd8d59043a4e53929121b45da7b33b1661ab8"
+          }
+        },
+        {
+          "post_title": "Code snippets for configuring special tax scenarios",
+          "menu_title": "Configuring special tax scenarios",
+          "tags": "code-snippet, tax",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/configuring_special_tax_scenarios.md",
+          "hash": "c2459568db70b97d9a901c83eecb7737746499fe03cc84133aab3cf981b5c96a",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/configuring_special_tax_scenarios.md",
+          "id": "a8ab8b6734ba2ac5af7c6653635d15548abdab2a"
+        },
+        {
+          "post_title": "Check if a Payment Method Support Refunds, Subscriptions or Pre-orders",
+          "menu_title": "Payment method support  for refunds, subscriptions, pre-orders",
+          "tags": "payment-methods",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/check_payment_method_support.md",
+          "hash": "932efcdd53d6b84920dd086570dedbf9b4ddaea333e6196cceaa017727ac5465",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/check_payment_method_support.md",
+          "id": "2919c9fc523bce46f43a5f35f821d0c6623c5ede"
+        },
+        {
+          "post_title": "Change a currency symbol",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/change-a-currency-symbol.md",
+          "hash": "1e25d4cf42f3b5907befc8d3b6d3999ca31c2f97b9512eadb749935685d1a7d6",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/change-a-currency-symbol.md",
+          "id": "35ff98a542ad0b092aa44a049c6015cd43ed5857"
+        },
+        {
+          "post_title": "Add a message above the login / register form",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/before-login--register-form.md",
+          "hash": "dd3d61cd1f99d459956167041718e6a25693901a810d4bde47613d5ea2595ca3",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/before-login--register-form.md",
+          "id": "26ea2036f16952c8c965f2ab38ab214e421aa615"
+        },
+        {
+          "post_title": "Adjust the quantity input values",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/adjust-quantity-input-values.md",
+          "hash": "2dce454ba4247b8ef604cf0f4dd42c6d9eedfc02115b7add4551c47e7c242c71",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/adjust-quantity-input-values.md",
+          "id": "e4d92076cbd872380edb6beb1ff944f749d2d0e1"
+        },
+        {
+          "post_title": "Add or modify states",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/add-or-modify-states.md",
+          "hash": "0f58428d8db1c7bc3e118362c25d129985a0a17957938d4003e64d4a56ea929b",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/add-or-modify-states.md",
+          "id": "59ff38edfc09669967a06dd1dd3e6fb967422367"
+        },
+        {
+          "post_title": "Add currencies and symbols",
+          "menu_title": "Add currencies and symbols",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/add-a-currency-symbol.md",
+          "hash": "f91b76a0ebe65b6095157e904435c563b477be639a70795890656a29871cea76",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/add-a-currency-symbol.md",
+          "id": "1c031c2af4a1461253e798daa3304baa89a83979"
+        },
+        {
+          "post_title": "Add a country",
+          "menu_title": "Add a country",
+          "tags": "code-snippet",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/add-a-country.md",
+          "hash": "2b5488637e3ecad6113abea73f26fab79e953d84b7e034d4aa71767f6b7338a6",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/add-a-country.md",
+          "id": "3f20affcf41e51989b0a7408aefe32b95d1da073"
+        }
+      ],
+      "categories": []
+    }
+  ],
   "hash": "ac7c6dd22f0991a6ea017959902b4a2dff796eefb347000c8f07ab0f0b6582e5"
 }
