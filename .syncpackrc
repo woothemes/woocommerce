@@ -51,7 +51,6 @@
 				"@wordpress/dom",
 				"@wordpress/dom-ready",
 				"@wordpress/e2e-test-utils",
-				"@wordpress/e2e-test-utils-playwright",
 				"@wordpress/e2e-tests",
 				"@wordpress/element",
 				"@wordpress/html-entities",
