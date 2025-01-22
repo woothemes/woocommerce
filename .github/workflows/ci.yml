@@ -73,7 +73,7 @@ jobs:
         uses: 'actions/checkout@v4'
         with:
           fetch-depth: ${{ steps.checkout_depth.outputs.value }}
-          ref: ${{ github.event.pull_request.head.ref || '' }}
+          ref: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.ref ) || '' }}
       - name: Setup - calculate base sha
         id: checkout_base_sha
         shell: bash
