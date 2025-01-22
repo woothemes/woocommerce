@@ -30,8 +30,11 @@ class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlo
 	private function get_product_row( $product_id, $attributes, $block ): string {
 		global $post;
 		$previous_post = $post;
-		
-		$post = get_post( $product_id );
+
+		// Since this template uses the core/post-title block to show the product name
+		// a temporally replacement of the global post is needed. This is reverted back
+		// to its initial post value that is stored in the $previous_post variable.
+		$post = get_post( $product_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Get an instance of the current Post Template block.
 		$block_instance = $block->parsed_block;
@@ -48,7 +51,7 @@ class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlo
 		// `render_callback` and ensure that no wrapper markup is included.
 		$block_content = $new_block->render( array( 'dynamic' => false ) );
 
-		$post = $previous_post;
+		$post = $previous_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		return $block_content;
 	}
