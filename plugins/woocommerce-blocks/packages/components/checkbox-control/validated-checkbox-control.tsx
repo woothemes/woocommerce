@@ -95,11 +95,6 @@ const ValidatedCheckboxControl = forwardRef<
 		// Ref for validation callback.
 		const customValidationRef = useRef( customValidation );
 
-		// Update ref when validation callback changes.
-		useEffect( () => {
-			customValidationRef.current = customValidation;
-		}, [ customValidation ] );
-
 		const { validationError, validationErrorId } = useSelect(
 			( select ) => {
 				const store = select( VALIDATION_STORE_KEY );
@@ -114,6 +109,7 @@ const ValidatedCheckboxControl = forwardRef<
 
 		const validateInput = useCallback(
 			( errorsHidden = true ) => {
+				customValidationRef.current = customValidation;
 				const inputObject = inputRef.current || null;
 
 				if ( inputObject === null ) {
@@ -145,6 +141,7 @@ const ValidatedCheckboxControl = forwardRef<
 				setValidationErrors,
 				label,
 				customValidityMessage,
+				customValidation,
 			]
 		);
 
