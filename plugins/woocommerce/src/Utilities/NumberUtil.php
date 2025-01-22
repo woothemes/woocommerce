@@ -1,9 +1,11 @@
-<?php
+<?php //phpcs:ignore Generic.PHP.RequireStrictTypes.MissingDeclaration
+// many places seem to be calling round with a string, and that causes PHP > 8.1 to throw a TypeError.
+// It's not respecting the 'mixed' type hint in the docblock, and type unions aren't supported until PHP > 8.0
+// so I'm not sure how to handle this since adding the type union will cause errors below PHP < 8.0
 /**
  * A class of utilities for dealing with numbers.
  */
 
-declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Utilities;
 
