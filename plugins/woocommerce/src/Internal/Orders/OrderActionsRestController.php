@@ -191,25 +191,23 @@ class OrderActionsRestController extends RestApiControllerBase {
 	public function get_schema_for_email_templates(): array {
 		$schema = array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => __( 'Email Templates', 'woocommerce' ),
+			'title'      => __( 'Email Template', 'woocommerce' ),
 			'type'       => 'object',
 			'properties' => array(
-				'templates' => array(
-					'description'          => __( 'List of email templates that can be sent for this order.', 'woocommerce' ),
-					'type'                 => 'object',
-					'context'              => array( 'view' ),
-					'readonly'             => true,
-					'additionalProperties' => array(
-						'type'       => 'object',
-						'properties' => array(
-							'title'       => array(
-								'type' => 'string',
-							),
-							'description' => array(
-								'type' => 'string',
-							),
-						),
-					),
+				'id'          => array(
+					'description' => __( 'A unique ID string for the email template.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'embed' ),
+				),
+				'title'       => array(
+					'description' => __( 'The display name of the email template.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view' ),
+				),
+				'description' => array(
+					'description' => __( 'A description of the purpose of the email template.', 'woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view' ),
 				),
 			),
 		);
@@ -350,13 +348,28 @@ class OrderActionsRestController extends RestApiControllerBase {
 		$templates           = array();
 
 		foreach ( $available_templates as $template ) {
-			$templates[ $template->id ]['title']       = $template->get_title();
-			$templates[ $template->id ]['description'] = $template->get_description();
+			$templates[] = array(
+				'id'          => $template->id,
+				'title'       => $template->get_title(),
+				'description' => $template->get_description(),
+			);
 		}
 
-		ksort( $templates );
+		usort(
+			$templates,
+			fn( $a, $b ) => strcmp( $a['id'], $b['id'] )
+		);
 
-		return $templates;
+		$schema            = $this->get_schema_for_email_templates();
+		$context           = $request->get_param( 'context' ) ?? 'view';
+		$filtered_response = array_map(
+			function( $template ) use ( $schema, $context ) {
+				return rest_filter_response_by_context( $template, $schema, $context );
+			},
+			$templates
+		);
+
+		return $filtered_response;
 	}
 
 	/**
