@@ -32,9 +32,10 @@ export class LocalPickupUtils {
 
 	async saveLocalPickupSettings() {
 		await this.page.getByRole( 'button', { name: 'Save changes' } ).click();
+
 		await this.page.waitForFunction( () => {
 			return window.wp.data
-				.select( 'core/notices' )
+				.select( window.wp.notices.store )
 				.getNotices()
 				.some(
 					( notice: Notice ) =>
