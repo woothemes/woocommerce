@@ -23,15 +23,7 @@ class CheckoutFieldsSchema {
 	 *
 	 * @var string
 	 */
-	private $meta_schema_json;
-
-	/**
-	 * Constructor.
-	 */
-	public function __construct() {
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$this->meta_schema_json = file_get_contents( __DIR__ . '/Schema/json-schema-draft-07.json' );
-	}
+	private $meta_schema_json = '';
 
 	/**
 	 * Check if the checkout fields schema is enabled.
@@ -103,6 +95,11 @@ class CheckoutFieldsSchema {
 	public function validate_schema( $options ) {
 		if ( ! $this->is_enabled() ) {
 			return true;
+		}
+
+		if ( empty( $this->meta_schema_json ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$this->meta_schema_json = file_get_contents( __DIR__ . '/Schema/json-schema-draft-07.json' );
 		}
 
 		try {
