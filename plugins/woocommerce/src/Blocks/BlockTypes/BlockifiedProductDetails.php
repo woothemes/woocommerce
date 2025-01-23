@@ -22,7 +22,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 	 */
 	private function create_accordion_item( $title, $content ) {
 		$markup_html = sprintf(
-			'<!-- wp:woocommerce/accordion-item --><div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
+			'<!-- wp:woocommerce/accordion-item {"openByDefault": false} --><div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
 		<h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>%1$s</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
 		<!-- /wp:woocommerce/accordion-header -->
 		<!-- wp:woocommerce/accordion-panel -->
