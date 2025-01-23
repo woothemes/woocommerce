@@ -78,8 +78,12 @@ class Controller extends AbstractBlock {
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
 		// Hook the store notices block to ensure woocommerce/product-button can add error notices client-side.
-		$filter = $this->block_hooks_support_post_content() ? 'block_hook_fallback_post_content_support' : 'block_hook_fallback_no_post_content_support';
-		add_filter( 'hooked_block_types', array( $this, $filter ), 1, 4 );
+		if ( wc_is_block_hook_post_content_supported() ) {
+			add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback_post_content_support' ), 1, 4 );
+		} elseif ( ! is_admin() ) {
+			add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback_no_post_content_support' ), 1, 4 );
+		}
+
 		add_filter( 'hooked_block_woocommerce/store-notices', array( $this, 'augment_hooked_store_notices_block' ), 10, 5 );
 
 		$this->register_core_collections_and_set_handler_store();
@@ -100,7 +104,7 @@ class Controller extends AbstractBlock {
 		// so it's hard to detect if the product collection block is being rendered. As a workaround,
 		// we don't hook the block in admin in this case, so that the only negative side effect
 		// on the frontend is that an empty store notices block will be rendered.
-		if ( ! is_admin() && 'core/post-content' === $anchor_block && 'before' === $position ) {
+		if ( 'core/post-content' === $anchor_block && 'before' === $position ) {
 			$hooked_blocks[] = 'woocommerce/store-notices';
 		}
 
@@ -146,27 +150,6 @@ class Controller extends AbstractBlock {
 		$parsed_hooked_block['attrs']['align'] = '';
 
 		return $parsed_hooked_block;
-	}
-
-	public function block_hooks_support_post_content() {
-		if ( is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
-			$gutenberg_version = '';
-
-			if ( defined( 'GUTENBERG_VERSION' ) ) {
-				$gutenberg_version = GUTENBERG_VERSION;
-			}
-
-			if ( ! $gutenberg_version ) {
-				$gutenberg_data    = get_file_data(
-					WP_PLUGIN_DIR . '/gutenberg/gutenberg.php',
-					array( 'Version' => 'Version' )
-				);
-				$gutenberg_version = $gutenberg_data['Version'];
-			}
-			return version_compare( $gutenberg_version, '20.0', '>=' );
-		}
-
-		return version_compare( get_bloginfo( 'version' ), '6.8', '>=' );
 	}
 
 	/**
