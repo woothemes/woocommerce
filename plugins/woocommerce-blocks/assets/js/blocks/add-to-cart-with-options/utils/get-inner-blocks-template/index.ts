@@ -21,6 +21,7 @@ const getInnerBlocksTemplate = (
 			},
 		],
 		[ 'woocommerce/add-to-cart-with-options-variation-selector' ],
+		[ 'woocommerce/add-to-cart-with-options-grouped-product-selector' ],
 		[ 'woocommerce/product-stock-indicator' ],
 		[
 			'woocommerce/add-to-cart-with-options-quantity-selector',
