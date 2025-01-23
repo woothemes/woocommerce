@@ -1,14 +1,16 @@
 export interface ProductGalleryBlockAttributes {
 	productGalleryClientId: string;
-	cropImages?: boolean;
-	hoverZoom?: boolean;
-	fullScreenOnClick?: boolean;
-	mode?: 'standard' | 'full';
+	cropImages: boolean;
+	hoverZoom: boolean;
+	fullScreenOnClick: boolean;
+	mode: 'standard' | 'full';
 }
 
 export interface ProductGallerySettingsProps {
 	attributes: ProductGalleryBlockAttributes;
-	setAttributes: ( attributes: ProductGalleryBlockAttributes ) => void;
+	setAttributes: (
+		attributes: Partial< ProductGalleryBlockAttributes >
+	) => void;
 }
 
 export type ProductGalleryContext = {
