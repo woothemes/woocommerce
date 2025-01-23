@@ -1,0 +1,34 @@
+/**
+ * External dependencies
+ */
+import { createElement, Fragment } from '@wordpress/element';
+import type { DataFormControlProps } from '@wordpress/dataviews';
+import { ColorPicker } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
+import type { DataFormItem } from '../../types';
+
+export const getColorEdit = ( {
+	field,
+	onChange,
+	data,
+}: DataFormControlProps< DataFormItem > ) => {
+	const { id, getValue, label } = field;
+	const value = getValue( { item: data } );
+
+	return (
+		<Fragment>
+			<ColorPicker
+				onChange={ ( newValue ) => {
+					onChange( {
+						[ id ]: newValue,
+					} );
+				} }
+				color={ value }
+			/>
+			<legend>{ label }</legend>
+		</Fragment>
+	);
+};
