@@ -174,7 +174,9 @@ const SettingsPaymentsMain = () => {
  */
 export const SettingsPaymentsMethods = () => {
 	const location = useLocation();
-	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
+	const [ paymentMethodsState, setPaymentMethodsState ] = useState< {
+		[ key: string ]: boolean;
+	} >( {} );
 	const [ isCompleted, setIsCompleted ] = useState( false );
 	const { providers } = useSelect( ( select ) => {
 		return {
@@ -197,10 +199,18 @@ export const SettingsPaymentsMethods = () => {
 
 	const onPaymentMethodsContinueClick = useCallback( () => {
 		// Record the event along with payment methods selected
-		recordEvent(
-			'wcpay_settings_payment_methods_continue',
-			paymentMethodsState
-		);
+		recordEvent( 'wcpay_settings_payment_methods_continue', {
+			selected_payment_methods: Object.keys( paymentMethodsState ).filter(
+				( paymentMethod ) =>
+					paymentMethodsState[ paymentMethod ] === true
+			),
+			deselected_payment_methods: Object.keys(
+				paymentMethodsState
+			).filter(
+				( paymentMethod ) =>
+					paymentMethodsState[ paymentMethod ] === false
+			),
+		} );
 
 		setIsCompleted( true );
 		// Get the onboarding URL or fallback to the test drive account link
