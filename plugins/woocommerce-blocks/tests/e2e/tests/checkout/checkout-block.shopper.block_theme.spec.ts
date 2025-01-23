@@ -199,12 +199,30 @@ test.describe( 'Shopper → Local pickup', () => {
 		);
 	} );
 
-	test( 'Delivery/pickup toggle is not shown when other shipping methods are disabled', async ( {
+	test( 'Delivery/pickup toggle is not shown when other shipping methods are disabled and hide rates until address is entered is off', async ( {
 		admin,
 		page,
 		frontendUtils,
 		checkoutPageObject,
 	} ) => {
+		// Disable hide rates until address is entered.
+		await admin.visitAdminPage(
+			'admin.php',
+			'page=wc-settings&tab=shipping&section=options'
+		);
+
+		await admin.page
+			.getByLabel( 'Hide shipping costs until an address is entered' )
+			.uncheck();
+
+		let saveButton = admin.page.getByRole( 'button', {
+			name: 'Save changes',
+		} );
+
+		if ( await saveButton.isEnabled() ) {
+			await saveButton.click();
+		}
+
 		// Disable all other shipping methods.
 		await admin.visitAdminPage(
 			'admin.php',
@@ -214,9 +232,11 @@ test.describe( 'Shopper → Local pickup', () => {
 		// There are 2 shipping methods and 2 toggles with our test data. Disable both.
 		await admin.page.getByRole( 'link', { name: 'Yes' } ).first().click();
 		await admin.page.getByRole( 'link', { name: 'Yes' } ).last().click();
-		const saveButton = admin.page.getByRole( 'button', {
+
+		saveButton = admin.page.getByRole( 'button', {
 			name: 'Save changes',
 		} );
+
 		await saveButton.click();
 
 		// Go to checkout.
@@ -227,6 +247,7 @@ test.describe( 'Shopper → Local pickup', () => {
 		await expect(
 			page.getByRole( 'radio', { name: 'Local Pickup', exact: true } )
 		).toBeHidden();
+
 		await expect(
 			page.getByRole( 'radio', { name: 'Ship', exact: true } )
 		).toBeHidden();
