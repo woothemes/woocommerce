@@ -74,10 +74,16 @@ function getReviewContent( review: Review ): JSX.Element {
 	);
 }
 
-function getReviewProductName( review: Review ): JSX.Element {
+function getReviewProductName(
+	review: Review,
+	reviewRatingId: string
+): JSX.Element {
 	return (
 		<div className="wc-block-review-list-item__product wc-block-components-review-list-item__product">
-			<a href={ review.product_permalink }>
+			<a
+				href={ review.product_permalink }
+				aria-describedby={ reviewRatingId }
+			>
 				{ decodeEntities( review.product_name ) }
 			</a>
 		</div>
@@ -108,7 +114,10 @@ function getReviewDate( review: Review ): JSX.Element {
 	);
 }
 
-function getReviewRating( review: Review ): JSX.Element {
+function getReviewRating(
+	review: Review,
+	reviewRatingId: string
+): JSX.Element {
 	const { rating } = review;
 	const starStyle = {
 		width: ( rating / 5 ) * 100 + '%' /* stylelint-disable-line */,
@@ -126,8 +135,12 @@ function getReviewRating( review: Review ): JSX.Element {
 		),
 	};
 	return (
-		<div className="wc-block-review-list-item__rating wc-block-components-review-list-item__rating">
+		<div
+			aria-hidden="true"
+			className="wc-block-review-list-item__rating wc-block-components-review-list-item__rating"
+		>
 			<div
+				id={ reviewRatingId }
 				className="wc-block-review-list-item__rating__stars wc-block-components-review-list-item__rating__stars"
 				role="img"
 				aria-label={ ratingText }
@@ -159,6 +172,9 @@ const ReviewListItem = ( { attributes, review = {} }: ReviewListItemProps ) => {
 	const { rating } = review;
 	const isLoading = ! ( Object.keys( review ).length > 0 );
 	const showReviewRating = Number.isFinite( rating ) && showReviewRatingAttr;
+	const reviewRatingId = `rating-stars-${ Math.floor(
+		Math.random() * 100
+	) }-${ Date.now() }`;
 
 	return (
 		<li
@@ -186,9 +202,10 @@ const ReviewListItem = ( { attributes, review = {} }: ReviewListItemProps ) => {
 						showReviewRating ||
 						showReviewDate ) && (
 						<div className="wc-block-review-list-item__meta wc-block-components-review-list-item__meta">
+							{ showReviewRating &&
+								getReviewRating( review, reviewRatingId ) }
 							{ showProductName &&
-								getReviewProductName( review ) }
-							{ showReviewRating && getReviewRating( review ) }
+								getReviewProductName( review, reviewRatingId ) }
 							{ showReviewerName && getReviewerName( review ) }
 							{ showReviewDate && getReviewDate( review ) }
 						</div>
