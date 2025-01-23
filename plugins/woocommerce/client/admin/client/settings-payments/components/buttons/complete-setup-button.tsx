@@ -43,8 +43,17 @@ interface CompleteSetupButtonProps {
 	 * The text of the button.
 	 */
 	buttonText?: string;
+	/**
+	 * ID of the plugin that is being installed.
+	 */
+	installingPlugin: string | null;
 }
 
+/**
+ * A button component that guides users through completing the setup for a payment gateway.
+ * The button dynamically determines the appropriate action (e.g., redirecting to onboarding
+ * or settings) based on the gateway's and onboarding state.
+ */
 export const CompleteSetupButton = ( {
 	gatewayId,
 	gatewayState,
@@ -52,6 +61,7 @@ export const CompleteSetupButton = ( {
 	settingsHref,
 	onboardingHref,
 	gatewayHasRecommendedPaymentMethods,
+	installingPlugin,
 	buttonText = __( 'Complete setup', 'woocommerce' ),
 }: CompleteSetupButtonProps ) => {
 	const [ isUpdating, setIsUpdating ] = useState( false );
@@ -94,7 +104,7 @@ export const CompleteSetupButton = ( {
 			key={ gatewayId }
 			variant={ 'primary' }
 			isBusy={ isUpdating }
-			disabled={ isUpdating }
+			disabled={ isUpdating || !! installingPlugin }
 			onClick={ completeSetup }
 		>
 			{ buttonText }

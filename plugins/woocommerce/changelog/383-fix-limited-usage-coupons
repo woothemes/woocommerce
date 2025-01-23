@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fixed a bug where limited usage coupons would experience conflicts when applied simultaneously.

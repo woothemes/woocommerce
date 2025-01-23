@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { SelectControl } from '@wordpress/components';
+import { recordEvent } from '@woocommerce/tracks';
 import {
 	// @ts-expect-error no exported member.
 	PluginDocumentSettingPanel,
@@ -25,7 +26,17 @@ function ProductTypeSwitcher() {
 				label: productType.label,
 				value: productType.slug,
 			} ) ) }
-			onChange={ ( slug ) => set( slug ) }
+			onChange={ ( slug ) => {
+				set( slug );
+				recordEvent(
+					'blocks_add_to_cart_with_options_product_type_switched',
+					{
+						context: 'inspector',
+						from: current?.slug,
+						to: slug,
+					}
+				);
+			} }
 			help={ __(
 				'Switch product type to see how the template adapts to each one.',
 				'woocommerce'

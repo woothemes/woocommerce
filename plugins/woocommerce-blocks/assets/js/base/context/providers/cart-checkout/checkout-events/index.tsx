@@ -17,7 +17,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	CHECKOUT_STORE_KEY,
 	PAYMENT_STORE_KEY,
-	VALIDATION_STORE_KEY,
+	validationStore,
 } from '@woocommerce/block-data';
 
 /**
@@ -141,30 +141,34 @@ export const CheckoutEventsProvider = ( {
 		__internalSetRedirectUrl( redirectUrl );
 	}
 
-	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { setValidationErrors } = useDispatch( validationStore );
 	const { dispatchCheckoutEvent } = useStoreEvents();
-	const { checkoutNotices, paymentNotices, expressPaymentNotices } =
-		useSelect( ( select ) => {
+
+	const checkoutContexts = Object.values( noticeContexts ).filter(
+		( context ) =>
+			context !== noticeContexts.PAYMENTS &&
+			context !== noticeContexts.EXPRESS_PAYMENTS
+	);
+
+	const checkoutNotices = useSelect(
+		( select ) => {
 			const { getNotices } = select( 'core/notices' );
-			const checkoutContexts = Object.values( noticeContexts ).filter(
-				( context ) =>
-					context !== noticeContexts.PAYMENTS &&
-					context !== noticeContexts.EXPRESS_PAYMENTS
-			);
-			const allCheckoutNotices = checkoutContexts.reduce(
-				( acc, context ) => {
-					return [ ...acc, ...getNotices( context ) ];
-				},
-				[]
-			);
-			return {
-				checkoutNotices: allCheckoutNotices,
-				paymentNotices: getNotices( noticeContexts.PAYMENTS ),
-				expressPaymentNotices: getNotices(
-					noticeContexts.EXPRESS_PAYMENTS
-				),
-			};
-		}, [] );
+			return checkoutContexts.reduce( ( acc, context ) => {
+				return [ ...acc, ...getNotices( context ) ];
+			}, [] );
+		},
+		[ checkoutContexts ]
+	);
+
+	const { paymentNotices, expressPaymentNotices } = useSelect( ( select ) => {
+		const { getNotices } = select( 'core/notices' );
+		return {
+			paymentNotices: getNotices( noticeContexts.PAYMENTS ),
+			expressPaymentNotices: getNotices(
+				noticeContexts.EXPRESS_PAYMENTS
+			),
+		};
+	}, [] );
 
 	const [ observers, observerDispatch ] = useReducer( emitReducer, {} );
 	const currentObservers = useRef( observers );
