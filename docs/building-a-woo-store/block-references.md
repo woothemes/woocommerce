@@ -1393,7 +1393,7 @@ Display the Thumbnails of a product.
 -   **Ancestor:** woocommerce/product-gallery
 -   **Parent:** 
 -	**Supports:** spacing (margin)
--	**Attributes:** thumbnailsNumberOfThumbnails, thumbnailsPosition
+-	**Attributes:** numberOfThumbnails, thumbnailsPosition
 
 ## Newest Products - woocommerce/product-new
 
