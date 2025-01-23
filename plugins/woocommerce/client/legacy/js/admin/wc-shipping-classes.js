@@ -1,6 +1,13 @@
 /* global shippingClassesLocalizeScript, ajaxurl */
 ( function( $, data, wp, ajaxurl ) {
 	$( function() {
+		if ( 
+			! document.getElementById( 'tmpl-wc-shipping-class-row' ) || 
+			! document.getElementById( 'tmpl-wc-shipping-class-row-blank' ) 
+		) {
+			return;
+		}
+
 		var $tbody          = $( '.wc-shipping-class-rows' ),
 			$save_button    = $( '.wc-shipping-class-save' ),
 			$row_template   = wp.template( 'wc-shipping-class-row' ),
