@@ -589,7 +589,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 			'woocommerce_order_is_partially_refunded',
 			count( $refunds ) > 0 && ( $remaining_amount > 0 || ( $order->has_free_item() && $remaining_items > 0 ) ),
 			$order->get_id(),
-			$last_refund->get_id()
+			$last_refund ? $last_refund->get_id() : 0
 		);
 
 		return (bool) $partially_refunded;
