@@ -48,11 +48,10 @@ test.describe( 'Marketing page', () => {
 			await expect(
 				page.getByRole( 'tab', { name: 'CRM', exact: true } )
 			).toBeVisible();
+			await expect(
+				page.getByText( 'Learn about marketing a store' )
+			).toBeVisible();
 		}
-
-		await expect(
-			page.getByText( 'Learn about marketing a store' )
-		).toBeVisible();
 	} );
 
 	test(
