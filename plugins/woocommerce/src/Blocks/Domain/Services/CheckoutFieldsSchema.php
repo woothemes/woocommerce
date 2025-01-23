@@ -30,7 +30,7 @@ class CheckoutFieldsSchema {
 	 */
 	public function __construct() {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$this->meta_schema_json = file_get_contents( __DIR__ . '/schema/json-schema-draft-07.json' );
+		$this->meta_schema_json = file_get_contents( __DIR__ . '/Schema/json-schema-draft-07.json' );
 	}
 
 	/**
