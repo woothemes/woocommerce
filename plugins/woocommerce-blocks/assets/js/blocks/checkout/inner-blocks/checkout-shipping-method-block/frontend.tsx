@@ -62,16 +62,21 @@ const FrontendBlock = ( {
 		isCollectable,
 	} = useShippingData();
 
+	const shouldForceShow =
+		LOCAL_PICKUP_ENABLED &&
+		SHIPPING_METHODS_EXIST &&
+		shippingCostRequiresAddress;
+
 	// Note that display logic is also found in plugins/woocommerce-blocks/assets/js/blocks/checkout/inner-blocks/register-components.ts
 	// where the block is not registered if the conditions are not met.
 	if (
+		! shouldForceShow &&
 		( ! needsShipping ||
 			! hasCalculatedShipping ||
 			! isCollectable ||
 			! LOCAL_PICKUP_ENABLED ||
-			! SHIPPING_METHODS_EXIST ) &&
-		! shippingRates &&
-		! shippingCostRequiresAddress
+			! SHIPPING_METHODS_EXIST ||
+			! shippingRates )
 	) {
 		return null;
 	}
