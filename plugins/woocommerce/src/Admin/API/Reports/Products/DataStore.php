@@ -536,7 +536,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			// If the order is a full refund and there is no order items. The order item here is the parent order item.
 			if ( $is_full_refund_without_line_items ) {
 				$id             = $variation_id ? $variation_id : $product_id;
-				$partial_refund = $partial_refund_product_revenue[ $id ];
+				$partial_refund = $partial_refund_product_revenue[ $id ] ?? 0;
 				// If a single line item was refunded 60% then fully refunded after, we need store the difference in the product lookup table.
 				// E.g. A product costs $100, it was previously partially refunded $60, then fully refunded $40.
 				// So it will be -abs( 100 + (-60) ) = -40.
