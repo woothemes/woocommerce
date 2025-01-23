@@ -284,10 +284,10 @@ class CheckoutFieldsSchema {
 
 			$data['checkout'] = [
 				'order_id'           => $order_data['order_id'],
-				'status'             => $order_data['status'],
 				'customer_note'      => $order_data['customer_note'],
 				'additional_fields'  => $order_data['additional_fields'],
 				'payment_method'     => $order_data['payment_method'],
+				'needs_payment'      => $order->needs_payment(),
 				'available_gateways' => array_values( wp_list_pluck( WC()->payment_gateways->get_available_payment_gateways(), 'id' ) ),
 			];
 		}
@@ -302,7 +302,6 @@ class CheckoutFieldsSchema {
 			$data['customer'] = [
 				'id'               => $customer->get_id(),
 				'guest'            => $customer->get_id() === 0,
-				'role'             => $customer->get_role(),
 				'billing_address'  => $billing_address,
 				'shipping_address' => $shipping_address,
 				'address'          => 'billing' === $current_address ? $billing_address : $shipping_address,
@@ -310,5 +309,31 @@ class CheckoutFieldsSchema {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Check if the fields have a valid schema.
+	 *
+	 * @param array $fields The fields.
+	 * @return bool
+	 */
+	public function has_valid_schema( $fields ) {
+		$has_valid_schema = false;
+
+		foreach ( $fields as $field ) {
+			if (
+				isset( $field['rules'] ) &&
+				(
+					! empty( $field['rules']['required'] ) ||
+					! empty( $field['rules']['hidden'] ) ||
+					! empty( $field['rules']['validation'] )
+				)
+			) {
+				$has_valid_schema = true;
+				break;
+			}
+		}
+
+		return $has_valid_schema;
 	}
 }

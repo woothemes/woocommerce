@@ -3,7 +3,9 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
-
+use Automattic\WooCommerce\Blocks\Package;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
 /**
  * Checkout class.
  *
@@ -157,6 +159,14 @@ class Checkout extends AbstractBlock {
 		// Load password strength meter script asynchronously if needed.
 		if ( ! is_user_logged_in() && 'no' === get_option( 'woocommerce_registration_generate_password' ) ) {
 			$dependencies[] = 'zxcvbn-async';
+		}
+
+		$checkout_fields = Package::container()->get( CheckoutFields::class );
+		$checkout_schema = Package::container()->get( CheckoutFieldsSchema::class );
+
+		// Load schema parser asynchronously if we need it.
+		if ( $checkout_schema->has_valid_schema( $checkout_fields->get_additional_fields() ) ) {
+			$dependencies[] = 'wc-schema-parser';
 		}
 
 		$script = [
