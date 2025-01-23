@@ -1,4 +1,6 @@
 <?php
+declare( strict_types=1 );
+
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
@@ -86,29 +88,26 @@ class ProductGalleryThumbnails extends AbstractBlock {
 	/**
 	 * Check if the thumbnails should be limited.
 	 *
-	 * @param string $mode                 Mode of the gallery. Expected values: 'standard'.
-	 * @param int    $thumbnails_count     Current count of processed thumbnails.
-	 * @param int    $number_of_thumbnails Number of thumbnails configured to display.
+	 * @param int $thumbnails_count     Current count of processed thumbnails.
+	 * @param int $number_of_thumbnails Number of thumbnails configured to display.
 	 *
 	 * @return bool
 	 */
-	protected function should_limit_thumbnails( $mode, $thumbnails_count, $number_of_thumbnails ) {
-		return 'standard' === $mode && $thumbnails_count > $number_of_thumbnails;
+	protected function limit_thumbnails( $thumbnails_count, $number_of_thumbnails ) {
+		return $thumbnails_count > $number_of_thumbnails;
 	}
 
 	/**
 	 * Check if View All markup should be displayed.
 	 *
-	 * @param string $mode                   Mode of the gallery. Expected values: 'standard'.
-	 * @param int    $thumbnails_count       Current count of processed thumbnails.
-	 * @param array  $product_gallery_images Array of product gallery image HTML strings.
-	 * @param int    $number_of_thumbnails   Number of thumbnails configured to display.
+	 * @param int   $thumbnails_count       Current count of processed thumbnails.
+	 * @param array $product_gallery_images Array of product gallery image HTML strings.
+	 * @param int   $number_of_thumbnails   Number of thumbnails configured to display.
 	 *
 	 * @return bool
 	 */
-	protected function should_display_view_all( $mode, $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) {
-		return 'standard' === $mode &&
-		$thumbnails_count === $number_of_thumbnails &&
+	protected function should_display_view_all( $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) {
+		return $thumbnails_count === $number_of_thumbnails &&
 		count( $product_gallery_images ) > $number_of_thumbnails;
 	}
 
@@ -150,34 +149,22 @@ class ProductGalleryThumbnails extends AbstractBlock {
 		if ( $product_gallery_images && count( $product_gallery_images ) > 1 ) {
 			$html                 = '';
 			$number_of_thumbnails = isset( $block->context['thumbnailsNumberOfThumbnails'] ) && is_numeric( $block->context['thumbnailsNumberOfThumbnails'] ) ? $block->context['thumbnailsNumberOfThumbnails'] : 3;
-			$mode                 = $block->context['mode'] ?? '';
 			$thumbnails_count     = 1;
 
 			foreach ( $product_gallery_images as $product_gallery_image_html ) {
 				// Limit the number of thumbnails only in the standard mode (and not in dialog).
-				if ( $this->should_limit_thumbnails( $mode, $thumbnails_count, $number_of_thumbnails ) ) {
+				if ( $this->limit_thumbnails( $thumbnails_count, $number_of_thumbnails ) ) {
 					break;
 				}
 
-				// If not in dialog and it's the last thumbnail and the number of product gallery images is greater than the number of thumbnails settings output the View All markup.
-				if ( $this->should_display_view_all( $mode, $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) ) {
-					$remaining_thumbnails_count = count( $product_gallery_images ) - $number_of_thumbnails;
+				$remaining_thumbnails_count = count( $product_gallery_images ) - $number_of_thumbnails;
+
+				// Display view all if this is the last visible thumbnail and there are more images.
+				if ( $this->should_display_view_all( $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) ) {
 					$product_gallery_image_html = $this->inject_view_all( $product_gallery_image_html, $this->generate_view_all_html( $remaining_thumbnails_count ) );
-					$html                      .= $product_gallery_image_html;
-				} else {
-					$processor = new \WP_HTML_Tag_Processor( $product_gallery_image_html );
-
-					if ( $processor->next_tag( 'img' ) ) {
-						$processor->set_attribute( 'data-wc-on--keydown', 'actions.onThumbnailKeyDown' );
-						$processor->set_attribute( 'tabindex', '0' );
-						$processor->set_attribute(
-							'data-wc-on--click',
-							'actions.selectImage'
-						);
-
-						$html .= $processor->get_updated_html();
-					}
 				}
+
+				$html .= $product_gallery_image_html;
 
 				++$thumbnails_count;
 			}
