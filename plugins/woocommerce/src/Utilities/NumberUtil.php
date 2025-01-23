@@ -58,7 +58,7 @@ final class NumberUtil {
 	 * Sanitize a cost value based on the current locale decimal and thousand separators.
 	 *
 	 * @param string $value               The value to sanitize.
-	 * @return string The sanitized value, or empty string if invalid.
+	 * @return string                     The sanitized value.
 	 * @throws \InvalidArgumentException If the value is not a valid numeric value.
 	 */
 	public static function sanitize_cost_in_current_locale( $value ): string {
