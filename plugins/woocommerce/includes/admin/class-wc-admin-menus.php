@@ -16,7 +16,6 @@ use Automattic\WooCommerce\Internal\Admin\Logging\FileV2\{ FileListTable, Search
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
-use Automattic\WooCommerce\Internal\BrandingController;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -91,7 +90,7 @@ class WC_Admin_Menus {
 	public function admin_menu() {
 		global $menu, $admin_page_hooks;
 
-		$woocommerce_icon = 'data:image/svg+xml;base64,' . BrandingController::get_dashboard_menu_icon_base64();
+		$woocommerce_icon = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyOC4yLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCA4NS45IDQ3LjYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDg1LjkgNDcuNjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCgkuc3Qwe2ZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6Izg3M0VGRjt9DQoJLnN0MXtmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDt9DQoJLnN0MntmaWxsOiM4NzNFRkY7fQ0KCS5zdDN7ZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7ZmlsbDojRkZGRkZGO30NCgkuc3Q0e2ZpbGw6I0ZGRkZGRjt9DQo8L3N0eWxlPg0KPHBhdGggY2xhc3M9InN0MyIgZD0iTTc3LjQsMC4xYy00LjMsMC03LjEsMS40LTkuNiw2LjFMNTYuNCwyNy43VjguNmMwLTUuNy0yLjctOC41LTcuNy04LjVzLTcuMSwxLjctOS42LDYuNUwyOC4zLDI3LjdWOC44DQoJYzAtNi4xLTIuNS04LjctOC42LTguN0g3LjNDMi42LDAuMSwwLDIuMywwLDYuM3MyLjUsNi40LDcuMSw2LjRoNS4xdjI0LjFjMCw2LjgsNC42LDEwLjgsMTEuMiwxMC44UzMzLDQ1LDM2LjMsMzguOWw3LjItMTMuNXYxMS40DQoJYzAsNi43LDQuNCwxMC44LDExLjEsMTAuOHM5LjItMi4zLDEzLTguN2wxNi42LTI4YzMuNi02LjEsMS4xLTEwLjgtNi45LTEwLjhDNzcuMywwLjEsNzcuMywwLjEsNzcuNCwwLjF6Ii8+DQo8L3N2Zz4NCg==';
 
 		if ( self::can_view_woocommerce_menu_item() ) {
 			$menu[] = array( '', 'read', 'separator-woocommerce', '', 'wp-menu-separator woocommerce' ); // WPCS: override ok.
