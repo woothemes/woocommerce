@@ -550,14 +550,24 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 				$product_qty = -abs( $product_qty );
 
 				if ( $parent_order ) {
+					$remaining_refund_items = $parent_order->get_remaining_refund_items();
+
 					// Calculate the shipping amount to refund from the parent order.
-					$total_shipping_refunded  = (float) $parent_order->get_total_shipping_refunded();
+					$total_shipping_refunded  = $parent_order->get_total_shipping_refunded();
 					$shipping_total           = (float) $parent_order->get_shipping_total();
 					$total_shipping_to_refund = $shipping_total - $total_shipping_refunded;
-					$remaining_refund_items   = $parent_order->get_remaining_refund_items();
+
+					// Calculate the shipping tax amount to refund from the parent order.
+					$shipping_tax                 = (float) $parent_order->get_shipping_tax();
+					$total_shipping_tax_refunded  = $parent_order->get_total_tax_refunded( false, true );
+					$total_shipping_tax_to_refund = $shipping_tax - $total_shipping_tax_refunded;
 
 					if ( $total_shipping_to_refund > 0 ) {
 						$shipping_amount = -abs( $parent_order->get_item_shipping_amount( $order_item, $remaining_refund_items, $total_shipping_to_refund ) );
+					}
+
+					if ( $total_shipping_tax_to_refund > 0 ) {
+						$shipping_tax_amount = -abs( $parent_order->get_item_shipping_tax_amount( $order_item, $remaining_refund_items, $total_shipping_tax_to_refund ) );
 					}
 				}
 			}

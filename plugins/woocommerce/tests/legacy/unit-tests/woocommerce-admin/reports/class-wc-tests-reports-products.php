@@ -739,12 +739,13 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$order->set_discount_total( 0 );
 		$order->set_discount_tax( 0 );
 		$order->set_cart_tax( 0 );
-		$order->set_shipping_tax( 0 );
-		$order->set_total( 260 ); // $25x4 product_1 + $30x2 product_2 + $100 shipping.
+		$order->set_shipping_tax( 10 );
+		$order->set_total( 270 ); // $25x4 product_1 + $30x2 product_2 + $100 shipping + $10 shipping tax.
 		$order->save();
 
 		WC_Helper_Queue::run_all_pending( 'wc-admin-data' );
 
+		// Refund the order completely by changing the order status to refunded.
 		$order->set_status( OrderStatus::REFUNDED );
 		$order->save();
 
@@ -767,7 +768,8 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$this->assertEquals( '-2', $result[0]->product_qty );
 		$this->assertEquals( -60.000000, $result[0]->product_net_revenue );   // -($30 product_2 * 2).
 		$this->assertEquals( -33.333333, $result[0]->shipping_amount );       // -($100 shipping / 6 total items * 2 product_2 ).
-		$this->assertEquals( -93.333333, $result[0]->product_gross_revenue ); // product_net_revenue + shipping_amount + shipping_tax_amount + tax_amount.
+		$this->assertEquals( -3.333333, $result[0]->shipping_tax_amount );    // -($10 shipping tax / 6 total items * 2 product_2 ).
+		$this->assertEquals( -96.666667, $result[0]->product_gross_revenue ); // product_net_revenue + shipping_amount + shipping_tax_amount + tax_amount.
 	}
 
 	/**
@@ -830,7 +832,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$order->set_discount_total( 0 );
 		$order->set_discount_tax( 0 );
 		$order->set_cart_tax( 0 );
-		$order->set_shipping_tax( 0 );
+		$order->set_shipping_tax( 10 );
 		$order->set_total( 380 ); // $25x4 product_1 + $30x2 product_2 + $40x3 product_3 + $100 shipping.
 		$order->save();
 
@@ -876,7 +878,8 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 
 		$this->assertEquals( '-3', $result[0]->product_qty );
 		$this->assertEquals( -120.000000, $result[0]->product_net_revenue );   // -($40 product_3 * 3).
-		$this->assertEquals( -60.000000, $result[0]->shipping_amount );       // -($100 shipping / ( 9 total items - 4 refunded items ) * 3 product_3 ).
-		$this->assertEquals( -180.000000, $result[0]->product_gross_revenue ); // product_net_revenue + shipping_amount + shipping_tax_amount + tax_amount.
+		$this->assertEquals( -60.000000, $result[0]->shipping_amount );        // -($100 shipping / ( 9 total items - 4 refunded items ) * 3 product_3 ).
+		$this->assertEquals( -6.000000, $result[0]->shipping_tax_amount );     // -($10 shipping tax / ( 9 total items - 4 refunded items ) * 3 product_3 ).
+		$this->assertEquals( -186.000000, $result[0]->product_gross_revenue ); // product_net_revenue + shipping_amount + shipping_tax_amount + tax_amount.
 	}
 }
