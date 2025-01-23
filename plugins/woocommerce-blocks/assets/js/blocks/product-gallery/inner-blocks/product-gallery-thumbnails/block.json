@@ -15,7 +15,7 @@
 			"type": "string",
 			"default": "left"
 		},
-		"thumbnailsNumberOfThumbnails": {
+		"numberOfThumbnails": {
 			"type": "number",
 			"default": 3
 		}

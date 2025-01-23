@@ -21,7 +21,7 @@ export const Edit = ( {
 	const blockProps = useBlockProps( {
 		className: clsx(
 			'wc-block-product-gallery-thumbnails',
-			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.thumbnailsNumberOfThumbnails }`,
+			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.numberOfThumbnails }`,
 			`wc-block-product-gallery-thumbnails--position-${ attributes.thumbnailsPosition }`
 		),
 	} );
@@ -29,21 +29,21 @@ export const Edit = ( {
 	const Placeholder = () => {
 		return (
 			<div className="wc-block-editor-product-gallery-thumbnails">
-				{ [
-					...Array( attributes.thumbnailsNumberOfThumbnails ).keys(),
-				].map( ( index ) => {
-					return (
-						<div
-							className="wc-block-product-gallery-thumbnails__thumbnail"
-							key={ index }
-						>
-							<img
-								src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
-								alt="Placeholder"
-							/>
-						</div>
-					);
-				} ) }
+				{ [ ...Array( attributes.numberOfThumbnails ).keys() ].map(
+					( index ) => {
+						return (
+							<div
+								className="wc-block-product-gallery-thumbnails__thumbnail"
+								key={ index }
+							>
+								<img
+									src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
+									alt="Placeholder"
+								/>
+							</div>
+						);
+					}
+				) }
 			</div>
 		);
 	};

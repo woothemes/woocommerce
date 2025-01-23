@@ -4,7 +4,7 @@
 import { ThumbnailsPosition } from './constants';
 
 export type ProductGalleryThumbnailsBlockAttributes = {
-	thumbnailsNumberOfThumbnails: number;
+	numberOfThumbnails: number;
 	thumbnailsPosition: ThumbnailsPosition;
 };
 

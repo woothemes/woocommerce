@@ -47,7 +47,7 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 }: ProductGalleryThumbnailsSettingsProps ) => {
 	const maxNumberOfThumbnails = 8;
 	const minNumberOfThumbnails = 3;
-	const { thumbnailsPosition, thumbnailsNumberOfThumbnails } = attributes;
+	const { thumbnailsPosition, numberOfThumbnails } = attributes;
 
 	return (
 		<>
@@ -78,10 +78,10 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 			</ToggleGroupControl>
 			<RangeControl
 				label={ __( 'Number of Thumbnails', 'woocommerce' ) }
-				value={ thumbnailsNumberOfThumbnails }
+				value={ numberOfThumbnails }
 				onChange={ ( value: number ) =>
 					setAttributes( {
-						thumbnailsNumberOfThumbnails: Math.round( value ),
+						numberOfThumbnails: Math.round( value ),
 					} )
 				}
 				help={ __(

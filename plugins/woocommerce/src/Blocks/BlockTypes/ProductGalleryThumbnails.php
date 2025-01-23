@@ -149,7 +149,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 
 		if ( $product_gallery_images && count( $product_gallery_images ) > 1 ) {
 			$html                 = '';
-			$number_of_thumbnails = isset( $attributes['thumbnailsNumberOfThumbnails'] ) && is_numeric( $attributes['thumbnailsNumberOfThumbnails'] ) ? $attributes['thumbnailsNumberOfThumbnails'] : 3;
+			$number_of_thumbnails = isset( $attributes['numberOfThumbnails'] ) && is_numeric( $attributes['numberOfThumbnails'] ) ? $attributes['numberOfThumbnails'] : 3;
 			$mode                 = $block->context['mode'] ?? '';
 			$thumbnails_count     = 1;
 
