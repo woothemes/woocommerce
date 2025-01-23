@@ -11,16 +11,18 @@ import { getSetting } from '@woocommerce/settings';
 import { API_SITE_CURRENCY, displayForMinorUnit } from './utils';
 
 // Get local pickup locations from the settings and format into some preview shipping rates for the response.
-const localPickupLocations = getSetting<
-	{
-		enabled: boolean;
-		name: string;
-		formatted_address: string;
-		details: string;
-	}[]
->( 'localPickupLocations', {} );
-
+const localPickupEnabled = getSetting< boolean >( 'localPickupEnabled', false );
 const localPickupCost = getSetting< string >( 'localPickupCost', '' );
+const localPickupLocations = localPickupEnabled
+	? getSetting<
+			{
+				enabled: boolean;
+				name: string;
+				formatted_address: string;
+				details: string;
+			}[]
+	  >( 'localPickupLocations', [] )
+	: [];
 
 const localPickupRates = localPickupLocations
 	? Object.values( localPickupLocations ).map(
