@@ -31,7 +31,7 @@ test.describe( 'Marketing page', () => {
 			page.getByText( 'Channels', { exact: true } )
 		).toBeVisible();
 
-		// Check the 'Discover more marketing tools' card and its individual tabs only on non-WPCOM sites.
+		// Check the 'Discover more marketing tools' and 'Learn about marketing a store' cards only on non-WPCOM sites.
 		if ( ! is_wpcom_site ) {
 			await expect(
 				page.getByText( 'Discover more marketing tools' )
