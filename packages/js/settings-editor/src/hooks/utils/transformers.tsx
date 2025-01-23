@@ -117,7 +117,7 @@ export const transformToField = (
 			return {
 				id: setting.id,
 				type: 'text',
-				label: setting.desc_tip,
+				label: String( setting.desc_tip ),
 				Edit: getTextareaEdit,
 			};
 
