@@ -26,7 +26,7 @@ import {
 import { ThumbnailsPosition } from '../constants';
 import type { ProductGalleryThumbnailsSettingsProps } from '../types';
 
-const positionHelp: Record< ThumbnailsPosition, string > = {
+const positionHelp = {
 	[ ThumbnailsPosition.LEFT ]: __(
 		'A strip of small images will appear to the left of the main gallery image.',
 		'woocommerce'
@@ -56,9 +56,7 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 				isBlock
 				label={ __( 'Thumbnails', 'woocommerce' ) }
 				value={ thumbnailsPosition }
-				help={
-					positionHelp[ thumbnailsPosition as ThumbnailsPosition ]
-				}
+				help={ positionHelp[ thumbnailsPosition ] }
 				onChange={ ( value: ThumbnailsPosition ) =>
 					setAttributes( {
 						thumbnailsPosition: value,
@@ -67,21 +65,15 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 			>
 				<ToggleGroupControlOption
 					value={ ThumbnailsPosition.LEFT }
-					label={
-						<Icon size={ 32 } icon={ thumbnailsPositionLeft } />
-					}
+					label={ <Icon icon={ thumbnailsPositionLeft } /> }
 				/>
 				<ToggleGroupControlOption
 					value={ ThumbnailsPosition.BOTTOM }
-					label={
-						<Icon size={ 32 } icon={ thumbnailsPositionBottom } />
-					}
+					label={ <Icon icon={ thumbnailsPositionBottom } /> }
 				/>
 				<ToggleGroupControlOption
 					value={ ThumbnailsPosition.RIGHT }
-					label={
-						<Icon size={ 32 } icon={ thumbnailsPositionRight } />
-					}
+					label={ <Icon icon={ thumbnailsPositionRight } /> }
 				/>
 			</ToggleGroupControl>
 			<RangeControl
