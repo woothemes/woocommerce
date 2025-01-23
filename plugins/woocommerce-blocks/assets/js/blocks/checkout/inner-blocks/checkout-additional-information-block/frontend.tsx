@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { FormStep } from '@woocommerce/blocks-components';
 import { ORDER_FORM_KEYS } from '@woocommerce/block-settings';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 import { withFilteredAttributes } from '@woocommerce/shared-hocs';
 import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
 
@@ -28,7 +28,7 @@ const FrontendBlock = ( {
 } ) => {
 	const { showFormStepNumbers } = useCheckoutBlockContext();
 	const checkoutIsProcessing = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).isProcessing()
+		select( checkoutStore ).isProcessing()
 	);
 
 	if ( ORDER_FORM_KEYS.length === 0 ) {

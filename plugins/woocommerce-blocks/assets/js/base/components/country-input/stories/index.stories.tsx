@@ -4,7 +4,7 @@
 import type { Story, Meta } from '@storybook/react';
 import { useDispatch } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -37,7 +37,7 @@ const Template: Story< CountryInputWithCountriesProps > = ( args ) => {
 		''
 	);
 	const { clearValidationError, showValidationError } =
-		useDispatch( VALIDATION_STORE_KEY );
+		useDispatch( validationStore );
 
 	useEffect( () => {
 		showValidationError( 'country' );

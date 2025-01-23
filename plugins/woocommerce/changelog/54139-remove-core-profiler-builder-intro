@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-
-Removed the Builder Intro screen from the Core Profiler as it's been relocated to WC Settings > Advanced > Blueprint

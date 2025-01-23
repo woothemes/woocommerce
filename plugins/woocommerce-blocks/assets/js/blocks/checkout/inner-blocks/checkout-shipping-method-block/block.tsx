@@ -6,7 +6,7 @@ import { useShippingData } from '@woocommerce/base-context/hooks';
 import clsx from 'clsx';
 import { Icon, store, shipping } from '@wordpress/icons';
 import { useEffect } from '@wordpress/element';
-import { CART_STORE_KEY, VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, validationStore } from '@woocommerce/block-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { isPackageRateCollectable } from '@woocommerce/base-utils';
 import { getSetting } from '@woocommerce/settings';
@@ -103,7 +103,7 @@ const ShippingSelector = ( {
 		! hasShippableRates;
 	const hasShippingPrices = rate.min !== undefined && rate.max !== undefined;
 	const { setValidationErrors, clearValidationError } =
-		useDispatch( VALIDATION_STORE_KEY );
+		useDispatch( validationStore );
 	useEffect( () => {
 		if ( checked === 'shipping' && ! hasShippingPrices ) {
 			setValidationErrors( {

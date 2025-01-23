@@ -1,4 +1,0 @@
-Significance: minor
-Type: enhancement
-
-Use wp_register_block_metadata_collection() on WordPress 6.7+ to improve block registration performance by reducing filesystem operations. (See https://core.trac.wordpress.org/changeset/59132)

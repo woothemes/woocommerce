@@ -426,4 +426,159 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		remove_filter( 'pre_option_woocommerce_tax_display_shop', array( $this, '__return_incl' ) );
 		remove_filter( 'pre_option_woocommerce_tax_display_cart', array( $this, '__return_incl' ) );
 	}
+
+	/**
+	 * @testdox Test read_children method handles various scenarios correctly including invalid transient data
+	 */
+	public function test_read_children() {
+		$data_store = new WC_Product_Variable_Data_Store_CPT();
+		$product    = WC_Helper_Product::create_variation_product();
+
+		// Set invalid transient data.
+		$invalid_data = 'not an array';
+		set_transient( 'wc_product_children_' . $product->get_id(), $invalid_data );
+
+		// Test read still works with invalid transient.
+		$children = $data_store->read_children( $product, false );
+		$this->assertIsArray( $children );
+		$this->assertArrayHasKey( 'all', $children );
+		$this->assertArrayHasKey( 'visible', $children );
+		$this->assertNotEmpty( $children['all'] );
+
+		// Set corrupt transient data.
+		$corrupt_data = array(
+			'version' => 'wrong_version',
+			'all'     => 'not an array',
+			'visible' => array(),
+		);
+		set_transient( 'wc_product_children_' . $product->get_id(), wp_json_encode( $corrupt_data ) );
+
+		// Test read still works with corrupt transient.
+		$children_after_corrupt = $data_store->read_children( $product, false );
+		$this->assertEquals( $children, $children_after_corrupt, 'Should return correct data even with corrupt transient' );
+	}
+
+	/**
+	 * @testdox Test read_price_data method handles various pricing scenarios including invalid transient data
+	 */
+	public function test_read_price_data() {
+		$data_store = new WC_Product_Variable_Data_Store_CPT();
+		$product    = WC_Helper_Product::create_variation_product();
+
+		// Get initial valid price data.
+		$initial_prices = $data_store->read_price_data( $product, false );
+
+		// Set invalid transient data.
+		$transient_name = 'wc_var_prices_' . $product->get_id();
+		set_transient( $transient_name, 'invalid data' );
+
+		// Test read still works with invalid transient.
+		$prices_after_invalid = $data_store->read_price_data( $product, false );
+		$this->assertEquals(
+			$initial_prices,
+			$prices_after_invalid,
+			'Should return correct prices even with invalid transient'
+		);
+
+		// Set corrupt transient data.
+		$corrupt_data = array(
+			'version'    => 'wrong_version',
+			'price_hash' => array(
+				'price'         => 'not an array',
+				'regular_price' => array(),
+				'sale_price'    => array(),
+			),
+		);
+		set_transient( $transient_name, wp_json_encode( $corrupt_data ) );
+
+		// Test read still works with corrupt transient.
+		$prices_after_corrupt = $data_store->read_price_data( $product, false );
+		$this->assertArrayHasKey( 'price', $prices_after_corrupt );
+		$this->assertArrayHasKey( 'regular_price', $prices_after_corrupt );
+		$this->assertArrayHasKey( 'sale_price', $prices_after_corrupt );
+		$this->assertEquals(
+			$initial_prices,
+			$prices_after_corrupt,
+			'Should return correct prices even with corrupt transient'
+		);
+	}
+
+	/**
+	 * @testdox Test read_price_data method works even when price validation fails
+	 */
+	public function test_read_price_data_with_validation_failure() {
+		$data_store = new WC_Product_Variable_Data_Store_CPT();
+		$product    = WC_Helper_Product::create_variation_product();
+
+		// Get initial valid price data.
+		$initial_prices = $data_store->read_price_data( $product, false );
+
+		// Create a mock that will force validation to fail.
+		$mock_data_store = $this->getMockBuilder( WC_Product_Variable_Data_Store_CPT::class )
+			->setMethods( array( 'validate_prices_data' ) )
+			->getMock();
+
+		$mock_data_store->method( 'validate_prices_data' )
+			->willReturn( false );
+
+		// Clear any existing transient.
+		delete_transient( 'wc_var_prices_' . $product->get_id() );
+
+		// Read prices with the mock that will fail validation.
+		$prices_with_failed_validation = $mock_data_store->read_price_data( $product, false );
+
+		// Verify the data is still correct despite validation failing.
+		$this->assertArrayHasKey( 'price', $prices_with_failed_validation );
+		$this->assertArrayHasKey( 'regular_price', $prices_with_failed_validation );
+		$this->assertArrayHasKey( 'sale_price', $prices_with_failed_validation );
+		$this->assertEquals(
+			$initial_prices,
+			$prices_with_failed_validation,
+			'Should return correct prices even when validation fails'
+		);
+
+		// Verify the transient was not set.
+		$this->assertFalse(
+			get_transient( 'wc_var_prices_' . $product->get_id() ),
+			'Transient should not be set when validation fails'
+		);
+	}
+
+	/**
+	 * @testdox Test read_children method works even when validation fails
+	 */
+	public function test_read_children_with_validation_failure() {
+		$data_store = new WC_Product_Variable_Data_Store_CPT();
+		$product    = WC_Helper_Product::create_variation_product();
+
+		// Get initial valid children data.
+		$initial_children = $data_store->read_children( $product, false );
+
+		// Create a mock that will force validation to fail.
+		$mock_data_store = $this->getMockBuilder( WC_Product_Variable_Data_Store_CPT::class )
+			->setMethods( array( 'validate_children_data' ) )
+			->getMock();
+
+		$mock_data_store->method( 'validate_children_data' )
+			->willReturn( false );
+
+		// Clear any existing transient.
+		delete_transient( 'wc_product_children_' . $product->get_id() );
+
+		// Read children with the mock that will fail validation.
+		$children_with_failed_validation = $mock_data_store->read_children( $product, false );
+
+		// Verify the data is still correct despite validation failing.
+		$this->assertEquals(
+			$initial_children,
+			$children_with_failed_validation,
+			'Should return correct children even when validation fails'
+		);
+
+		// Verify the transient was not set.
+		$this->assertFalse(
+			get_transient( 'wc_product_children_' . $product->get_id() ),
+			'Transient should not be set when validation fails'
+		);
+	}
 }

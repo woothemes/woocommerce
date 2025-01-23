@@ -1,4 +1,0 @@
-Significance: minor
-Type: fix
-
-Update the orders REST API endpoint to accurately adjust product stock levels when adding or modifying order line items

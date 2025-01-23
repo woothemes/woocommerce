@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-CI config: add unique event names for each CI job

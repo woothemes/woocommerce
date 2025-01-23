@@ -5,7 +5,7 @@ import { useArgs } from '@storybook/client-api';
 import type { Story, Meta } from '@storybook/react';
 import { INTERACTION_TIMEOUT } from '@woocommerce/storybook-controls';
 import { useDispatch } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -51,7 +51,7 @@ LoadingState.args = {
 };
 
 export const ErrorState: Story< TotalsCouponProps > = ( args ) => {
-	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { setValidationErrors } = useDispatch( validationStore );
 
 	setValidationErrors( { coupon: INVALID_COUPON_ERROR } );
 

@@ -475,7 +475,7 @@ test.describe( `${ blockData.name } Block`, () => {
 		await blockUtils.configureSingleProductBlock( productName );
 
 		const addToCartFormBlock = await editor.getBlockByName(
-			'woocommerce/add-to-cart-form'
+			blockData.slug
 		);
 		await editor.selectBlocks( addToCartFormBlock );
 

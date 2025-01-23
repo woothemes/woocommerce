@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fixes a bug where a URL containing part of a store page's URL is incorrectly identified as a valid store page URL

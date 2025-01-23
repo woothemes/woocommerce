@@ -5,18 +5,18 @@ import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { ValidatedTextInput } from '@woocommerce/blocks-components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 import PasswordStrengthMeter from '@woocommerce/base-components/cart-checkout/password-strength-meter';
 
 const CreatePassword = () => {
 	const [ passwordStrength, setPasswordStrength ] = useState( 0 );
 	const { customerPassword } = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			customerPassword: store.getCustomerPassword(),
 		};
 	} );
-	const { __internalSetCustomerPassword } = useDispatch( CHECKOUT_STORE_KEY );
+	const { __internalSetCustomerPassword } = useDispatch( checkoutStore );
 
 	return (
 		<ValidatedTextInput

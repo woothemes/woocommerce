@@ -5,7 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useState, useEffect } from '@wordpress/element';
 import {
 	CART_STORE_KEY,
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 	processErrorResponse,
 } from '@woocommerce/block-data';
 import { useDebounce } from 'use-debounce';
@@ -57,7 +57,7 @@ export const useStoreCartItemQuantity = (
 		verifiedCartItem;
 	const { cartErrors } = useStoreCart();
 	const { __internalIncrementCalculating, __internalDecrementCalculating } =
-		useDispatch( CHECKOUT_STORE_KEY );
+		useDispatch( checkoutStore );
 
 	// Store quantity in hook state. This is used to keep the UI updated while server request is updated.
 	const [ quantity, setQuantity ] = useState< number >( cartItemQuantity );

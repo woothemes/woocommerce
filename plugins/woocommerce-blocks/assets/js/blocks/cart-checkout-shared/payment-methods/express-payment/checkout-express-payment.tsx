@@ -6,7 +6,7 @@ import { useEditorContext, noticeContexts } from '@woocommerce/base-context';
 import { Title, StoreNoticesContainer } from '@woocommerce/blocks-components';
 import LoadingMask from '@woocommerce/base-components/loading-mask';
 import { CURRENT_USER_IS_ADMIN } from '@woocommerce/settings';
-import { CHECKOUT_STORE_KEY, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -24,7 +24,7 @@ const CheckoutExpressPayment = () => {
 		isComplete,
 		hasError,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			isCalculating: store.isCalculating(),
 			isProcessing: store.isProcessing(),

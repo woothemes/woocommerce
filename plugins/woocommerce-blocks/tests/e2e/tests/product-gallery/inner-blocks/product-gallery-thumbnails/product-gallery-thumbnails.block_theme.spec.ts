@@ -72,52 +72,6 @@ test.describe( 'Product Gallery Thumbnails block', () => {
 	} );
 
 	test.describe( 'settings', () => {
-		test( 'hides thumbnails', async ( { page, editor } ) => {
-			await test.step( 'in editor', async () => {
-				const productGalleryBlock = editor.canvas.locator(
-					'[data-type="woocommerce/product-gallery"]'
-				);
-				const thumbailsBlock = productGalleryBlock.locator(
-					'[data-type="woocommerce/product-gallery-thumbnails"]'
-				);
-				await expect( thumbailsBlock ).toBeVisible();
-
-				await editor.selectBlocks( thumbailsBlock );
-
-				await editor.openDocumentSettingsSidebar();
-				await page
-					.getByLabel( 'Editor settings' )
-					.locator( 'button[data-value="off"]' )
-					.click();
-
-				await expect( thumbailsBlock ).toBeHidden();
-
-				await editor.saveSiteEditorEntities( {
-					isOnlyCurrentEntityDirty: true,
-				} );
-			} );
-
-			await test.step( 'in frontend', async () => {
-				await page.goto( '/product/v-neck-t-shirt/' );
-
-				const productGalleryBlock = page.locator(
-					'[data-block-name="woocommerce/product-gallery"]'
-				);
-
-				await expect(
-					productGalleryBlock.locator(
-						'[data-block-name="woocommerce/product-gallery-large-image"]:visible'
-					)
-				).toBeVisible();
-
-				await expect(
-					productGalleryBlock.locator(
-						'[data-block-name="woocommerce/product-gallery-thumbnails"]'
-					)
-				).toBeHidden();
-			} );
-		} );
-
 		for ( const position of [ 'left', 'bottom', 'right' ] ) {
 			test( `positions thumbnails to the ${ position }`, async ( {
 				page,

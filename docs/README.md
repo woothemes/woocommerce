@@ -54,6 +54,7 @@ Available READMe files for the WooCommerce plugin:
 - [`packages`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/packages/README.md)
 - [`src`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/README.md)
 - [`src/Admin/RemoteInboxNotifications`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Admin/RemoteInboxNotifications/README.md)
+- [`src/Enums`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Enums/README.md)
 - [`src/Internal`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Internal/README.md)
 - [`src/Internal/Admin/ProductForm`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Internal/Admin/ProductForm/README.md)blob
 - [`src/TransientFiles`](https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/Internal/TransientFiles/README.md)

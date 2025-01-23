@@ -3,7 +3,7 @@
  */
 import { render, screen, within } from '@testing-library/react';
 import ShippingAddress from '@woocommerce/base-components/cart-checkout/totals/shipping/shipping-address';
-import { CART_STORE_KEY, CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, checkoutStore } from '@woocommerce/block-data';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout';
 import { dispatch } from '@wordpress/data';
 import { previewCart } from '@woocommerce/resource-previews';
@@ -95,7 +95,7 @@ describe( 'ShippingAddress', () => {
 	} );
 
 	it( 'Renders pickup location if shopper prefers collection', async () => {
-		dispatch( CHECKOUT_STORE_KEY ).setPrefersCollection( true );
+		dispatch( checkoutStore ).setPrefersCollection( true );
 
 		// Deselect the default selected rate and select pickup_location:1 rate.
 		const currentlySelectedIndex =
@@ -140,7 +140,7 @@ describe( 'ShippingAddress', () => {
 	} );
 
 	it( `renders an address if one is set in the methods metadata`, async () => {
-		dispatch( CHECKOUT_STORE_KEY ).setPrefersCollection( true );
+		dispatch( checkoutStore ).setPrefersCollection( true );
 
 		// Deselect the default selected rate and select pickup_location:1 rate.
 		const currentlySelectedIndex =
@@ -184,7 +184,7 @@ describe( 'ShippingAddress', () => {
 		).toBeInTheDocument();
 	} );
 	it( 'renders no address if one is not set in the methods metadata', async () => {
-		dispatch( CHECKOUT_STORE_KEY ).setPrefersCollection( true );
+		dispatch( checkoutStore ).setPrefersCollection( true );
 
 		// Deselect the default selected rate and select pickup_location:1 rate.
 		const currentlySelectedIndex =

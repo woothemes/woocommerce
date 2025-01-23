@@ -27,6 +27,7 @@ import {
 	SettingsButton,
 } from '~/settings-payments/components/buttons';
 import { ReactivateLivePaymentsButton } from '~/settings-payments/components/buttons/reactivate-live-payments-button';
+import { IncentiveStatusBadge } from '~/settings-payments/components/incentive-status-badge';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
@@ -102,10 +103,7 @@ export const PaymentGatewayListItem = ( {
 					<span className="woocommerce-list__item-title">
 						{ gateway.title }
 						{ incentive ? (
-							<StatusBadge
-								status="has_incentive"
-								message={ incentive.badge }
-							/>
+							<IncentiveStatusBadge incentive={ incentive } />
 						) : (
 							<StatusBadge status={ determineGatewayStatus() } />
 						) }

@@ -12,7 +12,7 @@ import LoadingMask from '@woocommerce/base-components/loading-mask';
 import type { PaymentMethodInterface } from '@woocommerce/types';
 import { useSelect, useDispatch } from '@wordpress/data';
 import {
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 	PAYMENT_STORE_KEY,
 	CART_STORE_KEY,
 } from '@woocommerce/block-data';
@@ -47,7 +47,7 @@ export const usePaymentMethodInterface = (): PaymentMethodInterface => {
 
 	const { isCalculating, isComplete, isIdle, isProcessing, customerId } =
 		useSelect( ( select ) => {
-			const store = select( CHECKOUT_STORE_KEY );
+			const store = select( checkoutStore );
 			return {
 				isComplete: store.isComplete(),
 				isIdle: store.isIdle(),

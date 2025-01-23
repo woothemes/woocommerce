@@ -6,7 +6,7 @@ import Button from '@woocommerce/base-components/button';
 import { useState } from '@wordpress/element';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import type { ShippingAddress, FormFields } from '@woocommerce/settings';
-import { VALIDATION_STORE_KEY, CART_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore, CART_STORE_KEY } from '@woocommerce/block-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useFocusReturn } from '@woocommerce/base-utils';
 /**
@@ -28,13 +28,13 @@ const ShippingCalculatorAddress = ( {
 	addressFields,
 }: ShippingCalculatorAddressProps ): JSX.Element => {
 	const [ address, setAddress ] = useState( initialAddress );
-	const { showAllValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { showAllValidationErrors } = useDispatch( validationStore );
 	const focusReturnRef = useFocusReturn();
 	const { hasValidationErrors, isCustomerDataUpdating } = useSelect(
 		( select ) => {
 			return {
 				hasValidationErrors:
-					select( VALIDATION_STORE_KEY ).hasValidationErrors,
+					select( validationStore ).hasValidationErrors,
 				isCustomerDataUpdating:
 					select( CART_STORE_KEY ).isCustomerDataUpdating(),
 			};

@@ -233,10 +233,11 @@ export const WooPaymentsMethodsLogos: React.FC< {
 					{ isPopoverVisible && (
 						<Popover
 							position="top right"
+							className="woocommerce-woopayments-payment-methods-logos-popover"
 							noArrow={ true }
 							onClose={ () => setIsPopoverVisible( false ) }
 						>
-							<div className="woocommerce-woopayments-payment-methods-logos inside-popover">
+							<div className="woocommerce-woopayments-payment-methods-logos">
 								{ hiddenPaymentMethods.map(
 									( pm ) => pm.component
 								) }

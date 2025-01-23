@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import React from 'react';
 import { decodeEntities } from '@wordpress/html-entities';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -22,6 +22,7 @@ import {
 } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
+import { IncentiveStatusBadge } from '~/settings-payments/components/incentive-status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
 	/**
@@ -99,10 +100,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 								<StatusBadge status="recommended" />
 							) }
 						{ incentive && (
-							<StatusBadge
-								status="has_incentive"
-								message={ incentive.badge }
-							/>
+							<IncentiveStatusBadge incentive={ incentive } />
 						) }
 					</span>
 					<span

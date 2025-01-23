@@ -1,5 +1,0 @@
-Significance: patch
-Type: fix
-Comment: Prevent two unnecessary dispatches to Product Type store
-
-

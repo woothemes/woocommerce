@@ -37,8 +37,8 @@ $email         = get_option( 'admin_email', 'marianne.renoir@mail.com' );
 		<!-- /wp:group -->
 
 		<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"0px","bottom":"0px","right":"0","left":"0"},"margin":{"bottom":"0"},"blockGap":"0px"},"dimensions":{"minHeight":"650px"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch","verticalAlignment":"bottom"}} -->
-		<div class="wp-block-group alignwide" style="min-height:650px;margin-bottom:0;padding-top:0px;padding-right:0;padding-bottom:0px;padding-left:0"><!-- wp:heading {"textAlign":"center","style":{"spacing":{"margin":{"bottom":"153px","top":"0"}},"typography":{"fontSize":"100px","lineHeight":"1.19","fontStyle":"normal","fontWeight":"400"}},"fontFamily":"<?php echo esc_attr( $cardo_font_family ); ?>"} -->
-			<h2 class="wp-block-heading has-text-align-center has-heading-font-family" style="margin-top:0;margin-bottom:153px;font-size:100px;font-style:normal;font-weight:400;line-height:1.19"><?php echo esc_html( _x( 'Stay tuned.', 'Coming Soon template heading', 'woocommerce' ) ); ?></h2>
+		<div class="wp-block-group alignwide" style="min-height:650px;margin-bottom:0;padding-top:0px;padding-right:0;padding-bottom:0px;padding-left:0"><!-- wp:heading {"textAlign":"center","level":1,"style":{"spacing":{"margin":{"bottom":"153px","top":"0"}},"typography":{"fontSize":"100px","lineHeight":"1.19","fontStyle":"normal","fontWeight":"400"}},"fontFamily":"heading"} -->
+			<h1 class="wp-block-heading has-text-align-center has-heading-font-family" style="margin-top:0;margin-bottom:153px;font-size:100px;font-style:normal;font-weight:400;line-height:1.19"><?php echo esc_html( _x( 'Stay tuned.', 'Coming Soon template heading', 'woocommerce' ) ); ?></h1>
 		<!-- /wp:heading -->
 
 		<!-- wp:paragraph {"align":"center","style":{"color":{"text":"#a7aaad"},"elements":{"link":{"color":{"text":"#a7aaad"}}},"typography":{"fontSize":"14px"}}} -->

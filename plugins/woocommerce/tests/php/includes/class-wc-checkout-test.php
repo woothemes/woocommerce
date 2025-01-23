@@ -98,6 +98,32 @@ class WC_Checkout_Test extends \WC_Unit_Test_Case {
 	}
 
 	/**
+	 * @testdox the customer notes can have linebreaks.
+	 */
+	public function test_order_notes_linebreaks() {
+		$data = array(
+			'ship_to_different_address' => false,
+			'order_comments'            => 'A string' . PHP_EOL . 'with linebreaks' . PHP_EOL . 'in it.',
+			'payment_method'            => WC_Gateway_BACS::ID,
+		);
+
+		$errors = new WP_Error();
+
+		$this->sut->validate_posted_data( $data, $errors );
+		$result = $this->sut->create_order( $data );
+
+		$content = wc_get_template_html(
+			'order/order-details.php',
+			array(
+				'order_id'       => $result,
+				'show_downloads' => false,
+			)
+		);
+		// The preg_replace is necessary because the template outputs a lot of whitespace, we can just make sure the <br /> tags are there as the other whitespace doesn't matter.
+		$this->assertStringContainsString( 'A string<br />with linebreaks<br />in it.', preg_replace( '/[\t\n\r]+/', '', $content ) );
+	}
+
+	/**
 	 * @testdox 'validate_posted_data' doesn't add errors for existing billing/shipping countries.
 	 *
 	 * @testWith [true]

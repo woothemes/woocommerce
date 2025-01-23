@@ -64,9 +64,9 @@ $store_description = ! empty( $site_tagline )
 
 					<!-- wp:column {"verticalAlignment":"stretch","width":"453px","className":"woocommerce-coming-soon-minimal-left-image__content-text","style":{"spacing":{"blockGap":"0","padding":{"right":"0","left":"0","bottom":"0","top":"53px"}}},"layout":{"type":"default"}} -->
 					<div class="wp-block-column is-vertically-aligned-stretch woocommerce-coming-soon-minimal-left-image__content-text" style="padding-top:53px;padding-right:0;padding-bottom:0;padding-left:0;flex-basis:453px"><!-- wp:group {"style":{"dimensions":{"minHeight":"100%"},"spacing":{"blockGap":"0"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch","flexWrap":"nowrap","verticalAlignment":"space-between"}} -->
-						<div class="wp-block-group" style="min-height:100%"><!-- wp:heading {"className":"is-style-default","style":{"elements":{"link":{"color":{"text":"#000"}}},"color":{"text":"#000"},"typography":{"fontSize":"38px","lineHeight":"1.19"},"spacing":{"margin":{"bottom":"var:preset|spacing|30"}}},"fontFamily":"heading"} -->
-							<h2 class="wp-block-heading is-style-default has-text-color has-link-color has-heading-font-family" style="color:#000;margin-bottom:var(--wp--preset--spacing--30);font-size:38px;line-height:1.19"><?php echo esc_html__( 'Something big is brewing! Our store is in the works – Launching shortly!', 'woocommerce' ); ?></h2>
-							<!-- /wp:heading -->
+						<div class="wp-block-group" style="min-height:100%"><!-- wp:heading {"level":1,"className":"is-style-default","style":{"elements":{"link":{"color":{"text":"#000"}}},"color":{"text":"#000"},"typography":{"fontSize":"38px","lineHeight":"1.19"},"spacing":{"margin":{"bottom":"var:preset|spacing|30"}}},"fontFamily":"heading"} -->
+						<h1 class="wp-block-heading is-style-default has-text-color has-link-color has-heading-font-family" style="color:#000;margin-bottom:var(--wp--preset--spacing--30);font-size:38px;line-height:1.19"><?php echo esc_html__( 'Something big is brewing! Our store is in the works – Launching shortly!', 'woocommerce' ); ?></h1>
+						<!-- /wp:heading -->
 
 <!-- wp:group {"layout":{"type":"constrained","justifyContent":"left","contentSize":"338px"}} -->
 							<div class="wp-block-group"><!-- wp:paragraph {"style":{"color":{"text":"#000"},"elements":{"link":{"color":{"text":"#000"}}},"typography":{"lineHeight":"1.6","letterSpacing":"0px"}}} -->

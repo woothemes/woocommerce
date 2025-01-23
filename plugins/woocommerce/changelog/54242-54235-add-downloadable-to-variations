@@ -1,4 +1,0 @@
-Significance: minor
-Type: add
-
-Add the `downloadable` param to the list product variations endpoint.

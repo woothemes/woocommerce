@@ -1,4 +1,0 @@
-Significance: minor
-Type: update
-
-Replace the Cost of Goods Sold overrides parent flag for variations with an is additive flag

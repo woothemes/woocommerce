@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-CI: bump PHP version for a PHPUnit job.

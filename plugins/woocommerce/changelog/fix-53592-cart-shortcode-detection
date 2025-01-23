@@ -1,4 +1,0 @@
-Significance: minor
-Type: update
-
-Fix cart and checkout block/shortcode detection in status report and frontend.

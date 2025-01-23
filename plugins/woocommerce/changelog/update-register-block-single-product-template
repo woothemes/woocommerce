@@ -1,4 +1,0 @@
-Significance: minor
-Type: update
-
-Significant refactor of our block registration system registerBlockSingleProductTemplate for single product templates, specifically addressing performance concerns with the current implementation

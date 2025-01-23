@@ -61,6 +61,12 @@ class ComingSoonHelper {
 	 * @param \WP $wp WordPress environment instance.
 	 */
 	public function get_url_from_wp( \WP $wp ) {
+		// Initialize query vars if they haven't been set.
+		if ( empty( $wp->query_vars ) || empty( $wp->request ) ) {
+			$wp->parse_request();
+
+		}
+
 		return home_url( add_query_arg( $wp->query_vars, $wp->request ) );
 	}
 }

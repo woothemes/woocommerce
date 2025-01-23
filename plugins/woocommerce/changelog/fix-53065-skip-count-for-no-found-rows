@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix logic for skipping found rows query in OrdersTableQuery

@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { type ShippingAddress } from '@woocommerce/settings';
 import { select, dispatch } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 // If it's the shipping address form and the user starts entering address
 // values without having set the country first, show an error.
@@ -14,18 +14,18 @@ const validateCountry = (
 ): void => {
 	const validationErrorId = `${ addressType }_country`;
 	const hasValidationError =
-		select( VALIDATION_STORE_KEY ).getValidationError( validationErrorId );
+		select( validationStore ).getValidationError( validationErrorId );
 
 	if (
 		! values.country &&
 		( values.city || values.state || values.postcode )
 	) {
 		if ( hasValidationError ) {
-			dispatch( VALIDATION_STORE_KEY ).showValidationError(
+			dispatch( validationStore ).showValidationError(
 				validationErrorId
 			);
 		} else {
-			dispatch( VALIDATION_STORE_KEY ).setValidationErrors( {
+			dispatch( validationStore ).setValidationErrors( {
 				[ validationErrorId ]: {
 					message: __( 'Please select your country', 'woocommerce' ),
 					hidden: false,
@@ -35,9 +35,7 @@ const validateCountry = (
 	}
 
 	if ( hasValidationError && values.country ) {
-		dispatch( VALIDATION_STORE_KEY ).clearValidationError(
-			validationErrorId
-		);
+		dispatch( validationStore ).clearValidationError( validationErrorId );
 	}
 };
 

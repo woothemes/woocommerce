@@ -4,6 +4,9 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Pill } from '@woocommerce/components';
+import { Popover } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+import { Icon, info } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -27,11 +30,17 @@ interface StatusBadgeProps {
 	 * Override the default status message to display a custom one. Optional.
 	 */
 	message?: string;
+	/**
+	 * Optionally pass in popover content (as a React element). If this is passed in,
+	 * an info icon will be displayed which will show the popover content on hover.
+	 */
+	popoverContent?: React.ReactElement;
 }
 
 /**
  * A component that displays a status badge with a customizable appearance and message.
- * The appearance and default message are determined by the `status` prop, but a custom message can be provided via the `message` prop.
+ * The appearance and default message are determined by the `status` prop,
+ * but a custom message can be provided via the `message` prop.
  *
  * @example
  * // Render a status badge with the default message for "active" status.
@@ -40,8 +49,18 @@ interface StatusBadgeProps {
  * @example
  * // Render a status badge with a custom message.
  * <StatusBadge status="inactive" message="Not in use" />
+ *
+ * @example
+ * // Render a status badge which displays a popover.
+ * <StatusBadge status="active" message="Active" popoverContent={ <p>This is an active status badge</p> } />
  */
-export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
+export const StatusBadge = ( {
+	status,
+	message,
+	popoverContent,
+}: StatusBadgeProps ) => {
+	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
+
 	/**
 	 * Get the appropriate CSS class for the badge based on the status.
 	 */
@@ -87,6 +106,43 @@ export const StatusBadge = ( { status, message }: StatusBadgeProps ) => {
 	return (
 		<Pill className={ `woocommerce-status-badge ${ getStatusClass() }` }>
 			{ message || getStatusMessage() }
+			{ popoverContent && (
+				<span
+					className="woocommerce-status-badge__icon-container"
+					onClick={ () => setPopoverVisible( ! isPopoverVisible ) }
+					onMouseEnter={ () => setPopoverVisible( true ) }
+					onMouseLeave={ () => setPopoverVisible( false ) }
+					onKeyDown={ ( event ) => {
+						if ( event.key === 'Enter' || event.key === ' ' ) {
+							setPopoverVisible( ! isPopoverVisible );
+						}
+					} }
+					tabIndex={ 0 }
+					role="button"
+				>
+					<Icon
+						className="woocommerce-status-badge-icon"
+						size={ 14 }
+						icon={ info }
+					/>
+					{ isPopoverVisible && (
+						<Popover
+							className="woocommerce-status-badge-popover"
+							position="top right"
+							noArrow={ true }
+							onClose={ () => setPopoverVisible( false ) }
+						>
+							<div
+								className={
+									'settings-payment-gateways__popover-container'
+								}
+							>
+								{ popoverContent }
+							</div>
+						</Popover>
+					) }
+				</span>
+			) }
 		</Pill>
 	);
 };

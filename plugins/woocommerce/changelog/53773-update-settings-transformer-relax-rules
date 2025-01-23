@@ -1,4 +1,0 @@
-Significance: patch
-Type: tweak
-Comment: Fix Settings data grouping so that undefined ids are matched and group checkboxes are still included in groups when malformed.
-

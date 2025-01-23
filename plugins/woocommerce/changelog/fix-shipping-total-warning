@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix a bug when adding notices to the woocommerce/checkout-totals-block context

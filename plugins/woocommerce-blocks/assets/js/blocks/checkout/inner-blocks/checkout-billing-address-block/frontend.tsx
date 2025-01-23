@@ -6,7 +6,7 @@ import { withFilteredAttributes } from '@woocommerce/shared-hocs';
 import { FormStep } from '@woocommerce/blocks-components';
 import { useCheckoutAddress } from '@woocommerce/base-context/hooks';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ const FrontendBlock = ( {
 } ): JSX.Element | null => {
 	const { showFormStepNumbers } = useCheckoutBlockContext();
 	const checkoutIsProcessing = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).isProcessing()
+		select( checkoutStore ).isProcessing()
 	);
 	const { showBillingFields, forcedBillingAddress, useBillingAsShipping } =
 		useCheckoutAddress();

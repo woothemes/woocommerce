@@ -43,6 +43,7 @@ export default function ToolbarProductTypeGroup() {
 					currentProductType?.label ||
 					__( 'Switch product type', 'woocommerce' )
 				}
+				label={ __( 'Switch product type', 'woocommerce' ) }
 				value={ currentProductType?.slug }
 				controls={ productTypes.map( ( productType ) => ( {
 					title: productType.label,

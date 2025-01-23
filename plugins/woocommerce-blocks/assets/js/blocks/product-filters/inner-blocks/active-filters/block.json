@@ -40,11 +40,5 @@
 	},
 	"usesContext": [
 		"activeFilters"
-	],
-	"attributes": {
-		"clearButton": {
-			"type": "boolean",
-			"default": false
-		}
-	}
+	]
 }

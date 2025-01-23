@@ -11,9 +11,9 @@ import {
 } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 	PAYMENT_STORE_KEY,
-	VALIDATION_STORE_KEY,
+	validationStore,
 } from '@woocommerce/block-data';
 import deprecated from '@wordpress/deprecated';
 
@@ -57,7 +57,7 @@ export const PaymentEventsProvider = ( {
 		isCalculating: checkoutIsCalculating,
 		hasError: checkoutHasError,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			isProcessing: store.isProcessing(),
 			isIdle: store.isIdle(),
@@ -78,7 +78,7 @@ export const PaymentEventsProvider = ( {
 		};
 	} );
 
-	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { setValidationErrors } = useDispatch( validationStore );
 	const [ observers, observerDispatch ] = useReducer( emitReducer, {} );
 	const { onPaymentSetup } = useEventEmitters( observerDispatch );
 	const currentObservers = useRef( observers );

@@ -7,20 +7,20 @@ import type {
 	ValidationContextError,
 } from '@woocommerce/types';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 /**
  * Custom hook for setting for adding errors to the validation system.
  */
 export const useValidation = (): ValidationData => {
 	const { clearValidationError, hideValidationError, setValidationErrors } =
-		useDispatch( VALIDATION_STORE_KEY );
+		useDispatch( validationStore );
 
 	const prefix = 'extensions-errors';
 
 	const { hasValidationErrors, getValidationError } = useSelect(
 		( mapSelect ) => {
-			const store = mapSelect( VALIDATION_STORE_KEY );
+			const store = mapSelect( validationStore );
 			return {
 				hasValidationErrors: store.hasValidationErrors(),
 				getValidationError: ( validationErrorId: string ) =>
