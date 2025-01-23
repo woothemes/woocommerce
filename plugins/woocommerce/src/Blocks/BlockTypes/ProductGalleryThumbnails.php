@@ -37,7 +37,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 	 * @return string[]
 	 */
 	protected function get_block_type_uses_context() {
-		return [ 'productGalleryClientId', 'postId', 'thumbnailsNumberOfThumbnails', 'thumbnailsPosition', 'mode', 'cropImages' ];
+		return [ 'postId', 'mode', 'cropImages' ];
 	}
 
 	/**
@@ -121,7 +121,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		if ( ! isset( $block->context ) || ! isset( $block->context['thumbnailsPosition'] ) || '' === $block->context['thumbnailsPosition'] ) {
+		if ( ! isset( $block->context ) ) {
 			return '';
 		}
 
@@ -149,7 +149,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 
 		if ( $product_gallery_images && count( $product_gallery_images ) > 1 ) {
 			$html                 = '';
-			$number_of_thumbnails = isset( $block->context['thumbnailsNumberOfThumbnails'] ) && is_numeric( $block->context['thumbnailsNumberOfThumbnails'] ) ? $block->context['thumbnailsNumberOfThumbnails'] : 3;
+			$number_of_thumbnails = isset( $attributes['thumbnailsNumberOfThumbnails'] ) && is_numeric( $attributes['thumbnailsNumberOfThumbnails'] ) ? $attributes['thumbnailsNumberOfThumbnails'] : 3;
 			$mode                 = $block->context['mode'] ?? '';
 			$thumbnails_count     = 1;
 
