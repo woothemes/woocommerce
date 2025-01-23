@@ -42,8 +42,6 @@ class WC_Product_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$_SERVER['REQUEST_URI'] = self::$default_uri;
 	}
 
-
-
 	/**
 	 * @testdox Variations should appear when searching for parent product's SKU.
 	 */
