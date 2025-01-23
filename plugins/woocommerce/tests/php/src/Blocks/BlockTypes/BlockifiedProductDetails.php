@@ -3,10 +3,80 @@
 declare(strict_types=1);
 namespace Automattic\WooCommerce\Tests\Blocks\BlockTypes;
 
+use WC_Helper_Product;
+
 /**
  * Tests for the BlockifiedProductDetails block type
  */
 class BlockifiedProductDetails extends \WP_UnitTestCase {
+
+	/**
+	 * Page ID
+	 *
+	 * @var @string
+	 */
+	private static $page_id;
+
+	/**
+	 * Product
+	 *
+	 * @var @WC_Product
+	 */
+	private static $product;
+
+	/**
+	 * Create Simple Product and Page
+	 */
+	public static function setUpBeforeClass(): void {
+		parent::setUpBeforeClass();
+
+		self::$product = WC_Helper_Product::create_simple_product( false );
+		WC_Helper_Product::create_product_review( self::$product );
+
+		self::$page_id = wp_insert_post(
+			[
+				'post_title'  => 'Test Product Page',
+				'post_type'   => 'page',
+				'post_status' => 'publish',
+			],
+			true
+		);
+	}
+	/**
+	 * Set up product and page for each test
+	 *
+	 * @return void
+	 */
+	public function setUp(): void {
+		parent::setUp();
+		global $post, $product;
+
+		$post = get_post( self::$page_id );
+		setup_postdata( $post );
+		$product            = self::$product;
+		$GLOBALS['product'] = $product;
+	}
+
+	/**
+	 * Reset postdata after each test
+	 *
+	 * @return void
+	 */
+	public function tearDown(): void {
+		parent::tearDown();
+		wp_reset_postdata();
+	}
+
+	/**
+	 * Delete the product and page after all tests
+	 *
+	 * @return void
+	 */
+	public static function tearDownAfterClass(): void {
+		parent::tearDownAfterClass();
+		wp_delete_post( self::$page_id, true );
+		WC_Helper_Product::delete_product( self::$product->get_id() );
+	}
 
 
 	/**
@@ -16,7 +86,7 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 	 */
 	public function test_product_details_render_with_no_hook() {
 
-		$template = '<!-- wp:woocommerce/blockified-product-details --><div class="wp-block-woocommerce-blockified-product-details"><!-- wp:woocommerce/accordion-group --><div class="wp-block-woocommerce-accordion-group"><!-- wp:woocommerce/accordion-item --><div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header --><h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>Description Header</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
+		$template = '<!-- wp:woocommerce/blockified-product-details --><div class="wp-block-woocommerce-blockified-product-details"><!-- wp:woocommerce/accordion-group {"autoclose": false} --><div class="wp-block-woocommerce-accordion-group"><!-- wp:woocommerce/accordion-item {"openByDefault": false} --><div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header --><h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>Description Header</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
 <!-- /wp:woocommerce/accordion-header -->
 <!-- wp:woocommerce/accordion-panel -->
 <div class="wp-block-woocommerce-accordion-panel"><div class="accordion-content__wrapper"><!-- wp:paragraph -->
@@ -24,7 +94,7 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 <!-- /wp:paragraph --></div></div>
 <!-- /wp:woocommerce/accordion-panel --></div>
 <!-- /wp:woocommerce/accordion-item -->
-<!-- wp:woocommerce/accordion-item -->
+<!-- wp:woocommerce/accordion-item {"openByDefault": false} -->
 <div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
 <h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>Additional Information Header</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
 <!-- /wp:woocommerce/accordion-header -->
@@ -34,7 +104,7 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 <!-- /wp:paragraph --></div></div>
 <!-- /wp:woocommerce/accordion-panel --></div>
 <!-- /wp:woocommerce/accordion-item -->
-<!-- wp:woocommerce/accordion-item -->
+<!-- wp:woocommerce/accordion-item {"openByDefault": false} -->
 <div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
 <h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>Reviews Header</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
 <!-- /wp:woocommerce/accordion-header -->
@@ -141,8 +211,8 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 		);
 
 		$template = '<!-- wp:woocommerce/blockified-product-details -->
-	<div class="wp-block-woocommerce-blockified-product-details"><!-- wp:woocommerce/accordion-group -->
-	<div class="wp-block-woocommerce-accordion-group"><!-- wp:woocommerce/accordion-item -->
+	<div class="wp-block-woocommerce-blockified-product-details"><!-- wp:woocommerce/accordion-group {"autoclose":false} -->
+	<div class="wp-block-woocommerce-accordion-group"><!-- wp:woocommerce/accordion-item {"openByDefault": false} -->
 	<div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
 	<h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>Description Header</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
 	<!-- /wp:woocommerce/accordion-header -->
@@ -154,7 +224,7 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 	<!-- /wp:woocommerce/accordion-panel --></div>
 	<!-- /wp:woocommerce/accordion-item -->
 
-	<!-- wp:woocommerce/accordion-item -->
+	<!-- wp:woocommerce/accordion-item {"openByDefault": false} -->
 	<div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
 	<h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>Additional Information Header</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
 	<!-- /wp:woocommerce/accordion-header -->
@@ -166,7 +236,7 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 	<!-- /wp:woocommerce/accordion-panel --></div>
 	<!-- /wp:woocommerce/accordion-item -->
 
-	<!-- wp:woocommerce/accordion-item -->
+	<!-- wp:woocommerce/accordion-item {"openByDefault": false} -->
 	<div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
 	<h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>Reviews Header</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
 	<!-- /wp:woocommerce/accordion-header -->
