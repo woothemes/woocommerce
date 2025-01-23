@@ -15,13 +15,17 @@ export const getTextareaEdit = ( {
 	onChange,
 	data,
 }: DataFormControlProps< DataFormItem > ) => {
-	const { id, getValue, label } = field;
+	const { id, getValue, label, placeholder, description } = field;
 	const value = getValue( { item: data } );
+	const helpText =
+		description === 'true' || description === 'false' ? '' : description;
 
 	return (
 		<TextareaControl
 			__nextHasNoMarginBottom
-			help={ label }
+			help={ helpText }
+			label={ label }
+			placeholder={ placeholder }
 			onChange={ ( newValue ) => {
 				onChange( {
 					[ id ]: newValue,
