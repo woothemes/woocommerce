@@ -89,8 +89,8 @@ final class NumberUtil {
 			substr_count( $value, $decimal_separator ) > 1 ||
 			(
 				// Check that decimal separator appears after thousand separator if both exist.
-				str_contains( $value, $thousand_separator ) &&
-				str_contains( $value, $decimal_separator ) &&
+				false !== strpos( $value, $thousand_separator ) &&
+				false !== strpos( $value, $decimal_separator ) &&
 				strpos( $value, $decimal_separator ) <= strpos( $value, $thousand_separator )
 			)
 		) {
