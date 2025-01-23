@@ -170,7 +170,6 @@ class ProductGallery extends AbstractBlock {
 			$classname_single_image = 'is-single-product-gallery-image';
 		}
 
-		$number_of_thumbnails           = $block->attributes['thumbnailsNumberOfThumbnails'] ?? 0;
 		$classname                      = StyleAttributesUtils::get_classes_by_attributes( $attributes, array( 'extra_classes' ) );
 		$dialog                         = isset( $attributes['mode'] ) && 'full' !== $attributes['mode'] ? $this->render_dialog() : '';
 		$product_gallery_first_image    = ProductGalleryUtils::get_product_gallery_image_ids( $product, 1 );
@@ -189,7 +188,7 @@ class ProductGallery extends AbstractBlock {
 						'firstMainImageId'                => $product_gallery_first_image_id,
 						'selectedImageNumber'             => 1,
 						'isDialogOpen'                    => false,
-						'visibleImagesIds'                => ProductGalleryUtils::get_product_gallery_image_ids( $product, $number_of_thumbnails, true ),
+						'visibleImagesIds'                => ProductGalleryUtils::get_product_gallery_image_ids( $product, null, false ),
 						'dialogVisibleImagesIds'          => ProductGalleryUtils::get_product_gallery_image_ids( $product, null, false ),
 						'mouseIsOverPreviousOrNextButton' => false,
 						'productId'                       => $product_id,
