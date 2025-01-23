@@ -1,4 +1,0 @@
-Significance: patch
-Type: dev
-
-CI config: run extra e2e checks for different envs in PRs updating e2e tests

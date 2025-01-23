@@ -1,5 +1,6 @@
 .woocommerce-incentive-popover {
 	&__title {
+		margin-top: 0;
 		font-size: 13px;
 		line-height: 20px;
 	}
@@ -7,5 +8,6 @@
 	&__terms {
 		font-size: 12px;
 		line-height: 18px;
+		margin-bottom: 0;
 	}
 }
