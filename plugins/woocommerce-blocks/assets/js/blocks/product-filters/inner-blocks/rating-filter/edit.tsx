@@ -36,7 +36,7 @@ import { InitialDisabled } from '../../components/initial-disabled';
 const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { attributes, setAttributes, clientId } = props;
 
-	const { isPreview, showCounts, minRating, clearButton } = attributes;
+	const { isPreview, showCounts, minRating } = attributes;
 
 	const { children, ...innerBlocksProps } = useInnerBlocksProps(
 		useBlockProps(),
@@ -67,9 +67,7 @@ const RatingFilterEdit = ( props: BlockEditProps< Attributes > ) => {
 								content: __( 'Rating', 'woocommerce' ),
 							},
 						],
-						clearButton
-							? [ 'woocommerce/product-filter-clear-button' ]
-							: null,
+						[ 'woocommerce/product-filter-clear-button' ],
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
 				[ 'woocommerce/product-filter-checkbox-list' ],

@@ -31,11 +31,19 @@
 // Popover styling
 .woocommerce-status-badge-popover {
 	.components-popover__content {
-		padding: 4px 12px;
+		background: $white;
+		padding: $gap-small;
+		border: 1px solid $gray-100;
+		box-shadow: none;
+		border-radius: 3px;
 
 		a {
+			outline: none;
 			text-decoration: underline;
-			outline: 0;
+
+			&:focus {
+				box-shadow: none;
+			}
 		}
 	}
 

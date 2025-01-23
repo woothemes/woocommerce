@@ -9,8 +9,6 @@ import { findBlock } from '@woocommerce/utils';
  * Internal dependencies
  */
 import { ThumbnailsPosition } from './inner-blocks/product-gallery-thumbnails/constants';
-import { getNextPreviousImagesWithClassName } from './inner-blocks/product-gallery-large-image-next-previous/utils';
-import { NextPreviousButtonSettingValues } from './inner-blocks/product-gallery-large-image-next-previous/types';
 
 /**
  * Generates layout attributes based on the position of thumbnails.
@@ -177,13 +175,4 @@ export const moveInnerBlocksToPosition = (
 			}
 		}
 	}
-};
-
-export const getClassNameByNextPreviousButtonsPosition = (
-	nextPreviousButtonsPosition: NextPreviousButtonSettingValues
-) => {
-	return `wc-block-product-gallery--has-next-previous-buttons-${
-		getNextPreviousImagesWithClassName( nextPreviousButtonsPosition )
-			?.classname
-	}`;
 };
