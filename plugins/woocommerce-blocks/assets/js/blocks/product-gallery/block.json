@@ -14,8 +14,6 @@
 	"textdomain": "woocommerce",
 	"usesContext": [ "postId" ],
 	"providesContext": {
-		"thumbnailsPosition": "thumbnailsPosition",
-		"thumbnailsNumberOfThumbnails": "thumbnailsNumberOfThumbnails",
 		"productGalleryClientId": "productGalleryClientId",
 		"hoverZoom": "hoverZoom",
 		"fullScreenOnClick": "fullScreenOnClick",
