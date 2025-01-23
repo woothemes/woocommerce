@@ -20,7 +20,13 @@ export const getColorEdit = ( {
 
 	return (
 		<Fragment>
+			<label
+				className="woocommerce-settings-color-picker__label"
+				htmlFor={ id }
+				dangerouslySetInnerHTML={ { __html: label } }
+			/>
 			<ColorPicker
+				className="woocommerce-settings-color-picker"
 				onChange={ ( newValue ) => {
 					onChange( {
 						[ id ]: newValue,
@@ -28,7 +34,6 @@ export const getColorEdit = ( {
 				} }
 				color={ value }
 			/>
-			<legend>{ label }</legend>
 		</Fragment>
 	);
 };
