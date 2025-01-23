@@ -37,6 +37,18 @@ export function cart() {
 			commonNonStandardHeaders
 		);
 
+		const product = http.get(
+			`${ base_url }/wp-json/wc/store/v1/products/${ product_id }`,
+			{
+				headers: requestheaders,
+				tags: { name: 'Shopper - Verify product' },
+			}
+		);
+
+		check( product, {
+			'is the infamous Beanie': ( r ) => r.sku === 'woo-beanie',
+		} );
+
 		const response = http.post(
 			`${ base_url }/?wc-ajax=add_to_cart`,
 			{
