@@ -1,14 +1,12 @@
 /**
  * External dependencies
  */
-import { store as blockEditorStore } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import {
 	thumbnailsPositionLeft,
 	thumbnailsPositionBottom,
 	thumbnailsPositionRight,
 } from '@woocommerce/icons';
-import { useDispatch } from '@wordpress/data';
 import {
 	Icon,
 	RangeControl,
@@ -26,7 +24,7 @@ import {
  * Internal dependencies
  */
 import { ThumbnailsPosition } from '../constants';
-import type { ProductGalleryThumbnailsSettingsProps } from '../../../types';
+import type { ProductGalleryThumbnailsSettingsProps } from '../types';
 
 const positionHelp: Record< ThumbnailsPosition, string > = {
 	[ ThumbnailsPosition.LEFT ]: __(
@@ -44,12 +42,12 @@ const positionHelp: Record< ThumbnailsPosition, string > = {
 };
 
 export const ProductGalleryThumbnailsBlockSettings = ( {
-	context,
+	attributes,
+	setAttributes,
 }: ProductGalleryThumbnailsSettingsProps ) => {
 	const maxNumberOfThumbnails = 8;
 	const minNumberOfThumbnails = 3;
-	const { productGalleryClientId } = context;
-	const { updateBlockAttributes } = useDispatch( blockEditorStore );
+	const { thumbnailsPosition, thumbnailsNumberOfThumbnails } = attributes;
 
 	return (
 		<>
@@ -57,14 +55,12 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 				className="wc-block-editor-product-gallery-thumbnails__position-toggle"
 				isBlock
 				label={ __( 'Thumbnails', 'woocommerce' ) }
-				value={ context.thumbnailsPosition }
+				value={ thumbnailsPosition }
 				help={
-					positionHelp[
-						context.thumbnailsPosition as ThumbnailsPosition
-					]
+					positionHelp[ thumbnailsPosition as ThumbnailsPosition ]
 				}
-				onChange={ ( value: string ) =>
-					updateBlockAttributes( productGalleryClientId, {
+				onChange={ ( value: ThumbnailsPosition ) =>
+					setAttributes( {
 						thumbnailsPosition: value,
 					} )
 				}
@@ -90,9 +86,9 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 			</ToggleGroupControl>
 			<RangeControl
 				label={ __( 'Number of Thumbnails', 'woocommerce' ) }
-				value={ context.thumbnailsNumberOfThumbnails }
+				value={ thumbnailsNumberOfThumbnails }
 				onChange={ ( value: number ) =>
-					updateBlockAttributes( productGalleryClientId, {
+					setAttributes( {
 						thumbnailsNumberOfThumbnails: Math.round( value ),
 					} )
 				}

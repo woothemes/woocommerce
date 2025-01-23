@@ -4,6 +4,7 @@
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { Disabled, PanelBody } from '@wordpress/components';
 import { WC_BLOCKS_IMAGE_URL } from '@woocommerce/block-settings';
+import type { BlockEditProps } from '@wordpress/blocks';
 import clsx from 'clsx';
 
 /**
@@ -11,18 +12,17 @@ import clsx from 'clsx';
  */
 import './editor.scss';
 import { ProductGalleryThumbnailsBlockSettings } from './block-settings';
-import type { ProductGalleryContext } from '../../types';
+import type { ProductGalleryThumbnailsBlockAttributes } from './types';
 
-interface EditProps {
-	context: ProductGalleryContext;
-}
-
-export const Edit = ( { context }: EditProps ) => {
+export const Edit = ( {
+	attributes,
+	setAttributes,
+}: BlockEditProps< ProductGalleryThumbnailsBlockAttributes > ) => {
 	const blockProps = useBlockProps( {
 		className: clsx(
 			'wc-block-product-gallery-thumbnails',
-			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ context.thumbnailsNumberOfThumbnails }`,
-			`wc-block-product-gallery-thumbnails--position-${ context.thumbnailsPosition }`
+			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.thumbnailsNumberOfThumbnails }`,
+			`wc-block-product-gallery-thumbnails--position-${ attributes.thumbnailsPosition }`
 		),
 	} );
 
@@ -30,7 +30,7 @@ export const Edit = ( { context }: EditProps ) => {
 		return (
 			<div className="wc-block-editor-product-gallery-thumbnails">
 				{ [
-					...Array( context.thumbnailsNumberOfThumbnails ).keys(),
+					...Array( attributes.thumbnailsNumberOfThumbnails ).keys(),
 				].map( ( index ) => {
 					return (
 						<div
@@ -54,7 +54,8 @@ export const Edit = ( { context }: EditProps ) => {
 				<InspectorControls>
 					<PanelBody>
 						<ProductGalleryThumbnailsBlockSettings
-							context={ context }
+							attributes={ attributes }
+							setAttributes={ setAttributes }
 						/>
 					</PanelBody>
 				</InspectorControls>
