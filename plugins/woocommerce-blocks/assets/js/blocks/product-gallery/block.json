@@ -14,7 +14,6 @@
 	"textdomain": "woocommerce",
 	"usesContext": [ "postId" ],
 	"providesContext": {
-		"productGalleryClientId": "productGalleryClientId",
 		"hoverZoom": "hoverZoom",
 		"fullScreenOnClick": "fullScreenOnClick",
 		"mode": "mode",
@@ -22,10 +21,6 @@
 	},
 	"ancestor": [ "woocommerce/single-product" ],
 	"attributes": {
-		"productGalleryClientId": {
-			"type": "string",
-			"default": ""
-		},
 		"cropImages": {
 			"type": "boolean",
 			"default": false
