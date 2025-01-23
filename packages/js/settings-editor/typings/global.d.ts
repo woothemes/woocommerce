@@ -28,7 +28,7 @@ declare global {
 			| 'slotfill_placeholder';
 		id: string;
 		desc?: string;
-		desc_tip?: boolean | string;
+		desc_tip?: string;
 		default?: string | number | boolean | object;
 		value: string | number | boolean | object;
 		placeholder?: string;

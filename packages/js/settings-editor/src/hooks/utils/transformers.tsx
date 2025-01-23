@@ -14,6 +14,7 @@ import { SettingsGroup } from '../../components/settings-group';
 import { CheckboxEdit } from '../../components/checkbox-edit';
 import { getInputEdit } from '../../components/inputEdit';
 import { SelectEdit } from '../../components/selectEdit';
+import { getTextareaEdit } from '../../components/textareaEdit';
 
 export type DataItem = Record< string, BaseSettingsField[ 'value' ] >;
 
@@ -110,6 +111,14 @@ export const transformToField = (
 					} )
 				),
 				Edit: SelectEdit,
+			};
+
+		case 'textarea':
+			return {
+				id: setting.id,
+				type: 'text',
+				label: setting.desc_tip,
+				Edit: getTextareaEdit,
 			};
 
 		case 'custom':
