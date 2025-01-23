@@ -5,7 +5,6 @@ import { store, getContext as getContextFn } from '@woocommerce/interactivity';
 import { select, subscribe, dispatch } from '@wordpress/data';
 import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
 import { Cart } from '@woocommerce/type-defs/cart';
-import { decodeEntities } from '@wordpress/html-entities';
 import type { store as StoreType } from '@wordpress/interactivity';
 
 /**
@@ -147,7 +146,7 @@ const { state } = ( store as typeof StoreType )< Store >(
 						}
 
 						const noticeId = noticesStore.actions.addNotice( {
-							notice: decodeEntities( message ),
+							notice: message,
 							type: 'error',
 							dismissible: true,
 						} );
