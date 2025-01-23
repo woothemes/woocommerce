@@ -24,14 +24,6 @@
 	},
 	"ancestor": [ "woocommerce/single-product" ],
 	"attributes": {
-		"thumbnailsPosition": {
-			"type": "string",
-			"default": "left"
-		},
-		"thumbnailsNumberOfThumbnails": {
-			"type": "number",
-			"default": 3
-		},
 		"productGalleryClientId": {
 			"type": "string",
 			"default": ""

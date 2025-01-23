@@ -16,7 +16,7 @@ import { useSelect } from '@wordpress/data';
  */
 import { moveInnerBlocksToPosition } from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
-import type { ProductGalleryAttributes } from './types';
+import type { ProductGalleryBlockAttributes } from './types';
 
 const TEMPLATE: InnerBlockTemplate[] = [
 	[
@@ -102,7 +102,7 @@ export const Edit = ( {
 	clientId,
 	attributes,
 	setAttributes,
-}: BlockEditProps< ProductGalleryAttributes > ) => {
+}: BlockEditProps< ProductGalleryBlockAttributes > ) => {
 	const blockProps = useBlockProps();
 
 	const { currentTemplateId, templateType } = useSelect( ( select ) => {
@@ -137,12 +137,6 @@ export const Edit = ( {
 				<ProductGalleryBlockSettings
 					attributes={ attributes }
 					setAttributes={ setAttributes }
-					context={ {
-						productGalleryClientId: clientId,
-						thumbnailsPosition: attributes.thumbnailsPosition,
-						thumbnailsNumberOfThumbnails:
-							attributes.thumbnailsNumberOfThumbnails,
-					} }
 				/>
 			</InspectorControls>
 			<InnerBlocks
