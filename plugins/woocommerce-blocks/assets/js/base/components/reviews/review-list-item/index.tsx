@@ -186,9 +186,9 @@ const ReviewListItem = ( { attributes, review = {} }: ReviewListItemProps ) => {
 						showReviewRating ||
 						showReviewDate ) && (
 						<div className="wc-block-review-list-item__meta wc-block-components-review-list-item__meta">
-							{ showReviewRating && getReviewRating( review ) }
 							{ showProductName &&
 								getReviewProductName( review ) }
+							{ showReviewRating && getReviewRating( review ) }
 							{ showReviewerName && getReviewerName( review ) }
 							{ showReviewDate && getReviewDate( review ) }
 						</div>
