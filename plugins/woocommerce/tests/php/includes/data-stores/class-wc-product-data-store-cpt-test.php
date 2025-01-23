@@ -15,7 +15,6 @@ class WC_Product_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	 */
 	private static $default_uri;
 
-
 	/**
 	 * Store the default URI.
 	 */
