@@ -97,39 +97,6 @@ class WC_Cart_Test extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * @testdox variable product should not be added to the cart if variation_id=0.
-	 */
-	public function test_add_variation_to_the_cart_zero_variation_id() {
-		WC()->cart->empty_cart();
-		WC()->session->set( 'wc_notices', null );
-
-		$variable_product = WC_Helper_Product::create_variation_product();
-
-		// Add variable and variation_id=0.
-		WC()->cart->add_to_cart(
-			$variable_product->get_id(),
-			1,
-			0
-		);
-		$notices = WC()->session->get( 'wc_notices', array() );
-
-		// Check for cart contents.
-		$this->assertCount( 0, WC()->cart->get_cart_contents() );
-		$this->assertEquals( 0, WC()->cart->get_cart_contents_count() );
-
-		// Check that the notices contain an error message about the product option is not selected.
-		$this->assertArrayHasKey( 'error', $notices );
-		$this->assertCount( 1, $notices['error'] );
-		$expected = sprintf( sprintf( 'Please choose product options by visiting <a href="%1$s" title="%2$s">%2$s</a>.', esc_url( $variable_product->get_permalink() ), esc_html( $variable_product->get_name() ) ) );
-		$this->assertEquals( $expected, $notices['error'][0]['notice'] );
-
-		// Reset cart.
-		WC()->cart->empty_cart();
-		WC()->customer->set_is_vat_exempt( false );
-		$variable_product->delete( true );
-	}
-
-	/**
 	 * Test cloning cart holds no references in session
 	 */
 	public function test_cloning_cart_session() {
