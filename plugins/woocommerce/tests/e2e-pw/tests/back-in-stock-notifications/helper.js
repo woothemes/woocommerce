@@ -422,6 +422,7 @@ class AcceptanceHelper {
 		await expect(
 			this.page.getByRole( 'heading', {
 				name: this.productData.name,
+				exact: true,
 			} )
 		).toBeVisible();
 	}
