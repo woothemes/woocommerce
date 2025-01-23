@@ -19,7 +19,6 @@
 		"productGalleryClientId": "productGalleryClientId",
 		"hoverZoom": "hoverZoom",
 		"fullScreenOnClick": "fullScreenOnClick",
-		"mode": "mode",
 		"cropImages": "cropImages"
 	},
 	"ancestor": [ "woocommerce/single-product" ],
@@ -47,10 +46,6 @@
 		"fullScreenOnClick": {
 			"type": "boolean",
 			"default": true
-		},
-		"mode": {
-			"type": "string",
-			"default": "standard"
 		}
 	},
 	"viewScript": "wc-product-gallery-frontend",
