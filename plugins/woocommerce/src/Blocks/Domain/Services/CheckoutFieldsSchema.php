@@ -4,9 +4,22 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Admin\Features\Features;
+<<<<<<< HEAD
 use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
+=======
+use Automattic\WooCommerce\StoreApi\StoreApi;
+use Automattic\WooCommerce\StoreApi\SchemaController;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\OrderSchema;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\BillingAddressSchema;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\ShippingAddressSchema;
+use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
+>>>>>>> 87eae2f6a9 (Add document schema in PHP)
 use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\Validator;
+use WC_Cart;
+use WC_Order;
+use WC_Customer;
 
 /**
  * Service class managing checkout field schema.
