@@ -59,20 +59,26 @@ class CheckoutFieldsSchema {
 			return $field_data;
 		}
 
-		if ( ! empty( $field_data['rules'] ) ) {
-			// No document object, so we can't validate the rules. Prevent field being required or hidden for now.
-			if ( null === $document_object ) {
-				if ( ! empty( $field_data['rules']['required'] ) ) {
-					$field_data['required'] = false;
-				}
-				if ( ! empty( $field_data['rules']['hidden'] ) ) {
-					$field_data['hidden'] = false;
-				}
-			} elseif ( ! empty( $field_data['rules']['required'] ) ) {
-				$test = $this->validate_document_object_rules( $document_object, $field_data['rules']['required'] );
-				var_dump( $test );
-				$field_data['required'] = $test;
+		if ( empty( $field_data['rules'] ) ) {
+			return $field_data;
+		}
+
+		if ( null === $document_object ) {
+			if ( ! empty( $field_data['rules']['required'] ) ) {
+				$field_data['required'] = false;
 			}
+			if ( ! empty( $field_data['rules']['hidden'] ) ) {
+				$field_data['hidden'] = false;
+			}
+			return $field_data;
+		}
+
+		if ( ! empty( $field_data['rules']['required'] ) ) {
+			$field_data['required'] = $this->validate_document_object_rules( $document_object, $field_data['rules']['required'] );
+		}
+
+		if ( ! empty( $field_data['rules']['hidden'] ) ) {
+			$field_data['hidden'] = $this->validate_document_object_rules( $document_object, $field_data['rules']['hidden'] );
 		}
 
 		return $field_data;
@@ -149,12 +155,7 @@ class CheckoutFieldsSchema {
 			)
 		);
 
-		if ( $result->hasError() ) {
-			var_dump( (string) $result->error() );
-			return false;
-		}
-
-		return true;
+		return ! $result->hasError();
 	}
 
 	/**

@@ -8,6 +8,7 @@ use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
 use Automattic\WooCommerce\Checkout\Helpers\ReserveStockException;
 use Automattic\WooCommerce\StoreApi\Utilities\CheckoutTrait;
 use Automattic\WooCommerce\Utilities\RestApiUtil;
+use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
 
 /**
  * Checkout class.
@@ -105,6 +106,11 @@ class Checkout extends AbstractCartRoute {
 							'description' => __( 'Customer password for new accounts, if applicable.', 'woocommerce' ),
 							'type'        => 'string',
 						],
+						'process_payment'   => [
+							'description' => __( 'Process payment.', 'woocommerce' ),
+							'type'        => 'boolean',
+							'default'     => true,
+						],
 					],
 					$this->schema->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE )
 				),
@@ -183,9 +189,21 @@ class Checkout extends AbstractCartRoute {
 	 * @throws RouteException When a required additional field is missing.
 	 */
 	public function validate_required_additional_fields( \WP_REST_Request $request ) {
-		$contact_fields           = $this->additional_fields_controller->get_fields_for_location( 'contact' );
-		$order_fields             = $this->additional_fields_controller->get_fields_for_location( 'order' );
-		$order_and_contact_fields = array_merge( $contact_fields, $order_fields );
+
+		$document_object = new DocumentObject();
+		$document_object->set_billing_address( $request['billing_address'] );
+		$document_object->set_shipping_address( $request['shipping_address'] );
+
+		$order_and_contact_fields = array_merge(
+			$this->additional_fields_controller->get_fields_for_location( 'contact' ),
+			$this->additional_fields_controller->get_fields_for_location( 'order' )
+		);
+		$order_and_contact_fields = array_map(
+			function ( $field ) use ( $document_object ) {
+				return $this->additional_fields_controller->schema->process_field_rules( $field, $document_object );
+			},
+			$order_and_contact_fields
+		);
 
 		if ( ! empty( $order_and_contact_fields ) ) {
 			foreach ( $order_and_contact_fields as $field_key => $order_and_contact_field ) {
@@ -201,6 +219,13 @@ class Checkout extends AbstractCartRoute {
 		}
 
 		$address_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
+		$address_fields = array_map(
+			function ( $field ) use ( $document_object ) {
+				return $this->additional_fields_controller->schema->process_field_rules( $field, $document_object );
+			},
+			$address_fields
+		);
+
 		if ( ! empty( $address_fields ) ) {
 			$needs_shipping = WC()->cart->needs_shipping();
 			foreach ( $address_fields as $field_key => $address_field ) {
@@ -370,10 +395,12 @@ class Checkout extends AbstractCartRoute {
 		 */
 		$payment_result = new PaymentResult();
 
-		if ( $this->order->needs_payment() ) {
-			$this->process_payment( $request, $payment_result );
-		} else {
-			$this->process_without_payment( $request, $payment_result );
+		if ( $request['process_payment'] ) {
+			if ( $this->order->needs_payment() ) {
+				$this->process_payment( $request, $payment_result );
+			} else {
+				$this->process_without_payment( $request, $payment_result );
+			}
 		}
 
 		return $this->prepare_item_for_response(
