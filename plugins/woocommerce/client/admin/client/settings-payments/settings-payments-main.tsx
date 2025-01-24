@@ -234,21 +234,28 @@ export const SettingsPaymentsMain = () => {
 		// Set the ref to true to prevent multiple pageview events.
 		triggeredPageViewRef.current = true;
 
-		const eventProps = ( suggestions || [] ).reduce(
-			( props, suggestion ) => {
-				return {
-					...props,
-					[ suggestion.id.replace( /-/g, '_' ) + '_displayed' ]: true,
-				};
-			},
-			{
-				woocommerce_payments_displayed: providers.some(
-					( provider ) =>
-						provider.id === 'woocommerce_payments' ||
-						provider.id === '_wc_pes_woopayments'
-				),
-			}
-		);
+		const eventProps = {
+			woocommerce_payments_displayed: providers.some(
+				( provider ) =>
+					provider.id === 'woocommerce_payments' ||
+					provider.id === '_wc_pes_woopayments'
+			),
+		};
+
+		suggestions.forEach( ( suggestion ) => {
+			eventProps[ suggestion.id.replace( /-/g, '_' ) + '_displayed' ] =
+				true;
+		} );
+
+		providers
+			.filter( ( provider ) => provider._type === 'suggestion' )
+			.forEach( ( provider ) => {
+				if ( provider.plugin && provider.plugin.slug ) {
+					eventProps[
+						provider.plugin.slug.replace( /-/g, '_' ) + '_displayed'
+					] = true;
+				}
+			} );
 
 		recordEvent( 'settings_payments_recommendations_pageview', eventProps );
 	}, [ suggestions, providers, isFetching ] );
