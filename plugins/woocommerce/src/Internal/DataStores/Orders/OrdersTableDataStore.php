@@ -1046,10 +1046,14 @@ WHERE
 
 		if ( $include_tax_amount ) {
 			$meta_key_includes[] = 'tax_amount';
+		} else {
+			$meta_key_includes[] = '';
 		}
 
 		if ( $include_shipping_tax_amount ) {
 			$meta_key_includes[] = 'shipping_tax_amount';
+		} else {
+			$meta_key_includes[] = '';
 		}
 
 		$total = $wpdb->get_var(
@@ -1060,9 +1064,13 @@ WHERE
 				INNER JOIN $order_table AS orders ON ( orders.type = 'shop_order_refund' AND orders.parent_order_id = %d )
 				INNER JOIN {$wpdb->prefix}woocommerce_order_items AS order_items ON ( order_items.order_id = orders.id AND order_items.order_item_type = 'tax' )
 				WHERE order_itemmeta.order_item_id = order_items.order_item_id
-				AND order_itemmeta.meta_key IN (%s)",
-				$order->get_id(),
-				implode( ',', $meta_key_includes )
+				AND order_itemmeta.meta_key IN (%s, %s)",
+				array_merge(
+					array(
+						$order->get_id(),
+					),
+					$meta_key_includes
+				)
 			)
 		) ?? 0;
 		// phpcs:enable
