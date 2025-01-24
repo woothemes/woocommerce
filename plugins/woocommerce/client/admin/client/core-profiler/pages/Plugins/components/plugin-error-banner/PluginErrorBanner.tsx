@@ -14,10 +14,12 @@ import { joinWithAnd, composeListFormatParts } from '../../Plugins';
 export const PluginErrorBanner = ( {
 	pluginsInstallationPermissionsFailure,
 	pluginsInstallationErrors,
+	pluginsSlugToName = {},
 	onClick,
 }: {
 	pluginsInstallationPermissionsFailure?: boolean;
 	pluginsInstallationErrors?: PluginInstallError[];
+	pluginsSlugToName?: Record< string, string >;
 	onClick?: () => void;
 } ) => {
 	let installationErrorMessage;
@@ -40,16 +42,22 @@ export const PluginErrorBanner = ( {
 				);
 			break;
 	}
+
+	const failedPluginNames = [
+		...new Set(
+			( pluginsInstallationErrors || [] ).map(
+				// Use the plugin name if available, otherwise use the plugin slug
+				( error ) => pluginsSlugToName[ error.plugin ] || error.plugin
+			)
+		),
+	];
+
 	return (
 		<p className="plugin-error">
 			{ interpolateComponents( {
 				mixedString: sprintf(
 					installationErrorMessage,
-					joinWithAnd(
-						( pluginsInstallationErrors || [] ).map(
-							( error ) => error.plugin
-						)
-					)
+					joinWithAnd( failedPluginNames )
 						.map( composeListFormatParts )
 						.join( '' )
 				),
