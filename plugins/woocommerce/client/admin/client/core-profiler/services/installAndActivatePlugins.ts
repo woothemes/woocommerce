@@ -25,6 +25,7 @@ import {
 	PluginsInstallationCompletedEvent,
 	PluginsInstallationCompletedWithErrorsEvent,
 } from '../events';
+import { getPluginSlug } from '~/utils/plugins';
 
 export type InstalledPlugin = {
 	plugin: string;
@@ -116,16 +117,15 @@ export const pluginInstallerMachine = createMachine(
 			>;
 		} ) => {
 			return {
-				selectedPlugins:
-					input?.selectedPlugins || ( [] as PluginNames[] ),
+				selectedPlugins: input?.selectedPlugins || [],
 				pluginsAvailable:
 					input?.pluginsAvailable ||
 					( [] as ExtensionList[ 'plugins' ] | [] ),
-				pluginsInstallationQueue: [] as PluginNames[],
-				installedPlugins: [] as InstalledPlugin[],
+				pluginsInstallationQueue: [],
+				installedPlugins: [],
 				startTime: 0,
 				installationDuration: 0,
-				errors: [] as PluginInstallError[],
+				errors: [],
 			} as PluginInstallerMachineContext;
 		},
 		states: {
@@ -213,7 +213,7 @@ export const pluginInstallerMachine = createMachine(
 				pluginsInstallationQueue: ( { context } ) => {
 					// Sort the plugins by install_priority so that the smaller plugins are installed first
 					// install_priority is set by plugin's size
-					// Lower install_prioirty means the plugin is smaller
+					// Lower install_priority means the plugin is smaller
 					return context.selectedPlugins.slice().sort( ( a, b ) => {
 						const aIndex = context.pluginsAvailable.find(
 							( plugin ) => plugin.key === a
@@ -318,7 +318,7 @@ export const pluginInstallerMachine = createMachine(
 					return dispatch(
 						PLUGINS_STORE_NAME
 					).installAndActivatePlugins( [
-						pluginsInstallationQueue[ 0 ],
+						getPluginSlug( pluginsInstallationQueue[ 0 ] ),
 					] );
 				}
 			),
@@ -331,7 +331,9 @@ export const pluginInstallerMachine = createMachine(
 					return dispatch(
 						ONBOARDING_STORE_NAME
 					).installAndActivatePluginsAsync(
-						pluginsInstallationQueue
+						pluginsInstallationQueue.map(
+							getPluginSlug
+						) as PluginNames[]
 					);
 				}
 			),

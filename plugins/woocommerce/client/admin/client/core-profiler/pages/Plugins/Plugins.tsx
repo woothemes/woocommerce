@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { Extension, ExtensionList } from '@woocommerce/data';
-import { useState } from 'react';
+import { useState, useMemo } from '@wordpress/element';
 import clsx from 'clsx';
 
 /**
@@ -159,6 +159,15 @@ export const Plugins = ( {
 		context.pluginsAvailable.length / 2
 	);
 
+	const pluginsSlugToName = useMemo(
+		() =>
+			context.pluginsAvailable.reduce( ( acc, plugin ) => {
+				acc[ plugin.key ] = plugin.name;
+				return acc;
+			}, {} as Record< string, string > ),
+		[ context.pluginsAvailable ]
+	);
+
 	return (
 		<div
 			className="woocommerce-profiler-plugins"
@@ -185,6 +194,7 @@ export const Plugins = ( {
 						pluginsInstallationErrors={
 							context.pluginsInstallationErrors
 						}
+						pluginsSlugToName={ pluginsSlugToName }
 						onClick={ submitInstallationRequest }
 					/>
 				) }
