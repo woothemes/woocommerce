@@ -197,10 +197,12 @@ class CheckoutFieldsSchema {
 	 * @param WC_Cart|null     $cart The cart object.
 	 * @param WC_Order|null    $order The order object.
 	 * @param WC_Customer|null $customer The customer object.
-	 * @param array|null       $current_address The current address.
+	 * @param array|null       $billing_address The billing address.
+	 * @param array|null       $shipping_address The shipping address.
+	 * @param string|null      $address_type The address type.
 	 * @return array The document object.
 	 */
-	public function get_document_object( WC_Cart $cart = null, WC_Order $order = null, WC_Customer $customer = null, $current_address = null ) {
+	public function get_document_object( WC_Cart $cart = null, WC_Order $order = null, WC_Customer $customer = null, $billing_address = null, $shipping_address = null, $address_type = null ) {
 
 		$data = [];
 
@@ -296,15 +298,15 @@ class CheckoutFieldsSchema {
 			$customer = $cart ? wc()->customer : new WC_Customer( $order->get_customer_id() );
 		}
 
-		if ( $customer ) {
-			$billing_address  = StoreApi::container()->get( SchemaController::class )->get( BillingAddressSchema::IDENTIFIER )->get_item_response( $customer );
-			$shipping_address = StoreApi::container()->get( SchemaController::class )->get( ShippingAddressSchema::IDENTIFIER )->get_item_response( $customer );
+		if ( $customer || $billing_address || $shipping_address ) {
+			$billing_address  = $billing_address ? $billing_address : StoreApi::container()->get( SchemaController::class )->get( BillingAddressSchema::IDENTIFIER )->get_item_response( $customer );
+			$shipping_address = $shipping_address ? $shipping_address : StoreApi::container()->get( SchemaController::class )->get( ShippingAddressSchema::IDENTIFIER )->get_item_response( $customer );
 			$data['customer'] = [
 				'id'               => $customer->get_id(),
 				'guest'            => $customer->get_id() === 0,
 				'billing_address'  => $billing_address,
 				'shipping_address' => $shipping_address,
-				'address'          => 'billing' === $current_address ? $billing_address : $shipping_address,
+				'address'          => 'billing' === $address_type ? $billing_address : $shipping_address,
 			];
 		}
 
