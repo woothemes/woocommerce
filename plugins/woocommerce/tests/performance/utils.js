@@ -2,10 +2,17 @@
  * External dependencies
  */
 import { check } from 'k6';
-
+import http from 'k6/http';
 /**
  * Internal dependencies
  */
+import { base_url, product_sku } from './config.js';
+import {
+	commonAPIGetRequestHeaders,
+	commonNonStandardHeaders,
+	commonRequestHeaders,
+	jsonAPIRequestHeader,
+} from './headers';
 
 const checkResponse = (
 	response,
@@ -27,4 +34,29 @@ const checkResponse = (
 	} );
 };
 
-export { checkResponse };
+const getDefaultProduct = ( tag ) => {
+	const requestHeaders = Object.assign(
+		{},
+		jsonAPIRequestHeader,
+		commonAPIGetRequestHeaders,
+		commonRequestHeaders,
+		commonNonStandardHeaders
+	);
+
+	const response = http.get(
+		`${ base_url }/wp-json/wc/store/v1/products?sku=${ product_sku }`,
+		{
+			requestHeaders,
+			tags: { name: `${ tag } - Get default product` },
+		}
+	);
+
+	check( response, {
+		'successfully retrieved default product': ( r ) =>
+			r.status === 200 && r.body.includes( `"sku":"${ product_sku }"` ),
+	} );
+
+	return JSON.parse( response.body );
+};
+
+export { checkResponse, getDefaultProduct };
