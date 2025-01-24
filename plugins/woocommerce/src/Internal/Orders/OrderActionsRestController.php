@@ -477,6 +477,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 			$user_agent ? $user_agent : 'REST API'
 		);
 
+		$messages = array_filter( $messages );
 		foreach ( $messages as $message ) {
 			$order->add_order_note( $message, false, true );
 		}
@@ -558,6 +559,10 @@ class OrderActionsRestController extends RestApiControllerBase {
 	 */
 	private function maybe_update_billing_email( WC_Order $order, string $email, ?bool $force = false ) {
 		$existing_email = $order->get_billing_email( 'edit' );
+
+		if ( $existing_email === $email ) {
+			return '';
+		}
 
 		if ( $existing_email && true !== $force ) {
 			return new WP_Error(

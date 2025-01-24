@@ -248,7 +248,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 				),
 			),
 		);
-		yield 'existing billing email, email specified, no force' => array(
+		yield 'existing billing email, different email specified, no force' => array(
 			'shop_manager',
 			array(),
 			array(
@@ -260,7 +260,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'notes'   => array(),
 			),
 		);
-		yield 'existing billing email, email specified, force' => array(
+		yield 'existing billing email, different email specified, force' => array(
 			'shop_manager',
 			array(),
 			array(
@@ -273,6 +273,20 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'notes'   => array(
 					'Billing email updated to another@example.org.',
 					'Email template &quot;Completed order&quot; sent to another@example.org, via some app.',
+				),
+			),
+		);
+		yield 'existing billing email, same email specified' => array(
+			'shop_manager',
+			array(),
+			array(
+				'email' => 'customer@example.org',
+			),
+			array(
+				'status'  => 200,
+				'message' => 'Email template &quot;Completed order&quot; sent to customer@example.org, via some app.',
+				'notes'   => array(
+					'Email template &quot;Completed order&quot; sent to customer@example.org, via some app.',
 				),
 			),
 		);
