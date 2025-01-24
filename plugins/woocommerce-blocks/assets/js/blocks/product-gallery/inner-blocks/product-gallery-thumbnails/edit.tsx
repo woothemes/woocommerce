@@ -10,7 +10,6 @@ import clsx from 'clsx';
 /**
  * Internal dependencies
  */
-import './editor.scss';
 import { ProductGalleryThumbnailsBlockSettings } from './block-settings';
 import type { ProductGalleryThumbnailsBlockAttributes } from './types';
 
@@ -18,51 +17,40 @@ export const Edit = ( {
 	attributes,
 	setAttributes,
 }: BlockEditProps< ProductGalleryThumbnailsBlockAttributes > ) => {
-	const blockProps = useBlockProps( {
-		className: clsx(
-			'wc-block-product-gallery-thumbnails',
-			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.numberOfThumbnails }`,
-			`wc-block-product-gallery-thumbnails--position-${ attributes.thumbnailsPosition }`
-		),
-	} );
+	const blockProps = useBlockProps();
 
-	const Placeholder = () => {
-		return (
-			<div className="wc-block-editor-product-gallery-thumbnails">
-				{ [ ...Array( attributes.numberOfThumbnails ).keys() ].map(
-					( index ) => {
-						return (
-							<div
-								className="wc-block-product-gallery-thumbnails__thumbnail"
-								key={ index }
-							>
-								<img
-									src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
-									alt="Placeholder"
-								/>
-							</div>
-						);
-					}
-				) }
-			</div>
-		);
-	};
+	const className = clsx(
+		'wc-block-product-gallery-thumbnails',
+		`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.numberOfThumbnails }`,
+		`wc-block-product-gallery-thumbnails--position-${ attributes.thumbnailsPosition }`
+	);
 
 	return (
-		<>
-			<div { ...blockProps }>
-				<InspectorControls>
-					<PanelBody>
-						<ProductGalleryThumbnailsBlockSettings
-							attributes={ attributes }
-							setAttributes={ setAttributes }
-						/>
-					</PanelBody>
-				</InspectorControls>
-				<Disabled>
-					<Placeholder />
-				</Disabled>
-			</div>
-		</>
+		<div { ...blockProps }>
+			<InspectorControls>
+				<PanelBody>
+					<ProductGalleryThumbnailsBlockSettings
+						attributes={ attributes }
+						setAttributes={ setAttributes }
+					/>
+				</PanelBody>
+			</InspectorControls>
+			<Disabled>
+				<div className={ className }>
+					{ [ ...Array( attributes.numberOfThumbnails ).keys() ].map(
+						( index ) => {
+							return (
+								<img
+									key={ index }
+									className="wc-block-product-gallery-thumbnails__thumbnail"
+									src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
+									alt=""
+								/>
+							);
+						}
+					) }
+				</div>
+			</Disabled>
+		</div>
 	);
 };
