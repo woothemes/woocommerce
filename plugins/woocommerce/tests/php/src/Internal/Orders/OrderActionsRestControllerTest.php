@@ -40,10 +40,10 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 	/**
 	 * Create a partial refund for an order.
 	 *
-	 * @param \WC_Order $order
+	 * @param \WC_Order $order The order to create a refund for.
 	 *
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception Throws Exception if refund creation fails.
 	 */
 	private function do_partial_refund( \WC_Order $order ): void {
 		$items      = $order->get_items();
@@ -152,7 +152,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 			'status'         => 'completed',
 			'partial_refund' => false,
 		);
-		$order_props = wp_parse_args( $order_props, $order_defaults );
+		$order_props    = wp_parse_args( $order_props, $order_defaults );
 
 		$order = wc_create_order();
 		if ( true === $order_props['partial_refund'] ) {
@@ -237,14 +237,14 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'billing_email' => '',
 			),
 			array(
-				'email' => 'another@example.org'
+				'email' => 'another@example.org',
 			),
 			array(
 				'status'  => 200,
 				'message' => 'Billing email updated to another@example.org. Email template &quot;Completed order&quot; sent to another@example.org, via some app.',
 				'notes'   => array(
 					'Billing email updated to another@example.org.',
-					'Email template &quot;Completed order&quot; sent to another@example.org, via some app.'
+					'Email template &quot;Completed order&quot; sent to another@example.org, via some app.',
 				),
 			),
 		);
@@ -252,7 +252,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 			'shop_manager',
 			array(),
 			array(
-				'email' => 'another@example.org'
+				'email' => 'another@example.org',
 			),
 			array(
 				'status'  => 500,
@@ -272,7 +272,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'message' => 'Billing email updated to another@example.org. Email template &quot;Completed order&quot; sent to another@example.org, via some app.',
 				'notes'   => array(
 					'Billing email updated to another@example.org.',
-					'Email template &quot;Completed order&quot; sent to another@example.org, via some app.'
+					'Email template &quot;Completed order&quot; sent to another@example.org, via some app.',
 				),
 			),
 		);
@@ -284,7 +284,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'status'  => 200,
 				'message' => 'Email template &quot;Completed order&quot; sent to customer@example.org, via some app.',
 				'notes'   => array(
-					'Email template &quot;Completed order&quot; sent to customer@example.org, via some app.'
+					'Email template &quot;Completed order&quot; sent to customer@example.org, via some app.',
 				),
 			),
 		);
@@ -308,14 +308,14 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 			'status'         => 'completed',
 			'partial_refund' => false,
 		);
-		$order_props = wp_parse_args( $order_props, $order_defaults );
+		$order_props    = wp_parse_args( $order_props, $order_defaults );
 
 		$request_defaults = array(
 			'template_id' => 'customer_completed_order',
 			'email'       => '',
 			'force'       => false,
 		);
-		$request_params = wp_parse_args( $request_params, $request_defaults );
+		$request_params   = wp_parse_args( $request_params, $request_defaults );
 
 		$order = wc_create_order();
 		if ( true === $order_props['partial_refund'] ) {
@@ -347,7 +347,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 		$this->assertArrayHasKey( 'message', $data );
 		$this->assertEquals( $result['message'], $data['message'] );
 
-		$notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
+		$notes         = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
 		$notes_content = wp_list_pluck( $notes, 'content' );
 		foreach ( $result['notes'] as $note ) {
 			$this->assertContains( $note, $notes_content );

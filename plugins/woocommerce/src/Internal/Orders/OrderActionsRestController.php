@@ -226,7 +226,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 			'title'      => __( 'Order Actions', 'woocommerce' ),
 			'type'       => 'object',
 			'properties' => array(
-				'message'   => array(
+				'message' => array(
 					'description' => __( 'A message indicating that the action completed successfully.', 'woocommerce' ),
 					'type'        => 'string',
 					'context'     => array( 'edit' ),
@@ -366,7 +366,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 		$schema            = $this->get_schema_for_email_templates();
 		$context           = $request->get_param( 'context' ) ?? 'view';
 		$filtered_response = array_map(
-			function( $template ) use ( $schema, $context ) {
+			function ( $template ) use ( $schema, $context ) {
 				return rest_filter_response_by_context( $template, $schema, $context );
 			},
 			$templates
