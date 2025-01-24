@@ -54,6 +54,26 @@ export class AccordionPage {
 		await this.editor.canvas.getByLabel( 'Add Accordion' ).click();
 	}
 
+	async setAccordionTitleAndContent(
+		index: number,
+		title: string,
+		content: string
+	) {
+		const blockLocator = await this.editor.getBlockByName(
+			'woocommerce/accordion-group'
+		);
+		await blockLocator
+			.getByLabel( 'Accordion title' )
+			.nth( index )
+			.fill( title );
+		await this.insertNestedPanelBlock( index, {
+			name: 'core/paragraph',
+		} );
+		await this.editor.canvas
+			.getByRole( 'document', { name: 'Empty block' } )
+			.fill( content );
+	}
+
 	async insertAccordionGroup(
 		accordionData: {
 			title: string;
@@ -63,9 +83,6 @@ export class AccordionPage {
 		await this.editor.insertBlock( {
 			name: 'woocommerce/accordion-group',
 		} );
-		const blockLocator = await this.editor.getBlockByName(
-			'woocommerce/accordion-group'
-		);
 		for ( let index = 0; index < accordionData.length; index++ ) {
 			const data = accordionData[ index ];
 			const accordionCount = await (
@@ -74,16 +91,11 @@ export class AccordionPage {
 			if ( index >= accordionCount ) {
 				await this.insertAccordion();
 			}
-			await blockLocator
-				.getByLabel( 'Accordion title' )
-				.nth( index )
-				.fill( data.title );
-			await this.insertNestedPanelBlock( index, {
-				name: 'core/paragraph',
-			} );
-			await this.editor.canvas
-				.getByRole( 'document', { name: 'Empty block' } )
-				.fill( data.content );
+			await this.setAccordionTitleAndContent(
+				index,
+				data.title,
+				data.content
+			);
 		}
 	}
 }
