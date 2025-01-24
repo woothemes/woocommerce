@@ -81,44 +81,45 @@ async function processDirectory(
 	}
 
 	markdownFiles.forEach( ( filePath ) => {
-			const fileContent = fs.readFileSync( filePath, 'utf-8' );
-			const fileFrontmatter = generatePostFrontMatter( fileContent );
-			
-			if ( ! hasContent( fileContent ) ) {
-				return;
-			}
+		const fileContent = fs.readFileSync( filePath, 'utf-8' );
+		
+		if ( ! hasContent( fileContent ) ) {
+			return;
+		}
 
-			if ( baseUrl.includes( 'github' ) ) {
-				fileFrontmatter.edit_url = generateFileUrl(
-					baseEditUrl,
-					rootDirectory,
-					subDirectory,
-					filePath
-				);
-			}
+		const fileFrontmatter = generatePostFrontMatter( fileContent );
 
-			const post: Post = { ...fileFrontmatter };
+		if ( baseUrl.includes( 'github' ) ) {
+			fileFrontmatter.edit_url = generateFileUrl(
+				baseEditUrl,
+				rootDirectory,
+				subDirectory,
+				filePath
+			);
+		}
 
-			// Generate hash of the post contents.
-			post.hash = crypto
-				.createHash( 'sha256' )
-				.update( JSON.stringify( fileContent ) )
-				.digest( 'hex' );
+		const post: Post = { ...fileFrontmatter };
 
-			// get the folder name of rootDirectory.
-			const relativePath = path.relative( fullPathToDocs, filePath );
+		// Generate hash of the post contents.
+		post.hash = crypto
+			.createHash( 'sha256' )
+			.update( JSON.stringify( fileContent ) )
+			.digest( 'hex' );
 
-			category.posts.push( {
-				...post,
-				url: generateFileUrl(
-					baseUrl,
-					rootDirectory,
-					subDirectory,
-					filePath
-				),
-				filePath,
-				id: generatePostId( relativePath, projectName ),
-			} );
+		// get the folder name of rootDirectory.
+		const relativePath = path.relative( fullPathToDocs, filePath );
+
+		category.posts.push( {
+			...post,
+			url: generateFileUrl(
+				baseUrl,
+				rootDirectory,
+				subDirectory,
+				filePath
+			),
+			filePath,
+			id: generatePostId( relativePath, projectName ),
+		} );
 	} );
 
 	// Recursively process subdirectories.
