@@ -63,6 +63,7 @@ pnpm --filter=@woocommerce/block-library run test:integration:js --watch
 ### Test Utilities
 
 The integration tests use several utility functions from `tests/utils/integration/editor.tsx`:
+
 - `selectBlock(name)`: Selects a block by its aria-label
 - `initializeEditor(testBlocks, useCoreBlocks, settings)`: Sets up the test environment with specified blocks
 - `Editor`: A component that provides the test environment
