@@ -3,6 +3,8 @@
  */
 import { debounce } from '@woocommerce/base-utils';
 import { select, dispatch } from '@wordpress/data';
+import { getSetting } from '@woocommerce/settings';
+import { ApiErrorResponse } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -32,6 +34,8 @@ const initialize = () => {
 	localState.isInitialized = true;
 };
 
+const isCheckoutBlock = getSetting< boolean >( 'isCheckoutBlock', false );
+
 /**
  * Function to dispatch an update to the server.
  */
@@ -43,16 +47,27 @@ const updatePaymentData = (): void => {
 	// Prevent multiple pushes from happening at the same time.
 	localState.doingPush = true;
 
+	// Don't push changes if the page contains a cart block, but no checkout block.
+	if ( ! isCheckoutBlock ) {
+		return;
+	}
+
+	// Don't push changes if an express payment method is clicked
+	if ( select( STORE_KEY ).isExpressPaymentStarted() ) {
+		return;
+	}
+
 	const newActivePaymentMethod = select( STORE_KEY ).getActivePaymentMethod();
+	// Don't push changes if the active payment method is set to empty
+	if ( newActivePaymentMethod === '' ) {
+		return;
+	}
+
 	const newActiveSavedToken = select( STORE_KEY ).getActiveSavedToken();
-	const isExpressPaymentMethodStarted =
-		select( STORE_KEY ).isExpressPaymentStarted();
-	// Only update if the active payment method has changed and it's not an express payment method or empty
+	// Only update if the active payment method or the saved token has changed
 	if (
-		newActivePaymentMethod !== '' &&
-		( newActivePaymentMethod !== localState.activePaymentMethod ||
-			newActiveSavedToken !== localState.activeSavedToken ) &&
-		! isExpressPaymentMethodStarted
+		newActivePaymentMethod !== localState.activePaymentMethod ||
+		newActiveSavedToken !== localState.activeSavedToken
 	) {
 		localState.activePaymentMethod = newActivePaymentMethod;
 
@@ -64,7 +79,7 @@ const updatePaymentData = (): void => {
 			.then( () => {
 				localState.doingPush = false;
 			} )
-			.catch( ( response ) => {
+			.catch( ( response: ApiErrorResponse ) => {
 				localState.doingPush = false;
 				processErrorResponse( response );
 			} );
