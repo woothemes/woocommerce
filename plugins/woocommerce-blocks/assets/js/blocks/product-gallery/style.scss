@@ -1,6 +1,5 @@
 $gallery: ".wc-block-product-gallery";
 $large-image: "#{$gallery}-large-image";
-$thumbnails: "#{$gallery}-thumbnails";
 $next-previous: "#{$large-image}-next-previous";
 $next-previous-left-off: "#{$next-previous}-left--off";
 $next-previous-right-off: "#{$next-previous}-right--off";
@@ -243,146 +242,161 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-// Thumbnails
-#{$thumbnails} {
+.wc-block-product-gallery-thumbnails {
 	display: flex;
 
 	img {
-		cursor: pointer;
-		height: auto;
-		width: auto;
-		max-width: 100%;
-	}
-
-	#{$gallery}[data-thumbnails-position='bottom'] & {
-		flex-direction: row;
-		gap: 0 15px;
-	}
-
-	#{$gallery}:not([data-thumbnails-position='bottom']) & {
-		flex-direction: column;
-		gap: 15px 0;
-
-		// Calculate the total width occupied by the gaps between thumbnails.
-		$gap-width: $thumbnails-gap * ($default-number-of-thumbnails - 1);
-
-		// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-		$border-width: #{$default-number-of-thumbnails * 1px * 2};
-
-		// Calculate the width of each thumbnail by accounting for the gap, border, and additional space.
-		flex-basis: calc((100% - #{$gap-width} - #{$border-width} - 4px) / #{$default-number-of-thumbnails});
-	}
-
-	@for $i from 3 through 8 {
-		#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}']:not([data-thumbnails-position='bottom']) & {
-			// Calculate the total width occupied by the gaps between thumbnails.
-			$gap-width: $thumbnails-gap * ($i - 1);
-
-			// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-			$border-width: $i * 1px * 2;
-
-			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-		}
-	}
-
-	.wc-block-product-gallery-thumbnails__thumbnail {
-		border: 1px solid rgba($color: #000, $alpha: 0.1);
-		height: auto;
-		width: auto;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		aspect-ratio: 1 / 1;
-		position: relative;
-		flex-basis: 0;
-		flex-grow: 1;
-
-		img {
-			aspect-ratio: 1 / 1;
-			object-fit: contain;
-		}
-
-		&::before {
-			content: "";
-			display: block;
-			padding-top: 100%;
-		}
-
-		@for $i from 3 through 8 {
-			#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}'][data-thumbnails-position="bottom"] & {
-				// Calculate the total width occupied by the gaps between thumbnails.
-				$gap-width: $thumbnails-gap * ($i - 1);
-
-				// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-				$border-width: $i * 1px * 2;
-
-				$thumbnail-width: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-
-				flex: 0 0 $thumbnail-width;
-			}
-		}
-	}
-
-	.wc-block-product-gallery-thumbnails__thumbnail__overlay {
-		container-type: inline-size;
-		cursor: pointer;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		position: absolute;
-		background-color: rgba(0, 0, 0, 0.4);
-		top: 0;
-		width: 100%;
-		height: 100%;
-		line-height: 1.5;
-
-		.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
-			font-size: 1.2rem;
-			font-weight: 700;
-		}
-
-		.wc-block-product-gallery-thumbnails__thumbnail__view-all {
-			text-decoration: underline;
-		}
-
-		.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count,
-		.wc-block-product-gallery-thumbnails__thumbnail__view-all {
-			color: #fff;
-		}
-
-		@container (width < 70px) {
-			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
-				display: none;
-			}
-
-			.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
-				font-size: 1rem;
-			}
-
-			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
-				font-size: 0.6rem;
-			}
-		}
-
-		@container (width > 70px) {
-			.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
-				font-size: 1.2rem;
-			}
-
-			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
-				font-size: 0.8rem;
-			}
-		}
-
-		@container (width > 100px) {
-			.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
-				font-size: 1.4rem;
-			}
-
-			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
-				font-size: 1rem;
-			}
-		}
+		height: 100px;
 	}
 }
+
+// Automattically react to the Group container settings.
+.is-nowrap .wc-block-product-gallery-thumbnails,
+.is-horizontal.is-nowrap .wc-block-product-gallery-thumbnails {
+	flex-direction: column;
+}
+
+.is-vertical .wc-block-product-gallery-thumbnails,
+.is-horizontal .wc-block-product-gallery-thumbnails {
+	flex-direction: row;
+}
+
+// 	img {
+// 		cursor: pointer;
+// 		height: auto;
+// 		width: auto;
+// 		max-width: 100%;
+// 	}
+
+// 	#{$gallery}[data-thumbnails-position='bottom'] & {
+// 		flex-direction: row;
+// 		gap: 0 15px;
+// 	}
+
+// 	#{$gallery}:not([data-thumbnails-position='bottom']) & {
+// 		flex-direction: column;
+// 		gap: 15px 0;
+
+// 		// Calculate the total width occupied by the gaps between thumbnails.
+// 		$gap-width: $thumbnails-gap * ($default-number-of-thumbnails - 1);
+
+// 		// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
+// 		$border-width: #{$default-number-of-thumbnails * 1px * 2};
+
+// 		// Calculate the width of each thumbnail by accounting for the gap, border, and additional space.
+// 		flex-basis: calc((100% - #{$gap-width} - #{$border-width} - 4px) / #{$default-number-of-thumbnails});
+// 	}
+
+// 	@for $i from 3 through 8 {
+// 		#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}']:not([data-thumbnails-position='bottom']) & {
+// 			// Calculate the total width occupied by the gaps between thumbnails.
+// 			$gap-width: $thumbnails-gap * ($i - 1);
+
+// 			// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
+// 			$border-width: $i * 1px * 2;
+
+// 			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
+// 		}
+// 	}
+
+// 	.wc-block-product-gallery-thumbnails__thumbnail {
+// 		border: 1px solid rgba($color: #000, $alpha: 0.1);
+// 		height: auto;
+// 		width: auto;
+// 		display: flex;
+// 		justify-content: center;
+// 		align-items: center;
+// 		aspect-ratio: 1 / 1;
+// 		position: relative;
+// 		flex-basis: 0;
+// 		flex-grow: 1;
+
+// 		img {
+// 			aspect-ratio: 1 / 1;
+// 			object-fit: contain;
+// 		}
+
+// 		&::before {
+// 			content: "";
+// 			display: block;
+// 			padding-top: 100%;
+// 		}
+
+// 		@for $i from 3 through 8 {
+// 			#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}'][data-thumbnails-position="bottom"] & {
+// 				// Calculate the total width occupied by the gaps between thumbnails.
+// 				$gap-width: $thumbnails-gap * ($i - 1);
+
+// 				// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
+// 				$border-width: $i * 1px * 2;
+
+// 				$thumbnail-width: calc((100% - #{$gap-width} - #{$border-width}) / $i);
+
+// 				flex: 0 0 $thumbnail-width;
+// 			}
+// 		}
+// 	}
+
+// 	.wc-block-product-gallery-thumbnails__thumbnail__overlay {
+// 		container-type: inline-size;
+// 		cursor: pointer;
+// 		display: flex;
+// 		flex-direction: column;
+// 		align-items: center;
+// 		justify-content: center;
+// 		position: absolute;
+// 		background-color: rgba(0, 0, 0, 0.4);
+// 		top: 0;
+// 		width: 100%;
+// 		height: 100%;
+// 		line-height: 1.5;
+
+// 		.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
+// 			font-size: 1.2rem;
+// 			font-weight: 700;
+// 		}
+
+// 		.wc-block-product-gallery-thumbnails__thumbnail__view-all {
+// 			text-decoration: underline;
+// 		}
+
+// 		.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count,
+// 		.wc-block-product-gallery-thumbnails__thumbnail__view-all {
+// 			color: #fff;
+// 		}
+
+// 		@container (width < 70px) {
+// 			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
+// 				display: none;
+// 			}
+
+// 			.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
+// 				font-size: 1rem;
+// 			}
+
+// 			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
+// 				font-size: 0.6rem;
+// 			}
+// 		}
+
+// 		@container (width > 70px) {
+// 			.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
+// 				font-size: 1.2rem;
+// 			}
+
+// 			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
+// 				font-size: 0.8rem;
+// 			}
+// 		}
+
+// 		@container (width > 100px) {
+// 			.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
+// 				font-size: 1.4rem;
+// 			}
+
+// 			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
+// 				font-size: 1rem;
+// 			}
+// 		}
+// 	}
+// }
