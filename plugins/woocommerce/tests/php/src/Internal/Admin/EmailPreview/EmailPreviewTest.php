@@ -23,6 +23,13 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 	const SITE_TITLE = 'Test Blog';
 
 	/**
+	 * Email type option key for default preview email.
+	 *
+	 * @var string
+	 */
+	const DEFAULT_EMAIL_TYPE_KEY = 'woocommerce_' . EmailPreview::DEFAULT_EMAIL_ID . '_email_type';
+
+	/**
 	 * "System Under Test", an instance of the class to be tested.
 	 *
 	 * @var EmailPreview
@@ -70,6 +77,28 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 		$this->assertStringContainsString( $order_title, $message );
 		$this->assertStringContainsString( $order_content, $message );
 		$this->assertStringContainsString( $order_product, $message );
+	}
+
+	/**
+	 * Tests that it renders HTML email.
+	 */
+	public function test_it_renders_html_email() {
+		set_transient( self::DEFAULT_EMAIL_TYPE_KEY, 'html', HOUR_IN_SECONDS );
+		$message = $this->sut->render();
+		$this->assertStringContainsString( '<html', $message );
+		$this->assertStringContainsString( '<table', $message );
+		delete_transient( self::DEFAULT_EMAIL_TYPE_KEY );
+	}
+
+	/**
+	 * Tests that it renders HTML email.
+	 */
+	public function test_it_renders_plain_text_email() {
+		set_transient( self::DEFAULT_EMAIL_TYPE_KEY, 'plain', HOUR_IN_SECONDS );
+		$message = $this->sut->render();
+		$this->assertStringNotContainsString( '<html', $message );
+		$this->assertStringNotContainsString( '<table', $message );
+		delete_transient( self::DEFAULT_EMAIL_TYPE_KEY );
 	}
 
 	/**
