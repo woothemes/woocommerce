@@ -48,7 +48,6 @@ const Edit = ( props: EditProps ) => {
 		showCounts,
 		sortOrder,
 		hideEmpty,
-		clearButton,
 	} = blockAttributes;
 
 	const attributeObject = getAttributeFromId( attributeId );
@@ -163,9 +162,7 @@ const Edit = ( props: EditProps ) => {
 									__( 'Attribute', 'woocommerce' ),
 							},
 						],
-						clearButton
-							? [ 'woocommerce/product-filter-clear-button' ]
-							: null,
+						[ 'woocommerce/product-filter-clear-button' ],
 					].filter( Boolean ) as unknown as TemplateArray,
 				],
 				[ displayStyle ],
