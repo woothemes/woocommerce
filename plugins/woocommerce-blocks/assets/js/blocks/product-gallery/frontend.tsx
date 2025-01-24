@@ -140,6 +140,37 @@ const productGallery = {
 			}
 			selectImage( getContext(), 'prev' );
 		},
+		onSelectedLargeImageKeyDown: ( event: KeyboardEvent ) => {
+			if (
+				( state.isSelected && event.code === 'Enter' ) ||
+				event.code === 'Space' ||
+				event.code === 'NumpadEnter'
+			) {
+				if ( event.code === 'Space' ) {
+					event.preventDefault();
+				}
+				actions.openDialog();
+				const largeImageElement = getElement()?.ref as HTMLElement;
+				const context = getContext();
+				context.elementThatTriggeredDialogOpening = largeImageElement;
+			}
+		},
+		onViewAllImagesKeyDown: ( event: KeyboardEvent ) => {
+			if (
+				event.code === 'Enter' ||
+				event.code === 'Space' ||
+				event.code === 'NumpadEnter'
+			) {
+				if ( event.code === 'Space' ) {
+					event.preventDefault();
+				}
+				actions.openDialog();
+				const viewAllImagesElement = getElement()?.ref as HTMLElement;
+				const context = getContext();
+				context.elementThatTriggeredDialogOpening =
+					viewAllImagesElement;
+			}
+		},
 		onThumbnailKeyDown: ( event: KeyboardEvent ) => {
 			if (
 				event.code === 'Enter' ||
@@ -151,6 +182,29 @@ const productGallery = {
 				}
 				productGallery.actions.selectImage();
 			}
+		},
+		onDialogKeyDown: ( event: KeyboardEvent ) => {
+			if ( event.code === 'Escape' ) {
+				actions.closeDialog();
+			}
+		},
+		openDialog: () => {
+			const context = getContext();
+			context.isDialogOpen = true;
+			const triggerElement = getElement()?.ref as HTMLElement;
+			if ( triggerElement ) {
+				context.elementThatTriggeredDialogOpening = triggerElement;
+			}
+			document.body.classList.add(
+				'wc-block-product-gallery-dialog-open'
+			);
+		},
+		closeDialog: () => {
+			const context = getContext();
+			context.isDialogOpen = false;
+			document.body.classList.remove(
+				'wc-block-product-gallery-dialog-open'
+			);
 		},
 	},
 	callbacks: {
@@ -210,42 +264,16 @@ const productGallery = {
 				document.removeEventListener( 'click', selectFirstImage );
 			};
 		},
-		keyboardAccess: () => {
+		dialogStateChange: () => {
 			const context = getContext();
-			let allowNavigation = true;
+			const { ref: dialogRef } = getElement() || {};
 
-			const handleKeyEvents = ( event: KeyboardEvent ) => {
-				if ( ! allowNavigation || ! context.isDialogOpen ) {
-					return;
-				}
-
-				// Disable navigation for a brief period to prevent spamming.
-				allowNavigation = false;
-
-				requestAnimationFrame( () => {
-					allowNavigation = true;
-				} );
-
-				// Check if the esc key is pressed.
-				if ( event.code === 'Escape' ) {
-					// TODO: Implement close dialog.
-				}
-
-				// Check if left arrow key is pressed.
-				if ( event.code === 'ArrowLeft' ) {
-					productGallery.actions.selectPreviousImage();
-				}
-
-				// Check if right arrow key is pressed.
-				if ( event.code === 'ArrowRight' ) {
-					productGallery.actions.selectNextImage();
-				}
-			};
-
-			document.addEventListener( 'keydown', handleKeyEvents );
-
-			return () =>
-				document.removeEventListener( 'keydown', handleKeyEvents );
+			if ( context.isDialogOpen && dialogRef instanceof HTMLElement ) {
+				dialogRef.focus();
+			} else if ( context.elementThatTriggeredDialogOpening ) {
+				context.elementThatTriggeredDialogOpening.focus();
+				context.elementThatTriggeredDialogOpening = null;
+			}
 		},
 	},
 };
