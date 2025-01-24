@@ -1,5 +1,5 @@
 <?php
-
+declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Tests\Blocks\Shipping;
 
 use Automattic\WooCommerce\Blocks\Assets\Api;
@@ -68,6 +68,7 @@ class ShippingControllerTest extends \WP_UnitTestCase {
 				return $locale;
 			}
 		);
+
 		// Unset the cached locale because this filter runs later. Typically that sort of filter would be applied before
 		// the locale is cached, but in unit tests the site is already set up before the test runs.
 		unset( WC()->countries->locale );
@@ -80,7 +81,6 @@ class ShippingControllerTest extends \WP_UnitTestCase {
 		WC()->customer->set_shipping_country( 'GB' );
 		WC()->customer->set_shipping_postcode( 'PR1 4SS' );
 		$this->assertFalse( $this->shipping_controller->has_full_shipping_address() );
-
 
 		// Finally test that it passes when an ordinarily optional prop filtered to be required is provided.
 		WC()->customer->set_shipping_state( 'Lancashire' );
