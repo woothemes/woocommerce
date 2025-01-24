@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
@@ -14,6 +14,7 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -216,6 +217,41 @@ export const SettingsPaymentsMain = () => {
 			showBannerIncentive = true;
 		}
 	}
+
+	const triggeredPageViewRef = useRef( false );
+
+	// Record a pageview event when the page loads.
+	useEffect( () => {
+		if (
+			isFetching ||
+			! providers.length ||
+			! suggestions.length ||
+			triggeredPageViewRef.current
+		) {
+			return;
+		}
+
+		// Set the ref to true to prevent multiple pageview events.
+		triggeredPageViewRef.current = true;
+
+		const eventProps = ( suggestions || [] ).reduce(
+			( props, suggestion ) => {
+				return {
+					...props,
+					[ suggestion.id.replace( /-/g, '_' ) + '_displayed' ]: true,
+				};
+			},
+			{
+				woocommerce_payments_displayed: providers.some(
+					( provider ) =>
+						provider.id === 'woocommerce_payments' ||
+						provider.id === '_wc_pes_woopayments'
+				),
+			}
+		);
+
+		recordEvent( 'settings_payments_recommendations_pageview', eventProps );
+	}, [ suggestions, providers, isFetching ] );
 
 	const setupPlugin = useCallback(
 		( id: string, slug: string, onboardingUrl: string | null ) => {
