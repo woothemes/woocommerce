@@ -270,6 +270,16 @@ const productGallery = {
 
 			if ( context.isDialogOpen && dialogRef instanceof HTMLElement ) {
 				dialogRef.focus();
+				const selectedImage = dialogRef.querySelector(
+					`[data-image-index="${ context.selectedImageNumber }"]`
+				);
+
+				if ( selectedImage instanceof HTMLElement ) {
+					selectedImage.scrollIntoView( {
+						behavior: 'auto',
+						block: 'center',
+					} );
+				}
 			} else if ( context.elementThatTriggeredDialogOpening ) {
 				context.elementThatTriggeredDialogOpening.focus();
 				context.elementThatTriggeredDialogOpening = null;
