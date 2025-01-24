@@ -266,6 +266,9 @@ export const SettingsPaymentsMain = () => {
 			}
 
 			setInstallingPlugin( id );
+			recordEvent( 'settings_payments_recommendations_setup', {
+				extension_selected: slug,
+			} );
 			installAndActivatePlugins( [ slug ] )
 				.then( async ( response: Response ) => {
 					createNoticesFromResponse( response );
