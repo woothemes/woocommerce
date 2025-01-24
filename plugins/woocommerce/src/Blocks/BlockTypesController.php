@@ -518,6 +518,8 @@ final class BlockTypesController {
 				$block_types[] = 'AddToCartWithOptions';
 				$block_types[] = 'AddToCartWithOptionsQuantitySelector';
 				$block_types[] = 'AddToCartWithOptionsVariationSelector';
+				$block_types[] = 'AddToCartWithOptionsGroupedProductSelector';
+				$block_types[] = 'AddToCartWithOptionsGroupedProductSelectorItemTemplate';
 			}
 			// Generic blocks that will be pushed upstream.
 			$block_types[] = 'Accordion\AccordionGroup';

@@ -1,0 +1,4 @@
+Significance: patch
+Type: enhancement
+
+Refactor plugin selection handling in Core Profiler
