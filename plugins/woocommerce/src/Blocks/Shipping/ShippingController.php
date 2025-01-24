@@ -444,16 +444,31 @@ class ShippingController {
 
 		// These are the important fields required to get the shipping rates.
 		$shipping_address = array(
-			'shipping_city'     => $customer->get_shipping_city(),
-			'shipping_state'    => $customer->get_shipping_state(),
-			'shipping_postcode' => $customer->get_shipping_postcode(),
-			'shipping_country'  => $customer->get_shipping_country(),
+			'city'     => $customer->get_shipping_city(),
+			'state'    => $customer->get_shipping_state(),
+			'postcode' => $customer->get_shipping_postcode(),
+			'country'  => $customer->get_shipping_country(),
 		);
 		$address_fields   = WC()->countries->get_country_locale();
+		$locale_key       = ! empty( $shipping_address['country'] ) && array_key_exists( $shipping_address['country'], $address_fields ) ? $shipping_address['country'] : 'default';
+		$default_locale   = $address_fields['default'];
+		$country_locale   = $address_fields[ $locale_key ] ?? array();
 
-		// For all fields in $shipping_address, check if they are required in $address_fields and if so, check if they are not empty.
+		// For all fields in $shipping_address, check if they are required in the country-specific locale first, if
+		// not set, orn$address_fields and if so, check if they are not empty.
 		foreach ( $shipping_address as $key => $value ) {
-			if ( isset( $address_fields[ $key ] ) && $address_fields[ $key ]['required'] && empty( $value ) ) {
+			// Skip further checks if the field has a value. From this point on $value is empty.
+			if ( ! empty( $value ) ) {
+				continue;
+			}
+
+			// If the country-specific locale does not require the field, continue.
+			if ( isset( $country_locale[ $key ]['required'] ) && false === filter_var( $country_locale[ $key ]['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ) {
+				continue;
+			}
+
+			// If the default locale requires the field return false.
+			if ( isset( $default_locale[ $key ]['required'] ) && true === filter_var( $default_locale[ $key ]['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ) {
 				return false;
 			}
 		}
