@@ -54,6 +54,20 @@ class DocumentObject {
 	protected $shipping_address = null;
 
 	/**
+	 * The additional fields object.
+	 *
+	 * @var array|null
+	 */
+	protected $additional_fields = null;
+
+	/**
+	 * The checkout object.
+	 *
+	 * @var array|null
+	 */
+	protected $checkout = null;
+
+	/**
 	 * Set the cart object.
 	 *
 	 * @param WC_Cart|null $cart The cart object.
@@ -81,6 +95,15 @@ class DocumentObject {
 	}
 
 	/**
+	 * Set the checkout object.
+	 *
+	 * @param array|null $checkout The checkout object.
+	 */
+	public function set_checkout( $checkout = null ) {
+		$this->checkout = $checkout;
+	}
+
+	/**
 	 * Set the billing address object.
 	 *
 	 * @param array|null $billing_address The billing address.
@@ -99,6 +122,15 @@ class DocumentObject {
 	}
 
 	/**
+	 * Set the additional fields object.
+	 *
+	 * @param array|null $additional_fields The additional fields.
+	 */
+	public function set_additional_fields( $additional_fields = null ) {
+		$this->additional_fields = $additional_fields;
+	}
+
+	/**
 	 * Get the cart data.
 	 *
 	 * @return array|null The cart data.
@@ -107,35 +139,20 @@ class DocumentObject {
 		if ( ! $this->cart ) {
 			return null;
 		}
-		$cart_data = StoreApi::container()->get( SchemaController::class )->get( CartSchema::IDENTIFIER )->get_item_response( $this->cart );
-
-		$selected_shipping_rates_ids = array_filter(
+		$cart_data               = StoreApi::container()->get( SchemaController::class )->get( CartSchema::IDENTIFIER )->get_item_response( $this->cart );
+		$selected_shipping_rates = array_filter(
 			array_map(
 				function ( $package ) {
 					$selected_rate = array_search( true, array_column( $package['shipping_rates'], 'selected' ), true );
-					return $selected_rate && isset( $package['shipping_rates'][ $selected_rate ] ) ? $package['shipping_rates'][ $selected_rate ]['rate_id'] : null;
+					return false !== $selected_rate && isset( $package['shipping_rates'][ $selected_rate ] ) ? $package['shipping_rates'][ $selected_rate ] : null;
 				},
 				$cart_data['shipping_rates']
 			)
 		);
-
-		$selected_shipping_rates_methods = array_map(
-			function ( $package ) {
-				$selected_rate = array_search( true, array_column( $package['shipping_rates'], 'selected' ), true );
-				return $selected_rate && isset( $package['shipping_rates'][ $selected_rate ] ) ? $package['shipping_rates'][ $selected_rate ]['method_id'] : null;
-			},
-			$cart_data['shipping_rates']
-		);
-
 		$local_pickup_method_ids = LocalPickupUtils::get_local_pickup_method_ids();
 
 		return [
-			'coupons'                 => array_map(
-				function ( $coupon ) {
-					return $coupon['code'];
-				},
-				$cart_data['coupons']
-			),
+			'coupons'                 => array_values( wc_list_pluck( $cart_data['coupons'], 'code' ) ),
 			'shipping_rates'          => array_unique(
 				array_merge(
 					...array_map(
@@ -151,8 +168,8 @@ class DocumentObject {
 					)
 				)
 			),
-			'selected_shipping_rates' => $selected_shipping_rates_ids,
-			'prefers_collection'      => count( array_intersect( $local_pickup_method_ids, $selected_shipping_rates_methods ) ) > 0,
+			'selected_shipping_rates' => array_values( wc_list_pluck( $selected_shipping_rates, 'rate_id' ) ),
+			'prefers_collection'      => count( array_intersect( $local_pickup_method_ids, wc_list_pluck( $selected_shipping_rates, 'method_id' ) ) ) > 0,
 			'items'                   => array_merge(
 				...array_map(
 					function ( $item ) {
@@ -161,16 +178,7 @@ class DocumentObject {
 					$cart_data['items']
 				)
 			),
-			'items_type'              => array_values(
-				array_unique(
-					array_map(
-						function ( $item ) {
-							return $item['type'];
-						},
-						$cart_data['items']
-					)
-				)
-			),
+			'items_type'              => array_values( array_unique( wc_list_pluck( $cart_data['items'], 'type' ) ) ),
 			'needs_shipping'          => $cart_data['needs_shipping'],
 			'totals'                  => $cart_data['totals']->total_price,
 			'extensions'              => $cart_data['extensions'],
@@ -182,19 +190,15 @@ class DocumentObject {
 	 *
 	 * @return array|null The order data.
 	 */
-	protected function get_order_data() {
-		if ( ! $this->order ) {
+	protected function get_checkout_data() {
+		if ( ! $this->checkout ) {
 			return null;
 		}
-		$order_data = StoreApi::container()->get( SchemaController::class )->get( OrderSchema::IDENTIFIER )->get_item_response( $this->order );
-
 		return [
-			'order_id'           => $order_data['order_id'],
-			'customer_note'      => $order_data['customer_note'],
-			'additional_fields'  => $order_data['additional_fields'],
-			'payment_method'     => $order_data['payment_method'],
-			'needs_payment'      => $this->order->needs_payment(),
-			'available_gateways' => array_values( wp_list_pluck( WC()->payment_gateways->get_available_payment_gateways(), 'id' ) ),
+			'create_account'  => $this->checkout['create_account'] ?? null,
+			'customer_note'   => $this->checkout['customer_note'] ?? null,
+			'payment_method'  => $this->checkout['payment_method'] ?? null,
+			'payment_methods' => array_values( wp_list_pluck( WC()->payment_gateways->get_available_payment_gateways(), 'id' ) ),
 		];
 	}
 
@@ -204,13 +208,8 @@ class DocumentObject {
 	 * @return array|null The customer data.
 	 */
 	protected function get_customer_data() {
-		if ( ! $this->customer ) {
-			return null;
-		}
 		return [
-			'id'               => $this->customer->get_id(),
-			'billing_address'  => $this->billing_address ? $this->billing_address : StoreApi::container()->get( SchemaController::class )->get( BillingAddressSchema::IDENTIFIER )->get_item_response( $this->customer ),
-			'shipping_address' => $this->shipping_address ? $this->shipping_address : StoreApi::container()->get( SchemaController::class )->get( ShippingAddressSchema::IDENTIFIER )->get_item_response( $this->customer ),
+			'id' => $this->customer ? $this->customer->get_id() : 0,
 		];
 	}
 
@@ -221,9 +220,12 @@ class DocumentObject {
 	 */
 	public function get_data() {
 		return array(
-			'cart'     => $this->get_cart_data(),
-			'order'    => $this->get_order_data(),
-			'customer' => $this->get_customer_data(),
+			'cart'              => $this->get_cart_data(),
+			'checkout'          => $this->get_checkout_data(),
+			'customer'          => $this->get_customer_data(),
+			'billing_address'   => $this->billing_address,
+			'shipping_address'  => $this->shipping_address,
+			'additional_fields' => $this->additional_fields,
 		);
 	}
 }

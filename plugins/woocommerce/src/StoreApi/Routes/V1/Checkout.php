@@ -9,7 +9,7 @@ use Automattic\WooCommerce\Checkout\Helpers\ReserveStockException;
 use Automattic\WooCommerce\StoreApi\Utilities\CheckoutTrait;
 use Automattic\WooCommerce\Utilities\RestApiUtil;
 use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
-
+use Automattic\WooCommerce\Admin\Features\Features;
 /**
  * Checkout class.
  */
@@ -189,11 +189,23 @@ class Checkout extends AbstractCartRoute {
 	 * @throws RouteException When a required additional field is missing.
 	 */
 	public function validate_required_additional_fields( \WP_REST_Request $request ) {
-		$document_object = new DocumentObject();
-		$document_object->set_cart( WC()->cart );
-		$document_object->set_customer( wc()->customer );
-		$document_object->set_billing_address( $request['billing_address'] );
-		$document_object->set_shipping_address( $request['shipping_address'] );
+		$document_object = null;
+
+		if ( Features::is_enabled( 'experimental-blocks' ) ) {
+			$document_object = new DocumentObject();
+			$document_object->set_cart( WC()->cart );
+			$document_object->set_customer( wc()->customer );
+			$document_object->set_billing_address( $request['billing_address'] );
+			$document_object->set_shipping_address( $request['shipping_address'] );
+			$document_object->set_additional_fields( $request['additional_fields'] );
+			$document_object->set_checkout(
+				[
+					'payment_method' => $request['payment_method'],
+					'create_account' => $request['create_account'],
+					'customer_note'  => $request['customer_note'],
+				]
+			);
+		}
 
 		if ( WC()->cart->needs_shipping() ) {
 			$shipping_fields = $this->additional_fields_controller->get_fields_for_group( 'shipping' );
