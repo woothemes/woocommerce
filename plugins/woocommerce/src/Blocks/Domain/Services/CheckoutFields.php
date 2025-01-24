@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1);
 
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
@@ -85,6 +86,19 @@ class CheckoutFields {
 	 * @var CheckoutFieldsSchema
 	 */
 	private $schema;
+
+	/**
+	 * Magic getter for the schema.
+	 *
+	 * @param string $name The name of the property to get.
+	 * @return mixed The value of the property.
+	 */
+	public function __get( $name ) {
+		if ( 'schema' === $name ) {
+			return $this->schema;
+		}
+		return null;
+	}
 
 	/**
 	 * Sets up core fields.
@@ -227,6 +241,8 @@ class CheckoutFields {
 		);
 
 		$field_data['attributes'] = $this->register_field_attributes( $field_data['id'], $field_data['attributes'] );
+
+		$field_data = $this->schema->process_field_rules( $field_data );
 
 		if ( 'checkbox' === $field_data['type'] ) {
 			$field_data = $this->process_checkbox_field( $field_data, $options );
@@ -856,10 +872,12 @@ class CheckoutFields {
 			$location = 'order';
 		}
 
+		$fields = [];
+
 		if ( in_array( $location, array_keys( $this->fields_locations ), true ) ) {
 			$order_fields_keys = $this->fields_locations[ $location ];
 
-			return array_filter(
+			$fields = array_filter(
 				$this->get_additional_fields(),
 				function ( $key ) use ( $order_fields_keys ) {
 					return in_array( $key, $order_fields_keys, true );
@@ -867,7 +885,8 @@ class CheckoutFields {
 				ARRAY_FILTER_USE_KEY
 			);
 		}
-		return [];
+
+		return $fields;
 	}
 
 	/**
