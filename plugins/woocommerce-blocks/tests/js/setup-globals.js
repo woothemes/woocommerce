@@ -286,3 +286,26 @@ Object.defineProperty( window, 'matchMedia', {
 } );
 
 global.__webpack_public_path__ = '';
+
+global.matchMedia = function ( query ) {
+	return {
+		matches: false,
+		media: query,
+		onchange: null,
+		addListener: () => {}, // Deprecated
+		removeListener: () => {}, // Deprecated
+		addEventListener: () => {},
+		removeEventListener: () => {},
+		dispatchEvent: () => true,
+	};
+};
+
+// Mock the DOMRect object
+global.DOMRect = class DOMRect {
+	constructor( x, y, width, height ) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+};
