@@ -3,6 +3,7 @@
  */
 import { createReduxStore, register, subscribe } from '@wordpress/data';
 import { controls as dataControls } from '@wordpress/data-controls';
+import { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import { STORE_KEY } from './constants';
 import * as actions from './actions';
 import { controls as sharedControls } from '../shared-controls';
 import * as selectors from './selectors';
-import { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { pushChanges } from './push-changes';
 
 export const config = {
