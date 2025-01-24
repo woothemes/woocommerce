@@ -87,7 +87,6 @@ class BlockifiedProductDetails extends AbstractBlock {
 	 * @return string Rendered block output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-
 		$parsed_block = $block->parsed_block;
 
 		if ( is_admin() || WC()->is_rest_api_request() ) {
