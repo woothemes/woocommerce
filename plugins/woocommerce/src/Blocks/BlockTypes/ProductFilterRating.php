@@ -102,7 +102,15 @@ final class ProductFilterRating extends AbstractBlock {
 			return '';
 		}
 
-		$rating_counts   = $this->get_rating_counts( $block );
+		$min_rating             = $attributes['minRating'] ?? 0;
+		$rating_counts          = $this->get_rating_counts( $block );
+		// User selected minimum rating to display.
+		$rating_counts_with_min = array_filter(
+			$rating_counts,
+			function( $rating ) use ( $min_rating ) {
+				return $rating['rating'] >= $min_rating;
+			}
+		);
 		$filter_params   = $block->context['filterParams'] ?? array();
 		$rating_query    = $filter_params[ self::RATING_FILTER_QUERY_VAR ] ?? '';
 		$selected_rating = array_filter( explode( ',', $rating_query ) );
@@ -128,7 +136,7 @@ final class ProductFilterRating extends AbstractBlock {
 					'data'      => $rating,
 				);
 			},
-			$rating_counts
+			$rating_counts_with_min
 		);
 
 		$filter_context = array(

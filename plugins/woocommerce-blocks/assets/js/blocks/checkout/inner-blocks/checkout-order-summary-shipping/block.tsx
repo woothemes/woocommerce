@@ -47,7 +47,7 @@ const Block = ( {
 			<TotalsShipping
 				label={
 					hasSelectedCollectionOnly
-						? __( 'Collection', 'woocommerce' )
+						? __( 'Pickup', 'woocommerce' )
 						: __( 'Delivery', 'woocommerce' )
 				}
 				placeholder={
