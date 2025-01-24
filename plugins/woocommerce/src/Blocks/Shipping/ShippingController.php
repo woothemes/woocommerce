@@ -469,12 +469,13 @@ class ShippingController {
 	 * @return array
 	 */
 	public function remove_shipping_if_no_address( $packages ) {
+		// We have to remove and re-add the filter here because we override to short circuit `show_shipping` from class-wc-cart.php.
+		// We want the true value of the option in this function.
 		remove_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 		$shipping_cost_requires_address = wc_string_to_bool( get_option( 'woocommerce_shipping_cost_requires_address', 'no' ) );
 		add_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 
-		// Return early here if we don't need to hide shipping costs until an address is entered. Saves us busting the
-		// locale cache in `has_full_shipping_address`.
+		// Return early here for a small performance gain if we don't need to hide shipping costs until an address is entered.
 		if ( ! $shipping_cost_requires_address ) {
 			return $packages;
 		}
