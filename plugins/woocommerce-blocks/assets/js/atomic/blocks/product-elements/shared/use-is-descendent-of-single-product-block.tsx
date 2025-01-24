@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { useAncestors } from '@woocommerce/base-hooks';
 
 interface UseIsDescendentOfSingleProductBlockProps {
 	blockClientId: string;
@@ -10,21 +10,11 @@ interface UseIsDescendentOfSingleProductBlockProps {
 export const useIsDescendentOfSingleProductBlock = ( {
 	blockClientId,
 }: UseIsDescendentOfSingleProductBlockProps ) => {
-	const { isDescendentOfSingleProductBlock } = useSelect(
-		( select ) => {
-			const { getBlockParentsByBlockName } =
-				select( 'core/block-editor' );
-			const blockParentBlocksIds = getBlockParentsByBlockName(
-				blockClientId?.replace( 'block-', '' ),
-				[ 'woocommerce/single-product' ]
-			);
-			return {
-				isDescendentOfSingleProductBlock:
-					blockParentBlocksIds.length > 0,
-			};
-		},
-		[ blockClientId ]
-	);
+	const { hasAncestor } = useAncestors( blockClientId );
 
-	return { isDescendentOfSingleProductBlock };
+	return {
+		isDescendentOfSingleProductBlock: hasAncestor(
+			'woocommerce/single-product'
+		),
+	};
 };
