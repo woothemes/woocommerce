@@ -14,7 +14,6 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { moveInnerBlocksToPosition } from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
 import type { ProductGalleryBlockAttributes } from './types';
 
@@ -120,9 +119,6 @@ export const Edit = ( {
 			...attributes,
 			mode,
 		} );
-		// TODO: FIX THIS!
-		// Move the Thumbnails block to the correct above or below the Large Image based on the thumbnailsPosition attribute.
-		moveInnerBlocksToPosition( attributes, clientId );
 	}, [
 		setAttributes,
 		attributes,
