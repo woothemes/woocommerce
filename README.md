@@ -30,6 +30,18 @@ pnpm install
 pnpm build
 ```
 
+Note: If you're working on an Ubuntu machine and observing freezes/crashes while running build and watch commands, the issue might be related to the swap configuration.
+<details>
+    <summary>Details:</summary>
+  
+    We have confirmed cases similar to https://askubuntu.com/questions/1194943/computer-often-freezes-because-of-webpack with systems having up to 32GB RAM.
+    Please follow the conversation for more context, troubleshooting, and possible mitigation options.
+  
+    As for the root cause, our `build` and `watch:build` commands (defined in `package.json` files under `scripts` section)
+    are heavily using the parallelization feature of pnpm  (`--workspace-concurrency=Infinity`), which, in combination with
+    running code editors / IDEs can, at peak usage, exhaust the RAM and swap.
+</details>
+
 ## Repository Structure
 
 Each plugin, package, and tool has its own `package.json` file containing project-specific dependencies and scripts. Most projects also contain a `README.md` file with any project-specific setup instructions and documentation.
