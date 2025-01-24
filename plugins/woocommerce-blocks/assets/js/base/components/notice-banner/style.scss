@@ -157,10 +157,11 @@
 		@extend %info;
 	}
 	&:focus {
-		outline: 0;
+		outline-width: 0;
 	}
 	&:focus-visible {
-		outline: -webkit-focus-ring-color auto 1px;
+		outline-width: 2px;
+		outline-style: solid;
 	}
 }
 
