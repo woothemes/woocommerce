@@ -6,6 +6,8 @@ use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
+use Automattic\WooCommerce\Admin\Features\Features;
+
 /**
  * Checkout class.
  *
@@ -165,7 +167,7 @@ class Checkout extends AbstractBlock {
 		$checkout_schema = Package::container()->get( CheckoutFieldsSchema::class );
 
 		// Load schema parser asynchronously if we need it.
-		if ( $checkout_schema->has_valid_schema( $checkout_fields->get_additional_fields() ) ) {
+		if ( $checkout_schema->has_valid_schema( $checkout_fields->get_additional_fields() ) && Features::is_enabled( 'experimental-blocks' ) ) {
 			$dependencies[] = 'wc-schema-parser';
 		}
 
