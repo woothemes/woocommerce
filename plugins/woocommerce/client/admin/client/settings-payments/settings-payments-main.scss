@@ -300,7 +300,28 @@
 }
 
 .settings-payment-gateways__header-select-container--indicator-popover {
-	width: 236px;
-	font-size: 13px;
-	line-height: 20px;
+	.components-popover__content {
+		background: $white;
+		border: 1px solid $gray-100;
+		border-radius: 3px;
+		max-width: 255px;
+		padding: $gap-smaller;
+		box-shadow: none;
+		margin-bottom: $gap-smaller;
+
+		a {
+			outline: none;
+			text-decoration: none;
+
+			&:focus {
+				box-shadow: none;
+			}
+		}
+	}
+
+	&-content {
+		width: 236px;
+		font-size: 13px;
+		line-height: 20px;
+	}
 }
