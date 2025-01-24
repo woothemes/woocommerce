@@ -208,6 +208,10 @@ trait CheckoutTrait {
 		$errors         = new \WP_Error();
 		$request_fields = $request['additional_fields'] ?? [];
 
+		if ( empty( $request_fields ) ) {
+			return;
+		}
+
 		foreach ( $request_fields as $key => $value ) {
 			try {
 				$this->additional_fields_controller->validate_field_for_location( $key, $value, 'order' );
