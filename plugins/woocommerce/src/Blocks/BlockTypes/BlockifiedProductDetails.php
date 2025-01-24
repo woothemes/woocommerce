@@ -40,20 +40,15 @@ class BlockifiedProductDetails extends AbstractBlock {
 	 * @param array $parsed_block Parsed block.
 	 * @param array $parsed_tabs_added_via_hook Parsed tabs added via hook.
 	 */
-	private function add_new_accordion_item( &$parsed_block, $parsed_tabs_added_via_hook ) {
-		foreach ( $parsed_block['innerBlocks'] as &$inner_block ) {
-			if ( 'woocommerce/accordion-group' === $inner_block['blockName'] ) {
-					$inner_block['innerBlocks'] = array_merge( $inner_block['innerBlocks'], $parsed_tabs_added_via_hook );
-					array_pop( $inner_block['innerContent'] );
-				foreach ( $parsed_tabs_added_via_hook as $block ) {
-					// It is necessary update the innerContent given that the block is being added to the innerBlocks array.
-					$inner_block['innerContent'][] = "\n\n";
-					$inner_block['innerContent'][] = null;
-				}
-				$inner_block['innerContent'][] = "</div>\n";
-			}
-			self::add_new_accordion_item( $inner_block, $parsed_tabs_added_via_hook );
+	private function add_new_accordion_item( &$accordion_group, $parsed_tabs_added_via_hook ) {
+		$accordion_group['innerBlocks'] = array_merge( $accordion_group['innerBlocks'], $parsed_tabs_added_via_hook );
+		array_pop( $accordion_group['innerContent'] );
+		foreach ( $parsed_tabs_added_via_hook as $block ) {
+			// It is necessary update the innerContent given that the block is being added to the innerBlocks array.
+			$accordion_group['innerContent'][] = "\n\n";
+			$accordion_group['innerContent'][] = null;
 		}
+		$accordion_group['innerContent'][] = "</div>\n";
 	}
 
 	/**
@@ -74,6 +69,53 @@ class BlockifiedProductDetails extends AbstractBlock {
 		);
 
 		return $tabs;
+	}
+
+	private function is_accordion_item_empty( $accordion_item ) {
+		// the first inner block is the header and the second is the content
+		$accordion_content= $accordion_item['innerBlocks'][1];
+
+		$is_accordion_content_empty = array_reduce(
+			$accordion_content['innerBlocks'],
+			function ( $carry, $block ) {
+				return $carry && wp_strip_all_tags( $block['innerHTML'] ) === '';
+			},
+			true
+		);
+
+
+		return $is_accordion_content_empty;
+	}
+
+	/**
+	 * Remove empty accordion item
+	 */
+	private function remove_empty_accordion_item( &$accordion_group_block ) {
+		foreach ( $accordion_group_block['innerBlocks'] as &$inner_block ) {
+			if ( 'woocommerce/accordion-item' === $inner_block['blockName'] ) {
+				if ( self::is_accordion_item_empty( $inner_block ) ) {
+					array_pop( $accordion_group_block['innerBlocks'] );
+					array_splice($accordion_group_block['innerContent'], -3, 2);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Update inner blocks based on some logic:
+	 * - new accordion to item via woocommerce_product_tabs
+	 * - accordion item to remove because their content is empty
+	 */
+	private function update_inner_blocks( &$parsed_block, $parsed_tabs_added_via_hook ) {
+		foreach ( $parsed_block['innerBlocks'] as &$inner_block ) {
+			if ( 'woocommerce/accordion-group' === $inner_block['blockName'] ) {
+					$this->remove_empty_accordion_item( $inner_block );
+					if (count($parsed_tabs_added_via_hook) > 0) {
+						$this->add_new_accordion_item( $inner_block, $parsed_tabs_added_via_hook );
+					}
+			}
+			self::update_inner_blocks( $inner_block, $parsed_tabs_added_via_hook );
+		}
 	}
 
 
@@ -127,7 +169,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 			array()
 		);
 
-		$this->add_new_accordion_item( $parsed_block, $this->sort_tabs_by_priority( $parsed_tabs_added_via_hook ) );
+		$this->update_inner_blocks( $parsed_block, $this->sort_tabs_by_priority( $parsed_tabs_added_via_hook ) );
 
 		return do_blocks( serialize_blocks( $parsed_block['innerBlocks'] ) );
 	}
