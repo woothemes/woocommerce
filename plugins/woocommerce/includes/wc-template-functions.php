@@ -1687,6 +1687,75 @@ if ( ! function_exists( 'woocommerce_show_product_thumbnails' ) ) {
 }
 
 /**
+ * Get the image data for a product.
+ *
+ * @param int $attachment_id The attachment ID.
+ * @return array The image data.
+ */
+function woocommerce_get_product_image_data( $attachment_id ) {
+	if ( ! wp_attachment_is_image( $attachment_id ) ) {
+		return new WP_Error( 'invalid_image', 'The provided attachment ID is not a valid image.' );
+	}
+
+	$image_sizes   = get_intermediate_image_sizes();
+	$image_sizes[] = 'full';
+	$variations    = array();
+	$metadata      = wp_get_attachment_metadata( $attachment_id );
+
+	foreach ( $image_sizes as $size ) {
+		$image_data = wp_get_attachment_image_src( $attachment_id, $size );
+
+		if ( $image_data ) {
+			$variations[ $size ] = array(
+				'url'       => $image_data[0],
+				'width'     => $image_data[1],
+				'height'    => $image_data[2],
+				'crop'      => isset( $metadata['sizes'][ $size ]['crop'] ) ? $metadata['sizes'][ $size ]['crop'] : null,
+				'mime_type' => get_post_mime_type( $attachment_id ),
+				'file_size' => isset( $metadata['sizes'][ $size ]['filesize'] ) ? $metadata['sizes'][ $size ]['filesize'] : null,
+			);
+
+			if ( isset( $metadata['sizes'][ $size ]['file'] ) ) {
+				$variations[ $size ]['filename'] = $metadata['sizes'][ $size ]['file'];
+			}
+		}
+	}
+
+	return $variations;
+}
+
+/**
+ * Build the container image observer data.
+ *
+ * @param int $attachment_id The attachment ID.
+ * @return array The container image observer data.
+ */
+function woocommerce_build_container_image_observer_data( $attachment_id ) {
+	$image_data = woocommerce_get_product_image_data( $attachment_id );
+
+	$srcset = array();
+	foreach ( $image_data as $data ) {
+		$srcset[] = sprintf( '%s %dw', $data['url'], $data['width'] );
+	}
+
+	$sizes_attribute_value = array_reduce(
+		$image_data,
+		function ( $sizes, $data ) {
+			$width = $data['width'];
+			return $sizes
+				? "{$sizes}, (min-width: {$width}px) {$width}px"
+				: "{$width}px";
+		},
+		''
+	);
+
+	return array(
+		'data-wc-container-observer-srcset' => $srcset,
+		'data-wc-container-observer-sizes'  => $sizes_attribute_value,
+	);
+}
+
+/**
  * Get HTML for a gallery image.
  *
  * Hooks: woocommerce_gallery_thumbnail_size, woocommerce_gallery_image_size and woocommerce_gallery_full_size accept name based image sizes, or an array of width/height values.
@@ -1712,6 +1781,11 @@ function wc_get_gallery_image_html( $attachment_id, $main_image = false, $image_
 	$alt_text          = trim( wp_strip_all_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) );
 	$alt_text          = ( empty( $alt_text ) && ( $product instanceof WC_Product ) ) ? woocommerce_get_alt_from_product_title_and_position( $product->get_title(), $main_image, $image_index ) : $alt_text;
 
+	$container_image_observer_data         = woocommerce_build_container_image_observer_data( $attachment_id );
+	$container_image_observer_srcset_value = implode( ', ', $container_image_observer_data['data-wc-container-observer-srcset'] );
+	$container_image_observer_sizes_value  = $container_image_observer_data['data-wc-container-observer-sizes'];
+	$container_image_observer_class        = 'wc-container-observer-image';
+
 	/**
 	 * Filters the attributes for the image markup.
 	 *
@@ -1722,14 +1796,16 @@ function wc_get_gallery_image_html( $attachment_id, $main_image = false, $image_
 	$image_params = apply_filters(
 		'woocommerce_gallery_image_html_attachment_image_params',
 		array(
-			'title'                   => _wp_specialchars( get_post_field( 'post_title', $attachment_id ), ENT_QUOTES, 'UTF-8', true ),
-			'data-caption'            => _wp_specialchars( get_post_field( 'post_excerpt', $attachment_id ), ENT_QUOTES, 'UTF-8', true ),
-			'data-src'                => esc_url( $full_src[0] ),
-			'data-large_image'        => esc_url( $full_src[0] ),
-			'data-large_image_width'  => esc_attr( $full_src[1] ),
-			'data-large_image_height' => esc_attr( $full_src[2] ),
-			'class'                   => esc_attr( $main_image ? 'wp-post-image' : '' ),
-			'alt'                     => esc_attr( $alt_text ),
+			'title'                             => _wp_specialchars( get_post_field( 'post_title', $attachment_id ), ENT_QUOTES, 'UTF-8', true ),
+			'data-caption'                      => _wp_specialchars( get_post_field( 'post_excerpt', $attachment_id ), ENT_QUOTES, 'UTF-8', true ),
+			'data-src'                          => esc_url( $full_src[0] ),
+			'data-large_image'                  => esc_url( $full_src[0] ),
+			'data-large_image_width'            => esc_attr( $full_src[1] ),
+			'data-large_image_height'           => esc_attr( $full_src[2] ),
+			'class'                             => esc_attr( $main_image ? 'wp-post-image ' . $container_image_observer_class : $container_image_observer_class ),
+			'alt'                               => esc_attr( $alt_text ),
+			'data-wc-container-observer-srcset' => esc_attr( $container_image_observer_srcset_value ),
+			'data-wc-container-observer-sizes'  => esc_attr( $container_image_observer_sizes_value ),
 		),
 		$attachment_id,
 		$image_size,
@@ -1746,6 +1822,9 @@ function wc_get_gallery_image_html( $attachment_id, $main_image = false, $image_
 		false,
 		$image_params
 	);
+
+	// Remove srcset and sizes attributes from the image to prevent the container image observer from being overridden.
+	$image = preg_replace( '/\s+(sizes|srcset)=(["\']).*?\2/', '', $image );
 
 	return '<div data-thumb="' . esc_url( $thumbnail_src[0] ) . '" data-thumb-alt="' . esc_attr( $alt_text ) . '" data-thumb-srcset="' . esc_attr( $thumbnail_srcset ) . '"  data-thumb-sizes="' . esc_attr( $thumbnail_sizes ) . '" class="woocommerce-product-gallery__image"><a href="' . esc_url( $full_src[0] ) . '">' . $image . '</a></div>';
 }

@@ -21,6 +21,7 @@ const wcDepMap = {
 	'@woocommerce/interactivity': [ 'wc', '__experimentalInteractivity' ],
 	'@woocommerce/types': [ 'wc', 'wcTypes' ],
 	'@woocommerce/customer-effort-score': [ 'wc', 'customerEffortScore' ],
+	'@woocommerce/container-image-observer': [ 'wc', 'containerImageObserver' ],
 };
 
 const wcHandleMap = {
@@ -36,6 +37,7 @@ const wcHandleMap = {
 	'@woocommerce/interactivity': 'wc-interactivity',
 	'@woocommerce/types': 'wc-types',
 	'@woocommerce/customer-effort-score': 'wc-customer-effort-score',
+	'@woocommerce/container-image-observer': 'wc-container-image-observer',
 };
 
 const getAlias = ( options = {} ) => {

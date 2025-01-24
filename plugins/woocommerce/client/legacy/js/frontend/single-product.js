@@ -1,6 +1,8 @@
 /*global wc_single_product_params, PhotoSwipe, PhotoSwipeUI_Default */
 jQuery( function( $ ) {
 
+	wc_single_product_params.zoom_enabled = false;
+
 	// wc_single_product_params is required to continue.
 	if ( typeof wc_single_product_params === 'undefined' ) {
 		return false;
@@ -515,3 +517,42 @@ jQuery( function( $ ) {
 
 	} );
 } );
+
+let containerImageObserver;
+
+function initContainerImageObserver() {
+	var imagesToObserve = document.querySelectorAll('.wc-container-observer-image');
+	// eslint-disable-next-line max-len
+	var ContainerImageObserverClass = window && window.wc && window.wc.containerImageObserver && window.wc.containerImageObserver.ContainerImageObserver ? window.wc.containerImageObserver.ContainerImageObserver : null;
+
+	if (!ContainerImageObserverClass && imagesToObserve.length > 0) {
+		imagesToObserve.forEach(image => {
+			var imgsrc = image.dataset['data-large_image'];
+			image.src = imgsrc;
+		});
+	}
+
+	observer = new ContainerImageObserverClass();
+
+	// Observe each image
+	imagesToObserve.forEach(image => {
+		observer.observe(image);
+	});
+}
+
+function disconnectContainerImageObserver() {
+	if (containerImageObserver) {
+		containerImageObserver.disconnect();
+		containerImageObserver = null;
+	}
+}
+
+(function() {
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initContainerImageObserver);
+	} else {
+		initContainerImageObserver();
+	}
+
+	window.addEventListener('unload', disconnectContainerImageObserver);
+})();

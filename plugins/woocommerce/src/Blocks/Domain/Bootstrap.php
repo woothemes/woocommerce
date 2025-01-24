@@ -16,6 +16,7 @@ use Automattic\WooCommerce\Blocks\Patterns\PTKPatternsStore;
 use Automattic\WooCommerce\Blocks\QueryFilters;
 use Automattic\WooCommerce\Blocks\Domain\Services\CreateAccount;
 use Automattic\WooCommerce\Blocks\Domain\Services\Notices;
+use Automattic\WooCommerce\Blocks\Domain\Services\ContainerImageObserver;
 use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
 use Automattic\WooCommerce\Blocks\Domain\Services\GoogleAnalytics;
 use Automattic\WooCommerce\Blocks\Domain\Services\Hydration;
@@ -170,6 +171,7 @@ class Bootstrap {
 			$this->container->get( BlockTypesController::class );
 			$this->container->get( ClassicTemplatesCompatibility::class );
 			$this->container->get( Notices::class )->init();
+			$this->container->get( ContainerImageObserver::class )->init();
 			$this->container->get( PTKPatternsStore::class );
 			$this->container->get( TemplateOptions::class )->init();
 		}
@@ -291,6 +293,12 @@ class Bootstrap {
 			Notices::class,
 			function ( Container $container ) {
 				return new Notices( $container->get( Package::class ) );
+			}
+		);
+		$this->container->register(
+			ContainerImageObserver::class,
+			function ( Container $container ) {
+				return new ContainerImageObserver( $container->get( Package::class ) );
 			}
 		);
 		$this->container->register(

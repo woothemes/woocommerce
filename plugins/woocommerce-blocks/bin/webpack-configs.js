@@ -1014,6 +1014,73 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 	};
 };
 
+const getContainerImageObserverConfig = ( options = {} ) => {
+	const { alias, resolvePlugins = [] } = options;
+
+	return {
+		entry: {
+			'wc-container-image-observer':
+				'./assets/js/utils/container-image-observer',
+		},
+		output: {
+			filename: '[name].js',
+			path: path.resolve( __dirname, '../build/' ),
+			library: [ 'wc', 'containerImageObserver' ],
+			libraryTarget: 'this',
+			chunkLoadingGlobal: 'webpackWcBlocksJsonp',
+		},
+		resolve: {
+			alias,
+			plugins: resolvePlugins,
+			extensions: [ '.js', '.ts', '.tsx' ],
+		},
+		plugins: [
+			...getSharedPlugins( {
+				bundleAnalyzerReportTitle: 'Container Image Observer',
+			} ),
+			new ProgressBarPlugin(
+				getProgressBarPluginConfig( 'Container Image Observer' )
+			),
+		],
+		module: {
+			rules: [
+				{
+					test: /\.(j|t)sx?$/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
+					use: {
+						loader: 'babel-loader',
+						options: {
+							presets: [
+								'@babel/preset-typescript',
+								[
+									'@babel/preset-env',
+									{
+										modules: false,
+										targets: {
+											browsers: [
+												'extends @wordpress/browserslist-config',
+											],
+										},
+									},
+								],
+							],
+							plugins: [
+								'@babel/plugin-proposal-optional-chaining',
+								'@babel/plugin-proposal-class-properties',
+							],
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
+						},
+					},
+				},
+			],
+		},
+	};
+};
+
 const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 	const { alias, resolvePlugins = [] } = options;
 
@@ -1168,5 +1235,6 @@ module.exports = {
 	getSiteEditorConfig,
 	getStylingConfig,
 	getInteractivityAPIConfig,
+	getContainerImageObserverConfig,
 	getCartAndCheckoutFrontendConfig,
 };
