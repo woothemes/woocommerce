@@ -9,7 +9,7 @@ import crypto from 'crypto';
 /**
  * Internal dependencies
  */
-import { generatePostFrontMatter } from './generate-frontmatter';
+import { generatePostFrontMatter, hasContent } from './generate-frontmatter';
 import { generateFileUrl } from './generate-urls';
 
 export interface Category {
@@ -81,15 +81,10 @@ async function processDirectory(
 	}
 
 	markdownFiles.forEach( ( filePath ) => {
-			// Skip README.md which we have already processed.
 			const fileContent = fs.readFileSync( filePath, 'utf-8' );
 			const fileFrontmatter = generatePostFrontMatter( fileContent );
-
-			// Get content after the frontmatter
-			const contentAfterFrontmatter = fileContent.replace(/^---[\s\S]*?---/, '').trim();
 			
-			// Skip if there's no actual content after frontmatter
-			if ( ! contentAfterFrontmatter) {
+			if ( ! hasContent( fileContent ) ) {
 				return;
 			}
 
