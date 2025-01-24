@@ -234,7 +234,7 @@ export const SettingsPaymentsMain = () => {
 		// Set the ref to true to prevent multiple pageview events.
 		triggeredPageViewRef.current = true;
 
-		const eventProps = {
+		const eventProps: { [ key: string ]: boolean } = {
 			woocommerce_payments_displayed: providers.some(
 				( provider ) =>
 					provider.id === 'woocommerce_payments' ||
