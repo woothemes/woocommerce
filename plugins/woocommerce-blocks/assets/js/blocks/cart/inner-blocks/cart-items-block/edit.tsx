@@ -12,6 +12,7 @@ import {
 	useForcedLayout,
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
+import crossSells from '../../../product-collection/collections/cross-sells';
 
 interface Props {
 	clientId: string;
@@ -26,8 +27,17 @@ export const Edit = ( { clientId }: Props ): JSX.Element => {
 			'woocommerce/product-collection',
 			{
 				collection: 'woocommerce/product-collection/cross-sells',
+				displayLayout: {
+					type: 'flex',
+					columns: 4,
+					shrinkColumns: true,
+				},
+				query: {
+					perPage: 8,
+					pages: 1,
+				},
 			},
-			[],
+			crossSells.innerBlocks,
 		],
 	] as unknown as TemplateArray;
 
