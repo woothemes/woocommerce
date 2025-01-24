@@ -502,7 +502,8 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_email_type() {
-		return $this->email_type && class_exists( 'DOMDocument' ) ? $this->email_type : 'plain';
+		$email_type = $this->get_transient_or_value( 'email_type', $this->email_type );
+		return $email_type && class_exists( 'DOMDocument' ) ? $email_type : 'plain';
 	}
 
 	/**
@@ -1244,5 +1245,29 @@ class WC_Email extends WC_Settings_API {
 		}
 
 		return $option;
+	}
+
+	/**
+	 * Return transient or provided value for email preview.
+	 *
+	 * @param string $key Option key.
+	 * @param mixed  $value Value to return when transient is not set.
+	 */
+	private function get_transient_or_value( string $key, $value ) {
+		/**
+		 * This filter is documented in templates/emails/email-styles.php
+		 *
+		 * @since 9.6.0
+		 * @param bool $is_email_preview Whether the email is being previewed.
+		 */
+		$is_email_preview = apply_filters( 'woocommerce_is_email_preview', false );
+		if ( $is_email_preview ) {
+			$email_id  = $this->id;
+			$transient = get_transient( "woocommerce_{$email_id}_{$key}" );
+			if ( false !== $transient ) {
+				return $transient ? $transient : $value;
+			}
+		}
+		return $value;
 	}
 }
