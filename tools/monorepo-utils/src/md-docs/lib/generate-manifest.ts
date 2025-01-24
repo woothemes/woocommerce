@@ -81,10 +81,17 @@ async function processDirectory(
 	}
 
 	markdownFiles.forEach( ( filePath ) => {
-		if ( filePath !== readmePath || ! checkReadme ) {
 			// Skip README.md which we have already processed.
 			const fileContent = fs.readFileSync( filePath, 'utf-8' );
 			const fileFrontmatter = generatePostFrontMatter( fileContent );
+
+			// Get content after the frontmatter
+			const contentAfterFrontmatter = fileContent.replace(/^---[\s\S]*?---/, '').trim();
+			
+			// Skip if there's no actual content after frontmatter
+			if ( ! contentAfterFrontmatter) {
+				return;
+			}
 
 			if ( baseUrl.includes( 'github' ) ) {
 				fileFrontmatter.edit_url = generateFileUrl(
@@ -117,7 +124,6 @@ async function processDirectory(
 				filePath,
 				id: generatePostId( relativePath, projectName ),
 			} );
-		}
 	} );
 
 	// Recursively process subdirectories.
