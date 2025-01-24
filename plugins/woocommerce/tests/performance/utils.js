@@ -12,7 +12,7 @@ import {
 	commonNonStandardHeaders,
 	commonRequestHeaders,
 	jsonAPIRequestHeader,
-} from './headers';
+} from './headers.js';
 
 const checkResponse = (
 	response,
