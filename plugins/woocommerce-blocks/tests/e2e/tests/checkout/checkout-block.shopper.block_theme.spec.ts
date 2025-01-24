@@ -245,7 +245,7 @@ test.describe( 'Shopper → Local pickup', () => {
 		await frontendUtils.goToCheckout();
 
 		await expect(
-			page.getByRole( 'radio', { name: 'Local Pickup', exact: true } )
+			page.getByRole( 'radio', { name: 'Pickup', exact: true } )
 		).toBeHidden();
 
 		await expect(
@@ -310,7 +310,7 @@ test.describe( 'Shopper → Local pickup', () => {
 		await frontendUtils.goToCheckout();
 
 		await expect(
-			page.getByRole( 'radio', { name: 'Local Pickup', exact: true } )
+			page.getByRole( 'radio', { name: 'Pickup', exact: true } )
 		).toBeHidden();
 
 		await expect(
