@@ -255,13 +255,16 @@ class OrderActionsRestController extends RestApiControllerBase {
 			OrderStatus::NEW,
 			OrderStatus::TRASH,
 		);
-		if ( ! in_array( $order_status, $unavailable_statuses, true ) ) {
-			$valid_template_classes = array(
-				'WC_Email_Customer_Invoice',
-			);
-			if ( $this->order_is_partially_refunded( $order ) ) {
-				$valid_template_classes[] = 'WC_Email_Customer_Refunded_Order';
-			}
+
+		if ( ! $order->get_billing_email() || in_array( $order_status, $unavailable_statuses, true ) ) {
+			return array();
+		}
+
+		$valid_template_classes = array(
+			'WC_Email_Customer_Invoice',
+		);
+		if ( $this->order_is_partially_refunded( $order ) ) {
+			$valid_template_classes[] = 'WC_Email_Customer_Refunded_Order';
 		}
 
 		switch ( $order_status ) {
