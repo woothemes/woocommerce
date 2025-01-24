@@ -46,45 +46,6 @@ class CheckoutFieldsSchema {
 	}
 
 	/**
-	 * Process field rules.
-	 *
-	 * Certain rules impact other attributes such as `required` and `hidden` since they become dynamic.
-	 *
-	 * @param array          $field_data The field data.
-	 * @param DocumentObject $document_object The document object.
-	 * @return array The processed field data.
-	 */
-	public function process_field_rules( $field_data, DocumentObject $document_object = null ) {
-		if ( ! $this->is_enabled() || empty( $field_data ) ) {
-			return $field_data;
-		}
-
-		if ( empty( $field_data['rules'] ) ) {
-			return $field_data;
-		}
-
-		if ( null === $document_object ) {
-			if ( ! empty( $field_data['rules']['required'] ) ) {
-				$field_data['required'] = false;
-			}
-			if ( ! empty( $field_data['rules']['hidden'] ) ) {
-				$field_data['hidden'] = false;
-			}
-			return $field_data;
-		}
-
-		if ( ! empty( $field_data['rules']['required'] ) ) {
-			$field_data['required'] = $this->validate_document_object_rules( $document_object, $field_data['rules']['required'] );
-		}
-
-		if ( ! empty( $field_data['rules']['hidden'] ) ) {
-			$field_data['hidden'] = $this->validate_document_object_rules( $document_object, $field_data['rules']['hidden'] );
-		}
-
-		return $field_data;
-	}
-
-	/**
 	 * Get the schema properties.
 	 *
 	 * @return array

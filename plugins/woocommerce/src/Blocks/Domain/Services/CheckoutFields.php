@@ -6,6 +6,7 @@ namespace Automattic\WooCommerce\Blocks\Domain\Services;
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
+use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
 use WC_Customer;
 use WC_Data;
 use WC_Order;
@@ -242,8 +243,6 @@ class CheckoutFields {
 
 		$field_data['attributes'] = $this->register_field_attributes( $field_data['id'], $field_data['attributes'] );
 
-		$field_data = $this->schema->process_field_rules( $field_data );
-
 		if ( 'checkbox' === $field_data['type'] ) {
 			$field_data = $this->process_checkbox_field( $field_data, $options );
 		} elseif ( 'select' === $field_data['type'] ) {
@@ -258,6 +257,21 @@ class CheckoutFields {
 		// Insert new field into the correct location array.
 		$this->additional_fields[ $field_data['id'] ]        = $field_data;
 		$this->fields_locations[ $field_data['location'] ][] = $field_data['id'];
+	}
+
+	/**
+	 * Returns true if the field is required. Takes rules into consideration if a document object is provided.
+	 *
+	 * @param array               $field The field.
+	 * @param DocumentObject|null $document_object The document object.
+	 * @return bool
+	 */
+	public function is_field_required( $field, $document_object = null ) {
+		if ( $document_object && ! empty( $field['rules']['required'] ) ) {
+			return $this->schema->validate_document_object_rules( $document_object, $field['rules']['required'] );
+		}
+
+		return true === $field['required'];
 	}
 
 	/**

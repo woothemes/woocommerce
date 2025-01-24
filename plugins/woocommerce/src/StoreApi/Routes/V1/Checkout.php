@@ -189,62 +189,38 @@ class Checkout extends AbstractCartRoute {
 	 * @throws RouteException When a required additional field is missing.
 	 */
 	public function validate_required_additional_fields( \WP_REST_Request $request ) {
-
 		$document_object = new DocumentObject();
+		$document_object->set_cart( WC()->cart );
+		$document_object->set_customer( wc()->customer );
 		$document_object->set_billing_address( $request['billing_address'] );
 		$document_object->set_shipping_address( $request['shipping_address'] );
 
-		$order_and_contact_fields = array_merge(
-			$this->additional_fields_controller->get_fields_for_location( 'contact' ),
-			$this->additional_fields_controller->get_fields_for_location( 'order' )
-		);
-		$order_and_contact_fields = array_map(
-			function ( $field ) use ( $document_object ) {
-				return $this->additional_fields_controller->schema->process_field_rules( $field, $document_object );
-			},
-			$order_and_contact_fields
-		);
+		if ( WC()->cart->needs_shipping() ) {
+			$shipping_fields = $this->additional_fields_controller->get_fields_for_group( 'shipping' );
 
-		if ( ! empty( $order_and_contact_fields ) ) {
-			foreach ( $order_and_contact_fields as $field_key => $order_and_contact_field ) {
-				if ( $order_and_contact_field['required'] && ! isset( $request['additional_fields'][ $field_key ] ) ) {
-					throw new RouteException(
-						'woocommerce_rest_checkout_missing_required_field',
-						/* translators: %s: is the field label */
-						esc_html( sprintf( __( 'There was a problem with the provided additional fields: %s is required', 'woocommerce' ), $order_and_contact_field['label'] ) ),
-						400
-					);
+			foreach ( $shipping_fields as $field_key => $field ) {
+				if ( ! isset( $request['shipping_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object ) ) {
+					/* translators: %s: is the field label */
+					throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided shipping address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
 				}
 			}
 		}
 
-		$address_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
-		$address_fields = array_map(
-			function ( $field ) use ( $document_object ) {
-				return $this->additional_fields_controller->schema->process_field_rules( $field, $document_object );
-			},
-			$address_fields
-		);
+		$billing_fields = $this->additional_fields_controller->get_fields_for_group( 'billing' );
 
-		if ( ! empty( $address_fields ) ) {
-			$needs_shipping = WC()->cart->needs_shipping();
-			foreach ( $address_fields as $field_key => $address_field ) {
-				if ( $address_field['required'] && ! isset( $request['billing_address'][ $field_key ] ) ) {
-					throw new RouteException(
-						'woocommerce_rest_checkout_missing_required_field',
-						/* translators: %s: is the field label */
-						esc_html( sprintf( __( 'There was a problem with the provided billing address: %s is required', 'woocommerce' ), $address_field['label'] ) ),
-						400
-					);
-				}
-				if ( $needs_shipping && $address_field['required'] && ! isset( $request['shipping_address'][ $field_key ] ) ) {
-					throw new RouteException(
-						'woocommerce_rest_checkout_missing_required_field',
-						/* translators: %s: is the field label */
-						esc_html( sprintf( __( 'There was a problem with the provided shipping address: %s is required', 'woocommerce' ), $address_field['label'] ) ),
-						400
-					);
-				}
+		foreach ( $billing_fields as $field_key => $field ) {
+			if ( ! isset( $request['billing_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object ) ) {
+				/* translators: %s: is the field label */
+				throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided billing address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
+			}
+		}
+
+		$other_fields = $this->additional_fields_controller->get_fields_for_group( 'other' );
+
+		foreach ( $other_fields as $field_key => $field ) {
+			if ( ! isset( $request['additional_fields'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object ) ) {
+				/* translators: %s: is the field label */
+				throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided additional fields: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
 			}
 		}
 	}
