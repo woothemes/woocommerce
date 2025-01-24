@@ -21,7 +21,7 @@ import {
 	commonPostRequestHeaders,
 	commonNonStandardHeaders,
 } from '../../headers.js';
-import { getDefaultProduct } from '../../utils';
+import { getDefaultProduct } from '../../utils.js';
 
 export function cartRemoveItem() {
 	let item_to_remove;

@@ -27,7 +27,7 @@ import {
 	commonNonStandardHeaders,
 	contentTypeRequestHeader,
 } from '../../headers.js';
-import { getDefaultProduct } from '../../utils';
+import { getDefaultProduct } from '../../utils.js';
 
 export function cartApplyCoupon() {
 	let apply_coupon_nonce;

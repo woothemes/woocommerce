@@ -24,7 +24,7 @@ import {
 	commonPostRequestHeaders,
 	commonNonStandardHeaders,
 } from '../../headers.js';
-import { getDefaultProduct } from '../../utils';
+import { getDefaultProduct } from '../../utils.js';
 
 export function cart() {
 	group( 'Product Page Add to cart', function () {
