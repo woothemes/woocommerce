@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: bump number of workers in CI to run tests in parallel
