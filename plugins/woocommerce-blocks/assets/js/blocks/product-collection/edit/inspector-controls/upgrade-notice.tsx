@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Notice, Button } from '@wordpress/components';
 import { useLocalStorageState } from '@woocommerce/base-hooks';
 import {
 	createInterpolateElement,
@@ -14,6 +13,8 @@ import {
 	getInitialStatusLSValue,
 	incrementUpgradeStatusDisplayCount,
 } from '@woocommerce/blocks/migration-products-to-product-collection';
+import { recordEvent } from '@woocommerce/tracks';
+import { UpgradeDowngradeNotice } from '@woocommerce/editor-components/upgrade-downgrade-notice';
 
 const notice = createInterpolateElement(
 	__(
@@ -52,6 +53,12 @@ const UpgradeNotice = ( { revertMigration }: UpgradeNoticeProps ) => {
 
 	const handleRevert = () => {
 		revertMigration();
+		recordEvent(
+			'blocks_product_collection_migration_between_products_beta',
+			{
+				transform_to: 'products_beta',
+			}
+		);
 	};
 
 	// Prevent the possibility to count displays multiple times when the
@@ -68,14 +75,13 @@ const UpgradeNotice = ( { revertMigration }: UpgradeNoticeProps ) => {
 	}, [ canCountDisplays ] );
 
 	return status === 'notseen' ? (
-		<Notice onRemove={ handleRemove }>
-			<>{ notice } </>
-			<br />
-			<br />
-			<Button variant="link" onClick={ handleRevert }>
-				{ buttonLabel }
-			</Button>
-		</Notice>
+		<UpgradeDowngradeNotice
+			actionLabel={ buttonLabel }
+			onActionClick={ handleRevert }
+			onRemove={ handleRemove }
+		>
+			{ notice }
+		</UpgradeDowngradeNotice>
 	) : null;
 };
 

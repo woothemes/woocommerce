@@ -15,6 +15,7 @@ const defaultProductData: ProductResponseItem = {
 	variation: '',
 	permalink: '',
 	sku: '',
+	slug: '',
 	short_description: '',
 	description: '',
 	on_sale: false,
@@ -44,6 +45,10 @@ const defaultProductData: ProductResponseItem = {
 	is_in_stock: false,
 	is_on_backorder: false,
 	low_stock_remaining: null,
+	stock_availability: {
+		text: '',
+		class: '',
+	},
 	sold_individually: false,
 	add_to_cart: {
 		text: 'Add to cart',
@@ -53,6 +58,7 @@ const defaultProductData: ProductResponseItem = {
 		maximum: 99,
 		multiple_of: 1,
 	},
+	grouped_products: [],
 };
 
 /**

@@ -137,16 +137,14 @@ const Table: React.VFC< TableProps > = ( {
 
 		if ( table?.scrollWidth && table?.scrollHeight && table?.offsetWidth ) {
 			const scrolledToEnd =
-				table?.scrollWidth - table?.scrollLeft <= table?.offsetWidth;
+				table.scrollWidth - table.scrollLeft <= table.offsetWidth;
 			if ( scrolledToEnd && isScrollableRight ) {
 				setIsScrollableRight( false );
 			} else if ( ! scrolledToEnd && ! isScrollableRight ) {
 				setIsScrollableRight( true );
 			}
-		}
 
-		if ( table?.scrollLeft ) {
-			const scrolledToStart = table?.scrollLeft <= 0;
+			const scrolledToStart = table.scrollLeft === 0;
 			if ( scrolledToStart && isScrollableLeft ) {
 				setIsScrollableLeft( false );
 			} else if ( ! scrolledToStart && ! isScrollableLeft ) {

@@ -12,27 +12,23 @@ import {
 } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useState, useContext, useEffect } from '@wordpress/element';
+import { __unstableMotion as motion } from '@wordpress/components';
 import {
-	// @ts-ignore No types for this exist yet.
-	__unstableMotion as motion,
-} from '@wordpress/components';
-import {
+	// @ts-expect-error No types for this exist yet.
 	privateApis as blockEditorPrivateApis,
-	// @ts-ignore No types for this exist yet.
 } from '@wordpress/block-editor';
-// @ts-ignore No types for this exist yet.
+// @ts-expect-error No types for this exist yet.
 import useInitEditedEntityFromURL from '@wordpress/edit-site/build-module/components/sync-state-with-url/use-init-edited-entity-from-url';
-// @ts-ignore No types for this exist yet.
+// @ts-expect-error No types for this exist yet.
 import { useIsSiteEditorLoading } from '@wordpress/edit-site/build-module/components/layout/hooks';
-// @ts-ignore No types for this exist yet.
+// @ts-expect-error No types for this exist yet.
 import ErrorBoundary from '@wordpress/edit-site/build-module/components/error-boundary';
-// @ts-ignore No types for this exist yet.
+// @ts-expect-error No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
-// @ts-ignore No types for this exist yet.
+// @ts-expect-error No types for this exist yet.
 import { NavigableRegion } from '@wordpress/interface';
-// @ts-ignore No types for this exist yet.
 import { EntityProvider } from '@wordpress/core-data';
-// @ts-ignore No types for this exist yet.
+// @ts-expect-error No types for this exist yet.
 import useEditedEntityRecord from '@wordpress/edit-site/build-module/components/use-edited-entity-record';
 
 /**
@@ -54,6 +50,7 @@ import { isOfflineAIFlow } from '../guards';
 import { isWooExpress } from '~/utils/is-woo-express';
 import { trackEvent } from '../tracking';
 import { SidebarNavigationExtraScreen } from './sidebar/navigation-extra-screen/sidebar-navigation-extra-screen';
+import './gutenberg-styles/layout.scss';
 
 const { useGlobalStyle } = unlock( blockEditorPrivateApis );
 
@@ -121,6 +118,7 @@ export const Layout = () => {
 		currentState.transitionalScreen === 'transitional'
 	) {
 		return (
+			// @ts-expect-error Types are not correct when kind is root and type is site.
 			<EntityProvider kind="root" type="site">
 				<EntityProvider
 					kind="postType"
@@ -151,35 +149,34 @@ export const Layout = () => {
 			} }
 		>
 			<HighlightedBlockContextProvider>
+				{ /* @ts-expect-error Types are not correct when kind is root and type is site. */ }
 				<EntityProvider kind="root" type="site">
 					<EntityProvider
 						kind="postType"
 						type={ templateType }
 						id={ templateId }
 					>
-						<div className={ clsx( 'edit-site-layout' ) }>
+						<div
+							className={ clsx( 'woocommerce-edit-site-layout' ) }
+						>
 							<motion.div
-								className="edit-site-layout__header-container"
+								className="woocommerce-edit-site-layout__header-container"
 								animate={ 'view' }
 							>
 								<SiteHub
-									as={ motion.div }
-									variants={ {
-										view: { x: 0 },
-									} }
 									isTransparent={ false }
-									className="edit-site-layout__hub"
+									className="woocommerce-edit-site-layout__hub"
 								/>
 							</motion.div>
 
-							<div className="edit-site-layout__content">
-								<div className="edit-site-layout__sidebar">
+							<div className="woocommerce-edit-site-layout__content">
+								<div className="woocommerce-edit-site-layout__sidebar">
 									<NavigableRegion
 										ariaLabel={ __(
 											'Navigation',
 											'woocommerce'
 										) }
-										className="edit-site-layout__sidebar-region"
+										className="woocommerce-edit-site-layout__sidebar-region"
 									>
 										<motion.div
 											animate={ { opacity: 1 } }
@@ -193,7 +190,7 @@ export const Layout = () => {
 														: ANIMATION_DURATION,
 												ease: 'easeOut',
 											} }
-											className="edit-site-layout__sidebar"
+											className="woocommerce-edit-site-layout__sidebar"
 										>
 											<Sidebar />
 										</motion.div>
@@ -202,14 +199,14 @@ export const Layout = () => {
 								</div>
 
 								{ ! isMobileViewport && (
-									<div className="edit-site-layout__canvas-container">
+									<div className="woocommerce-edit-site-layout__canvas-container">
 										{ canvasResizer }
 										{ !! canvasSize.width && (
 											<motion.div
 												initial={ false }
 												layout="position"
 												className={ clsx(
-													'edit-site-layout__canvas'
+													'woocommerce-edit-site-layout__canvas'
 												) }
 											>
 												<ErrorBoundary>

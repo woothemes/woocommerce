@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests\Shortcodes
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+
 /**
  * Class WC_Test_Shortcode_Products.
  */
@@ -81,7 +83,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		$shortcode = new WC_Shortcode_Products();
 		$expected  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'menu_order title',
@@ -102,7 +104,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected2  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'ID',
@@ -122,7 +124,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected3                 = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'menu_order title',
@@ -155,7 +157,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected4                = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'title',
@@ -189,7 +191,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected4_id                = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'title',
@@ -223,7 +225,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected5  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'date ID',
@@ -246,7 +248,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected6  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'menu_order title',
@@ -274,7 +276,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected7  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'title',
@@ -300,7 +302,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected8  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'meta_value_num',
@@ -328,7 +330,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected9  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'meta_value_num',
@@ -356,7 +358,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected10  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'date ID',
@@ -394,7 +396,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected11  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'title',
@@ -431,7 +433,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected11_id  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'title',
@@ -462,7 +464,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected12  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'menu_order title',
@@ -490,7 +492,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected13  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'menu_order title',
@@ -525,7 +527,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected14  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'menu_order title',
@@ -562,7 +564,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected15  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'menu_order title',
@@ -595,7 +597,7 @@ class WC_Test_Shortcode_Products extends WC_Unit_Test_Case {
 		);
 		$expected16  = array(
 			'post_type'           => 'product',
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'ignore_sticky_posts' => true,
 			'no_found_rows'       => true,
 			'orderby'             => 'menu_order title',

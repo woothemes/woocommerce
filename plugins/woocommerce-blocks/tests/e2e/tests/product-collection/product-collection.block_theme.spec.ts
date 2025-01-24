@@ -169,7 +169,6 @@ test.describe( 'Product Collection', () => {
 			'Beanie', // core/post-title
 			'$20.00 Original price was: $20.00.$18.00Current price is: $18.00.', // woocommerce/product-price
 			'woo-beanie', // woocommerce/product-sku
-			'In stock', // woocommerce/product-stock-indicator
 			'This is a simple product.', // core/post-excerpt
 			'Accessories', // core/post-terms - product_cat
 			'Recommended', // core/post-terms - product_tag
@@ -244,40 +243,6 @@ test.describe( 'Product Collection', () => {
 					page.locator( '.wc-block-product-template' )
 				).toContainText( content );
 			}
-		} );
-	} );
-
-	test.describe( 'Toolbar settings', () => {
-		test.beforeEach( async ( { pageObject } ) => {
-			await pageObject.createNewPostAndInsertBlock();
-		} );
-
-		test( 'Toolbar -> Items per page, offset & max page to show', async ( {
-			pageObject,
-		} ) => {
-			await pageObject.clickDisplaySettings();
-			await pageObject.setDisplaySettings( {
-				itemsPerPage: 3,
-				offset: 0,
-				maxPageToShow: 2,
-			} );
-
-			await expect( pageObject.products ).toHaveCount( 3 );
-
-			await pageObject.setDisplaySettings( {
-				itemsPerPage: 2,
-				offset: 0,
-				maxPageToShow: 2,
-			} );
-			await expect( pageObject.products ).toHaveCount( 2 );
-
-			await pageObject.publishAndGoToFrontend();
-
-			await expect( pageObject.products ).toHaveCount( 2 );
-
-			const paginationNumbers =
-				pageObject.pagination.locator( '.page-numbers' );
-			await expect( paginationNumbers ).toHaveCount( 2 );
 		} );
 	} );
 
@@ -698,7 +663,7 @@ test.describe( 'Product Collection', () => {
 			await expect( pageObject.productTemplate ).toBeVisible();
 		} );
 
-		test( 'On Sale collection should be visible after Refresh', async ( {
+		test( 'On Sale Products collection should be visible after Refresh', async ( {
 			page,
 			pageObject,
 			editor,
@@ -713,7 +678,7 @@ test.describe( 'Product Collection', () => {
 
 			await expect( productTemplate ).toHaveCount( 2 );
 
-			// Refresh the template and verify "On Sale" collection is still visible
+			// Refresh the template and verify "On Sale Products" collection is still visible
 			await editor.saveSiteEditorEntities( {
 				isOnlyCurrentEntityDirty: true,
 			} );
@@ -721,7 +686,7 @@ test.describe( 'Product Collection', () => {
 			await expect( productTemplate ).toHaveCount( 2 );
 		} );
 
-		test( 'On Sale collection should be visible after Refresh in a Post', async ( {
+		test( 'On Sale Products collection should be visible after Refresh in a Post', async ( {
 			page,
 			pageObject,
 			editor,
@@ -729,7 +694,7 @@ test.describe( 'Product Collection', () => {
 			await pageObject.createNewPostAndInsertBlock( 'onSale' );
 			await expect( pageObject.productTemplate ).toBeVisible();
 
-			// Refresh the post and verify "On Sale" collection is still visible
+			// Refresh the post and verify "On Sale Products" collection is still visible
 			await editor.saveDraft();
 			await page.reload();
 			await expect( pageObject.productTemplate ).toBeVisible();

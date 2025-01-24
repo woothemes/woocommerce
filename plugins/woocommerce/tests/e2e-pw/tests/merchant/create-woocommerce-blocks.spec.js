@@ -1,13 +1,17 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlock,
-	getCanvas,
-	publishPage,
-	closeChoosePatternModal,
-} = require( '../../utils/editor' );
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
+
+/**
+ * External dependencies
+ */
+import {
+	closeChoosePatternModal,
+	getCanvas,
+	goToPageEditor,
+	insertBlock,
+	publishPage,
+} from '@woocommerce/e2e-utils-playwright';
 
 const simpleProductName = 'Simplest Product';
 const singleProductPrice = '555.00';
@@ -17,30 +21,29 @@ const singleProductPrice = '555.00';
 // - Product Gallery (Beta) - it's not intended to be used in posts
 const blocks = [
 	'Active Filters',
-	'All Products',
 	'All Reviews',
-	'Best Selling Products',
+	'Best Sellers',
+	'Cross-Sells',
 	'Customer account',
 	'Featured Category',
 	'Featured Product',
+	'Featured Products',
 	'Filter by Attribute',
 	'Filter by Price',
 	'Filter by Rating',
 	'Filter by Stock',
-	'Hand-picked Products',
-	'Newest Products',
+	'Hand-Picked Products',
+	'New Arrivals',
 	'On Sale Products',
 	'Product Categories List',
 	'Product Collection',
 	'Product Search',
-	'Products by Attribute',
-	'Products by Category',
-	'Products by Tag',
 	'Reviews by Category',
 	'Reviews by Product',
 	'Single Product',
 	'Store Notices',
 	'Top Rated Products',
+	'Upsells',
 ];
 
 let productId, shippingZoneId, productTagId, attributeId, productCategoryId;
@@ -53,12 +56,7 @@ const test = baseTest.extend( {
 test.describe(
 	'Add WooCommerce Blocks Into Page',
 	{
-		tag: [
-			'@gutenberg',
-			'@services',
-			'@skip-on-default-pressable',
-			'@skip-on-default-wpcom',
-		],
+		tag: [ tags.GUTENBERG, tags.SKIP_ON_EXTERNAL_ENV ],
 	},
 	() => {
 		test.beforeAll( async ( { api } ) => {
@@ -169,16 +167,23 @@ test.describe(
 
 					// eslint-disable-next-line playwright/no-conditional-in-test
 					if ( blocks[ i ] === 'Reviews by Product' ) {
+						// Use click() instead of check().
+						// check() causes occasional flakiness:
+						//     - "Error: locator.check: Clicking the checkbox did not change its state"
 						await canvas
 							.locator( '.wc-block-reviews-by-product' )
 							.getByLabel( simpleProductName )
-							.check();
+							.click();
 						await canvas
 							.locator( '.wc-block-reviews-by-product' )
 							.getByRole( 'button', {
 								name: 'Done',
 								exact: true,
 							} )
+							.click();
+						// Click on the Reviews by Product block to show the Block Tools to be used later.
+						await canvas
+							.getByLabel( 'Block: Reviews by Product' )
 							.click();
 					}
 
@@ -191,6 +196,13 @@ test.describe(
 							} )
 							.first()
 					).toBeVisible();
+
+					// Add a new empty block to insert the next block into.
+					await page
+						.getByLabel( 'Block tools' )
+						.getByLabel( 'Options' )
+						.click();
+					await page.getByText( 'Add after' ).click();
 				} );
 			}
 

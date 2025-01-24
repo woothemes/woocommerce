@@ -12,12 +12,16 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 7.4.0
+ * @version 9.7.0
  */
+
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+
+$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 
 ?>
 <!DOCTYPE html>
@@ -33,15 +37,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<td><!-- Deliberately empty to support consistent sizing and layout across multiple email clients. --></td>
 				<td width="600">
 					<div id="wrapper" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'; ?>">
-						<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+						<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="inner_wrapper">
 							<tr>
 								<td align="center" valign="top">
 									<div id="template_header_image">
 										<?php
 										$img = get_option( 'woocommerce_email_header_image' );
+										/**
+										 * This filter is documented in templates/emails/email-styles.php
+										 *
+										 * @since 9.6.0
+										 */
+										if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
+											$img_transient = get_transient( 'woocommerce_email_header_image' );
+											$img           = false !== $img_transient ? $img_transient : $img;
+										}
 
 										if ( $img ) {
 											echo '<p style="margin-top:0;"><img src="' . esc_url( $img ) . '" alt="' . esc_attr( get_bloginfo( 'name', 'display' ) ) . '" /></p>';
+										} elseif ( $email_improvements_enabled ) {
+											echo '<p class="email-logo-text">' . esc_html( get_bloginfo( 'name', 'display' ) ) . '</p>';
 										}
 										?>
 									</div>

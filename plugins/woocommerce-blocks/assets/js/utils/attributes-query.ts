@@ -3,6 +3,7 @@
  */
 import {
 	AttributeObject,
+	AttributeObjectForDisplay,
 	AttributeQuery,
 	AttributeTerm,
 } from '@woocommerce/types';
@@ -68,7 +69,7 @@ export const removeAttributeFilterBySlug = (
 export const updateAttributeFilter = (
 	query: AttributeQuery[] = [],
 	setQuery: ( query: AttributeQuery[] ) => void,
-	attribute?: AttributeObject,
+	attribute?: AttributeObjectForDisplay,
 	attributeTerms: AttributeTerm[] = [],
 	operator: 'in' | 'and' = 'in'
 ) => {

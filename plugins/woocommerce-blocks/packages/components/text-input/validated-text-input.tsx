@@ -12,7 +12,7 @@ import {
 import clsx from 'clsx';
 import { isObject } from '@woocommerce/types';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { usePrevious } from '@woocommerce/base-hooks';
 import { useInstanceId } from '@wordpress/compose';
 
@@ -82,7 +82,7 @@ const ValidatedTextInput = forwardRef<
 			setValidationErrors,
 			hideValidationError,
 			clearValidationError,
-		} = useDispatch( VALIDATION_STORE_KEY );
+		} = useDispatch( validationStore );
 
 		// Ref for validation callback.
 		const customValidationRef = useRef( customValidation );
@@ -94,7 +94,7 @@ const ValidatedTextInput = forwardRef<
 
 		const { validationError, validationErrorId } = useSelect(
 			( select ) => {
-				const store = select( VALIDATION_STORE_KEY );
+				const store = select( validationStore );
 				return {
 					validationError: store.getValidationError( errorIdString ),
 					validationErrorId:
@@ -232,10 +232,6 @@ const ValidatedTextInput = forwardRef<
 		}
 
 		const hasError = validationError?.message && ! validationError?.hidden;
-		const describedBy =
-			showError && hasError && validationErrorId
-				? validationErrorId
-				: ariaDescribedBy;
 
 		return (
 			<TextInput
@@ -244,12 +240,20 @@ const ValidatedTextInput = forwardRef<
 				} ) }
 				aria-invalid={ hasError === true }
 				id={ textInputId }
+				aria-errormessage={
+					// we're using the internal `aria-errormessage` attribute, calculated from the data store.
+					// If a consumer wants to overwrite the attribute, they can pass a prop.
+					showError && hasError && validationErrorId
+						? validationErrorId
+						: undefined
+				}
 				type={ type }
 				feedback={
 					showError && hasError ? (
 						<ValidationInputError
 							errorMessage={ passedErrorMessage }
 							propertyName={ errorIdString }
+							elementId={ errorIdString }
 						/>
 					) : (
 						feedback
@@ -271,7 +275,7 @@ const ValidatedTextInput = forwardRef<
 					}
 				} }
 				onBlur={ () => validateInput( false ) }
-				ariaDescribedBy={ describedBy }
+				ariaDescribedBy={ ariaDescribedBy }
 				value={ value }
 				title="" // This prevents the same error being shown on hover.
 				label={ label }

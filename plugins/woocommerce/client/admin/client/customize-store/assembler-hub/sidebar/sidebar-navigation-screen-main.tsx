@@ -55,7 +55,7 @@ export const SidebarNavigationScreenMain = () => {
 			) }
 			content={
 				<>
-					<div className="edit-site-sidebar-navigation-screen-patterns__group-header">
+					<div className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-header">
 						<Heading level={ 2 }>
 							{ __( 'Style', 'woocommerce' ) }
 						</Heading>
@@ -150,7 +150,7 @@ export const SidebarNavigationScreenMain = () => {
 								: __( 'Choose fonts', 'woocommerce' ) }
 						</NavigatorButton>
 					</ItemGroup>
-					<div className="edit-site-sidebar-navigation-screen-patterns__group-header">
+					<div className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-header">
 						<Heading level={ 2 }>
 							{ __( 'Layout', 'woocommerce' ) }
 						</Heading>

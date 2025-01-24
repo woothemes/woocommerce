@@ -32,6 +32,7 @@ import { GoBackWarningModal } from '../go-back-warning-modal';
 import { CustomizeStoreContext } from '../';
 import { isAIFlow } from '~/customize-store/guards';
 import { isEntrepreneurFlow } from '~/customize-store/design-with-ai/entrepreneur-flow';
+import '../gutenberg-styles/sidebar-navigation-screen.scss';
 const { useLocation } = unlock( routerPrivateApis );
 
 export const SidebarNavigationScreen = ( {
@@ -66,16 +67,19 @@ export const SidebarNavigationScreen = ( {
 	return (
 		<>
 			<VStack
-				className={ clsx( 'edit-site-sidebar-navigation-screen__main', {
-					'has-footer': !! footer,
-				} ) }
+				className={ clsx(
+					'woocommerce-edit-site-sidebar-navigation-screen__main',
+					{
+						'has-footer': !! footer,
+					}
+				) }
 				spacing={ 0 }
 				justify="flex-start"
 			>
 				<HStack
 					spacing={ 4 }
 					alignment="flex-start"
-					className="edit-site-sidebar-navigation-screen__title-icon"
+					className="woocommerce-edit-site-sidebar-navigation-screen__title-icon"
 				>
 					{ ! isRoot && (
 						<SidebarButton
@@ -107,33 +111,33 @@ export const SidebarNavigationScreen = ( {
 						/>
 					) }
 					<Heading
-						className="edit-site-sidebar-navigation-screen__title"
+						className="woocommerce-edit-site-sidebar-navigation-screen__title"
 						style={
 							isEntrepreneurFlow() ? { padding: '0 16px' } : {}
 						}
 						color={ '#e0e0e0' /* $gray-200 */ }
 						level={ 1 }
-						size={ 20 }
+						as="h1"
 					>
 						{ title }
 					</Heading>
 					{ actions && (
-						<div className="edit-site-sidebar-navigation-screen__actions">
+						<div className="woocommerce-edit-site-sidebar-navigation-screen__actions">
 							{ actions }
 						</div>
 					) }
 				</HStack>
 				{ meta && (
 					<>
-						<div className="edit-site-sidebar-navigation-screen__meta">
+						<div className="woocommerce-edit-site-sidebar-navigation-screen__meta">
 							{ meta }
 						</div>
 					</>
 				) }
 
-				<div className="edit-site-sidebar-navigation-screen__content">
+				<div className="woocommerce-edit-site-sidebar-navigation-screen__content">
 					{ description && (
-						<p className="edit-site-sidebar-navigation-screen__description">
+						<p className="woocommerce-edit-site-sidebar-navigation-screen__description">
 							{ description }
 						</p>
 					) }
@@ -141,7 +145,7 @@ export const SidebarNavigationScreen = ( {
 				</div>
 			</VStack>
 			{ footer && (
-				<footer className="edit-site-sidebar-navigation-screen__footer">
+				<footer className="woocommerce-edit-site-sidebar-navigation-screen__footer">
 					{ footer }
 				</footer>
 			) }

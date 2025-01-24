@@ -3,7 +3,7 @@
  */
 import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/components';
+import { Icon, Disabled } from '@wordpress/components';
 import { checkMark } from '@woocommerce/icons';
 import { useMemo } from '@wordpress/element';
 import {
@@ -26,7 +26,7 @@ import './editor.scss';
 import { EditProps } from './types';
 import { getColorClasses, getColorVars } from './utils';
 
-const Edit = ( props: EditProps ): JSX.Element => {
+const CheckboxListEdit = ( props: EditProps ): JSX.Element => {
 	const {
 		clientId,
 		context,
@@ -81,22 +81,22 @@ const Edit = ( props: EditProps ): JSX.Element => {
 	return (
 		<>
 			<div { ...blockProps }>
-				<ul className="wc-block-product-filter-checkbox-list__list">
-					{ isLoading && loadingState }
-					{ ! isLoading &&
-						( isLongList
-							? items.slice( 0, threshold )
-							: items
-						).map( ( item, index ) => (
-							<li
-								key={ index }
-								className="wc-block-product-filter-checkbox-list__item"
-							>
-								<label
-									htmlFor={ `interactive-checkbox-${ index }` }
-									className=" wc-block-product-filter-checkbox-list__label"
+				<Disabled>
+					<ul className="wc-block-product-filter-checkbox-list__list">
+						{ isLoading && loadingState }
+						{ ! isLoading &&
+							( isLongList
+								? items.slice( 0, threshold )
+								: items
+							).map( ( item, index ) => (
+								<li
+									key={ index }
+									className="wc-block-product-filter-checkbox-list__item"
 								>
-									<span className="wc-block-interactive-components-checkbox-list__input-wrapper">
+									<label
+										htmlFor={ `interactive-checkbox-${ index }` }
+										className=" wc-block-product-filter-checkbox-list__label"
+									>
 										<span className="wc-block-product-filter-checkbox-list__input-wrapper">
 											<input
 												name={ `interactive-checkbox-${ index }` }
@@ -111,19 +111,19 @@ const Edit = ( props: EditProps ): JSX.Element => {
 												icon={ checkMark }
 											/>
 										</span>
-									</span>
-									<span className="wc-block-product-filter-checkbox-list__text">
-										{ item.label }
-									</span>
-								</label>
-							</li>
-						) ) }
-				</ul>
-				{ ! isLoading && isLongList && (
-					<button className="wc-block-product-filter-checkbox-list__show-more">
-						{ __( 'Show more…', 'woocommerce' ) }
-					</button>
-				) }
+										<span className="wc-block-product-filter-checkbox-list__text">
+											{ item.label }
+										</span>
+									</label>
+								</li>
+							) ) }
+					</ul>
+					{ ! isLoading && isLongList && (
+						<button className="wc-block-product-filter-checkbox-list__show-more">
+							{ __( 'Show more…', 'woocommerce' ) }
+						</button>
+					) }
+				</Disabled>
 			</div>
 			<InspectorControls group="color">
 				{ colorGradientSettings.hasColorsOrGradients && (
@@ -209,4 +209,4 @@ export default withColors( {
 	optionElementBorder: 'option-element-border',
 	optionElementSelected: 'option-element-border',
 	optionElement: 'option-element',
-} )( Edit );
+} )( CheckboxListEdit );

@@ -97,6 +97,7 @@ export const BlockSettings = ( {
 				{ displayIconStyleSelector ? (
 					<ToggleGroupControl
 						label={ __( 'Display Style', 'woocommerce' ) }
+						isBlock
 						value={ iconStyle }
 						onChange={ ( value: IconStyle ) =>
 							setAttributes( {
@@ -110,7 +111,7 @@ export const BlockSettings = ( {
 							label={
 								<Icon
 									icon={ customerAccountStyleLine }
-									size={ 16 }
+									size={ 32 }
 									className={ clsx(
 										'wc-block-editor-customer-account__icon-option',
 										{
@@ -126,7 +127,7 @@ export const BlockSettings = ( {
 							label={
 								<Icon
 									icon={ customerAccountStyle }
-									size={ 16 }
+									size={ 32 }
 									className={ clsx(
 										'wc-block-editor-customer-account__icon-option',
 										{
@@ -142,7 +143,7 @@ export const BlockSettings = ( {
 							label={
 								<Icon
 									icon={ customerAccountStyleAlt }
-									size={ 20 }
+									size={ 32 }
 									className={ clsx(
 										'wc-block-editor-customer-account__icon-option',
 										{

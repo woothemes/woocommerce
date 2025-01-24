@@ -5,6 +5,8 @@
  * Handles requests to /onboarding/profile
  */
 
+declare( strict_types=1 );
+
 namespace Automattic\WooCommerce\Admin\API;
 
 defined( 'ABSPATH' ) || exit;
@@ -77,6 +79,46 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/progress',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_profile_progress' ),
+					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/progress/core-profiler/complete',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'core_profiler_step_complete' ),
+					'permission_callback' => array( $this, 'update_items_permissions_check' ),
+					'args'                => array(
+						'step' => array(
+							'required'    => true,
+							'type'        => 'string',
+							'description' => __( 'The Core Profiler step to mark as complete.', 'woocommerce' ),
+							'enum'        => array(
+								'intro-opt-in',
+								'skip-guided-setup',
+								'user-profile',
+								'business-info',
+								'plugins',
+								'intro-builder',
+								'skip-guided-setup',
+							),
+						),
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -136,10 +178,16 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 	/**
 	 * Filter the industries.
 	 *
-	 * @param  array $industries list of industries.
+	 * @param  array $industries List of industries.
 	 * @return array
 	 */
 	protected function filter_industries( $industries ) {
+		/**
+		 * Filter the list of industries.
+		 *
+		 * @since 6.5.0
+		 * @param array $industries List of industries.
+		 */
 		return apply_filters(
 			'woocommerce_admin_onboarding_industries',
 			$industries
@@ -153,11 +201,20 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_items( $request ) {
-		$params          = $request->get_json_params();
-		$query_args      = $this->prepare_objects_query( $params );
+		$params     = $request->get_json_params();
+		$query_args = $this->prepare_objects_query( $params );
+
 		$onboarding_data = (array) get_option( Profile::DATA_OPTION, array() );
 		$profile_data    = array_merge( $onboarding_data, $query_args );
 		update_option( Profile::DATA_OPTION, $profile_data );
+
+		/**
+		 * Fires when onboarding profile data is updated via the REST API.
+		 *
+		 * @since 6.5.0
+		 * @param array $onboarding_data Previous onboarding data.
+		 * @param array $query_args New data being set.
+		 */
 		do_action( 'woocommerce_onboarding_profile_data_updated', $onboarding_data, $query_args );
 
 		$result = array(
@@ -202,6 +259,57 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 	}
 
 	/**
+	 * Mark a core profiler step as complete.
+	 *
+	 * @param  WP_REST_Request $request Request data.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function core_profiler_step_complete( $request ) {
+		$json = $request->get_json_params();
+		$step = $json['step'];
+
+		$onboarding_progress = (array) get_option( Profile::PROGRESS_OPTION, array() );
+
+		if ( ! isset( $onboarding_progress['core_profiler_completed_steps'] ) ) {
+			$onboarding_progress['core_profiler_completed_steps'] = array();
+		}
+
+		$onboarding_progress['core_profiler_completed_steps'][ $step ] = array(
+			'completed_at' => gmdate( 'Y-m-d\TH:i:s\Z' ),
+		);
+
+		update_option( Profile::PROGRESS_OPTION, $onboarding_progress );
+
+		/**
+		 * Fires when a core profiler step is completed.
+		 *
+		 * @since 6.5.0
+		 * @param string $step The completed step name.
+		 */
+		do_action( 'woocommerce_core_profiler_step_complete', $step );
+
+		$response_data = array(
+			'results' => $onboarding_progress,
+			'status'  => 'success',
+		);
+
+		$response = rest_ensure_response( $response_data );
+
+		return $response;
+	}
+
+	/**
+	 * Get the onboarding profile progress.
+	 *
+	 * @param  WP_REST_Request $request Request data.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_profile_progress( $request ) {
+		$onboarding_progress = (array) get_option( Profile::PROGRESS_OPTION, array() );
+		return rest_ensure_response( $onboarding_progress );
+	}
+
+	/**
 	 * Prepare objects query.
 	 *
 	 * @param  array $params The params sent in the request.
@@ -223,7 +331,8 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 		 * Enables adding extra arguments or setting defaults for a post
 		 * collection request.
 		 *
-		 * @param array $args    Key value array of query var to query value.
+		 * @since 6.5.0
+		 * @param array $args Key value array of query var to query value.
 		 * @param array $params The params sent in the request.
 		 */
 		$args = apply_filters( 'woocommerce_rest_onboarding_profile_object_query', $args, $params );
@@ -247,6 +356,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 		/**
 		 * Filter the list returned from the API.
 		 *
+		 * @since 6.5.0
 		 * @param WP_REST_Response $response The response object.
 		 * @param array            $item     The original item.
 		 * @param WP_REST_Request  $request  Request used to generate the response.
@@ -261,31 +371,32 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 	 */
 	public static function get_profile_properties() {
 		$properties = array(
-			'completed'               => array(
+			'completed'                     => array(
 				'type'              => 'boolean',
 				'description'       => __( 'Whether or not the profile was completed.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 			),
-			'skipped'                 => array(
+			'skipped'                       => array(
 				'type'              => 'boolean',
 				'description'       => __( 'Whether or not the profile was skipped.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 			),
-			'industry'                => array(
+			'industry'                      => array(
 				'type'              => 'array',
 				'description'       => __( 'Industry.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
+				'nullable'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 				'items'             => array(
-					'type' => 'object',
+					'type' => 'string',
 				),
 			),
-			'product_types'           => array(
+			'product_types'                 => array(
 				'type'              => 'array',
 				'description'       => __( 'Types of products sold.', 'woocommerce' ),
 				'context'           => array( 'view' ),
@@ -297,7 +408,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 					'type' => 'string',
 				),
 			),
-			'product_count'           => array(
+			'product_count'                 => array(
 				'type'              => 'string',
 				'description'       => __( 'Number of products to be added.', 'woocommerce' ),
 				'context'           => array( 'view' ),
@@ -311,7 +422,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 					'1000+',
 				),
 			),
-			'selling_venues'          => array(
+			'selling_venues'                => array(
 				'type'              => 'string',
 				'description'       => __( 'Other places the store is selling products.', 'woocommerce' ),
 				'context'           => array( 'view' ),
@@ -325,7 +436,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 					'other-woocommerce',
 				),
 			),
-			'number_employees'        => array(
+			'number_employees'              => array(
 				'type'              => 'string',
 				'description'       => __( 'Number of employees of the store.', 'woocommerce' ),
 				'context'           => array( 'view' ),
@@ -340,7 +451,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 					'not specified',
 				),
 			),
-			'revenue'                 => array(
+			'revenue'                       => array(
 				'type'              => 'string',
 				'description'       => __( 'Current annual revenue of the store.', 'woocommerce' ),
 				'context'           => array( 'view' ),
@@ -356,7 +467,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 					'rather-not-say',
 				),
 			),
-			'other_platform'          => array(
+			'other_platform'                => array(
 				'type'              => 'string',
 				'description'       => __( 'Name of other platform used to sell.', 'woocommerce' ),
 				'context'           => array( 'view' ),
@@ -374,14 +485,14 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 					'other',
 				),
 			),
-			'other_platform_name'     => array(
+			'other_platform_name'           => array(
 				'type'              => 'string',
 				'description'       => __( 'Name of other platform used to sell (not listed).', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 			),
-			'business_extensions'     => array(
+			'business_extensions'           => array(
 				'type'              => 'array',
 				'description'       => __( 'Extra business extensions to install.', 'woocommerce' ),
 				'context'           => array( 'view' ),
@@ -392,7 +503,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 					'type' => 'string',
 				),
 			),
-			'theme'                   => array(
+			'theme'                         => array(
 				'type'              => 'string',
 				'description'       => __( 'Selected store theme.', 'woocommerce' ),
 				'context'           => array( 'view' ),
@@ -400,50 +511,91 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 				'sanitize_callback' => 'sanitize_title_with_dashes',
 				'validate_callback' => 'rest_validate_request_arg',
 			),
-			'setup_client'            => array(
+			'setup_client'                  => array(
 				'type'              => 'boolean',
 				'description'       => __( 'Whether or not this store was setup for a client.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 			),
-			'wccom_connected'         => array(
+			'wccom_connected'               => array(
 				'type'              => 'boolean',
 				'description'       => __( 'Whether or not the store was connected to WooCommerce.com during the extension flow.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 			),
-			'is_agree_marketing'      => array(
+			'is_agree_marketing'            => array(
 				'type'              => 'boolean',
 				'description'       => __( 'Whether or not this store agreed to receiving marketing contents from WooCommerce.com.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 			),
-			'store_email'             => array(
+			'store_email'                   => array(
 				'type'              => 'string',
 				'description'       => __( 'Store email address.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
+				'nullable'          => true,
 				'validate_callback' => array( __CLASS__, 'rest_validate_marketing_email' ),
 			),
-			'is_store_country_set'    => array(
+			'is_store_country_set'          => array(
 				'type'              => 'boolean',
 				'description'       => __( 'Whether or not this store country is set via onboarding profiler.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 			),
-			'is_plugins_page_skipped' => array(
+			'is_plugins_page_skipped'       => array(
 				'type'              => 'boolean',
 				'description'       => __( 'Whether or not plugins step in core profiler was skipped.', 'woocommerce' ),
 				'context'           => array( 'view' ),
 				'readonly'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
 			),
+			'core_profiler_completed_steps' => array(
+				'type'              => 'array',
+				'description'       => __( 'Completed steps in core profiler.', 'woocommerce' ),
+				'context'           => array( 'view' ),
+				'readonly'          => true,
+				'validate_callback' => 'rest_validate_request_arg',
+				'items'             => array(
+					'type' => 'object',
+				),
+			),
+			'business_choice'               => array(
+				'type'        => 'string',
+				'description' => __( 'Business choice.', 'woocommerce' ),
+				'context'     => array( 'view' ),
+				'readonly'    => true,
+				'nullable'    => true,
+			),
+			'selling_online_answer'         => array(
+				'type'        => 'string',
+				'description' => __( 'Selling online answer.', 'woocommerce' ),
+				'context'     => array( 'view' ),
+				'readonly'    => true,
+				'nullable'    => true,
+			),
+			'selling_platforms'             => array(
+				'type'        => array( 'array', 'null' ),
+				'description' => __( 'Selling platforms.', 'woocommerce' ),
+				'context'     => array( 'view' ),
+				'readonly'    => true,
+				'nullable'    => true,
+				'items'       => array(
+					'type' => array( 'string', 'null' ),
+				),
+			),
 		);
 
+		/**
+		 * Filters the Onboarding Profile REST API JSON Schema.
+		 *
+		 * @since 6.5.0
+		 * @param array $properties List of properties.
+		 */
 		return apply_filters( 'woocommerce_rest_onboarding_profile_properties', $properties );
 	}
 
@@ -461,7 +613,7 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 			( $is_agree_marketing || ! empty( $value ) ) &&
 			! is_email( $value ) ) {
 			return new \WP_Error( 'rest_invalid_email', __( 'Invalid email address', 'woocommerce' ) );
-		};
+		}
 		return true;
 	}
 
@@ -505,6 +657,12 @@ class OnboardingProfile extends \WC_REST_Data_Controller {
 
 		$params['context'] = $this->get_context_param( array( 'default' => 'view' ) );
 
+		/**
+		 * Filters the Onboarding Profile REST API collection parameters.
+		 *
+		 * @since 6.5.0
+		 * @param array $params Collection parameters.
+		 */
 		return apply_filters( 'woocommerce_rest_onboarding_profile_collection_params', $params );
 	}
 }

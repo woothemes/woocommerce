@@ -98,20 +98,18 @@ export const DesignWithAiController = ( {
 			: state.value;
 
 	return (
-		<>
-			<div
-				className={ `woocommerce-design-with-ai__container woocommerce-design-with-ai-wizard__step-${ currentNodeCssLabel }` }
-			>
-				{ CurrentComponent ? (
-					<CurrentComponent
-						sendEvent={ send }
-						context={ state.context }
-					/>
-				) : (
-					<div />
-				) }
-			</div>
-		</>
+		<div
+			className={ `woocommerce-design-with-ai__container woocommerce-design-with-ai-wizard__step-${ currentNodeCssLabel }` }
+		>
+			{ CurrentComponent ? (
+				<CurrentComponent
+					sendEvent={ send }
+					context={ state.context }
+				/>
+			) : (
+				<div />
+			) }
+		</div>
 	);
 };
 
@@ -127,11 +125,9 @@ export const DesignWithAi: CustomizeStoreComponent = ( {
 		return null;
 	}
 	return (
-		<>
-			<DesignWithAiController
-				parentMachine={ parentMachine }
-				parentContext={ context }
-			/>
-		</>
+		<DesignWithAiController
+			parentMachine={ parentMachine }
+			parentContext={ context }
+		/>
 	);
 };

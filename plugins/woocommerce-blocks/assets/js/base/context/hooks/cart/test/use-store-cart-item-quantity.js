@@ -18,8 +18,7 @@ jest.mock( '../use-store-cart', () => ( {
 
 jest.mock( '@woocommerce/block-data', () => ( {
 	__esModule: true,
-	CART_STORE_KEY: 'test/cart/store',
-	CHECKOUT_STORE_KEY: 'test/checkout/store',
+	...jest.requireActual( '@woocommerce/block-data' ),
 } ) );
 
 // Make debounce instantaneous.

@@ -7,6 +7,7 @@ const {
 	toggleBlockProductEditor,
 } = require( '../../../../utils/simple-products' );
 const { toggleBlockProductTour } = require( '../../../../utils/tours' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 
 let isNewProductEditorEnabled = false;
 
@@ -22,7 +23,7 @@ async function dismissFeedbackModalIfShown( page ) {
 
 test.describe.serial(
 	'Disable block product editor',
-	{ tag: '@gutenberg' },
+	{ tag: tags.GUTENBERG },
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
 
@@ -56,14 +57,14 @@ test.describe.serial(
 		);
 
 		test( 'is hooked up to sidebar "Add New"', async ( { page } ) => {
-			await page.goto( '/wp-admin/edit.php?post_type=product' );
+			await page.goto( 'wp-admin/edit.php?post_type=product' );
 			await clickAddNewMenuItem( page );
 			await expectBlockProductEditor( page );
 		} );
 
 		test( 'can be disabled from the header', async ( { page } ) => {
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-admin&path=%2Fadd-product'
+				'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product'
 			);
 
 			try {
@@ -86,7 +87,7 @@ test.describe.serial(
 
 		test( 'can be disabled from settings', async ( { page } ) => {
 			await toggleBlockProductEditor( 'disable', page );
-			await page.goto( '/wp-admin/edit.php?post_type=product' );
+			await page.goto( 'wp-admin/edit.php?post_type=product' );
 			await clickAddNewMenuItem( page );
 			await expectOldProductEditor( page );
 		} );

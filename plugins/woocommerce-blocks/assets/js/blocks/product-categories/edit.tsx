@@ -10,7 +10,9 @@ import Block from './block';
 import './editor.scss';
 import type { ProductCategoriesBlockProps } from './types';
 
-export const Edit = ( props: ProductCategoriesBlockProps ): JSX.Element => {
+export default function ProductCategoriesEdit(
+	props: ProductCategoriesBlockProps
+): JSX.Element {
 	const blockProps = useBlockProps();
 
 	return (
@@ -18,4 +20,4 @@ export const Edit = ( props: ProductCategoriesBlockProps ): JSX.Element => {
 			<Block { ...props } />
 		</div>
 	);
-};
+}

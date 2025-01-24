@@ -53,6 +53,7 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 		currency: '',
 		isOnSale: false,
 		regularPrice: 0,
+		type: '',
 	};
 
 	function isSponsored(): boolean {
@@ -74,7 +75,7 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 	}
 
 	function recordTracksEvent( event: string, data: ExtraProperties ) {
-		const tracksData = props.tracksData;
+		const { tracksData } = props;
 
 		if ( tracksData.position ) {
 			data.position = tracksData.position;
@@ -99,6 +100,8 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 		if ( tracksData.category ) {
 			data.category = tracksData.category;
 		}
+
+		data.tab = query.tab || 'discover';
 
 		queueRecordEvent( event, data );
 	}
@@ -277,14 +280,16 @@ function ProductCard( props: ProductCardProps ): JSX.Element {
 							{ ! isLoading && decodedDescription }
 						</p>
 					) }
-					<footer className="woocommerce-marketplace__product-card__footer">
-						{ isLoading && (
-							<div className="woocommerce-marketplace__product-card__price" />
-						) }
-						{ ! isLoading && props.product && (
-							<ProductCardFooter product={ props.product } />
-						) }
-					</footer>
+					{ ProductType.businessService !== props?.product?.type && (
+						<footer className="woocommerce-marketplace__product-card__footer">
+							{ isLoading && (
+								<div className="woocommerce-marketplace__product-card__price" />
+							) }
+							{ ! isLoading && props.product && (
+								<ProductCardFooter product={ props.product } />
+							) }
+						</footer>
+					) }
 				</div>
 			) }
 		</Card>

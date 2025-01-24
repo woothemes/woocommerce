@@ -19,6 +19,7 @@ import { withSpokenMessages } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getSetting } from '@woocommerce/settings';
+import type { TemplateArray } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -66,7 +67,7 @@ const Edit = ( props: EditProps ) => {
 			query: { orderby: 'menu_order', hide_empty: hideEmpty },
 		} );
 
-	const { results: filteredCounts, isLoading: isFilterCountsLoading } =
+	const { data: filteredCounts, isLoading: isFilterCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',
@@ -113,7 +114,7 @@ const Edit = ( props: EditProps ) => {
 							? `${ term.name } (${ term.count })`
 							: term.name,
 						value: term.id.toString(),
-						selected: index === 1,
+						selected: index === 0,
 						rawData: term,
 					} ) )
 			);
@@ -155,31 +156,16 @@ const Edit = ( props: EditProps ) => {
 						[
 							'core/heading',
 							{
-								level: 3,
+								level: 4,
 								content:
 									attributeObject?.label ||
 									__( 'Attribute', 'woocommerce' ),
 							},
 						],
-						[
-							'woocommerce/product-filter-clear-button',
-							{
-								lock: {
-									remove: true,
-									move: false,
-								},
-							},
-						],
-					],
+						[ 'woocommerce/product-filter-clear-button' ],
+					].filter( Boolean ) as unknown as TemplateArray,
 				],
-				[
-					displayStyle,
-					{
-						lock: {
-							remove: true,
-						},
-					},
-				],
+				[ displayStyle ],
 			],
 		}
 	);

@@ -1,18 +1,14 @@
 /* eslint-disable @woocommerce/dependency-group */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * External dependencies
  */
 import {
 	Button,
 	CheckboxControl,
-	// @ts-ignore No types for this exist yet.
 	__experimentalItemGroup as ItemGroup,
 	Modal,
-	// @ts-ignore No types for this exist yet.
 	__experimentalNavigatorButton as NavigatorButton,
 	Spinner,
-	// @ts-ignore No types for this exist yet.
 } from '@wordpress/components';
 import {
 	createInterpolateElement,
@@ -22,11 +18,8 @@ import {
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import interpolateComponents from '@automattic/interpolate-components';
-import {
-	store as coreStore,
-	// @ts-expect-error No types for this exist yet.
-} from '@wordpress/core-data';
-// @ts-expect-error Missing type.
+import { store as coreStore } from '@wordpress/core-data';
+// @ts-expect-error No types for this exist yet.
 import SidebarNavigationItem from '@wordpress/edit-site/build-module/components/sidebar-navigation-item';
 
 /**
@@ -66,16 +59,14 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 	const isNetworkOffline = useNetworkStatus();
 	const isPTKPatternsAPIAvailable = context.isPTKPatternsAPIAvailable;
 
-	const currentTemplate = useSelect(
-		( sel ) =>
-			// @ts-expect-error No types for this exist yet.
-			sel( coreStore ).__experimentalGetTemplateForLink( '/' ),
+	const currentTemplateId: string | undefined = useSelect(
+		( sel ) => sel( coreStore ).getDefaultTemplateId( { slug: 'home' } ),
 		[]
 	);
 
 	const [ blocks ] = useEditorBlocks(
 		'wp_template',
-		currentTemplate?.id ?? ''
+		currentTemplateId || ''
 	);
 
 	const numberOfPatternsAdded = useMemo( () => {
@@ -193,13 +184,13 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 			description={ sidebarMessage }
 			content={
 				<div className="woocommerce-customize-store__sidebar-homepage-content">
-					<div className="edit-site-sidebar-navigation-screen-patterns__group-homepage">
+					<div className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage">
 						{ Object.entries( PATTERN_CATEGORIES ).map(
 							( [ categoryKey, { label } ], index ) => (
 								<ItemGroup key={ index }>
 									<NavigatorButton
 										className={ clsx( {
-											'edit-site-sidebar-navigation-screen-patterns__group-homepage-item--active':
+											'woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage-item--active':
 												isActiveElement(
 													path,
 													categoryKey
@@ -223,13 +214,13 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 										as={ SidebarNavigationItem }
 										withChevron
 									>
-										<div className="edit-site-sidebar-navigation-screen-patterns__group-homepage-label-container">
+										<div className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage-label-container">
 											<span>{ capitalize( label ) }</span>
 											{ blocks.length > 0 &&
 												numberOfPatternsAdded[
 													categoryKey
 												] > 0 && (
-													<span className="edit-site-sidebar-navigation-screen-patterns__group-homepage-number-pattern">
+													<span className="woocommerce-edit-site-sidebar-navigation-screen-patterns__group-homepage-number-pattern">
 														{
 															numberOfPatternsAdded[
 																categoryKey
@@ -289,6 +280,7 @@ export const SidebarNavigationScreenHomepagePTK = ( {
 									>
 										<CheckboxControl
 											className="core-profiler__checkbox"
+											// @ts-expect-error Types are incorrect for this prop.
 											label={ interpolateComponents( {
 												mixedString: __(
 													'More patterns from the WooCommerce.com library are available! Opt in to connect your store and access the full library, plus get more relevant content and a tailored store setup experience. Opting in will enable {{link}}usage tracking{{/link}}, which you can opt out of at any time via WooCommerce settings.',

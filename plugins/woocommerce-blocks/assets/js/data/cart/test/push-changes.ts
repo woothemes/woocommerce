@@ -2,7 +2,8 @@
  * External dependencies
  */
 import * as wpDataFunctions from '@wordpress/data';
-import { CART_STORE_KEY, VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, validationStore } from '@woocommerce/block-data';
+import type { StoreDescriptor } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -62,39 +63,47 @@ jest.mock( '../update-payment-methods', () => ( {
 
 describe( 'pushChanges', () => {
 	beforeEach( () => {
-		wpDataFunctions.select.mockImplementation( ( storeName: string ) => {
-			if ( storeName === CART_STORE_KEY ) {
-				return {
-					...jest
-						.requireActual( '@wordpress/data' )
-						.select( storeName ),
-					hasFinishedResolution: () => true,
-					getCustomerData: getCustomerDataMock,
-				};
+		wpDataFunctions.select.mockImplementation(
+			( storeNameOrDescriptor: StoreDescriptor | string ) => {
+				if ( storeNameOrDescriptor === CART_STORE_KEY ) {
+					return {
+						...jest
+							.requireActual( '@wordpress/data' )
+							.select( storeNameOrDescriptor ),
+						hasFinishedResolution: () => true,
+						getCustomerData: getCustomerDataMock,
+					};
+				}
+				if ( storeNameOrDescriptor === validationStore ) {
+					return {
+						...jest
+							.requireActual( '@wordpress/data' )
+							.select( storeNameOrDescriptor ),
+						getValidationError: jest
+							.fn()
+							.mockReturnValue( undefined ),
+					};
+				}
+				return jest
+					.requireActual( '@wordpress/data' )
+					.select( storeNameOrDescriptor );
 			}
-			if ( storeName === VALIDATION_STORE_KEY ) {
-				return {
-					...jest
-						.requireActual( '@wordpress/data' )
-						.select( storeName ),
-					getValidationError: jest.fn().mockReturnValue( undefined ),
-				};
+		);
+		wpDataFunctions.dispatch.mockImplementation(
+			( storeNameOrDescriptor: StoreDescriptor | string ) => {
+				if ( storeNameOrDescriptor === CART_STORE_KEY ) {
+					return {
+						...jest
+							.requireActual( '@wordpress/data' )
+							.dispatch( storeNameOrDescriptor ),
+						updateCustomerData: updateCustomerDataMock,
+					};
+				}
+				return jest
+					.requireActual( '@wordpress/data' )
+					.dispatch( storeNameOrDescriptor );
 			}
-			return jest.requireActual( '@wordpress/data' ).select( storeName );
-		} );
-		wpDataFunctions.dispatch.mockImplementation( ( storeName: string ) => {
-			if ( storeName === CART_STORE_KEY ) {
-				return {
-					...jest
-						.requireActual( '@wordpress/data' )
-						.dispatch( storeName ),
-					updateCustomerData: updateCustomerDataMock,
-				};
-			}
-			return jest
-				.requireActual( '@wordpress/data' )
-				.dispatch( storeName );
-		} );
+		);
 	} );
 	it( 'Keeps props dirty if data did not persist due to an error', async () => {
 		// Run this without changing anything because the first run does not push data (the first run is populating what was received on page load).
@@ -130,12 +139,30 @@ describe( 'pushChanges', () => {
 		// Push these changes to the server, the `updateCustomerData` mock is set to reject (in the original mock at the top of the file), to simulate a server error.
 		pushChanges( false );
 
-		// Check that the mock was called with only the updated data.
+		// Check that the mock was called with full address data.
 		await expect( updateCustomerDataMock ).toHaveBeenCalledWith( {
+			billing_address: {
+				first_name: 'John',
+				last_name: 'Doe',
+				address_1: '123 Main St',
+				address_2: '',
+				city: 'New York',
+				state: 'NY',
+				postcode: '10001',
+				country: 'US',
+				email: 'john.doe@mail.com',
+				phone: '555-555-5555',
+			},
 			shipping_address: {
+				first_name: 'John',
+				last_name: 'Doe',
+				address_1: '123 Main St',
+				address_2: '',
 				city: 'Houston',
 				state: 'TX',
 				postcode: 'ABCDEF',
+				country: 'US',
+				phone: '555-555-5555',
 			},
 		} );
 
@@ -177,10 +204,28 @@ describe( 'pushChanges', () => {
 		// to the server because the previous push failed when they were originally changed.
 		pushChanges( false );
 		await expect( updateCustomerDataMock ).toHaveBeenLastCalledWith( {
+			billing_address: {
+				first_name: 'John',
+				last_name: 'Doe',
+				address_1: '123 Main St',
+				address_2: '',
+				city: 'New York',
+				state: 'NY',
+				postcode: '10001',
+				country: 'US',
+				email: 'john.doe@mail.com',
+				phone: '555-555-5555',
+			},
 			shipping_address: {
+				first_name: 'John',
+				last_name: 'Doe',
+				address_1: '123 Main St',
+				address_2: '',
 				city: 'Houston',
 				state: 'TX',
 				postcode: '77058',
+				country: 'US',
+				phone: '555-555-5555',
 			},
 		} );
 	} );

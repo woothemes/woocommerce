@@ -1,6 +1,7 @@
 <?php
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use WP_Query;
 use Automattic\WooCommerce\Blocks\Utils\Utils;
 
@@ -189,7 +190,7 @@ class ProductQuery extends AbstractBlock {
 				'query_loop_block_query_vars',
 				array( $this, 'build_query' ),
 				10,
-				1
+				2
 			);
 		}
 
@@ -239,11 +240,13 @@ class ProductQuery extends AbstractBlock {
 	 * Return a custom query based on attributes, filters and global WP_Query.
 	 *
 	 * @param WP_Query $query The WordPress Query.
+	 * @param WP_Block $block The block being rendered.
 	 * @return array
 	 */
-	public function build_query( $query ) {
-		$parsed_block = $this->parsed_block;
-		if ( ! $this->is_woocommerce_variation( $parsed_block ) ) {
+	public function build_query( $query, $block = null ) {
+		$parsed_block                = $this->parsed_block;
+		$is_product_collection_block = $block->context['query']['isProductCollectionBlock'] ?? false;
+		if ( ! $this->is_woocommerce_variation( $parsed_block ) || $is_product_collection_block ) {
 			return $query;
 		}
 
@@ -254,7 +257,7 @@ class ProductQuery extends AbstractBlock {
 			'order'          => $query['order'],
 			'offset'         => $query['offset'],
 			'post__in'       => array(),
-			'post_status'    => 'publish',
+			'post_status'    => ProductStatus::PUBLISH,
 			'post_type'      => 'product',
 			'tax_query'      => array(),
 		);
@@ -514,7 +517,6 @@ class ProductQuery extends AbstractBlock {
 			'attributes_filter_query_args' => $attributes_filter_query_args,
 			'rating_filter_query_args'     => array( RatingFilter::RATING_QUERY_VAR ),
 		);
-
 	}
 
 	/**

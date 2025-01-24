@@ -4,7 +4,7 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { previewCart } from '@woocommerce/resource-previews';
 import { dispatch } from '@wordpress/data';
-import { CART_STORE_KEY, CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, checkoutStore } from '@woocommerce/block-data';
 import { default as fetchMock } from 'jest-fetch-mock';
 import { allSettings } from '@woocommerce/settings';
 
@@ -36,6 +36,14 @@ import Shipping from '../inner-blocks/checkout-order-summary-shipping/frontend';
 import Taxes from '../inner-blocks/checkout-order-summary-taxes/frontend';
 import { defaultCartState } from '../../../data/cart/default-state';
 import Checkout from '../block';
+
+jest.mock( '@wordpress/data', () => {
+	const wpData = jest.requireActual( 'wordpress-data-wp-6-7' );
+	return {
+		__esModule: true,
+		...wpData,
+	};
+} );
 
 jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
@@ -291,7 +299,7 @@ describe( 'Testing Checkout', () => {
 			// Set required settings
 			allSettings.checkoutAllowsGuest = true;
 			allSettings.checkoutAllowsSignup = true;
-			dispatch( CHECKOUT_STORE_KEY ).__internalSetCustomerId( 0 );
+			dispatch( checkoutStore ).__internalSetCustomerId( 0 );
 		} );
 
 		// Render the CheckoutBlock
@@ -314,7 +322,7 @@ describe( 'Testing Checkout', () => {
 			// Restore initial settings
 			allSettings.checkoutAllowsGuest = undefined;
 			allSettings.checkoutAllowsSignup = undefined;
-			dispatch( CHECKOUT_STORE_KEY ).__internalSetCustomerId( 1 );
+			dispatch( checkoutStore ).__internalSetCustomerId( 1 );
 		} );
 	} );
 
@@ -360,7 +368,7 @@ describe( 'Testing Checkout', () => {
 		await act( async () => {
 			allSettings.checkoutAllowsGuest = true;
 			allSettings.checkoutAllowsSignup = true;
-			dispatch( CHECKOUT_STORE_KEY ).__internalSetCustomerId( 0 );
+			dispatch( checkoutStore ).__internalSetCustomerId( 0 );
 		} );
 
 		// Render the CheckoutBlock
@@ -377,7 +385,7 @@ describe( 'Testing Checkout', () => {
 		await act( async () => {
 			allSettings.checkoutAllowsGuest = true;
 			allSettings.checkoutAllowsSignup = true;
-			dispatch( CHECKOUT_STORE_KEY ).__internalSetCustomerId( 1 );
+			dispatch( checkoutStore ).__internalSetCustomerId( 1 );
 		} );
 
 		rerender( <CheckoutBlock /> );
@@ -390,7 +398,7 @@ describe( 'Testing Checkout', () => {
 			// Restore initial settings
 			allSettings.checkoutAllowsGuest = undefined;
 			allSettings.checkoutAllowsSignup = undefined;
-			dispatch( CHECKOUT_STORE_KEY ).__internalSetCustomerId( 1 );
+			dispatch( checkoutStore ).__internalSetCustomerId( 1 );
 		} );
 	} );
 } );

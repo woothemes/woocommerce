@@ -206,7 +206,7 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 				),
 			),
 			'woocommerce_single_product_summary'        => array(
-				'block_names' => array( 'core/post-excerpt' ),
+				'block_names' => array( 'core/post-excerpt', 'woocommerce/product-summary' ),
 				'position'    => 'before',
 				'hooked'      => array(
 					'woocommerce_template_single_title'   => 5,
@@ -388,7 +388,7 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 	 * @return bool True if the template has a single product template block, false otherwise.
 	 */
 	private static function has_single_product_template_blocks( $parsed_blocks ) {
-		$single_product_template_blocks = array( 'woocommerce/product-image-gallery', 'woocommerce/product-details', 'woocommerce/add-to-cart-form', 'woocommerce/product-meta', 'woocommerce/product-price', 'woocommerce/breadcrumbs' );
+		$single_product_template_blocks = array( 'woocommerce/product-image-gallery', 'woocommerce/product-gallery', 'woocommerce/product-details', 'woocommerce/add-to-cart-form', 'woocommerce/product-meta', 'woocommerce/product-price', 'woocommerce/breadcrumbs' );
 
 		return BlockTemplateUtils::has_block_including_patterns( $single_product_template_blocks, $parsed_blocks );
 	}

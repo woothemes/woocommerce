@@ -35,4 +35,28 @@ export const deprecatedAttributes = {
 		type: 'number',
 		default: 0,
 	},
+	showCompanyField: {
+		type: 'boolean',
+		default: false,
+	},
+	requireCompanyField: {
+		type: 'boolean',
+		default: false,
+	},
+	showApartmentField: {
+		type: 'boolean',
+		default: true,
+	},
+	requireApartmentField: {
+		type: 'boolean',
+		default: false,
+	},
+	showPhoneField: {
+		type: 'boolean',
+		default: true,
+	},
+	requirePhoneField: {
+		type: 'boolean',
+		default: false,
+	},
 };

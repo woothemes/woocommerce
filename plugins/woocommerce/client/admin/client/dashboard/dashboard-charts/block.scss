@@ -30,6 +30,8 @@
 }
 
 .woocommerce-dashboard__chart-block {
+	overflow: hidden;
+
 	.woocommerce-card__body {
 		padding: 0;
 		position: relative;
