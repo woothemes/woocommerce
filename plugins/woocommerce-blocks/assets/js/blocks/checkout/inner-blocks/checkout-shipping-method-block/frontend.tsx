@@ -10,6 +10,7 @@ import { useShippingData } from '@woocommerce/base-context/hooks';
 import {
 	LOCAL_PICKUP_ENABLED,
 	SHIPPING_METHODS_EXIST,
+	SHIPPING_ENABLED,
 } from '@woocommerce/block-settings';
 import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
 import { getSetting } from '@woocommerce/settings';
@@ -63,6 +64,7 @@ const FrontendBlock = ( {
 	} = useShippingData();
 
 	const shouldForceShow =
+		SHIPPING_ENABLED &&
 		LOCAL_PICKUP_ENABLED &&
 		SHIPPING_METHODS_EXIST &&
 		shippingCostRequiresAddress;
