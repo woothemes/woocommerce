@@ -54,7 +54,7 @@ const Block = ( { className }: { className: string } ): JSX.Element | null => {
 				<TotalsShipping
 					label={
 						hasSelectedCollectionOnly
-							? __( 'Collection', 'woocommerce' )
+							? __( 'Pickup', 'woocommerce' )
 							: __( 'Delivery', 'woocommerce' )
 					}
 					placeholder={
