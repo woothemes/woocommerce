@@ -164,7 +164,20 @@ class ProductGalleryThumbnails extends AbstractBlock {
 					$product_gallery_image_html = $this->inject_view_all( $product_gallery_image_html, $this->generate_view_all_html( $remaining_thumbnails_count ) );
 				}
 
-				$html .= $product_gallery_image_html;
+				$processor = new \WP_HTML_Tag_Processor( $product_gallery_image_html );
+
+				if ( $processor->next_tag( 'img' ) ) {
+					$processor->set_attribute( 'data-wc-on--keydown', 'actions.onThumbnailKeyDown' );
+					$processor->set_attribute( 'tabindex', '0' );
+					$processor->set_attribute(
+						'data-wc-on--click',
+						'actions.selectImage'
+					);
+
+					$html .= $processor->get_updated_html();
+				} else {
+					$html .= $product_gallery_image_html;
+				}
 
 				++$thumbnails_count;
 			}
