@@ -1003,6 +1003,9 @@ class WC_Tracker {
 			'hpos_transactions_level'               => get_option( 'woocommerce_db_transactions_isolation_level_for_custom_orders_table_data_sync' ),
 			'show_marketplace_suggestions'          => get_option( 'woocommerce_show_marketplace_suggestions' ),
 			'admin_install_timestamp'               => get_option( 'woocommerce_admin_install_timestamp' ),
+			'coming_soon'                           => get_option( 'woocommerce_coming_soon' ),
+			'store_pages_only'                      => get_option( 'woocommerce_store_pages_only' ),
+			'private_link'                          => get_option( 'woocommerce_private_link' ),
 		);
 	}
 
