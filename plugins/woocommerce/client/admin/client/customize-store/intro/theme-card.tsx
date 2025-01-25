@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Link } from '@woocommerce/components';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -53,7 +53,7 @@ export const ThemeCard = ( {
 				) }
 				{ ! is_free && (
 					<span className="theme-card__paid">
-						{ __( 'Paid', 'woocommerce' ) }
+						{ _x( 'Paid', 'Indicates a premium theme. See screen shot for context: https://cloudup.com/cnz0SDTaPz4', 'woocommerce' ) }
 					</span>
 				) }
 				<span className="theme-card__free">{ price }</span>
