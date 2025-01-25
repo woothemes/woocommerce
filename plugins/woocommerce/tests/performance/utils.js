@@ -6,7 +6,7 @@ import http from 'k6/http';
 /**
  * Internal dependencies
  */
-import { base_url, product_sku } from './config.js';
+import { base_url, product_sku, product_url } from './config.js';
 import {
 	commonAPIGetRequestHeaders,
 	commonNonStandardHeaders,
@@ -44,17 +44,16 @@ const getDefaultProduct = ( tag ) => {
 	);
 
 	const response = http.get(
-		`${ base_url }/wp-json/wc/store/v1/products?sku=${ product_sku }`,
+		`${ base_url }/wp-json/wc/store/v1/products/${ product_url }`,
 		{
 			requestHeaders,
-			tags: { name: `${ tag } - Get default product data by sku` },
+			tags: { name: `${ tag } - Get default product data by url` },
 		}
 	);
 
 	check( response, {
-		'sku query is status 200': ( r ) => r.status === 200,
-		'one product matched sku': ( r ) => r.json().length === 1,
-		'sku matches retrieved product data': ( r ) =>
+		'url query is status 200': ( r ) => r.status === 200,
+		'url matches retrieved product data sku': ( r ) =>
 			r.body.includes( `"sku":"${ product_sku }"` ),
 	} );
 
