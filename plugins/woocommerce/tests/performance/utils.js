@@ -47,16 +47,18 @@ const getDefaultProduct = ( tag ) => {
 		`${ base_url }/wp-json/wc/store/v1/products?sku=${ product_sku }`,
 		{
 			requestHeaders,
-			tags: { name: `${ tag } - Get default product` },
+			tags: { name: `${ tag } - Get default product data by sku` },
 		}
 	);
 
 	check( response, {
-		'successfully retrieved default product': ( r ) =>
-			r.status === 200 && r.body.includes( `"sku":"${ product_sku }"` ),
+		'sku query is status 200': ( r ) => r.status === 200,
+		'one product matched sku': ( r ) => r.json().length === 1,
+		'sku matches retrieved product data': ( r ) =>
+			r.body.includes( `"sku":"${ product_sku }"` ),
 	} );
 
-	return JSON.parse( response.body );
+	return response.json()[ 0 ];
 };
 
 export { checkResponse, getDefaultProduct };
