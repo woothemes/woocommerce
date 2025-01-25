@@ -156,6 +156,11 @@ add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_m
 add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_sharing', 50 );
 
 /**
+ * Product Gallery
+ */
+add_action( 'woocommerce_before_single_product', 'WC_Product_Image_Handler::enqueue_image_resize_observer', 10 );
+
+/**
  * Reviews
  *
  * @see woocommerce_review_display_gravatar()
