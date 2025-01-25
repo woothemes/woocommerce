@@ -57,7 +57,7 @@ const getDefaultProduct = ( tag ) => {
 			r.body.includes( `"sku":"${ product_sku }"` ),
 	} );
 
-	return response.json()[ 0 ];
+	return response.json();
 };
 
 export { checkResponse, getDefaultProduct };
