@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Cache verification of approved download directories to avoid duplicate queries
