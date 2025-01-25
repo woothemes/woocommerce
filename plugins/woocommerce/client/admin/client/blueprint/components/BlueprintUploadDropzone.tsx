@@ -76,7 +76,6 @@ const uploadBlueprint = async ( file: File ) => {
 	if ( response.error_type ) {
 		throw new Error( response.errors?.[ 0 ] ?? 'Unknown error' );
 	}
-
 	return response;
 };
 
