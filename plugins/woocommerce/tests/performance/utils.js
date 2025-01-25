@@ -53,7 +53,7 @@ const getDefaultProduct = ( tag ) => {
 
 	check( response, {
 		'url query is status 200': ( r ) => r.status === 200,
-		'url matches retrieved product data sku': ( r ) =>
+		'url query response matches retrieved product data sku': ( r ) =>
 			r.body.includes( `"sku":"${ product_sku }"` ),
 	} );
 
