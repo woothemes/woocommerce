@@ -77,3 +77,26 @@ $min-product-width: 150px;
 .is-product-collection-layout-list .wc-block-product:not(:last-child) {
 	margin-bottom: 1.2rem;
 }
+
+.carousel-pagination {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
+	&__pages {
+		list-style-type: none;
+		display: inline-flex;
+		margin: 0 20px;
+		padding: 0;
+	}
+	&__page {
+		opacity: 50%;
+
+		&--active {
+			opacity: 100%;
+		}
+	}
+	&__prev, &__next {
+
+	}
+}

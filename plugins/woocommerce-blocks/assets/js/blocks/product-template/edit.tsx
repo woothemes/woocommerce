@@ -14,7 +14,7 @@ import {
 	useInnerBlocksProps,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
-import { Spinner } from '@wordpress/components';
+import { Spinner, Disabled } from '@wordpress/components';
 import { store as coreStore } from '@wordpress/core-data';
 import { ProductCollectionAttributes } from '@woocommerce/blocks/product-collection/types';
 import { getSettingWithCoercion } from '@woocommerce/settings';
@@ -82,6 +82,30 @@ const ProductTemplateBlockPreview = ( {
 			onKeyPress={ handleOnClick }
 			style={ style }
 		/>
+	);
+};
+
+const CarouselPagination = () => {
+	const pages = [ 1, 2, 3, 4, 5 ];
+	return (
+		<Disabled>
+			<div className="carousel-pagination">
+				<a className="carousel-pagination__prev--disabled">«</a>
+				<ul className="carousel-pagination__pages">
+					{ pages.map( ( page ) => {
+						const className = clsx( 'carousel-pagination__page', {
+							'carousel-pagination__page--active': page === 1,
+						} );
+						return (
+							<li key={ page } className={ className }>
+								•
+							</li>
+						);
+					} ) }
+				</ul>
+				<a className="carousel-pagination__next">»</a>
+			</div>
+		</Disabled>
 	);
 };
 
@@ -310,7 +334,8 @@ const ProductTemplateEdit = (
 		[ products ]
 	);
 
-	const hasLayoutFlex = layoutType === 'flex' && columns > 1;
+	const hasLayoutFlex =
+		( layoutType === 'flex' || layoutType === 'carousel' ) && columns > 1;
 	let customClassName = '';
 
 	// We don't want to apply layout styles if there's no products.
@@ -355,29 +380,35 @@ const ProductTemplateEdit = (
 	// This ensures that when it is displayed again, the cached rendering of the
 	// block preview is used, instead of having to re-render the preview from scratch.
 	return (
-		<ul { ...blockProps }>
-			{ blockContexts &&
-				blockContexts.map( ( blockContext ) => {
-					const displayTemplate =
-						blockContext.postId ===
-						( activeBlockContextId || blockContexts[ 0 ]?.postId );
+		<>
+			<ul { ...blockProps }>
+				{ blockContexts &&
+					blockContexts.map( ( blockContext ) => {
+						const displayTemplate =
+							blockContext.postId ===
+							( activeBlockContextId ||
+								blockContexts[ 0 ]?.postId );
 
-					return (
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore isLoading and product props are missing as they're coming from untyped withProduct HOC.
-						<ProductContent
-							key={ blockContext.postId }
-							attributes={ {
-								productId: blockContext.postId,
-							} }
-							blocks={ blocks }
-							displayTemplate={ displayTemplate }
-							blockContext={ blockContext }
-							setActiveBlockContextId={ setActiveBlockContextId }
-						/>
-					);
-				} ) }
-		</ul>
+						return (
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore isLoading and product props are missing as they're coming from untyped withProduct HOC.
+							<ProductContent
+								key={ blockContext.postId }
+								attributes={ {
+									productId: blockContext.postId,
+								} }
+								blocks={ blocks }
+								displayTemplate={ displayTemplate }
+								blockContext={ blockContext }
+								setActiveBlockContextId={
+									setActiveBlockContextId
+								}
+							/>
+						);
+					} ) }
+			</ul>
+			{ layoutType === 'carousel' && <CarouselPagination /> }
+		</>
 	);
 };
 

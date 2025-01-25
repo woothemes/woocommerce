@@ -40,13 +40,27 @@ const DEFAULT_VALUE = LayoutOptions.GRID;
 const LayoutOptionsControl = ( props: DisplayLayoutControlProps ) => {
 	const { type, columns, shrinkColumns } = props.displayLayout;
 	const setDisplayLayout = ( displayLayout: LayoutOptions ) => {
-		props.setAttributes( {
-			displayLayout: {
-				type: displayLayout,
-				columns,
-				shrinkColumns,
-			},
-		} );
+		if ( displayLayout === LayoutOptions.CAROUSEL ) {
+			const fixedColumns = 4;
+			props.setAttributes( {
+				displayLayout: {
+					type: displayLayout,
+					columns: fixedColumns,
+					shrinkColumns: false,
+				},
+				query: {
+					perPage: fixedColumns,
+				},
+			} );
+		} else {
+			props.setAttributes( {
+				displayLayout: {
+					type: displayLayout,
+					columns,
+					shrinkColumns,
+				},
+			} );
+		}
 	};
 
 	return (
@@ -74,6 +88,10 @@ const LayoutOptionsControl = ( props: DisplayLayoutControlProps ) => {
 				<ToggleGroupControlOption
 					value={ LayoutOptions.GRID }
 					label={ __( 'Grid', 'woocommerce' ) }
+				/>
+				<ToggleGroupControlOption
+					value={ LayoutOptions.CAROUSEL }
+					label={ __( 'Carousel', 'woocommerce' ) }
 				/>
 			</ToggleGroupControl>
 		</ToolsPanelItem>

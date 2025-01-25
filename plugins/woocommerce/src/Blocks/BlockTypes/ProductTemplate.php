@@ -38,6 +38,16 @@ class ProductTemplate extends AbstractBlock {
 		return null;
 	}
 
+	function links_update($html) {
+		$p = new \WP_HTML_Tag_Processor( $html );
+
+		while ( $p->next_tag( array( 'class_name' => 'page-numbers' ) ) ) {
+			// Adjust the pagination on the frontend.
+		}
+
+		return $html;
+	}
+
 	/**
 	 * Render the block.
 	 *
@@ -62,7 +72,9 @@ class ProductTemplate extends AbstractBlock {
 		if ( isset( $block->context['displayLayout'] ) && isset( $block->context['query'] ) ) {
 			$classnames = 'is-product-collection-layout-' . $block->context['displayLayout']['type'] . ' ';
 
-			if ( isset( $block->context['displayLayout']['type'] ) && 'flex' === $block->context['displayLayout']['type'] ) {
+			if ( isset( $block->context['displayLayout']['type'] ) && (
+				'flex' === $block->context['displayLayout']['type'] ||
+				'carousel' === $block->context['displayLayout']['type'] ) ) {
 				if ( isset( $block->context['displayLayout']['shrinkColumns'] ) && $block->context['displayLayout']['shrinkColumns'] ) {
 					$classnames = "wc-block-product-template__responsive columns-{$block->context['displayLayout']['columns']}";
 				} else {
@@ -140,10 +152,24 @@ class ProductTemplate extends AbstractBlock {
 		*/
 		wp_reset_postdata();
 
+		// Carousel pagination
+		$page_key = isset( $block->context['queryId'] ) ? 'query-' . $block->context['queryId'] . '-page' : 'query-page';
+		$page     = empty( $_GET[ $page_key ] ) ? 1 : (int) $_GET[ $page_key ];
+		$max_page = isset( $block->context['query']['pages'] ) ? (int) $block->context['query']['pages'] : 0;
+
+		$is_carousel_layout = 'carousel' === $block->context['displayLayout']['type'];
+		$carousel_pagination = '';
+
+		if ( $is_carousel_layout ) {
+
+
+			add_filter( 'paginate_links_output', array( $this, 'links_update' ), 10, 2 );
+		};
+
 		return sprintf(
 			'<ul %1$s>%2$s</ul>',
 			$wrapper_attributes,
-			$content
+			$content,
 		);
 	}
 
