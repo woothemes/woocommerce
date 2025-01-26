@@ -107,6 +107,7 @@ export const PaymentGatewayList = ( {
 							>
 								{ PaymentGatewayListItem( {
 									gateway,
+									installingPlugin,
 									acceptIncentive,
 								} ) }
 							</SortableItem>
@@ -152,7 +153,7 @@ export const PaymentGatewayList = ( {
 												} }
 											/>
 										</div>
-										<div className="woocommerce-list__item-after centered">
+										<div className="woocommerce-list__item-after centered no-buttons">
 											<div className="woocommerce-list__item-after__actions">
 												<a
 													href={

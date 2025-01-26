@@ -2,10 +2,12 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import { CART_STORE_KEY, CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, checkoutStore } from '@woocommerce/block-data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { hasShippingRate } from '@woocommerce/base-utils';
+import { store as noticesStore } from '@wordpress/notices';
+import type { WPNotice } from '@wordpress/notices/build-types/store/selectors';
 
 /**
  * Internal dependencies
@@ -21,17 +23,20 @@ export const useShowShippingTotalWarning = () => {
 	const { prefersCollection, isRateBeingSelected, shippingNotices } =
 		useSelect( ( select ) => {
 			return {
-				prefersCollection:
-					select( CHECKOUT_STORE_KEY ).prefersCollection(),
+				prefersCollection: select( checkoutStore ).prefersCollection(),
 				isRateBeingSelected:
 					select( CART_STORE_KEY ).isShippingRateBeingSelected(),
-				shippingNotices: select( 'core/notices' ).getNotices( context ),
+				shippingNotices: select( noticesStore ).getNotices( context ),
 			};
-		} );
-	const { createInfoNotice, removeNotice } = useDispatch( 'core/notices' );
+		}, [] );
+	const { createInfoNotice, removeNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
-		const isShowingNotice = shippingNotices.length > 0;
+		const isShowingNotice =
+			shippingNotices.length > 0 &&
+			shippingNotices.some(
+				( notice: WPNotice ) => notice.id === errorNoticeId
+			);
 		const hasMismatch = ! prefersCollection && hasSelectedLocalPickup;
 
 		if ( ! hasRates || isRateBeingSelected ) {
