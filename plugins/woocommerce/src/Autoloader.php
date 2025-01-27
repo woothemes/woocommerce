@@ -17,9 +17,7 @@ class Autoloader {
 	/**
 	 * Static-only class.
 	 */
-	private function __construct(){
-
-	}
+	private function __construct() {}
 
 	/**
 	 * Require the autoloader and return the result.
