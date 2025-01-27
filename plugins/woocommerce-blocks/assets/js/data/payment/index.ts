@@ -3,7 +3,6 @@
  */
 import { createReduxStore, register, subscribe } from '@wordpress/data';
 import { controls as dataControls } from '@wordpress/data-controls';
-import { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -28,16 +27,5 @@ export const store = createReduxStore( STORE_KEY, config );
 register( store );
 
 subscribe( pushChanges, store );
-
-declare module '@wordpress/data' {
-	function dispatch(
-		key: typeof STORE_KEY
-	): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap<
-		typeof selectors
-	> & {
-		hasFinishedResolution: ( selector: string ) => boolean;
-	};
-}
 
 export const PAYMENT_STORE_KEY = STORE_KEY;
