@@ -475,10 +475,7 @@ class ShippingController {
 		if ( ! $has_full_address ) {
 			$packages = array_map(
 				function ( $package ) {
-					if ( isset( $package['rates'] ) && ! is_array( $package['rates'] ) ) {
-						$package['rates'] = array();
-						return $package;
-					}
+					// Package rates is always an array due to a check in core.
 					$package['rates'] = array_filter(
 						$package['rates'],
 						function ( $rate ) {
