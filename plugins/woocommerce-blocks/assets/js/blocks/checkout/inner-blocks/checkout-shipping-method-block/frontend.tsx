@@ -13,7 +13,6 @@ import {
 	SHIPPING_ENABLED,
 } from '@woocommerce/block-settings';
 import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
-import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
