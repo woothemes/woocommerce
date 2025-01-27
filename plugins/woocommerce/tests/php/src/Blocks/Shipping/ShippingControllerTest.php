@@ -36,7 +36,7 @@ class ShippingControllerTest extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that a pattern should not be registered without a slug.
+	 * Test that the has_full_shipping_address method returns correctly.
 	 */
 	public function test_has_full_shipping_address_returns_correctly() {
 		// With GB, state is not required. Test it returns false with only a country, nothing else.
