@@ -51,10 +51,6 @@ const FrontendBlock = ( {
 		}
 	);
 
-	const shippingCostRequiresAddress = getSetting< boolean >(
-		'shippingCostRequiresAddress',
-		false
-	);
 	const { setPrefersCollection } = useDispatch( checkoutStoreDescriptor );
 	const { needsShipping, isCollectable } = useShippingData();
 
