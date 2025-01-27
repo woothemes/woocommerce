@@ -235,10 +235,8 @@ export const SettingsPaymentsMain = () => {
 		triggeredPageViewRef.current = true;
 
 		const eventProps: { [ key: string ]: boolean } = {
-			woocommerce_payments_displayed: providers.some(
-				( provider ) =>
-					provider.id === 'woocommerce_payments' ||
-					provider.id === '_wc_pes_woopayments'
+			woocommerce_payments_displayed: providers.some( ( provider ) =>
+				isWooPayments( provider.id )
 			),
 		};
 
