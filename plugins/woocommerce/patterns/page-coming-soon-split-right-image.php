@@ -37,8 +37,9 @@ $right_image = PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern
 					<h1 class="wp-block-heading has-text-align-center has-<?php echo esc_attr( $inter_font_family ); ?>-font-family" style="font-size:14px;font-style:normal;font-weight:700;letter-spacing:2.1px;text-transform:uppercase"><?php echo esc_html_x( 'opening soon', 'Used in the heading of the coming soon page', 'woocommerce' ); ?></h1>
 					<!-- /wp:heading -->
 					<!-- wp:group {"style":{"spacing":{"margin":{"top":"32px","bottom":"32px"}}},"layout":{"type":"constrained"}} -->
-					<div class="wp-block-group" style="margin-top:32px;margin-bottom:32px"><!-- wp:image {"id":33,"width":"259px","sizeSlug":"full","linkDestination":"none"} -->
-						<figure class="wp-block-image size-full is-resized"><img src="<?php echo esc_url( $left_image ); ?>" alt="" class="wp-image-33" style="width:259px"/></figure>
+					<div class="wp-block-group" style="margin-top:32px;margin-bottom:32px">
+						<!-- wp:image {"id":33,"width":"259px","height":"285px","scale":"cover","sizeSlug":"full","linkDestination":"none"} -->
+						<figure class="wp-block-image size-full is-resized"><img src="<?php echo esc_url( $left_image ); ?>" alt="" class="wp-image-33" style="object-fit:cover;width:259px;height:285px"/></figure>
 						<!-- /wp:image --></div>
 					<!-- /wp:group -->
 
