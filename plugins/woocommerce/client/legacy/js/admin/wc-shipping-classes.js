@@ -121,9 +121,7 @@
 						const view = event.data.view;
 						const model = view.model;
 						const isNewRow = posted_data.term_id.includes( 'new-1-' );
-						const rowData = {
-							...posted_data,
-						};
+						const rowData = Object.assign( {}, posted_data );
 
 						if ( isNewRow ) {
 							rowData.newRow = true;
