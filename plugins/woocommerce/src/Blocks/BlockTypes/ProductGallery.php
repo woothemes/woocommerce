@@ -57,8 +57,10 @@ class ProductGallery extends AbstractBlock {
 							<path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z"></path>
 						</svg>
 					</button>
-					<div class="wc-block-product-gallery-dialog__images">
-						%s
+					<div class="wc-block-product-gallery-dialog__images-container">
+						<div class="wc-block-product-gallery-dialog__images">
+							%s
+						</div>
 					</div>
 				</div>
 			</dialog>',
