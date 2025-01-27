@@ -196,8 +196,7 @@ body:has(.woocommerce-coming-soon-banner) {
 }
 
 .block-editor-block-preview__content-iframe {
-	body:has(.woocommerce-coming-soon-entire-site),
-	body:has(.woocommerce-coming-soon-banner) {
+	.wp-block-woocommerce-coming-soon {
 		/* Set ratio to 1:1 so height is always equal to width for the preview. */
 		aspect-ratio: 1 / 1;
 	}
