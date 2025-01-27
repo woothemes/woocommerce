@@ -63,23 +63,25 @@ jobs:
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
       # Shallow copy of the branch is fast, but needs a bit of creativity about depth calculation and finding out proper base sha. 
-      - name: Setup - calculate checkout depth
-        id: checkout_depth
-        shell: bash
-        run: |
-          value=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
-          echo "value=$value" >> $GITHUB_OUTPUT
-      - name: Setup - checkout
+      - name: Setup - checkout base branch
+        if: github.event_name == 'pull_request'
         uses: 'actions/checkout@v4'
         with:
-          fetch-depth: ${{ steps.checkout_depth.outputs.value }}
-          ref: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.ref ) || '' }}
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.base.ref }}
       - name: Setup - calculate base sha
+        if: github.event_name == 'pull_request'
         id: checkout_base_sha
         shell: bash
         run: |
-          value=$(git rev-list --no-merges -n ${{ steps.checkout_depth.outputs.value }} HEAD | tail -1)
+          value=$(git rev-list --no-merges -n 1 HEAD | tail -1)
           echo "value=$value" >> $GITHUB_OUTPUT
+      - name: Setup - checkout branch
+        uses: 'actions/checkout@v4'
+        with:
+          fetch-depth: 1
+          ref: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.ref ) || '' }}
+          repository: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name ) || '' }}
       # Now let's get to generating the build matrix itself.
       - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
