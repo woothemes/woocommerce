@@ -23,6 +23,22 @@ jest.mock( '@woocommerce/settings', () => {
 			if ( setting === 'collectableMethodIds' ) {
 				return [ 'pickup_location' ];
 			}
+			if ( setting === 'localPickupLocations' ) {
+				return {
+					'1': {
+						enabled: true,
+						name: 'Local pickup #1',
+						formatted_address: '123 Easy Street',
+						details: 'Details for Local pickup #1',
+					},
+					'2': {
+						enabled: true,
+						name: 'Local pickup #2',
+						formatted_address: '456 Main St',
+						details: 'Details for Local pickup #2',
+					},
+				};
+			}
 			return originalModule.getSetting( setting, ...rest );
 		},
 	};
