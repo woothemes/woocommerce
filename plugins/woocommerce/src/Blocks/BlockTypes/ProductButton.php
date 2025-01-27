@@ -82,9 +82,23 @@ class ProductButton extends AbstractBlock {
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$product = wc_get_product( $post_id );
 
+		// Todo: move this to a general function so it's only triggered once.
+		$cart = rest_do_request( new \WP_REST_Request( 'GET', '/wc/store/v1/cart' ) );
+		wc_initial_state(
+			'woocommerce',
+			array(
+				'cart' => $cart->data,
+				'nonce' => $cart->headers['Nonce'],
+
+				// Todo: move this to wp_interactivity_config() instead of state.
+				'restUrl' => get_rest_url(),
+			)
+		);
+
 		wc_initial_state(
 			'woocommerce/product-button',
 			array(
+				// Todo: move this to wp_interactivity_config() instead of state.
 				'inTheCartText' => sprintf(
 					/* translators: %s: product number. */
 					__( '%s in cart', 'woocommerce' ),
@@ -96,8 +110,7 @@ class ProductButton extends AbstractBlock {
 
 		if ( $product ) {
 			$number_of_items_in_cart = $this->get_cart_item_quantities_by_product_id( $product->get_id() );
-			$more_than_one_item      = $number_of_items_in_cart > 0;
-			$initial_product_text    = $more_than_one_item ? sprintf(
+			$initial_product_text    = $number_of_items_in_cart > 0 ? sprintf(
 			/* translators: %s: product number. */
 				__( '%s in cart', 'woocommerce' ),
 				$number_of_items_in_cart
@@ -133,13 +146,14 @@ class ProductButton extends AbstractBlock {
 			* @param number $default_quantity The default quantity.
 			* @param number $product_id The product id.
 			*/
+			// Question: Is this info in the Store API cart?
 			$quantity_to_add = apply_filters( 'woocommerce_add_to_cart_quantity', $default_quantity, $product->get_id() );
 
 			$context = array(
 				'quantityToAdd'          => $quantity_to_add,
 				'productId'              => $product->get_id(),
 				'addToCartText'          => null !== $product->add_to_cart_text() ? $product->add_to_cart_text() : __( 'Add to cart', 'woocommerce' ),
-				'temporaryNumberOfItems' => $number_of_items_in_cart,
+				'tempQuantity'           => $number_of_items_in_cart,
 				'animationStatus'        => 'IDLE',
 			);
 
@@ -170,31 +184,26 @@ class ProductButton extends AbstractBlock {
 				$this->prevent_cache();
 			}
 
-			$interactive = array(
-				'namespace' => 'woocommerce/product-button',
-			);
 
+			// Todo: replace data-wc-interactive JSON with a simple 'woocommerce/product-button' string.
+			$interactive = array( 'namespace' => 'woocommerce/product-button' );
 			$div_directives = '
 				data-wc-interactive=\'' . wp_json_encode( $interactive, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
 				data-wc-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
 			';
 
-			$button_directives = '
-				data-wc-on--click="actions.addToCart"
-				data-wc-class--loading="context.isLoading"
-			';
+			$button_directives = 'data-wc-on--click="actions.addToCart"';
 
-			$anchor_directive = '
-				data-wc-on--click="woocommerce/product-collection::actions.viewProduct"
-			';
+			$anchor_directive = 'data-wc-on--click="woocommerce/product-collection::actions.viewProduct"';
 
+			// Todo: switch data-wc-layout-init to data-wp-run.
 			$span_button_directives = '
 				data-wc-text="state.addToCartText"
 				data-wc-class--wc-block-slide-in="state.slideInAnimation"
 				data-wc-class--wc-block-slide-out="state.slideOutAnimation"
 				data-wc-on--animationend="actions.handleAnimationEnd"
 				data-wc-watch="callbacks.startAnimation"
-				data-wc-layout-init="callbacks.syncTemporaryNumberOfItemsOnLoad"
+				data-wc-layout-init="callbacks.syncTempQuantityOnLoad"
 			';
 
 			$wrapper_attributes = get_block_wrapper_attributes(

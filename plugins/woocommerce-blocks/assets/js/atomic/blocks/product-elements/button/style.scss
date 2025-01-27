@@ -17,20 +17,20 @@
 		font-size: 1em;
 		width: auto;
 
-		&.loading {
-			opacity: 0.25;
-		}
-
-		&.loading::after {
-			font-family: WooCommerce; /* stylelint-disable-line */
-			content: "\e031";
-			animation: spin 2s linear infinite;
-			margin-right: 0;
-			margin-left: 0.5em;
-			display: inline-block;
-			width: auto;
-			height: auto;
-		}
+		// Todo: Maybe remove this is we finally use optimistic updates and it's not needed anymore.
+		// &.loading {
+		// 	opacity: 0.25;
+		// }
+		// &.loading::after {
+		// 	font-family: WooCommerce; /* stylelint-disable-line */
+		// 	content: "\e031";
+		// 	animation: spin 2s linear infinite;
+		// 	margin-right: 0;
+		// 	margin-left: 0.5em;
+		// 	display: inline-block;
+		// 	width: auto;
+		// 	height: auto;
+		// }
 	}
 
 	a[hidden] {
@@ -97,11 +97,12 @@
 	}
 }
 
-.is-loading .wc-block-components-product-button > .wc-block-components-product-button__button {
-	@include placeholder();
-	min-width: 8em;
-	min-height: 3em;
-}
+// Todo: remove this when we use optimistic updates?
+// .is-loading .wc-block-components-product-button > .wc-block-components-product-button__button {
+// 	@include placeholder();
+// 	min-width: 8em;
+// 	min-height: 3em;
+// }
 
 .theme-twentytwentyone {
 	// Prevent buttons appearing disabled in the editor.

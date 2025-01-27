@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import { getContext, getElement, store } from '@wordpress/interactivity';
+import {
+	getContext as getContextFn,
+	getElement,
+	store,
+} from '@wordpress/interactivity';
 
 type Notice = {
 	notice: string;

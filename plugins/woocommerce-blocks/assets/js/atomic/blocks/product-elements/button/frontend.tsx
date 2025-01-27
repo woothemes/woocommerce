@@ -2,25 +2,26 @@
  * External dependencies
  */
 import { store, getContext as getContextFn } from '@woocommerce/interactivity';
-import { select, subscribe, dispatch } from '@wordpress/data';
-import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
-import { Cart } from '@woocommerce/type-defs/cart';
-import type { store as StoreType } from '@wordpress/interactivity';
 
+// Todo: move the addToCart store to its own module.
 /**
  * Internal dependencies
  */
-import type { StoreNoticesStore } from '../../../../blocks/store-notices/frontend';
+import {
+	state as wooState,
+	actions as wooActions,
+} from '../../../../base/stores/add-to-cart';
 
 interface Context {
-	isLoading: boolean;
 	addToCartText: string;
 	productId: number;
 	displayViewCart: boolean;
 	quantityToAdd: number;
-	temporaryNumberOfItems: number;
+	tempQuantity: number;
 	animationStatus: AnimationStatus;
 }
+
+const getContext = () => getContextFn< Context >();
 
 enum AnimationStatus {
 	IDLE = 'IDLE',
@@ -30,9 +31,8 @@ enum AnimationStatus {
 
 interface Store {
 	state: {
-		cart?: Cart;
-		inTheCartText?: string;
-		numberOfItemsInTheCart: number;
+		inTheCartText: string;
+		quantity: number;
 		hasCartLoaded: boolean;
 		slideInAnimation: boolean;
 		slideOutAnimation: boolean;
@@ -46,30 +46,22 @@ interface Store {
 	};
 	callbacks: {
 		startAnimation: () => void;
-		syncTemporaryNumberOfItemsOnLoad: () => void;
+		syncTempQuantityOnLoad: () => void;
 	};
 }
 
-const getProductById = ( cartState: Cart | undefined, productId: number ) => {
-	return cartState?.items.find( ( item ) => item.id === productId );
-};
-
-const getButtonText = (
-	addToCart: string,
-	inTheCart: string,
-	numberOfItems: number
-): string => {
-	if ( numberOfItems === 0 ) return addToCart;
-	return inTheCart.replace( '###', numberOfItems.toString() );
-};
-
-// The `getContextFn` function is wrapped just to avoid prettier issues.
-const getContext = ( ns?: string ) => getContextFn< Context >( ns );
-
+// Todo: Remove the type cast once we import from `@wordpress/interactivity`.
 const { state } = ( store as typeof StoreType )< Store >(
 	'woocommerce/product-button',
 	{
 		state: {
+			get quantity() {
+				const { productId } = getContext();
+				const product = wooState.cart.items.find(
+					( item ) => item.id === productId
+				);
+				return product?.quantity || 0;
+			},
 			get slideInAnimation() {
 				const { animationStatus } = getContext();
 				return animationStatus === AnimationStatus.SLIDE_IN;
@@ -78,92 +70,48 @@ const { state } = ( store as typeof StoreType )< Store >(
 				const { animationStatus } = getContext();
 				return animationStatus === AnimationStatus.SLIDE_OUT;
 			},
-			get numberOfItemsInTheCart() {
-				const { productId } = getContext();
-				const product = getProductById( state.cart, productId );
-				return product?.quantity || 0;
-			},
 			get hasCartLoaded(): boolean {
-				return !! state.cart;
+				return !! wooState.cart;
 			},
 			get addToCartText(): string {
-				const context = getContext();
-				const inTheCartText = state.inTheCartText || '';
-				// We use the temporary number of items when there's no animation, or the
-				// second part of the animation hasn't started.
-				const showTemporaryNumber =
-					context.animationStatus === AnimationStatus.IDLE ||
-					context.animationStatus === AnimationStatus.SLIDE_OUT;
-				const numberOfItems = showTemporaryNumber
-					? context.temporaryNumberOfItems
-					: state.numberOfItemsInTheCart;
+				const { animationStatus, tempQuantity, addToCartText } =
+					getContext();
 
-				return getButtonText(
-					context.addToCartText,
-					inTheCartText,
-					numberOfItems
+				// We use the temporary quantity when there's no animation, or when
+				// the second part of the animation hasn't started yet.
+				const showTemporaryNumber =
+					animationStatus === AnimationStatus.IDLE ||
+					animationStatus === AnimationStatus.SLIDE_OUT;
+				const quantity = showTemporaryNumber
+					? tempQuantity
+					: state.quantity;
+
+				if ( quantity === 0 ) return addToCartText;
+				return state.inTheCartText.replace(
+					'###',
+					quantity.toString()
 				);
 			},
 			get displayViewCart(): boolean {
-				const { displayViewCart, temporaryNumberOfItems } =
-					getContext();
+				const { displayViewCart, tempQuantity } = getContext();
 				if ( ! displayViewCart ) return false;
 				if ( ! state.hasCartLoaded ) {
-					return temporaryNumberOfItems > 0;
+					return tempQuantity > 0;
 				}
-				return state.numberOfItemsInTheCart > 0;
+				return state.quantity > 0;
 			},
 		},
 		actions: {
-			*addToCart() {
+			addToCart() {
 				const context = getContext();
 				const { productId, quantityToAdd } = context;
-
-				context.isLoading = true;
-
-				try {
-					yield dispatch( storeKey ).addItemToCart(
-						productId,
-						quantityToAdd
-					);
-
-					// After the cart is updated, sync the temporary number of items again.
-					context.temporaryNumberOfItems =
-						state.numberOfItemsInTheCart;
-				} catch ( error ) {
-					const message = ( error as Error ).message;
-					const noticesStore = store< StoreNoticesStore >(
-						'woocommerce/store-notices'
-					);
-
-					// If the user deleted the hooked store notice block, the store won't be present
-					// and we should not add a notice.
-					if ( 'addNotice' in noticesStore.actions ) {
-						// The old implementation always overwrites the last notice, so
-						// we remove the last notice before adding a new one.
-						if ( state.noticeId !== '' ) {
-							noticesStore.actions.removeNotice( state.noticeId );
-						}
-
-						const noticeId = noticesStore.actions.addNotice( {
-							notice: message,
-							type: 'error',
-							dismissible: true,
-						} );
-
-						state.noticeId = noticeId;
-					}
-
-					// We don't care about errors blocking execution, but will
-					// console.error for troubleshooting.
-					// eslint-disable-next-line no-console
-					console.error( error );
-				} finally {
-					context.displayViewCart = true;
-					context.isLoading = false;
-				}
+				wooActions.addToCart(
+					productId,
+					// Question: is quantityToAdd available in the cart or we need to pass it down?
+					state.quantity + quantityToAdd
+				);
 			},
-			handleAnimationEnd: ( event: AnimationEvent ) => {
+			handleAnimationEnd( event: AnimationEvent ) {
 				const context = getContext();
 				if ( event.animationName === 'slideOut' ) {
 					// When the first part of the animation (slide-out) ends, we move
@@ -173,25 +121,24 @@ const { state } = ( store as typeof StoreType )< Store >(
 					// When the second part of the animation ends, we update the
 					// temporary number of items to sync it with the cart and reset the
 					// animation status so it can be triggered again.
-					context.temporaryNumberOfItems =
-						state.numberOfItemsInTheCart;
+					context.tempQuantity = state.quantity;
 					context.animationStatus = AnimationStatus.IDLE;
 				}
 			},
 		},
 		callbacks: {
-			syncTemporaryNumberOfItemsOnLoad: () => {
+			// Todo: switch to a data-wp-run directive with a `useLayoutEffect` hook inside.
+			syncTempQuantityOnLoad() {
 				const context = getContext();
 				// If the cart has loaded when we instantiate this element, we sync
 				// the temporary number of items with the number of items in the cart
 				// to avoid triggering the animation. We do this only once, but we
 				// use useLayoutEffect to avoid the useEffect flickering.
 				if ( state.hasCartLoaded ) {
-					context.temporaryNumberOfItems =
-						state.numberOfItemsInTheCart;
+					context.tempQuantity = state.quantity;
 				}
 			},
-			startAnimation: () => {
+			startAnimation() {
 				const context = getContext();
 				// We start the animation if the cart has loaded, the temporary number
 				// of items is out of sync with the number of items in the cart, the
@@ -199,9 +146,7 @@ const { state } = ( store as typeof StoreType )< Store >(
 				// interaction) and the animation hasn't started yet.
 				if (
 					state.hasCartLoaded &&
-					context.temporaryNumberOfItems !==
-						state.numberOfItemsInTheCart &&
-					! context.isLoading &&
+					context.tempQuantity !== state.quantity &&
 					context.animationStatus === AnimationStatus.IDLE
 				) {
 					context.animationStatus = AnimationStatus.SLIDE_OUT;
@@ -209,26 +154,6 @@ const { state } = ( store as typeof StoreType )< Store >(
 			},
 		},
 	}
+	// Todo: Lock this store once we import from `@wordpress/interactivity`.
+	// { lock: true }
 );
-
-// Subscribe to changes in Cart data.
-subscribe( () => {
-	const cartData = select( storeKey ).getCartData();
-	const isResolutionFinished =
-		select( storeKey ).hasFinishedResolution( 'getCartData' );
-	if ( isResolutionFinished ) {
-		state.cart = cartData;
-	}
-}, storeKey );
-
-// RequestIdleCallback is not available in Safari, so we use setTimeout as an alternative.
-const callIdleCallback =
-	window.requestIdleCallback || ( ( cb ) => setTimeout( cb, 100 ) );
-
-// This selector triggers a fetch of the Cart data. It is done in a
-// `requestIdleCallback` to avoid potential performance issues.
-callIdleCallback( () => {
-	if ( ! state.hasCartLoaded ) {
-		select( storeKey ).getCartData();
-	}
-} );
