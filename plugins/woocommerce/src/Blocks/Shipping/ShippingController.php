@@ -441,13 +441,10 @@ class ShippingController {
 				continue;
 			}
 
-			// If the country-specific locale does not require the field, continue.
-			if ( isset( $country_locale[ $key ]['required'] ) && false === filter_var( $country_locale[ $key ]['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ) {
-				continue;
-			}
+			$locale_to_check = isset( $country_locale[ $key ]['required'] ) ? $country_locale : $default_locale;
 
-			// If the default locale requires the field return false.
-			if ( isset( $default_locale[ $key ]['required'] ) && true === filter_var( $default_locale[ $key ]['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ) {
+			// If the locale requires the field return false.
+			if ( isset( $locale_to_check[ $key ]['required'] ) && true === wc_string_to_bool( $locale_to_check[ $key ]['required'] ) ) {
 				return false;
 			}
 		}
