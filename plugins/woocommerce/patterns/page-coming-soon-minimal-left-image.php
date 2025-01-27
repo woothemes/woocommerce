@@ -41,14 +41,13 @@ $store_description = ! empty( $site_tagline )
 				<div class="wp-block-group"><!-- wp:site-logo {"width":60} /-->
 
 					<!-- wp:group {"style":{"spacing":{"blockGap":"0px"}}} -->
-					<div class="wp-block-group"><!-- wp:site-title {"level":0,"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
+					<div class="wp-block-group"><!-- wp:site-title {"level":0,"style":{"typography":{"fontSize":"20px","letterSpacing":"0px"},"color":{"text":"#000000"},"elements":{"link":{"color":{"text":"#000000"}}}},"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
 					<!-- /wp:group --></div>
 				<!-- /wp:group -->
 
 				<!-- wp:group {"className":"woocommerce-coming-soon-social-login","style":{"spacing":{"blockGap":"48px"}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
 				<div class="wp-block-group woocommerce-coming-soon-social-login"><!-- wp:template-part {"slug":"coming-soon-social-links","theme":"woocommerce/woocommerce","tagName":"div"} /-->
-
-					<!-- wp:loginout {"style":{"elements":{"link":{"color":{"text":"var:preset|color|primary"}}},"border":{"radius":"6px","width":"1px"},"layout":{"selfStretch":"fit","flexSize":null}},"borderColor":"primary"} /--></div>
+					<!-- wp:loginout {"style":{"elements":{"link":{"color":{"text":"#000000"}}},"spacing":{"padding":{"top":"12px","bottom":"12px","left":"16px","right":"16px"}},"typography":{"fontSize":"14px","lineHeight":"1.2"},"border":{"radius":"6px","color":"#000000","width":"1px"}}} /--></div>
 				<!-- /wp:group --></div>
 			<!-- /wp:group --></div>
 		<!-- /wp:group -->
