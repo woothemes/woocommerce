@@ -75,26 +75,7 @@ class ShippingController {
 		add_filter( 'woocommerce_shipping_packages', array( $this, 'remove_shipping_if_no_address' ), 11 );
 		add_filter( 'woocommerce_order_shipping_to_display', array( $this, 'show_local_pickup_details' ), 10, 2 );
 
-		// This is required to short circuit `show_shipping` from class-wc-cart.php - without it, that function
-		// returns based on the option's value in the DB and we can't override it any other way.
-		add_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
-
 		add_action( 'rest_pre_serve_request', array( $this, 'track_local_pickup' ), 10, 4 );
-	}
-
-	/**
-	 * Overrides the option to force shipping calculations NOT to wait until an address is entered, but only if the
-	 * Checkout page contains the Checkout Block.
-	 *
-	 * @param boolean $value Whether shipping cost calculation requires address to be entered.
-	 * @return boolean Whether shipping cost calculation should require an address to be entered before calculating.
-	 */
-	public function override_cost_requires_address_option( $value ) {
-		if ( is_checkout() && CartCheckoutUtils::is_checkout_block_default() && $this->local_pickup_enabled ) {
-			return 'no';
-		}
-
-		return $value;
 	}
 
 	/**
@@ -461,11 +442,7 @@ class ShippingController {
 	 * @return array
 	 */
 	public function remove_shipping_if_no_address( $packages ) {
-		// We have to remove and re-add the filter here because we override to short circuit `show_shipping` from class-wc-cart.php.
-		// We want the true value of the option in this function.
-		remove_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 		$shipping_cost_requires_address = wc_string_to_bool( get_option( 'woocommerce_shipping_cost_requires_address', 'no' ) );
-		add_filter( 'option_woocommerce_shipping_cost_requires_address', array( $this, 'override_cost_requires_address_option' ) );
 
 		// Return early here for a small performance gain if we don't need to hide shipping costs until an address is entered.
 		if ( ! $shipping_cost_requires_address ) {
