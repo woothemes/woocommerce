@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Locator } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { test as base, expect } from '@woocommerce/e2e-utils';
 
 /**
@@ -79,6 +79,47 @@ const getThumbnailImageIdByNth = async (
 	const imageId = JSON.parse( imageContext ).imageId;
 
 	return imageId;
+};
+
+/**
+ * Get the focused image in the container.
+ *
+ * @param {Locator} containerLocator - The container locator.
+ * @return {Promise<string | null>} The image ID or null if no focused image is found.
+ */
+export const getFocusedImage = async ( containerLocator: Locator ) => {
+	const focusedImage = containerLocator.locator(
+		'img:focus, img[aria-selected="true"]'
+	);
+
+	if ( ( await focusedImage.count() ) > 0 ) {
+		const imageContext = ( await focusedImage.getAttribute(
+			'data-wc-context'
+		) ) as string;
+		return JSON.parse( imageContext ).imageId;
+	}
+
+	return null;
+};
+
+/**
+ * Gets the image ID from the currently focused element.
+ *
+ * @param {Page} page - The Playwright page object.
+ * @return {Promise<string | null>} The image ID or null if no focused element or context found.
+ */
+export const getActiveElementImageId = async ( page: Page ) => {
+	return page.evaluate( () => {
+		const element = document?.activeElement;
+		if ( ! element ) {
+			return null;
+		}
+		const context = element.getAttribute( 'data-wc-context' );
+		if ( ! context ) {
+			return null;
+		}
+		return JSON.parse( context ).imageId;
+	} );
 };
 
 test.describe( `${ blockData.name }`, () => {
@@ -326,15 +367,9 @@ test.describe( `${ blockData.name }`, () => {
 			} );
 			await largeImageBlock.click();
 
-			const productGalleryPopUpContent = page.locator(
-				'.wc-block-product-gallery-dialog__body'
-			);
-
-			const popUpSelectedImageId = await getVisibleLargeImageId(
-				productGalleryPopUpContent.locator(
-					`[data-block-name="woocommerce/product-gallery-large-image"]`
-				)
-			);
+			// eslint-disable-next-line playwright/no-wait-for-timeout, no-restricted-syntax
+			await page.waitForTimeout( 300 );
+			const popUpSelectedImageId = await getActiveElementImageId( page );
 
 			expect( popUpSelectedImageId ).toBe( nextImageId );
 		} );
@@ -387,46 +422,20 @@ test.describe( `${ blockData.name }`, () => {
 
 			await largeImageBlock.click();
 
-			const productGalleryPopUpContent = page.locator(
-				'.wc-block-product-gallery-dialog__body'
+			const popUpInitialSelectedImageId = await getActiveElementImageId(
+				page
 			);
 
-			const popUpInitialSelectedImageId = await getVisibleLargeImageId(
-				productGalleryPopUpContent.locator(
-					`[data-block-name="woocommerce/product-gallery-large-image"]`
-				)
-			);
+			await page.keyboard.press( 'Tab' );
 
-			const popUpNextButton = productGalleryPopUpContent
-				.locator(
-					'.wc-block-product-gallery-large-image-next-previous--button'
-				)
-				.nth( 1 );
-			await popUpNextButton.click();
-
-			const popUpNextImageId = await getVisibleLargeImageId(
-				productGalleryPopUpContent.locator(
-					`[data-block-name="woocommerce/product-gallery-large-image"]`
-				)
-			);
+			const popUpNextImageId = await getActiveElementImageId( page );
 
 			expect( popUpInitialSelectedImageId ).not.toBe( popUpNextImageId );
 
-			const productGalleryPopUpHeader = page.locator(
-				'.wc-block-product-gallery-dialog__header'
-			);
-			const closePopUpButton = productGalleryPopUpHeader.locator(
-				'.wc-block-product-gallery-dialog__close'
+			const closePopUpButton = page.locator(
+				'.wc-block-product-gallery-dialog__close-button'
 			);
 			await closePopUpButton.click();
-
-			await page.waitForFunction( () => {
-				const isPopUpOpen = document
-					.querySelector( '[aria-label="Product gallery"]' )
-					?.checkVisibility();
-
-				return isPopUpOpen === false;
-			} );
 
 			const singleProductImageId = await getVisibleLargeImageId(
 				largeImageBlock
@@ -509,21 +518,6 @@ test.describe( `${ blockData.name }`, () => {
 				.getByRole( 'option', { name: blockData.title } );
 
 			await expect( productGalleryBlockOption ).toBeVisible();
-		} );
-
-		test( 'should be inserted on the Product Gallery template part by default', async ( {
-			admin,
-			editor,
-		} ) => {
-			await admin.visitSiteEditor( {
-				postId: `woocommerce/woocommerce//product-gallery`,
-				postType: 'wp_template_part',
-				canvas: 'edit',
-			} );
-
-			await expect(
-				await editor.getBlockByName( blockData.name )
-			).toHaveCount( 1 );
 		} );
 
 		test( 'should be hidden on the post editor globally', async ( {

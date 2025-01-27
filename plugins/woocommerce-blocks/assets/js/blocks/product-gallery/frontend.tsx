@@ -200,7 +200,21 @@ const productGallery = {
 			);
 		},
 		closeDialog: () => {
+			// eslint-disable-next-line @wordpress/no-unused-vars-before-return
 			const context = getContext();
+			const clickedElement = getElement()?.ref as HTMLElement;
+			if ( clickedElement && clickedElement.tagName === 'IMG' ) {
+				// If the dialog is closed by clicking on an image, we need to select the image that was clicked.
+				const imgContext =
+					clickedElement.getAttribute( 'data-wc-context' );
+				if ( ! imgContext ) {
+					return null;
+				}
+				const imageId = JSON.parse( imgContext ).imageId;
+				context.selectedImageNumber =
+					getImageIndex( context, imageId ) + 1;
+				selectImage( getContext(), 'current' );
+			}
 			context.isDialogOpen = false;
 			document.body.classList.remove(
 				'wc-block-product-gallery-dialog-open'
@@ -279,6 +293,7 @@ const productGallery = {
 						behavior: 'auto',
 						block: 'center',
 					} );
+					selectedImage.focus();
 				}
 			} else if ( context.elementThatTriggeredDialogOpening ) {
 				context.elementThatTriggeredDialogOpening.focus();
