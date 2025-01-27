@@ -48,6 +48,7 @@ const blocks = {
 	'attribute-filter': {},
 	breadcrumbs: {},
 	'blockified-product-details': {
+		// Test comment here.
 		isExperimental: true,
 		customDir: 'product-details',
 	},

@@ -18,7 +18,7 @@ const createAccordionItem = (
 	];
 };
 
-const descriptionAccordion = createAccordionItem( 'Description', [
+const descriptionAccordion = createAccordionItem( 'Description...', [
 	[
 		'core/paragraph',
 		{
