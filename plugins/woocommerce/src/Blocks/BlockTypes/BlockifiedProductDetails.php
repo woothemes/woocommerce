@@ -101,10 +101,11 @@ class BlockifiedProductDetails extends AbstractBlock {
 	 * @param array $accordion_group_block Accordion group block.
 	 */
 	private function remove_empty_accordion_item( &$accordion_group_block ) {
-		foreach ( $accordion_group_block['innerBlocks'] as &$inner_block ) {
+		foreach ( $accordion_group_block['innerBlocks'] as $index => &$inner_block ) {
 			if ( 'woocommerce/accordion-item' === $inner_block['blockName'] ) {
 				if ( self::is_accordion_item_empty( $inner_block ) ) {
-					array_pop( $accordion_group_block['innerBlocks'] );
+					array_splice( $accordion_group_block['innerBlocks'], $index, 1 );
+					// It is necessary update the innerContent given that a inner block is removed.
 					array_splice( $accordion_group_block['innerContent'], -3, 2 );
 				}
 			}
