@@ -69,7 +69,6 @@ class ShippingController {
 		add_filter( 'woocommerce_local_pickup_methods', array( $this, 'register_local_pickup_method' ) );
 		add_filter( 'woocommerce_order_hide_shipping_address', array( $this, 'hide_shipping_address_for_local_pickup' ), 10 );
 		add_filter( 'woocommerce_customer_taxable_address', array( $this, 'filter_taxable_address' ) );
-		add_filter( 'woocommerce_shipping_settings', array( $this, 'remove_shipping_settings' ) );
 		add_filter( 'woocommerce_shipping_packages', array( $this, 'filter_shipping_packages' ) );
 		add_filter( 'pre_update_option_woocommerce_pickup_location_settings', array( $this, 'flush_cache' ) );
 		add_filter( 'pre_update_option_pickup_location_pickup_locations', array( $this, 'flush_cache' ) );
@@ -133,28 +132,6 @@ class ShippingController {
 			__( 'Collection from <strong>%s</strong>:', 'woocommerce' ),
 			$location
 		) . '<br/><address>' . str_replace( ',', ',<br/>', $address ) . '</address><br/>' . $details;
-	}
-
-	/**
-	 * When using the cart and checkout blocks this method is used to adjust core shipping settings via a filter hook.
-	 *
-	 * @param array $settings The default WC shipping settings.
-	 * @return array|mixed The filtered settings.
-	 */
-	public function remove_shipping_settings( $settings ) {
-		if ( CartCheckoutUtils::is_checkout_block_default() && $this->local_pickup_enabled ) {
-			foreach ( $settings as $index => $setting ) {
-				if ( 'woocommerce_shipping_cost_requires_address' === $setting['id'] ) {
-					$settings[ $index ]['desc']     =
-						__( 'Hide shipping costs until an address is entered', 'woocommerce' );
-					$settings[ $index ]['desc_tip'] =
-						__( 'Local pickup rates will display in the Checkout block, even without an address', 'woocommerce' );
-					break;
-				}
-			}
-		}
-
-		return $settings;
 	}
 
 	/**
