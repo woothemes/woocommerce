@@ -248,7 +248,13 @@ export const SettingsPaymentsMain = () => {
 		providers
 			.filter( ( provider ) => provider._type === 'suggestion' )
 			.forEach( ( provider ) => {
-				if ( provider.plugin && provider.plugin.slug ) {
+				if ( provider._suggestion_id ) {
+					eventProps[
+						provider._suggestion_id.replace( /-/g, '_' ) +
+							'_displayed'
+					] = true;
+				} else if ( provider.plugin && provider.plugin.slug ) {
+					// Fallback to using the slug if the suggestion ID is not available.
 					eventProps[
 						provider.plugin.slug.replace( /-/g, '_' ) + '_displayed'
 					] = true;
