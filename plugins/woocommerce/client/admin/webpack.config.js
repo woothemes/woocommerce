@@ -259,9 +259,16 @@ const webpackConfig = {
 		! process.env.STORYBOOK &&
 			new WooCommerceDependencyExtractionWebpackPlugin( {
 				requestToExternal( request ) {
-					if ( request === '@wordpress/components/build/ui' ) {
-						// The external wp.components does not include ui components, so we need to skip requesting to external here.
-						return null;
+					switch ( request ) {
+						case '@wordpress/components/build/ui':
+							// The external wp.components does not include ui components, so we need to skip requesting to external here.
+							return null;
+						case 'react/jsx-runtime':
+						case 'react/jsx-dev-runtime':
+							// @wordpress/dependency-extraction-webpack-plugin version bump related, which added 'react-jsx-runtime' dependency.
+							// See https://github.com/WordPress/gutenberg/pull/61692 for more details about the dependency in general.
+							// For backward compatibility reasons we need to skip requesting to external here.
+							return null;
 					}
 
 					if ( request.startsWith( '@wordpress/dataviews' ) ) {
