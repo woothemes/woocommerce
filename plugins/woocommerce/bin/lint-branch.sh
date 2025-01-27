@@ -18,4 +18,4 @@ if [[ -z $changedFiles ]]; then
     exit 0
 fi
 
-composer exec phpcs-changed -- -s --no-verify-git-file --git --git-base $baseBranch $changedFiles
+composer exec phpcs-changed -- -s --git --git-base $baseBranch $changedFiles
