@@ -403,36 +403,42 @@ class CheckoutFields {
 	 * @return array|false The updated $field_data array or false if an error was encountered.
 	 */
 	private function process_checkbox_field( $field_data, $options ) {
-		$id = $options['id'];
 
-		if ( isset( $options['required'] ) && null === filter_var( $options['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ) {
-			$message = sprintf( 'The required property for field with id: "%s" must be a boolean, you passed %s. The field will not be registered.', $id, gettype( $options['required'] ) );
+		// Note: 1, '1', 'yes', / 0, '0', 'no' will evaluate to (bool) true/false, is this acceptable?
+		// Also, this re-evaluation seems inefficient, and we could probably look into the validate-parse-process flow again. The second $options arg here seems unnecessary.
+		$field_data['required'] = filter_var( $options['required'] ?? $field_data['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+
+		if ( null === $field_data['required'] ) {
+			// This message should be adjusted, as it can accept certain strings and ints as stated above.
+			// Again, this seems like it should belong in the validate method, not here.
+			// While we're at it, why not use typed function arguments to enforce these things?
+			$message = sprintf(
+				'The required property for field with id: "%s" must be a boolean, you passed %s. The field will not be registered.',
+				$field_data['id'],
+				gettype( $options['required'] )
+			);
 			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.8.0' );
-			return false;
+
+			return false; // Return false if it can't be coalesced into boolean. Also, let's throw errors instead of mixed return types, this is tech-debt inducing :/ .
 		}
 
-		if ( isset( $options['required'] ) ) {
-			// Filter the boolean in case the developer added it as a string.
-			$options['required']    = filter_var( $options['required'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
-			$field_data['required'] = $options['required'];
-		}
-
-		if ( ( ! isset( $options['required'] ) || false === $options['required'] ) && ! empty( $options['error_message'] ) ) {
-			$message = sprintf( 'Passing an error message to a non-required checkbox "%s" will have no effect. The error message has been removed from the field.', $id );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.8.0' );
-			unset( $field_data['error_message'] );
-		}
-
-		if ( isset( $options['error_message'] ) && ! is_string( $options['error_message'] ) ) {
-			$message = sprintf( 'The error_message property for field with id: "%s" must be a string, you passed %s. A default message will be shown.', $id, gettype( $options['error_message'] ) );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.8.0' );
-			unset( $field_data['error_message'] );
-		}
-
-		// Get the error message property and set it to errorMessage for use in JS.
 		if ( isset( $field_data['error_message'] ) ) {
-			$field_data['errorMessage'] = $field_data['error_message'];
-			unset( $field_data['error_message'] );
+
+			if ( ! is_string( $field_data['error_message'] ) ) {
+				// Again, this should probably belong in the validate method. Or again, typed function arguments.
+				$message = sprintf(
+					'The error_message property for field with id: "%s" must be a string, you passed %s. A default message will be shown.',
+					$field_data['id'],
+					gettype( $field_data['error_message'] )
+				);
+				_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '9.8.0' );
+			}
+
+			if ( '' !== $field_data['error_message'] ) {
+				$field_data['errorMessage'] = $field_data['error_message'];
+			}
+
+			unset( $field_data['error_message'] ); // We don't really need to throw a doing_it_wrong for submitting this on an optional checkbox.
 		}
 
 		return $field_data;
