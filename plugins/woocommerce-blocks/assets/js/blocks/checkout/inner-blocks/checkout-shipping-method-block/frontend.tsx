@@ -56,29 +56,16 @@ const FrontendBlock = ( {
 		false
 	);
 	const { setPrefersCollection } = useDispatch( checkoutStoreDescriptor );
-	const {
-		shippingRates,
-		needsShipping,
-		hasCalculatedShipping,
-		isCollectable,
-	} = useShippingData();
-
-	const shouldForceShow =
-		SHIPPING_ENABLED &&
-		LOCAL_PICKUP_ENABLED &&
-		SHIPPING_METHODS_EXIST &&
-		shippingCostRequiresAddress;
+	const { needsShipping, isCollectable } = useShippingData();
 
 	// Note that display logic is also found in plugins/woocommerce-blocks/assets/js/blocks/checkout/inner-blocks/register-components.ts
 	// where the block is not registered if the conditions are not met.
 	if (
-		! shouldForceShow &&
-		( ! needsShipping ||
-			! hasCalculatedShipping ||
-			! isCollectable ||
-			! LOCAL_PICKUP_ENABLED ||
-			! SHIPPING_METHODS_EXIST ||
-			! shippingRates )
+		! SHIPPING_ENABLED ||
+		! needsShipping ||
+		! isCollectable ||
+		! LOCAL_PICKUP_ENABLED ||
+		! SHIPPING_METHODS_EXIST
 	) {
 		return null;
 	}
