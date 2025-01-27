@@ -103,8 +103,7 @@ const CheckboxListEdit = ( props: EditProps ): JSX.Element => {
 												type="checkbox"
 												className="wc-block-product-filter-checkbox-list__input"
 												defaultChecked={
-													!! item.selected ||
-													index === 1
+													!! item.selected
 												}
 											/>
 											<Icon

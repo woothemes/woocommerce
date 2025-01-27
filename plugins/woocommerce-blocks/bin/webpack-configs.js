@@ -9,7 +9,6 @@ const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const ProgressBarPlugin = require( 'progress-bar-webpack-plugin' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const WebpackRTLPlugin = require( './webpack-rtl-plugin' );
-const TerserPlugin = require( 'terser-webpack-plugin' );
 const CreateFileWebpack = require( 'create-file-webpack' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
@@ -18,7 +17,7 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 /**
  * Internal dependencies
  */
-const { getEntryConfig } = require( './webpack-entries' );
+const { getEntryConfig, genericBlocks } = require( './webpack-entries' );
 const {
 	ASSET_CHECK,
 	NODE_ENV,
@@ -29,6 +28,7 @@ const {
 	getCacheGroups,
 } = require( './webpack-helpers' );
 const AddSplitChunkDependencies = require( './add-split-chunk-dependencies' );
+const { sharedOptimizationConfig } = require( './webpack-shared-config' );
 
 const isProduction = NODE_ENV === 'production';
 
@@ -137,32 +137,13 @@ woocommerce_blocks_env = ${ NODE_ENV }
 			} ),
 		],
 		optimization: {
-			// Only concatenate modules in production, when not analyzing bundles.
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		resolve: {
 			...resolve,
@@ -177,9 +158,8 @@ woocommerce_blocks_env = ${ NODE_ENV }
  * @param {Object} options Build options.
  */
 const getMainConfig = ( options = {} ) => {
-	let { fileSuffix } = options;
 	const { alias, resolvePlugins = [] } = options;
-	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
+
 	const resolve = alias
 		? {
 				alias,
@@ -200,8 +180,8 @@ const getMainConfig = ( options = {} ) => {
 			// i18n system relies on the hash of the filename, so changing that frequently would result in broken
 			// translations which we must avoid.
 			// @see https://github.com/Automattic/jetpack/pull/20926
-			chunkFilename: `[name]${ fileSuffix }.js?ver=[contenthash]`,
-			filename: `[name]${ fileSuffix }.js`,
+			chunkFilename: `[name].js?ver=[contenthash]`,
+			filename: `[name].js`,
 			library: [ 'wc', 'blocks', '[name]' ],
 			libraryTarget: 'this',
 			uniqueName: 'webpackWcBlocksMainJsonp',
@@ -241,8 +221,7 @@ const getMainConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				minSize: 200000,
 				automaticNameDelimiter: '--',
@@ -256,23 +235,6 @@ const getMainConfig = ( options = {} ) => {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -296,7 +258,10 @@ const getMainConfig = ( options = {} ) => {
 								.split( '/' )
 								.at( 1 );
 
-							if ( metadata.parent )
+							if (
+								metadata.parent &&
+								! genericBlocks[ blockName ]
+							)
 								return `./inner-blocks/${ blockName }/block.json`;
 							return `./${ blockName }/block.json`;
 						},
@@ -317,9 +282,7 @@ const getMainConfig = ( options = {} ) => {
  * @param {Object} options Build options.
  */
 const getFrontConfig = ( options = {} ) => {
-	let { fileSuffix } = options;
 	const { alias, resolvePlugins = [] } = options;
-	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
 	const resolve = alias
 		? {
 				alias,
@@ -340,9 +303,9 @@ const getFrontConfig = ( options = {} ) => {
 			// i18n system relies on the hash of the filename, so changing that frequently would result in broken
 			// translations which we must avoid.
 			// @see https://github.com/Automattic/jetpack/pull/20926
-			chunkFilename: `[name]-frontend${ fileSuffix }.js?ver=[contenthash]`,
+			chunkFilename: `[name]-frontend.js?ver=[contenthash]`,
 			filename: () => {
-				return `[name]-frontend${ fileSuffix }.js`;
+				return '[name]-frontend.js';
 			},
 			uniqueName: 'webpackWcBlocksFrontendJsonp',
 			library: [ 'wc', '[name]' ],
@@ -394,8 +357,7 @@ const getFrontConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				minSize: 200000,
 				automaticNameDelimiter: '--',
@@ -414,23 +376,6 @@ const getFrontConfig = ( options = {} ) => {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -516,31 +461,13 @@ const getPaymentsConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -577,7 +504,7 @@ const getExtensionsConfig = ( options = {} ) => {
 		output: {
 			devtoolNamespace: 'wc',
 			path: path.resolve( __dirname, '../build/' ),
-			filename: `[name].js`,
+			filename: '[name].js',
 			uniqueName: 'webpackWcBlocksExtensionsMethodExtensionJsonp',
 		},
 		module: {
@@ -627,31 +554,13 @@ const getExtensionsConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -737,31 +646,13 @@ const getSiteEditorConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -784,9 +675,8 @@ const getSiteEditorConfig = ( options = {} ) => {
  * @param {Object} options Build options.
  */
 const getStylingConfig = ( options = {} ) => {
-	let { fileSuffix } = options;
 	const { alias, resolvePlugins = [] } = options;
-	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
+
 	const resolve = alias
 		? {
 				alias,
@@ -800,7 +690,7 @@ const getStylingConfig = ( options = {} ) => {
 		output: {
 			devtoolNamespace: 'wc',
 			path: path.resolve( __dirname, '../build/' ),
-			filename: `[name]-style${ fileSuffix }.js`,
+			filename: '[name]-style.js',
 			library: [ 'wc', 'blocks', '[name]' ],
 			libraryTarget: 'this',
 			uniqueName: 'webpackWcBlocksStylingJsonp',
@@ -933,13 +823,13 @@ const getStylingConfig = ( options = {} ) => {
 			...getSharedPlugins( { bundleAnalyzerReportTitle: 'Styles' } ),
 			new ProgressBarPlugin( getProgressBarPluginConfig( 'Styles' ) ),
 			new MiniCssExtractPlugin( {
-				filename: `[name]${ fileSuffix }.css`,
+				filename: '[name].css',
 			} ),
 			new WebpackRTLPlugin( {
 				filenameSuffix: '-rtl.css',
 			} ),
 			// Remove JS files generated by MiniCssExtractPlugin.
-			new RemoveFilesPlugin( `./build/*style${ fileSuffix }.js` ),
+			new RemoveFilesPlugin( './build/*style.js' ),
 		],
 		resolve: {
 			...resolve,
@@ -1016,9 +906,7 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 };
 
 const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
-	let { fileSuffix } = options;
 	const { alias, resolvePlugins = [] } = options;
-	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
 
 	const resolve = alias
 		? {
@@ -1043,7 +931,7 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 			// i18n system relies on the hash of the filename, so changing that frequently would result in broken
 			// translations which we must avoid.
 			// @see https://github.com/Automattic/jetpack/pull/20926
-			chunkFilename: `[name]-frontend${ fileSuffix }.js?ver=[contenthash]`,
+			chunkFilename: '[name]-frontend.js?ver=[contenthash]',
 			filename: ( pathData ) => {
 				// blocksCheckout and blocksComponents were moved from core bundle,
 				// retain their filenames to avoid breaking translations.
@@ -1051,12 +939,10 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 					pathData.chunk.name === 'blocksCheckout' ||
 					pathData.chunk.name === 'blocksComponents'
 				) {
-					return `${ paramCase(
-						pathData.chunk.name
-					) }${ fileSuffix }.js`;
+					return `${ paramCase( pathData.chunk.name ) }.js`;
 				}
 
-				return `[name]-frontend${ fileSuffix }.js`;
+				return `[name]-frontend.js`;
 			},
 			uniqueName: 'webpackWcBlocksCartCheckoutFrontendJsonp',
 			library: [ 'wc', '[name]' ],
@@ -1108,8 +994,7 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				minSize: 200000,
 				automaticNameDelimiter: '--',
@@ -1130,23 +1015,6 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
