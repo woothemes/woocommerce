@@ -20,6 +20,7 @@ export const getColorEdit = ( {
 
 	return (
 		<Fragment>
+			{ /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
 			<label
 				className="woocommerce-settings-color-picker__label"
 				htmlFor={ id }
@@ -32,6 +33,7 @@ export const getColorEdit = ( {
 						[ id ]: newValue,
 					} );
 				} }
+				id={ id }
 				color={ value }
 			/>
 		</Fragment>

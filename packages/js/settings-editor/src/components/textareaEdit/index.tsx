@@ -32,6 +32,7 @@ export const getTextareaEdit = ( {
 				} );
 			} }
 			value={ value }
+			id={ id }
 		/>
 	);
 };
