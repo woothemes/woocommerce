@@ -36,7 +36,7 @@ class ProductGallery extends AbstractBlock {
 		$images_html = '';
 		foreach ( $product_gallery_full_images as $index => $image ) {
 			$image_number = $index + 1;
-			$images_html .= str_replace( '<img', '<img tabindex="0" data-wc-on--click="actions.closeDialog" data-image-index="' . $image_number . '"', $image );
+			$images_html .= str_replace( '<img', '<img tabindex="0" data-image-index="' . $image_number . '"', $image );
 		}
 
 		return sprintf(
