@@ -2932,3 +2932,14 @@ function wc_update_950_tracking_option_autoload() {
 	);
 	wp_set_option_autoload_values( $options );
 }
+
+/**
+ * Update the base color for emails as part of the WooCommerce rebranding,
+ * but only if the user hasn't specified a custom color.
+ */
+function wc_update_961_migrate_default_email_base_color() {
+	$color = get_option( 'woocommerce_email_base_color' );
+	if ( '#7f54b3' === $color ) {
+		update_option( 'woocommerce_email_base_color', '#720eec' );
+	}
+}

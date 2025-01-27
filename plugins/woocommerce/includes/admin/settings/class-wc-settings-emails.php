@@ -7,7 +7,6 @@
  */
 
 use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
-use Automattic\WooCommerce\Internal\BrandingController;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -427,7 +426,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Get default colors for emails.
 	 */
 	private function get_email_default_colors() {
-		$base_color_default        = BrandingController::get_default_email_base_color();
+		$base_color_default        = '#720eec';
 		$bg_color_default          = '#f7f7f7';
 		$body_bg_color_default     = '#ffffff';
 		$body_text_color_default   = '#3c3c3c';

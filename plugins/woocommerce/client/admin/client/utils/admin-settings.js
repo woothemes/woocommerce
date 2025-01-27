@@ -86,13 +86,3 @@ export function setAdminSetting( name, value, filter = ( val ) => val ) {
 	}
 	ADMIN_SETTINGS_SOURCE[ name ] = filter( value );
 }
-
-/**
- * Returns whether the new branding is enabled
- *
- * @return {boolean} Whether branding is enabled
- */
-export const isNewBranding = () => {
-	const experimentalFlags = adminSettings.__experimentalFlags || {};
-	return experimentalFlags.isNewBranding ?? false;
-};
