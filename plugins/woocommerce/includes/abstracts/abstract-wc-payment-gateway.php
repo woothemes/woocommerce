@@ -206,7 +206,7 @@ abstract class WC_Payment_Gateway extends WC_Settings_API {
 	 * Output the gateway settings screen.
 	 */
 	public function admin_options() {
-		$is_reactify_enabled      = Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2024_v1' );
+		$is_reactify_enabled      = Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2025_v1' );
 		$offline_payment_gateways = array( WC_Gateway_BACS::ID, WC_Gateway_Cheque::ID, WC_Gateway_COD::ID );
 		$is_offline_gateway       = in_array( $this->id, $offline_payment_gateways, true );
 

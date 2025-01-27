@@ -35,7 +35,7 @@ if ( ! $tab_exists ) {
 }
 
 $hide_nav = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
-    Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2024_v1' ) &&
+    Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2025_v1' ) &&
 	( 'checkout' === $current_tab && 'offline' === $current_section );
 ?>
 

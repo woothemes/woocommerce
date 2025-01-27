@@ -23,7 +23,7 @@ class Init extends RemoteSpecsEngine {
 	public function __construct() {
 		// If the React-based Payments settings page is enabled, we don't need the old WooPayments promotion system,
 		// as we will show the WooPayments suggestion with the new system.
-		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2024_v1' ) ) {
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2025_v1' ) ) {
 			return;
 		}
 

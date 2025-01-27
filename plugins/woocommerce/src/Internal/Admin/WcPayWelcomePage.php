@@ -69,7 +69,7 @@ class WcPayWelcomePage {
 	 */
 	public function delayed_register() {
 		// Don't do anything if the feature is enabled.
-		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2024_v1' ) ) {
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2025_v1' ) ) {
 			return;
 		}
 
