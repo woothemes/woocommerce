@@ -8,15 +8,11 @@ test.describe( 'Marketing page', () => {
 	test( 'Marketing Overview page have relevant content', async ( {
 		baseURL,
 		page,
-		request,
 	} ) => {
 		// See if this is a WPCOM site.
 		const base_hostname = new URL( baseURL ).hostname;
-		const is_wpcom_site = (
-			await request.get(
-				`https://public-api.wordpress.com/wp/v2/sites/${ base_hostname }`
-			)
-		 ).ok();
+		const pattern_domain_name = /\.(?:wordpress\.com|wpcomstaging\.com)$/;
+		const is_wpcom_site = pattern_domain_name.test( base_hostname );
 
 		// Go to the Marketing page.
 		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing' );
