@@ -8,6 +8,7 @@
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Automattic\WooCommerce\Internal\DownloadPermissionsAdjuster;
 use Automattic\WooCommerce\Utilities\NumberUtil;
@@ -559,13 +560,13 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		$exclude_catalog = in_array( 'exclude-from-catalog', $term_names, true );
 
 		if ( $exclude_search && $exclude_catalog ) {
-			$catalog_visibility = 'hidden';
+			$catalog_visibility = CatalogVisibility::HIDDEN;
 		} elseif ( $exclude_search ) {
-			$catalog_visibility = 'catalog';
+			$catalog_visibility = CatalogVisibility::CATALOG;
 		} elseif ( $exclude_catalog ) {
-			$catalog_visibility = 'search';
+			$catalog_visibility = CatalogVisibility::SEARCH;
 		} else {
-			$catalog_visibility = 'visible';
+			$catalog_visibility = CatalogVisibility::VISIBLE;
 		}
 
 		$product->set_props(
@@ -949,14 +950,14 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 			}
 
 			switch ( $product->get_catalog_visibility() ) {
-				case 'hidden':
+				case CatalogVisibility::HIDDEN:
 					$terms[] = 'exclude-from-search';
 					$terms[] = 'exclude-from-catalog';
 					break;
-				case 'catalog':
+				case CatalogVisibility::CATALOG:
 					$terms[] = 'exclude-from-search';
 					break;
-				case 'search':
+				case CatalogVisibility::SEARCH:
 					$terms[] = 'exclude-from-catalog';
 					break;
 			}
@@ -2243,7 +2244,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		// Handle visibility.
 		if ( $manual_queries['visibility'] ) {
 			switch ( $manual_queries['visibility'] ) {
-				case 'search':
+				case CatalogVisibility::SEARCH:
 					$wp_query_args['tax_query'][] = array(
 						'taxonomy' => 'product_visibility',
 						'field'    => 'slug',
@@ -2251,7 +2252,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 						'operator' => 'NOT IN',
 					);
 					break;
-				case 'catalog':
+				case CatalogVisibility::CATALOG:
 					$wp_query_args['tax_query'][] = array(
 						'taxonomy' => 'product_visibility',
 						'field'    => 'slug',
@@ -2259,7 +2260,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 						'operator' => 'NOT IN',
 					);
 					break;
-				case 'visible':
+				case CatalogVisibility::VISIBLE:
 					$wp_query_args['tax_query'][] = array(
 						'taxonomy' => 'product_visibility',
 						'field'    => 'slug',
@@ -2267,7 +2268,7 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 						'operator' => 'NOT IN',
 					);
 					break;
-				case 'hidden':
+				case CatalogVisibility::HIDDEN:
 					$wp_query_args['tax_query'][] = array(
 						'taxonomy' => 'product_visibility',
 						'field'    => 'slug',

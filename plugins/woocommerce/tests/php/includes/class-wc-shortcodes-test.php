@@ -4,6 +4,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 
 /**
  * Class WC_Shortcodes_Test.
@@ -138,7 +139,7 @@ class WC_Shortcodes_Test extends WC_Unit_Test_Case {
 	public function test_product_page_shortcode_hidden_product() {
 		$product = WC_Helper_Product::create_simple_product();
 		$product->set_name( 'Test Product' );
-		$product->set_catalog_visibility( 'hidden' );
+		$product->set_catalog_visibility( CatalogVisibility::HIDDEN );
 		$product->save();
 		$product_id = $product->get_id();
 		wp_set_current_user( self::$user_contributor );
