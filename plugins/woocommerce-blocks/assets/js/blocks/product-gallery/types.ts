@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { ProductGalleryNextPreviousBlockAttributes } from './inner-blocks/product-gallery-large-image-next-previous/types';
 import { ThumbnailsPosition } from './inner-blocks/product-gallery-thumbnails/constants';
 
 export interface ProductGalleryBlockAttributes {
@@ -39,7 +38,7 @@ export type ProductGalleryContext = {
 	thumbnailsPosition: ThumbnailsPosition;
 	thumbnailsNumberOfThumbnails: number;
 	productGalleryClientId: string;
-} & ProductGalleryNextPreviousBlockAttributes;
+};
 
 export type ProductGalleryPagerContext = Pick<
 	ProductGalleryContext,
@@ -48,7 +47,7 @@ export type ProductGalleryPagerContext = Pick<
 
 export type ProductGalleryLargeImageNextPreviousContext = Pick<
 	ProductGalleryContext,
-	'productGalleryClientId' | 'nextPreviousButtonsPosition'
+	'productGalleryClientId'
 >;
 
 export type ProductGalleryThumbnailsContext = Pick<
@@ -59,5 +58,4 @@ export type ProductGalleryThumbnailsContext = Pick<
 >;
 
 export type ProductGalleryAttributes = ProductGalleryThumbnailsBlockAttributes &
-	ProductGalleryBlockAttributes &
-	ProductGalleryNextPreviousBlockAttributes;
+	ProductGalleryBlockAttributes;

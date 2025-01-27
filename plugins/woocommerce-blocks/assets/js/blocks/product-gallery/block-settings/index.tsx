@@ -10,7 +10,6 @@ import { __ } from '@wordpress/i18n';
  */
 import type { ProductGallerySettingsProps } from '../types';
 import { ProductGalleryThumbnailsBlockSettings } from '../inner-blocks/product-gallery-thumbnails/block-settings';
-import { ProductGalleryNextPreviousBlockSettings } from '../inner-blocks/product-gallery-large-image-next-previous/settings';
 
 export const ProductGalleryBlockSettings = ( {
 	attributes,
@@ -20,19 +19,12 @@ export const ProductGalleryBlockSettings = ( {
 	const { cropImages, hoverZoom, fullScreenOnClick } = attributes;
 	const {
 		productGalleryClientId,
-		nextPreviousButtonsPosition,
 		thumbnailsNumberOfThumbnails,
 		thumbnailsPosition,
 	} = context;
 	return (
 		<InspectorControls>
 			<PanelBody title={ __( 'Gallery Navigation', 'woocommerce' ) }>
-				<ProductGalleryNextPreviousBlockSettings
-					context={ {
-						productGalleryClientId,
-						nextPreviousButtonsPosition,
-					} }
-				/>
 				<ProductGalleryThumbnailsBlockSettings
 					context={ {
 						productGalleryClientId,

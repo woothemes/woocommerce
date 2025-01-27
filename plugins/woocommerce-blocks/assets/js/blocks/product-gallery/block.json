@@ -17,7 +17,6 @@
 		"thumbnailsPosition": "thumbnailsPosition",
 		"thumbnailsNumberOfThumbnails": "thumbnailsNumberOfThumbnails",
 		"productGalleryClientId": "productGalleryClientId",
-		"nextPreviousButtonsPosition": "nextPreviousButtonsPosition",
 		"hoverZoom": "hoverZoom",
 		"fullScreenOnClick": "fullScreenOnClick",
 		"mode": "mode",
@@ -48,10 +47,6 @@
 		"fullScreenOnClick": {
 			"type": "boolean",
 			"default": true
-		},
-		"nextPreviousButtonsPosition": {
-			"type": "string",
-			"default": "insideTheImage"
 		},
 		"mode": {
 			"type": "string",
