@@ -10,7 +10,7 @@
 
 baseBranch=${1:-"trunk"}
 
-changedFiles=$(git diff $(git merge-base HEAD $baseBranch) --relative --name-only --diff-filter=d -- '*.php')
+changedFiles=$(git diff $baseBranch --relative --name-only --diff-filter=d -- '*.php')
 
 # Only complete this if changed files are detected.
 if [[ -z $changedFiles ]]; then
