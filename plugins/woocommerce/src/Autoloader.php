@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 class Autoloader {
 
 	/**
-	 * Static-only clazz.
+	 * Static-only class.
 	 */
 	private function __construct() {}
 
