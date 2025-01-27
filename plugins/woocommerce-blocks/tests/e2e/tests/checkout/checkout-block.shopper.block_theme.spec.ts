@@ -755,13 +755,20 @@ test.describe( 'Shopper → Place Virtual Order', () => {
 		await frontendUtils.goToCart();
 
 		await expect(
-			page.getByText( 'Shipping', { exact: true } )
+			page.getByText( 'Delivery', { exact: true } )
 		).toBeHidden();
 
 		await frontendUtils.goToCheckout();
 
+		// Delivery total in the sidebar.
 		await expect(
-			page.getByText( 'Shipping', { exact: true } )
+			page.getByText( 'Delivery', { exact: true } )
+		).toBeHidden();
+
+		// Ship/Pickup method selector.
+		await expect( page.getByText( 'Ship', { exact: true } ) ).toBeHidden();
+		await expect(
+			page.getByText( 'Pickup', { exact: true } )
 		).toBeHidden();
 
 		await checkoutPageObject.fillInCheckoutWithTestData();
@@ -783,17 +790,24 @@ test.describe( 'Shopper → Place Virtual Order', () => {
 		await localPickupUtils.enableLocalPickup();
 
 		await frontendUtils.goToShop();
-		await frontendUtils.addToCart( SIMPLE_PHYSICAL_PRODUCT_NAME );
+		await frontendUtils.addToCart( SIMPLE_VIRTUAL_PRODUCT_NAME );
 		await frontendUtils.goToCart();
 
 		await expect(
-			page.getByText( 'Shipping', { exact: true } )
+			page.getByText( 'Delivery', { exact: true } )
 		).toBeHidden();
 
 		await frontendUtils.goToCheckout();
 
+		// Delivery total in the sidebar.
 		await expect(
-			page.getByText( 'Shipping', { exact: true } )
+			page.getByText( 'Delivery', { exact: true } )
+		).toBeHidden();
+
+		// Ship/Pickup method selector.
+		await expect( page.getByText( 'Ship', { exact: true } ) ).toBeHidden();
+		await expect(
+			page.getByText( 'Pickup', { exact: true } )
 		).toBeHidden();
 
 		await checkoutPageObject.fillInCheckoutWithTestData();
