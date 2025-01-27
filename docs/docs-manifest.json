@@ -821,7 +821,7 @@
           "post_title": "WooCommerce extension development best practices",
           "menu_title": "Best Practices",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/extension-development-best-practices.md",
-          "hash": "e70da25a57254820d094df736e79974d345deee234dcd2e56897d1feb76700d4",
+          "hash": "e834979b88a8cad198b2dbf0e1d0a59d3b1d3ffee424325b0aeb5ba83782659b",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/extension-development-best-practices.md",
           "id": "83050f0142b6de00b73b3638d46ddddc5a2f8b12",
           "links": {
@@ -1915,5 +1915,5 @@
       "categories": []
     }
   ],
-  "hash": "beb3b80fda92376b5c05e46850a045fb2503f062e3c7ee12168c7290a0295198"
+  "hash": "fde09b69fe66305c8599d0a5b9678f67fe72d825177637ba26f225a17fd80774"
 }
