@@ -2161,10 +2161,13 @@ class WC_Order extends WC_Abstract_Order {
 	/**
 	 * Get the total tax refunded.
 	 *
+	 * @param bool $include_tax_amount          (optional) Whether to include tax amount in the total. Default true.
+	 * @param bool $include_shipping_tax_amount (optional) Whether to include shipping tax amount in the total. Default true.
+	 *
 	 * @since  2.3
 	 * @return float
 	 */
-	public function get_total_tax_refunded() {
+	public function get_total_tax_refunded( $include_tax_amount = true, $include_shipping_tax_amount = true ) {
 		$cache_key   = WC_Cache_Helper::get_cache_prefix( 'orders' ) . 'total_tax_refunded' . $this->get_id();
 		$cached_data = wp_cache_get( $cache_key, $this->cache_group );
 
@@ -2172,7 +2175,7 @@ class WC_Order extends WC_Abstract_Order {
 			return $cached_data;
 		}
 
-		$total_refunded = $this->data_store->get_total_tax_refunded( $this );
+		$total_refunded = $this->data_store->get_total_tax_refunded( $this, $include_tax_amount, $include_shipping_tax_amount );
 
 		wp_cache_set( $cache_key, $total_refunded, $this->cache_group );
 
