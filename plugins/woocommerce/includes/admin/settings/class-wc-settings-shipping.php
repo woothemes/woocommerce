@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
+use Automattic\WooCommerce\Admin\Features\Features;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,6 +27,15 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 	public function __construct() {
 		$this->id    = 'shipping';
 		$this->label = __( 'Shipping', 'woocommerce' );
+
+		if ( Features::is_enabled( 'settings' ) ) {
+			// Register as a modern page.
+			$this->is_modern = true;
+			// Include the script to power the modern settings page.
+			WCAdminAssets::register_script( 'wp-admin-scripts', 'shipping-settings', true, array( 'wc-shipping-zones' ), false );
+			// Make sure the required data is available.
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_modern_screen_data' ) );
+		}
 
 		parent::__construct();
 	}
@@ -171,6 +181,36 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 			);
 
 		return apply_filters( 'woocommerce_shipping_settings', $settings );
+	}
+
+	/**
+	 * Enqueue modern screen data.
+	 */
+	public function enqueue_modern_screen_data() {
+		$allowed_countries   = WC()->countries->get_shipping_countries();
+		$shipping_continents = WC()->countries->get_shipping_continents();
+
+		wp_localize_script(
+			'wc-admin-shipping-settings',
+			'shippingZonesData',
+			array(
+				'zones'                   => WC_Shipping_Zones::get_zones( 'json' ),
+				'default_zone'            => array(
+					'zone_id'    => 0,
+					'zone_name'  => '',
+					'zone_order' => null,
+				),
+				'wc_shipping_zones_nonce' => wp_create_nonce( 'wc_shipping_zones_nonce' ),
+				'strings'                 => array(
+					'unload_confirmation_msg'     => __( 'Your changed data will be lost if you leave this page without saving.', 'woocommerce' ),
+					'delete_confirmation_msg'     => __( 'Are you sure you want to delete this zone? This action cannot be undone.', 'woocommerce' ),
+					'save_failed'                 => __( 'Your changes were not saved. Please retry.', 'woocommerce' ),
+					'no_shipping_methods_offered' => __( 'No shipping methods offered to this zone.', 'woocommerce' ),
+				),
+				'regionOptions'           => $this->get_region_options( $allowed_countries, $shipping_continents ),
+			)
+		);
+		wp_enqueue_script( 'wc-admin-shipping-settings' );
 	}
 
 	/**
