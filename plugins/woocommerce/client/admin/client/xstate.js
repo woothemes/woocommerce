@@ -6,7 +6,7 @@
  * localStorage.setItem("xstate_inspect", "true")
  */
 
-async function enableXStateV4Inspect() {
+async function enableXStateV4Inspect(){
 	const { inspect } = await import( '@xstate/inspect' );
 	const { Interpreter } = await import( 'xstate' );
 	// configure the XState inspector to open in a new tab
