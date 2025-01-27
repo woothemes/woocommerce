@@ -36,7 +36,7 @@ class ProductAttributesById extends AbstractRoute {
 	 * @return string
 	 */
 	public static function get_path_regex() {
-		return '/products/attributes/(?P<id>[\d]+)';
+		return '/products/attributes/(?P<identifier>[\w-]+)';
 	}
 
 	/**
@@ -47,9 +47,9 @@ class ProductAttributesById extends AbstractRoute {
 	public function get_args() {
 		return [
 			'args'   => array(
-				'id' => array(
+				'identifier' => array(
 					'description' => __( 'Unique identifier for the resource.', 'woocommerce' ),
-					'type'        => 'integer',
+					'type'        => 'string',
 				),
 			),
 			[
@@ -63,6 +63,7 @@ class ProductAttributesById extends AbstractRoute {
 						)
 					),
 				),
+				'allow_batch'         => [ 'v1' => true ],
 			],
 			'schema' => [ $this->schema, 'get_public_item_schema' ],
 		];
@@ -76,10 +77,20 @@ class ProductAttributesById extends AbstractRoute {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
-		$object = wc_get_attribute( (int) $request['id'] );
+		$identifier = $request['identifier'];
 
-		if ( ! $object || 0 === $object->id ) {
-			throw new RouteException( 'woocommerce_rest_attribute_invalid_id', __( 'Invalid attribute ID.', 'woocommerce' ), 404 );
+		if ( is_numeric( $identifier ) ) {
+			$object = wc_get_attribute( (int) $identifier );
+		} else {
+			$object = $this->get_attribute_by_slug( $identifier );
+		}
+
+		if ( ! $object ) {
+			if ( is_numeric( $identifier ) ) {
+				throw new RouteException( 'woocommerce_rest_attribute_invalid_id', __( 'Invalid attribute ID.', 'woocommerce' ), 404 );
+			} else {
+				throw new RouteException( 'woocommerce_rest_attribute_invalid_slug', __( 'Invalid attribute slug.', 'woocommerce' ), 404 );
+			}
 		}
 
 		$data     = $this->prepare_item_for_response( $object, $request );
@@ -87,4 +98,25 @@ class ProductAttributesById extends AbstractRoute {
 
 		return $response;
 	}
+
+	private function get_attribute_by_slug( $slug ) {
+		$attributes = wc_get_attribute_taxonomies();
+
+		$data = current( array_filter( $attributes, function( $attribute ) use ( $slug ) {
+			return wc_attribute_taxonomy_name( $attribute->attribute_name ) === $slug;
+		} ));
+
+		if ( empty( $data ) ) {
+			return null;
+		}
+
+		$attribute               = new \stdClass();
+		$attribute->id           = (int) $data->attribute_id;
+		$attribute->name         = $data->attribute_label;
+		$attribute->slug         = wc_attribute_taxonomy_name( $data->attribute_name );
+		$attribute->type         = $data->attribute_type;
+		$attribute->order_by     = $data->attribute_orderby;
+		$attribute->has_archives = (bool) $data->attribute_public;
+		return $attribute;
+}
 }

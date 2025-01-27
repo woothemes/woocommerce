@@ -48,12 +48,18 @@ Get a single attribute taxonomy.
 GET /products/attributes/:id
 ```
 
-| Attribute | Type    | Required | Description                          |
-| :-------- | :------ | :------: | :----------------------------------- |
-| `id`      | integer |   Yes    | The ID of the attribute to retrieve. |
+| Attribute    | Type   | Required | Description                                                                                                   |
+| :--------    | :----- | :------: |:--------------------------------------------------------------------------------------------------------------|
+| `identifier` | string |   Yes    | The identifier of the attribute to retrieve. Can be an attribute ID or slug.                                  |
 
 ```sh
 curl "https://example-store.com/wp-json/wc/store/v1/products/attributes/1"
+```
+
+or 
+
+```sh
+curl "https://example-store.com/wp-json/wc/store/v1/products/attributes/pa_color"
 ```
 
 **Example response:**

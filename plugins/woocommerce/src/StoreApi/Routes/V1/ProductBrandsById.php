@@ -4,22 +4,22 @@ namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 use Automattic\WooCommerce\StoreApi\Exceptions\RouteException;
 
 /**
- * ProductCategoriesById class.
+ * ProductBrandsById class.
  */
-class ProductCategoriesById extends AbstractRoute {
+class ProductBrandsById extends AbstractRoute {
 	/**
 	 * The route identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'product-categories-by-id';
+	const IDENTIFIER = 'product-brands-by-id';
 
 	/**
 	 * The routes schema.
 	 *
 	 * @var string
 	 */
-	const SCHEMA_TYPE = 'product-category';
+	const SCHEMA_TYPE = 'product-brand';
 
 	/**
 	 * Get the path of this REST route.
@@ -36,7 +36,7 @@ class ProductCategoriesById extends AbstractRoute {
 	 * @return string
 	 */
 	public static function get_path_regex() {
-		return '/products/categories/(?P<identifier>[\w-]+)';
+		return '/products/brands/(?P<identifier>[\w-]+)';
 	}
 
 	/**
@@ -78,16 +78,16 @@ class ProductCategoriesById extends AbstractRoute {
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
 		if ( isset( $request['identifier'] ) && is_numeric( $request['identifier'] ) ) {
-			$object = get_term( (int) $request['identifier'], 'product_cat' );
+			$object = get_term( (int) $request['identifier'], 'product_brand' );
 		} else {
-			$object = get_term_by( 'slug', $request['identifier'], 'product_cat' );
+			$object = get_term_by( 'slug', $request['identifier'], 'product_brand' );
 		}
 
 		if ( ! $object ) {
 			if ( isset( $request['identifier'] ) && is_numeric( $request['identifier'] ) ) {
-				throw new RouteException( 'woocommerce_rest_category_invalid_id', __( 'Invalid category ID.', 'woocommerce' ), 404 );
+				throw new RouteException( 'woocommerce_rest_brand_invalid_id', __( 'Invalid brand ID.', 'woocommerce' ), 404 );
 			} else {
-				throw new RouteException( 'woocommerce_rest_category_invalid_slug', __( 'Invalid category slug.', 'woocommerce' ), 404 );
+				throw new RouteException( 'woocommerce_rest_brand_invalid_slug', __( 'Invalid brand slug.', 'woocommerce' ), 404 );
 			}
 		}
 

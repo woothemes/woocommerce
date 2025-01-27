@@ -62,12 +62,24 @@ Get a single category.
 GET /products/categories/:id
 ```
 
+or 
+
+```http
+GET /products/categories/:slug
+```
+
 | Category | Type    | Required | Description                         |
 | :------- | :------ | :------: | :---------------------------------- |
 | `id`     | integer |   Yes    | The ID of the category to retrieve. |
-
+| `slug`   | string  |   Yes    | The slug of the category to retrieve. |
 ```sh
 curl "https://example-store.com/wp-json/wc/store/v1/products/categories/1"
+```
+
+or
+
+```sh
+curl "https://example-store.com/wp-json/wc/store/v1/products/categories/decor"
 ```
 
 **Example response:**

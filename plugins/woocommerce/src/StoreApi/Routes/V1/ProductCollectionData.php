@@ -54,6 +54,7 @@ class ProductCollectionData extends AbstractRoute {
 				'callback'            => [ $this, 'get_response' ],
 				'permission_callback' => '__return_true',
 				'args'                => $this->get_collection_params(),
+				'allow_batch'         => [ 'v1' => true ],
 			],
 			'schema' => [ $this->schema, 'get_public_item_schema' ],
 		];
@@ -94,7 +95,7 @@ class ProductCollectionData extends AbstractRoute {
 			foreach ( $counts as $key => $value ) {
 				$data['stock_status_counts'][] = (object) [
 					'status' => $key,
-					'count'  => $value,
+					'count'  => (int) $value,
 				];
 			}
 		}
@@ -134,8 +135,8 @@ class ProductCollectionData extends AbstractRoute {
 
 					foreach ( $counts as $key => $value ) {
 						$data['attribute_counts'][] = (object) [
-							'term'  => $key,
-							'count' => $value,
+							'term'  => (int) $key,
+							'count' => (int) $value,
 						];
 					}
 				}
@@ -146,8 +147,8 @@ class ProductCollectionData extends AbstractRoute {
 
 				foreach ( $counts as $key => $value ) {
 					$data['attribute_counts'][] = (object) [
-						'term'  => $key,
-						'count' => $value,
+						'term'  => (int) $key,
+						'count' => (int) $value,
 					];
 				}
 			}
@@ -160,8 +161,8 @@ class ProductCollectionData extends AbstractRoute {
 
 			foreach ( $counts as $key => $value ) {
 				$data['rating_counts'][] = (object) [
-					'rating' => $key,
-					'count'  => $value,
+					'rating' => (int) $key, // Rating is rounded to the nearest integer.
+					'count'  => (int) $value,
 				];
 			}
 		}

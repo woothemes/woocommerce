@@ -52,6 +52,7 @@ class ProductReviews extends AbstractRoute {
 				'callback'            => [ $this, 'get_response' ],
 				'permission_callback' => '__return_true',
 				'args'                => $this->get_collection_params(),
+				'allow_batch'         => [ 'v1' => true ],
 			],
 			'schema' => [ $this->schema, 'get_public_item_schema' ],
 		];
@@ -73,6 +74,13 @@ class ProductReviews extends AbstractRoute {
 			'number'        => $request['per_page'],
 			'post__in'      => $request['product_id'],
 		);
+
+		if ( ! empty( $request['product'] ) ) {
+			$product =  get_page_by_path( $request['product'], OBJECT, 'product' );
+			if ( $product ) {
+				$prepared_args['post__in'] = $product->ID;
+			}
+		}
 
 		/**
 		 * Map category id to list of product ids.
@@ -232,6 +240,13 @@ class ProductReviews extends AbstractRoute {
 			'description'       => __( 'Limit result set to reviews from specific product IDs.', 'woocommerce' ),
 			'type'              => 'string',
 			'sanitize_callback' => 'wp_parse_id_list',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		$params['product'] = array(
+			'description'       => __( 'Limit result set to reviews from specific product slug.', 'woocommerce' ),
+			'type'              => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 

@@ -12,6 +12,7 @@ This endpoint returns product reviews (comments) and can also show results from 
 GET /products/reviews
 GET /products/reviews?category_id=1,2,3
 GET /products/reviews?product_id=1,2,3
+GET /products/reviews?product=product-slug
 GET /products/reviews?orderby=rating&order=desc
 ```
 
@@ -24,7 +25,7 @@ GET /products/reviews?orderby=rating&order=desc
 | `orderby`     | string  |    no    | Sort collection by object attribute. Allowed values : `date`, `date_gmt`, `id`, `rating`, `product` |
 | `category_id` | string  |    no    | Limit result set to reviews from specific category IDs.                                             |
 | `product_id`  | string  |    no    | Limit result set to reviews from specific product IDs.                                              |
-
+| `product`     | string  |    no    | Limit result set to reviews from specific product slug.                                              |
 ```sh
 curl "https://example-store.com/wp-json/wc/store/v1/products/collection-data?calculate_price_range=true&calculate_attribute_counts=pa_size,pa_color&calculate_rating_counts=true"
 ```

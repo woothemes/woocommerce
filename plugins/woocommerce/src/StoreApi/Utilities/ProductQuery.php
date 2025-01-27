@@ -112,6 +112,7 @@ class ProductQuery {
 		$default_taxonomies = array(
 			'product_cat' => 'category',
 			'product_tag' => 'tag',
+			'product_brand' => 'brand',
 		);
 
 		$taxonomies = array_merge( $all_product_taxonomies, $default_taxonomies );
@@ -119,10 +120,11 @@ class ProductQuery {
 		// Set tax_query for each passed arg.
 		foreach ( $taxonomies as $taxonomy => $key ) {
 			if ( ! empty( $request[ $key ] ) ) {
+				$type = is_numeric($request[ $key ][0]) ? 'term_id' : 'slug';
 				$operator    = $request->get_param( $key . '_operator' ) && isset( $operator_mapping[ $request->get_param( $key . '_operator' ) ] ) ? $operator_mapping[ $request->get_param( $key . '_operator' ) ] : 'IN';
 				$tax_query[] = array(
 					'taxonomy' => $taxonomy,
-					'field'    => 'term_id',
+					'field'    => $type,
 					'terms'    => $request[ $key ],
 					'operator' => $operator,
 				);

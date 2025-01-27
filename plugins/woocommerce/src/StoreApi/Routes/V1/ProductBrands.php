@@ -2,22 +2,22 @@
 namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
 /**
- * ProductCategories class.
+ * ProductBrands class.
  */
-class ProductCategories extends AbstractTermsRoute {
+class ProductBrands extends AbstractTermsRoute {
 	/**
 	 * The route identifier.
 	 *
 	 * @var string
 	 */
-	const IDENTIFIER = 'product-categories';
+	const IDENTIFIER = 'product-brands';
 
 	/**
 	 * The routes schema.
 	 *
 	 * @var string
 	 */
-	const SCHEMA_TYPE = 'product-category';
+	const SCHEMA_TYPE = 'product-brand';
 
 	/**
 	 * Get the path of this REST route.
@@ -34,7 +34,7 @@ class ProductCategories extends AbstractTermsRoute {
 	 * @return string
 	 */
 	public static function get_path_regex() {
-		return '/products/categories';
+		return '/products/brands';
 	}
 
 	/**
@@ -62,6 +62,6 @@ class ProductCategories extends AbstractTermsRoute {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
-		return $this->get_terms_response( 'product_cat', $request );
+		return $this->get_terms_response( 'product_brand', $request );
 	}
 }

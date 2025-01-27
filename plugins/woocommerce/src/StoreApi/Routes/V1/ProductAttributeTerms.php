@@ -29,7 +29,7 @@ class ProductAttributeTerms extends AbstractTermsRoute {
 	 * @return string
 	 */
 	public static function get_path_regex() {
-		return '/products/attributes/(?P<attribute_id>[\d]+)/terms';
+		return '/products/attributes/(?P<attribute_identifier>[\w-]+)/terms';
 	}
 
 	/**
@@ -40,9 +40,9 @@ class ProductAttributeTerms extends AbstractTermsRoute {
 	public function get_args() {
 		return [
 			'args'   => array(
-				'attribute_id' => array(
+				'attribute_identifier' => array(
 					'description' => __( 'Unique identifier for the attribute.', 'woocommerce' ),
-					'type'        => 'integer',
+					'type'        => 'string',
 				),
 			),
 			[
@@ -50,6 +50,7 @@ class ProductAttributeTerms extends AbstractTermsRoute {
 				'callback'            => [ $this, 'get_response' ],
 				'permission_callback' => '__return_true',
 				'args'                => $this->get_collection_params(),
+				'allow_batch'         => [ 'v1' => true ],
 			],
 			'schema' => [ $this->schema, 'get_public_item_schema' ],
 		];
@@ -76,12 +77,19 @@ class ProductAttributeTerms extends AbstractTermsRoute {
 	 * @return \WP_REST_Response
 	 */
 	protected function get_route_response( \WP_REST_Request $request ) {
-		$attribute = wc_get_attribute( $request['attribute_id'] );
+		$identifier = $request['attribute_identifier'];
 
-		if ( ! $attribute || ! taxonomy_exists( $attribute->slug ) ) {
+		if ( is_string( $identifier ) && taxonomy_exists( $identifier ) ) {
+			$attribute_slug = $identifier;
+		} else {
+			$attribute = wc_get_attribute( (int) $identifier );
+			$attribute_slug = $attribute->slug;
+		}
+
+		if ( ! taxonomy_exists( $attribute_slug ) ) {
 			throw new RouteException( 'woocommerce_rest_taxonomy_invalid', __( 'Attribute does not exist.', 'woocommerce' ), 404 );
 		}
 
-		return $this->get_terms_response( $attribute->slug, $request );
+		return $this->get_terms_response( $attribute_slug, $request );
 	}
 }
