@@ -74,7 +74,7 @@ jobs:
         with:
           fetch-depth: ${{ steps.checkout_depth.outputs.value }}
           ref: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.ref ) || '' }}
-          repository: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.name ) || '' }}
+          repository: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name ) || '' }}
       - name: Setup - calculate base sha
         id: checkout_base_sha
         shell: bash
