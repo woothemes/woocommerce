@@ -9,14 +9,10 @@ const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extrac
  */
 const { sharedOptimizationConfig } = require( './webpack-shared-config' );
 
-// Using pseudo module paths for entry points, generates them in the build folder like:
-// `@woocommerce/block-library/store-notices.js` Then we can instruct users to enqueue them like:
-// `wp_enqueue_script_module( '@woocommerce/block-library/store-notices' );
-// or for a base store:
-// `wp_enqueue_script_module( '@woocommerce/block-library/base/stores/add-to-cart' );
 const blockEntries = {
-	'@woocommerce/block-library/store-notices':
-		'./assets/js/blocks/store-notices/frontend.ts',
+	'woocommerce/store-notices': './assets/js/blocks/store-notices/frontend.ts',
+	'woocommerce/product-button':
+		'./assets/js/atomic/blocks/product-elements/button/frontend.tsx',
 };
 
 module.exports = {
@@ -35,6 +31,7 @@ module.exports = {
 		path: path.resolve( __dirname, '../build/' ),
 		asyncChunks: false,
 		chunkFormat: 'module',
+		module: true,
 	},
 	resolve: {
 		extensions: [ '.js', '.ts', '.tsx' ],

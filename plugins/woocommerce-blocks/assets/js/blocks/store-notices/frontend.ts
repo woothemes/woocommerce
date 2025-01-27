@@ -6,6 +6,7 @@ import {
 	getElement,
 	store,
 } from '@wordpress/interactivity';
+import type { store as StoreType } from '@wordpress/interactivity';
 
 type Notice = {
 	notice: string;
@@ -124,12 +125,17 @@ const { state, actions } = ( store as typeof StoreType )< StoreNoticesStore >(
 				const context = getContext();
 				const { ref } = getElement();
 
-				ref.innerHTML = context.notice.notice;
+				if ( ref ) {
+					ref.innerHTML = context.notice.notice;
+				}
 			},
 
 			scrollIntoView: () => {
 				const { ref } = getElement();
-				ref.scrollIntoView( { behavior: 'smooth' } );
+
+				if ( ref ) {
+					ref.scrollIntoView( { behavior: 'smooth' } );
+				}
 			},
 		},
 	}

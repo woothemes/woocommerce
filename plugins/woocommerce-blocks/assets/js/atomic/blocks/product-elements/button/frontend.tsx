@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { store, getContext as getContextFn } from '@woocommerce/interactivity';
+import { store, getContext as getContextFn } from '@wordpress/interactivity';
 
 // Todo: move the addToCart store to its own module.
 /**

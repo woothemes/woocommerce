@@ -53,12 +53,13 @@ final class AssetsController {
 		// Right now we only have one script modules build for supported interactivity API powered block front-ends.
 		// We generate a combined asset file for that via DependencyExtractionWebpackPlugin to make registration more
 		// efficient.
-		$asset_path = $this->api->get_block_asset_build_path( 'interactivity-blocks-frontend-assets', 'php' );
-		$asset      = file_exists( $asset_path ) ? require $asset_path : [];
+		$asset_data = $this->api->get_asset_data(
+			$this->api->get_block_asset_build_path( 'interactivity-blocks-frontend-assets', 'php' )
+		);
 
-		foreach ( $asset as $handle => $data ) {
-
-			// wp_register_script_module( $block_name, $this->api->get_block_asset_build_path( $handle ), $data['dependencies'], $data['version'] );
+		foreach ( $asset_data as $handle => $data ) {
+			$handle_without_js = str_replace( '.js', '', $handle );
+			wp_register_script_module( $handle_without_js, plugins_url( $this->api->get_block_asset_build_path( $handle_without_js ), dirname( __DIR__ ) ), $data['dependencies'], $data['version'] );
 		}
 	}
 

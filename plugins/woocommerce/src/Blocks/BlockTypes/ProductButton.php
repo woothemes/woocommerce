@@ -75,6 +75,7 @@ class ProductButton extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
+		wp_enqueue_script_module( 'woocommerce/product-button' );
 
 		// This workaround ensures that WordPress loads the core/button block styles.
 		// For more details, see https://github.com/woocommerce/woocommerce/pull/53052.
@@ -87,7 +88,7 @@ class ProductButton extends AbstractBlock {
 		// Question: Is this ok for 3PD or should we use a global function like `woocommerce_interactivity_use_add_to_cart_store()`.
 		$state = Store::add_to_cart();
 
-		wc_initial_state(
+		wp_interactivity_state(
 			'woocommerce/product-button',
 			array(
 				// Todo: move this to wp_interactivity_config() instead of state.
@@ -96,7 +97,6 @@ class ProductButton extends AbstractBlock {
 					__( '%s in cart', 'woocommerce' ),
 					'###'
 				),
-				'noticeId'      => '',
 			)
 		);
 
@@ -142,11 +142,11 @@ class ProductButton extends AbstractBlock {
 			$quantity_to_add = apply_filters( 'woocommerce_add_to_cart_quantity', $default_quantity, $product->get_id() );
 
 			$context = array(
-				'quantityToAdd'          => $quantity_to_add,
-				'productId'              => $product->get_id(),
-				'addToCartText'          => null !== $product->add_to_cart_text() ? $product->add_to_cart_text() : __( 'Add to cart', 'woocommerce' ),
-				'tempQuantity'           => $number_of_items_in_cart,
-				'animationStatus'        => 'IDLE',
+				'quantityToAdd'   => $quantity_to_add,
+				'productId'       => $product->get_id(),
+				'addToCartText'   => null !== $product->add_to_cart_text() ? $product->add_to_cart_text() : __( 'Add to cart', 'woocommerce' ),
+				'tempQuantity'    => $number_of_items_in_cart,
+				'animationStatus' => 'IDLE',
 			);
 
 			/**
@@ -176,26 +176,23 @@ class ProductButton extends AbstractBlock {
 				$this->prevent_cache();
 			}
 
-			// Todo: replace data-wc-interactive JSON with a simple 'woocommerce/product-button' string.
-			$interactive = array( 'namespace' => 'woocommerce/product-button' );
 			$div_directives = '
-				data-wc-interactive=\'' . wp_json_encode( $interactive, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
-				data-wc-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
-				data-wc-init="actions.refreshCart"
+				data-wp-interactive="woocommerce/product-button"
+				data-wp-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
+				data-wp-init="actions.refreshCart"
 			';
 
-			$button_directives = 'data-wc-on--click="actions.addToCart"';
+			$button_directives = 'data-wp-on--click="actions.addToCart"';
 
-			$anchor_directive = 'data-wc-on--click="woocommerce/product-collection::actions.viewProduct"';
+			$anchor_directive = 'data-wp-on--click="woocommerce/product-collection::actions.viewProduct"';
 
-			// Todo: switch data-wc-layout-init to data-wp-run.
 			$span_button_directives = '
-				data-wc-text="state.addToCartText"
-				data-wc-class--wc-block-slide-in="state.slideInAnimation"
-				data-wc-class--wc-block-slide-out="state.slideOutAnimation"
-				data-wc-on--animationend="actions.handleAnimationEnd"
-				data-wc-watch="callbacks.startAnimation"
-				data-wc-layout-init="callbacks.syncTempQuantityOnLoad"
+				data-wp-text="state.addToCartText"
+				data-wp-class--wc-block-slide-in="state.slideInAnimation"
+				data-wp-class--wc-block-slide-out="state.slideOutAnimation"
+				data-wp-on--animationend="actions.handleAnimationEnd"
+				data-wp-watch="callbacks.startAnimation"
+				data-wp-run="callbacks.syncTempQuantityOnLoad"
 			';
 
 			$wrapper_attributes = get_block_wrapper_attributes(
@@ -288,7 +285,7 @@ class ProductButton extends AbstractBlock {
 		return sprintf(
 			'<span
 				hidden
-				data-wc-bind--hidden="!state.displayViewCart"
+				data-wp-bind--hidden="!state.displayViewCart"
 			>
 				<a
 					href="%1$s"
