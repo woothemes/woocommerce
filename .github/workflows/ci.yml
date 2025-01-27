@@ -138,17 +138,18 @@ jobs:
       matrix:
         include: ${{ fromJSON( needs.project-jobs.outputs.lint-jobs ) }}
     steps:
-      - name: 'Calculate checkout depth'
-        id: checkout_depth
-        shell: bash
-        run: |
-          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
-          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
-
-      - uses: 'actions/checkout@v4'
+      - name: Setup - checkout base branch
+        uses: 'actions/checkout@v4'
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Setup - checkout branch
+        uses: 'actions/checkout@v4'
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
         id: 'setup-monorepo'
