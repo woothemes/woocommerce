@@ -14,6 +14,8 @@ import { BlockEditProps, InnerBlockTemplate } from '@wordpress/blocks';
  */
 import { ProductGalleryBlockSettings } from './block-settings/index';
 import type { ProductGalleryAttributes } from './types';
+import { useEffect } from '@wordpress/element';
+import { moveInnerBlocksToPosition } from './utils';
 
 const TEMPLATE: InnerBlockTemplate[] = [
 	[
@@ -91,6 +93,15 @@ export const Edit = ( {
 	setAttributes,
 }: BlockEditProps< ProductGalleryAttributes > ) => {
 	const blockProps = useBlockProps();
+
+	useEffect( () => {
+		setAttributes( {
+			...attributes,
+			productGalleryClientId: clientId,
+		} );
+		// Move the Thumbnails block to the correct above or below the Large Image based on the thumbnailsPosition attribute.
+		moveInnerBlocksToPosition( attributes, clientId );
+	}, [ setAttributes, attributes, clientId ] );
 
 	return (
 		<div { ...blockProps }>
