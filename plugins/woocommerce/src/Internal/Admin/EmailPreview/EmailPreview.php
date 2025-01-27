@@ -42,6 +42,7 @@ class EmailPreview {
 		'woocommerce_email_footer_text_color',
 		'woocommerce_email_header_alignment',
 		'woocommerce_email_header_image',
+		'woocommerce_email_header_image_width',
 		'woocommerce_email_text_color',
 	);
 

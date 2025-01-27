@@ -50,6 +50,7 @@ if ( $is_email_preview ) {
 	$text_transient             = get_transient( 'woocommerce_email_text_color' );
 	$footer_text_transient      = get_transient( 'woocommerce_email_footer_text_color' );
 	$header_alignment_transient = get_transient( 'woocommerce_email_header_alignment' );
+	$logo_image_width_transient = get_transient( 'woocommerce_email_header_image_width' );
 	$font_family_transient      = get_transient( 'woocommerce_email_font_family' );
 
 	$bg               = $bg_transient ? $bg_transient : $bg;
@@ -58,6 +59,7 @@ if ( $is_email_preview ) {
 	$text             = $text_transient ? $text_transient : $text;
 	$footer_text      = $footer_text_transient ? $footer_text_transient : $footer_text;
 	$header_alignment = $header_alignment_transient ? $header_alignment_transient : $header_alignment;
+	$logo_image_width = $logo_image_width_transient ? $logo_image_width_transient : $logo_image_width;
 	$font_family      = $font_family_transient ? $font_family_transient : $font_family;
 }
 
