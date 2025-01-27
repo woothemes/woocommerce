@@ -22,6 +22,7 @@ global $product;
 $attribute_keys  = array_keys( $attributes );
 $variations_json = wp_json_encode( $available_variations );
 $variations_attr = function_exists( 'wc_esc_json' ) ? wc_esc_json( $variations_json ) : _wp_specialchars( $variations_json, ENT_QUOTES, 'UTF-8', true );
+$reset_variations_link = wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#" aria-label="' . esc_attr__( 'Clear options', 'woocommerce' ) . '">' . esc_html__( 'Clear', 'woocommerce' ) . '</a>' ) );
 
 do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 
@@ -45,6 +46,13 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 										'product'   => $product,
 									)
 								);
+							?>
+						</td>
+					</tr>
+					<?php if ( ! empty( $reset_variations_link ) && end( $attribute_keys ) === $attribute_name ) : ?>
+						<tr>
+							<td colspan="2">
+								<?php
 								/**
 								 * Filters the reset variation button.
 								 *
@@ -52,10 +60,11 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 								 *
 								 * @param string  $button The reset variation button HTML.
 								 */
-								echo end( $attribute_keys ) === $attribute_name ? wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#" aria-label="' . esc_attr__( 'Clear options', 'woocommerce' ) . '">' . esc_html__( 'Clear', 'woocommerce' ) . '</a>' ) ) : '';
-							?>
-						</td>
-					</tr>
+								echo $reset_variations_link;
+								?>
+							</td>
+						</tr>
+					<?php endif; ?>
 				<?php endforeach; ?>
 			</tbody>
 		</table>
