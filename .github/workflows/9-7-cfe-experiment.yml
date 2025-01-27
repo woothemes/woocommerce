@@ -1,0 +1,107 @@
+# This workflow is used to merge release/9.7 into trunk when a CFE for 9.7 is merged.
+# We're explicitly excluding release/9.7 from new-cfe-cherry-pick.yml throughout the duration of this experiment.
+name: Update trunk from 9.7 after CFE
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'release/9.7'
+  workflow_dispatch:
+    inputs:
+      silent:
+        description: 'Run silently. Do not trigger Slack pings.'
+        type: boolean
+        required: false
+        default: false
+      source_pr:
+        description: 'PR number that originated the event.'
+        type: number
+        required: true
+
+permissions: {}
+
+jobs:
+  open-pr-after-cfe-merge:
+    name: 'Open PR merging release/9.7 into trunk after CFE merge'
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'cherry pick to trunk'))
+    runs-on: ubuntu-latest
+    permissions:
+        pull-requests: write
+    steps:
+      - name: 'Fetch CFE PR details'
+        id: cfe-details
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const cfePR = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: 'workflow_dispatch' === context.eventName ? context.payload.inputs.source_pr : context.payload.pull_request.number
+            });
+
+            if ( ! cfePR.data.merged || cfePR.data.state != 'closed' || cfePR.data.base.ref != 'release/9.7' ) {
+              core.setFailed( 'Triggered with invalid PR' );
+              process.exit( 1 );
+            }
+
+            core.setOutput( 'prNumber', cfePR.data.number );
+            core.setOutput( 'prTitle', cfePR.data.title );
+            core.setOutput( 'prURL', cfePR.data.html_url );
+      - name: 'Open or fetch merge PR'
+        id: fetch-pr
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const existingPRs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              base: 'trunk',
+              head: 'release/9.7'
+            });
+
+            // PR already exists?
+            if ( existingPRs.data.length > 0 ) {
+              return existingPRs.data[0].html_url;
+            }
+
+            // Create a new PR targeting trunk.
+            const newPR = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: 'trunk',
+              head: 'release/9.7',
+              title: '[CFE merge(s)] Update `trunk` with latest `release/9.7`',
+              body: 'This PR brings over changes from `release/9.7` to `trunk` after the merge of the following PR(s). Confirm that the changes in this PR are correct **and merge it by creating a merge commit**. Do not rebase or squash.'
+            });
+
+            return newPR.data.html_url;
+          result-encoding: string
+      - name: 'Append CFE PR as a comment'
+        run: |
+          gh pr comment "${{ steps.fetch-pr.outputs.result }}" --body "* Includes: ${{ steps.cfe-details.outputs.prURL }}"
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: 'Notify via Slack (success)'
+        uses: archive/github-actions-slack@v2.0.0
+        if: success() && inputs.silent != true
+        continue-on-error: true
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
+          slack-channel: ${{ secrets.WOO_RELEASE_SLACK_NOTIFICATION_CHANNEL }}
+          slack-optional-unfurl_links: false
+          slack-optional-unfurl_media: false
+          slack-text: |
+            :pull-request-open: *(Release 9.7)* CFE PR _<${{ steps.cfe-details.outputs.prURL }}|${{ steps.cfe-details.outputs.prNumber }} - ${{ steps.cfe-details.outputs.prTitle }}>_ has just been merged into `release/9.7`. A PR syncing these changes with `trunk` has been created and needs to be reviewed: ${{ steps.fetch-pr.outputs.result }}.
+      - name: 'Notify via Slack (failure)'
+        uses: archive/github-actions-slack@v2.0.0
+        if: failure() && inputs.silent != true
+        continue-on-error: true
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.CODE_FREEZE_BOT_TOKEN }}
+          slack-channel: ${{ secrets.WOO_RELEASE_SLACK_NOTIFICATION_CHANNEL }}
+          slack-optional-unfurl_links: false
+          slack-optional-unfurl_media: false
+          slack-text: |
+            :warning: *(Release 9.7)* An error occurred while running the `release/9.7` to `trunk` sync workflow. Please check out this link for debugging: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
