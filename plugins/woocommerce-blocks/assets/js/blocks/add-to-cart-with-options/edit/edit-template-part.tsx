@@ -4,7 +4,11 @@
 import { useSelect } from '@wordpress/data';
 import { Spinner } from '@wordpress/components';
 import { useEntityBlockEditor, store as coreStore } from '@wordpress/core-data';
-import { useInnerBlocksProps, useBlockProps } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useInnerBlocksProps,
+	useBlockProps,
+} from '@wordpress/block-editor';
 
 export type FeaturesKeys = 'isBlockifiedAddToCart';
 
@@ -50,7 +54,10 @@ const TemplatePartInnerBlocks = ( {
 		value: blocks,
 		onInput,
 		onChange,
-		renderAppender: ! isLoading && blocks.length > 0,
+		renderAppender: () =>
+			! isLoading && blocks.length === 0
+				? InnerBlocks.ButtonBlockAppender
+				: null,
 	} );
 
 	if ( isLoading ) {
