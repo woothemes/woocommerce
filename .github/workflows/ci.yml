@@ -62,26 +62,11 @@ jobs:
       test-jobs: ${{ steps.project-jobs.outputs.test-jobs }}
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
-      # Shallow copy of the branch is fast, but needs a bit of creativity about depth calculation and finding out proper base sha. 
-      - name: Setup - checkout base branch
-        if: github.event_name == 'pull_request'
-        uses: 'actions/checkout@v4'
+      - uses: 'actions/checkout@v4'
+        name: 'Checkout'
         with:
-          fetch-depth: 1
-          ref: ${{ github.event.pull_request.base.ref }}
-      - name: Setup - calculate base sha
-        if: github.event_name == 'pull_request'
-        id: checkout_base_sha
-        shell: bash
-        run: |
-          value=$(git rev-list --no-merges -n 1 HEAD | tail -1)
-          echo "value=$value" >> $GITHUB_OUTPUT
-      - name: Setup - checkout branch
-        uses: 'actions/checkout@v4'
-        with:
-          fetch-depth: 1
-          ref: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.ref ) || '' }}
-          repository: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name ) || '' }}
+          # We tried to speed checkout up with shallow copies, but supporting PRs from forks forces us to follow this approach.
+          fetch-depth: ${{ ( ( github.base_ref && '0' ) || '1' ) }}
       # Now let's get to generating the build matrix itself.
       - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
@@ -95,7 +80,7 @@ jobs:
             // - Pushes: run CI jobs aiming pushes without filtering based on the content changes
 
             let baseRef   = '';
-            const baseSha = ${{ toJson( github.event_name == 'pull_request' && steps.checkout_base_sha.outputs.value ) }};
+            const baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
             if ( baseSha ) {
               // Use-case: trigger is pull request
               baseRef = `--base-ref ${ baseSha }`;
@@ -141,8 +126,7 @@ jobs:
       - uses: 'actions/checkout@v4'
         name: 'Checkout'
         with:
-          # WooCommerce core package uses phpcs-changed for linting, which requires non-shallow git-history.
-          # We tried to speed checkout up, but `git merge-base ...` used on different levels of tooling forces us to follow this approach. 
+          # We tried to speed checkout up with shallow copies, but `git merge-base ...` used on different levels of tooling forces us to follow this approach.
           fetch-depth: ${{ ( ( matrix.projectName == '@woocommerce/plugin-woocommerce' && '0' ) || '1' ) }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
