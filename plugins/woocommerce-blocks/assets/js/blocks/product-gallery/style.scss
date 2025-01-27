@@ -243,22 +243,36 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 }
 
 .wc-block-product-gallery-thumbnails {
-	display: flex;
-
-	img {
-		height: 100px;
+	&__thumbnail {
+		max-width: 100%;
+		border: 1px solid rgba($color: #000, $alpha: 0.1);
 	}
 }
 
 // Automattically react to the Group container settings.
 .is-nowrap .wc-block-product-gallery-thumbnails,
 .is-horizontal.is-nowrap .wc-block-product-gallery-thumbnails {
+	flex-basis: 250px;
+
+	display: flex;
 	flex-direction: column;
 }
 
 .is-vertical .wc-block-product-gallery-thumbnails,
 .is-horizontal .wc-block-product-gallery-thumbnails {
-	flex-direction: row;
+	display: grid;
+	gap: 15px;
+	$grid-gap: 15px;
+	$min-image-width: 32px;
+
+	@for $i from 3 through 8 {
+		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
+			$gap-count: calc(#{$i} - 1);
+			$total-gap-width: calc(#{$gap-count} * #{$grid-gap});
+			$max-image-width: calc((100% - #{$total-gap-width}) / #{$i});
+			grid-template-columns: repeat(auto-fill, minmax(max(#{$min-image-width}, #{$max-image-width}), 1fr));
+		}
+	}
 }
 
 // 	img {
