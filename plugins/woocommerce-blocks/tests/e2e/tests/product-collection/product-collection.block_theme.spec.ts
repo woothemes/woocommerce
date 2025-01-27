@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Request } from '@playwright/test';
-import { test as base, expect } from '@woocommerce/e2e-utils';
+import { test as base, expect, wpCLI } from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
@@ -807,6 +807,48 @@ test.describe( 'Product Collection', () => {
 			} );
 		}
 	);
+
+	test.describe( 'default query can be modified', () => {
+		test( 'default query can be modified', async ( {
+			page,
+			pageObject,
+			editor,
+		} ) => {
+			await wpCLI(
+				'option update woocommerce_default_catalog_orderby price'
+			);
+
+			await pageObject.goToEditorTemplate();
+
+			await pageObject.focusProductCollection();
+
+			// Verify the default order matches the option in the database.
+			const orderBySelect = await pageObject.getOrderByElement();
+			const editorProductTitle = editor.canvas
+				.locator( SELECTORS.productTitle )
+				.first();
+
+			await expect( orderBySelect ).toHaveValue( 'price' );
+			await expect( editorProductTitle ).toHaveText( 'Single' );
+
+			await orderBySelect.selectOption( 'price-desc' );
+
+			await expect( editorProductTitle ).toHaveText( 'Sunglasses' );
+
+			await editor.saveSiteEditorEntities();
+			await pageObject.goToProductCatalogFrontend();
+
+			const frontendProductTitle = page
+				.locator( SELECTORS.productTitle )
+				.first();
+			await expect( frontendProductTitle ).toContainText( 'Sunglasses' );
+
+			await wpCLI(
+				'option update woocommerce_default_catalog_orderby menu_order'
+			);
+		} );
+	} );
+
 	test.describe( 'Editor: In taxonomies templates', () => {
 		test( 'Products by specific category template displays products from this category', async ( {
 			admin,

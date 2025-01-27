@@ -67,6 +67,9 @@ class Controller extends AbstractBlock {
 			2
 		);
 
+		// Register the backend settings so they can be used in the editor.
+		add_action( 'rest_api_init', array( $this, 'register_settings' ) );
+
 		// Update the query for Editor.
 		add_filter( 'rest_product_query', array( $this, 'update_rest_query_in_editor' ), 10, 2 );
 
@@ -238,6 +241,30 @@ class Controller extends AbstractBlock {
 		// The `loop_shop_per_page` filter can be found in WC_Query::product_query().
 		// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 		$this->asset_data_registry->add( 'loopShopPerPage', apply_filters( 'loop_shop_per_page', wc_get_default_products_per_row() * wc_get_default_product_rows_per_page() ) );
+	}
+
+	/**
+	 * Exposes settings used by the Product Collection block when manipulating
+	 * the default query.
+	 */
+	public function register_settings() {
+		register_setting(
+			'options',
+			'woocommerce_default_catalog_orderby',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'How should products be sorted in the catalog by default?', 'woocommerce' ),
+				'label'        => __( 'Default product sorting', 'woocommerce' ),
+				'show_in_rest' => array(
+					'name'   => 'woocommerce_default_catalog_orderby',
+					'schema' => array(
+						'type' => 'string',
+						'enum' => array( 'menu_order', 'popularity', 'rating', 'date', 'price', 'price-desc' ),
+					),
+				),
+				'default'      => 'menu_order',
+			)
+		);
 	}
 
 	/**

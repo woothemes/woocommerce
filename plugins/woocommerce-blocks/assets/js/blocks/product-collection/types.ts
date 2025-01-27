@@ -198,6 +198,7 @@ export enum CoreFilterNames {
 	KEYWORD = 'keyword',
 	ON_SALE = 'on-sale',
 	ORDER = 'order',
+	DEFAULT_ORDER = 'default-order',
 	STOCK_STATUS = 'stock-status',
 	TAXONOMY = 'taxonomy',
 	PRICE_RANGE = 'price-range',

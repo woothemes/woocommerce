@@ -39,7 +39,8 @@ import {
 	InheritQueryControl,
 	FilterableControl,
 } from './use-page-context-control';
-import OrderByControl from './order-by-control';
+import DefaultQueryOrderByControl from './order-by-control/default-query-order-by-control';
+import CustomQueryOrderByControl from './order-by-control/custom-query-order-by-control';
 import OnSaleControl from './on-sale-control';
 import StockStatusControl from './stock-status-control';
 import KeywordControl from './keyword-control';
@@ -86,20 +87,21 @@ const ProductCollectionInspectorControls = (
 		tracksLocation === 'product-catalog' ||
 		tracksLocation === 'product-archive';
 
-	const showQueryControls = inherit === false;
+	const showCustomQueryControls = inherit === false;
 	const showInheritQueryControl =
 		isArchiveTemplate && shouldShowFilter( CoreFilterNames.INHERIT );
 	const showFilterableControl =
 		! isArchiveTemplate && shouldShowFilter( CoreFilterNames.FILTERABLE );
-	const showOrderControl =
-		showQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
+	const showCustomOrderControl =
+		showCustomQueryControls && shouldShowFilter( CoreFilterNames.ORDER );
+	const showDefaultOrderControl = ! showCustomQueryControls;
 	const showOffsetControl =
-		showQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
+		showCustomQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
 	const showMaxPagesToShowControl =
-		showQueryControls &&
+		showCustomQueryControls &&
 		shouldShowFilter( CoreFilterNames.MAX_PAGES_TO_SHOW );
 	const showProductsPerPageControl =
-		showQueryControls &&
+		showCustomQueryControls &&
 		shouldShowFilter( CoreFilterNames.PRODUCTS_PER_PAGE );
 	const showOnSaleControl = shouldShowFilter( CoreFilterNames.ON_SALE );
 	const showStockStatusControl = shouldShowFilter(
@@ -162,6 +164,14 @@ const ProductCollectionInspectorControls = (
 				{ showInheritQueryControl && (
 					<InheritQueryControl { ...queryControlProps } />
 				) }
+				{ showCustomOrderControl && (
+					<CustomQueryOrderByControl { ...queryControlProps } />
+				) }
+				{ showDefaultOrderControl && (
+					<DefaultQueryOrderByControl
+						trackInteraction={ trackInteraction }
+					/>
+				) }
 				{ showFilterableControl && (
 					<FilterableControl { ...queryControlProps } />
 				) }
@@ -171,9 +181,6 @@ const ProductCollectionInspectorControls = (
 					<ProductsPerPageControl { ...queryControlProps } />
 				) }
 				<ColumnsControl { ...displayControlProps } />
-				{ showOrderControl && (
-					<OrderByControl { ...queryControlProps } />
-				) }
 				{ showOffsetControl && (
 					<OffsetControl { ...queryControlProps } />
 				) }
@@ -182,7 +189,7 @@ const ProductCollectionInspectorControls = (
 				) }
 			</ToolsPanel>
 
-			{ showQueryControls ? (
+			{ showCustomQueryControls ? (
 				<ToolsPanel
 					label={ __( 'Filters', 'woocommerce' ) }
 					resetAll={ ( resetAllFilters: ( () => void )[] ) => {
