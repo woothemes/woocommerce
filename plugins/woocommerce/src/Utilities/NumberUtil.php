@@ -76,8 +76,8 @@ final class NumberUtil {
 		);
 
 		if ( 1 !== preg_match( $allowed_characters_regex, $value ) ) {
-			/* translators: %s: Invalid value that was input by the user */
-			throw new \InvalidArgumentException( sprintf( esc_html__( '%s is not a valid numeric value. Allowed characters are numbers and the thousand and decimal separators.', 'woocommerce' ), esc_html( $value ) ) );
+			/* translators: %1$s: Invalid value that was input by the user, %2$s: thousand separator, %3$s: decimal separator */
+			throw new \InvalidArgumentException( sprintf( esc_html__( '%1$s is not a valid numeric value. Allowed characters are numbers, and the thousand (%2$s) and decimal (%3$s) separators.', 'woocommerce' ), esc_html( $value ), esc_html( wc_get_price_thousand_separator() ), esc_html( wc_get_price_decimal_separator() ) ) );
 		}
 
 		// Validate decimal and thousand separator positions.
