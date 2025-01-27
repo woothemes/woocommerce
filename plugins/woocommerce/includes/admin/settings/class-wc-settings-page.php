@@ -198,7 +198,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 				// Replace empty string section ids with 'default'.
 				$normalized_section_id                   = '' === $section_id ? 'default' : $section_id;
 				$sections_data[ $normalized_section_id ] = array(
-					'label'    => html_entity_decode( $section_label ),
+					'label'    => html_entity_decode( esc_html( $section_label ) ),
 					'settings' => $section_settings_data,
 				);
 			}
