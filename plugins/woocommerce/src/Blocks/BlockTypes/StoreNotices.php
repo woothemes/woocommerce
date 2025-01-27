@@ -74,7 +74,6 @@ class StoreNotices extends AbstractBlock {
 		);
 
 		ob_start();
-		// Adding the is-layout-constrained class to the wrapper is a hack, to ensure the notice looks the same as it used to when prepended to post content.
 		?>
 		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="woocommerce-notices-wrapper">
 			<template
@@ -85,8 +84,8 @@ class StoreNotices extends AbstractBlock {
 					class="wc-block-components-notice-banner"
 					data-wc-init="callbacks.scrollIntoView"
 					data-wc-class--is-error="state.isError"
-  					data-wc-class--is-success ="state.isSuccess"
-  					data-wc-class--is-info="state.isInfo"
+					data-wc-class--is-success ="state.isSuccess"
+					data-wc-class--is-info="state.isInfo"
 					data-wc-bind--role="state.role"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">

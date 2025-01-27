@@ -78,10 +78,8 @@ class Controller extends AbstractBlock {
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
 		// Hook the store notices block to ensure woocommerce/product-button can add error notices client-side.
-		if ( wc_is_block_hook_post_content_supported() ) {
-			add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback_post_content_support' ), 1, 4 );
-		} elseif ( ! is_admin() ) {
-			add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback_no_post_content_support' ), 1, 4 );
+		if ( ! is_admin() ) {
+			add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback' ), 1, 4 );
 		}
 
 		add_filter( 'hooked_block_woocommerce/store-notices', array( $this, 'augment_hooked_store_notices_block' ), 10, 5 );
@@ -90,39 +88,17 @@ class Controller extends AbstractBlock {
 	}
 
 	/**
-	 * Hook the store notices block to post-content/before to ensure that error notices can be shown
-	 * client-side even when the store notices block is not present as part of the template. This hook
-	 * is not called in WordPress 6.8+ where post_content is supported by block hooks.
+	 * Hook the store notices block to post-content to ensure that error notices can be shown
+	 * client-side even when the store notices block is not present as part of the template.
 	 *
 	 * @param array  $hooked_blocks The array of hooked blocks.
 	 * @param string $position The position of the block.
 	 * @param string $anchor_block The anchor block.
+	 * @param array  $context The context of the block.
 	 * @return array The array of hooked blocks.
 	 */
-	public function block_hook_fallback_no_post_content_support( $hooked_blocks, $position, $anchor_block ) {
-		// In WordPress versions prior to 6.8, contents of post_content was not available on the context,
-		// so it's hard to detect if the product collection block is being rendered. As a workaround,
-		// we don't hook the block in admin in this case, so that the only negative side effect
-		// on the frontend is that an empty store notices block will be rendered.
-		if ( 'core/post-content' === $anchor_block && 'before' === $position ) {
-			$hooked_blocks[] = 'woocommerce/store-notices';
-		}
-
-		return $hooked_blocks;
-	}
-
-	/**
-	 * Hook the store notices block to post-content/first_child to ensure that error notices can be shown
-	 * client-side even when the store notices block is not present as part of the template. This hook is
-	 * only called in WordPress 6.8+ where post_content is supported by block hooks.
-	 *
-	 * @param array  $hooked_blocks The array of hooked blocks.
-	 * @param string $position The position of the block.
-	 * @param string $anchor_block The anchor block.
-	 * @return array The array of hooked blocks.
-	 */
-	public function block_hook_fallback_post_content_support( $hooked_blocks, $position, $anchor_block ) {
-		if ( 'core/post-content' === $anchor_block && 'first_child' === $position ) {
+	public function block_hook_fallback( $hooked_blocks, $position, $anchor_block, $context ) {
+		if ( $context instanceof \WP_Block_Template && 'core/post-content' === $anchor_block && 'before' === $position ) {
 			$hooked_blocks[] = 'woocommerce/store-notices';
 		}
 

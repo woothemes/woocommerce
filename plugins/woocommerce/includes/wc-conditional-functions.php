@@ -583,16 +583,3 @@ function wc_block_theme_has_styles_for_element( $element ) {
 
 	return false;
 }
-
-/**
- * Check if the block hooks API supports contents of post_content.
- *
- * @since 9.8.0
- * @return bool
- */
-function wc_is_block_hook_post_content_supported() {
-	return (
-		has_filter( 'the_content', 'gutenberg_apply_block_hooks_to_post_content' ) ||
-		has_filter( 'the_content', 'apply_block_hooks_to_content' )
-	);
-}
