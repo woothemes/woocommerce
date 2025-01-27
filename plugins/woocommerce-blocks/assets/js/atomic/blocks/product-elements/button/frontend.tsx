@@ -7,10 +7,7 @@ import { store, getContext as getContextFn } from '@woocommerce/interactivity';
 /**
  * Internal dependencies
  */
-import {
-	state as wooState,
-	actions as wooActions,
-} from '../../../../base/stores/add-to-cart';
+import type { Store as WooStore } from '../../../../base/stores/add-to-cart';
 
 interface Context {
 	addToCartText: string;
@@ -42,6 +39,7 @@ interface Store {
 	};
 	actions: {
 		addToCart: () => void;
+		refreshCart: () => void;
 		handleAnimationEnd: ( event: AnimationEvent ) => void;
 	};
 	callbacks: {
@@ -50,8 +48,9 @@ interface Store {
 	};
 }
 
-// Todo: Remove the type cast once we import from `@wordpress/interactivity`.
-const { state } = ( store as typeof StoreType )< Store >(
+const { state: wooState } = store< WooStore >( 'woocommerce' );
+
+const { state } = store< Store >(
 	'woocommerce/product-button',
 	{
 		state: {
@@ -102,14 +101,29 @@ const { state } = ( store as typeof StoreType )< Store >(
 			},
 		},
 		actions: {
-			addToCart() {
+			*addToCart() {
 				const context = getContext();
 				const { productId, quantityToAdd } = context;
-				wooActions.addToCart(
+
+				// Todo: move the addToCart store to its own module.
+				const { actions } = ( yield import(
+					'../../../../base/stores/add-to-cart'
+				) ) as WooStore;
+
+				actions.addToCart(
 					productId,
 					// Question: is quantityToAdd available in the cart or we need to pass it down?
 					state.quantity + quantityToAdd
 				);
+			},
+			*refreshCart() {
+				// Question: use `splitTask` here? Does it make sense?
+				// Question: does it make sense to use a dynamic import instead of a static one?
+				// Todo: move the addToCart store to its own module.
+				const { actions } = ( yield import(
+					'../../../../base/stores/add-to-cart'
+				) ) as WooStore;
+				actions.refreshCart();
 			},
 			handleAnimationEnd( event: AnimationEvent ) {
 				const context = getContext();
