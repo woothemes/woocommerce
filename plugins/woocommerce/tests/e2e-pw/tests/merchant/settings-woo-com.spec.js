@@ -5,7 +5,7 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 test.describe(
 	'WooCommerce woo.com Settings',
 	{
-		tag: [ tags.SERVICES, tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ],
+		tag: [ tags.SERVICES, tags.SKIP_ON_WPCOM ],
 	},
 	() => {
 		test.use( { storageState: process.env.ADMINSTATE } );
@@ -18,7 +18,7 @@ test.describe(
 				consumerSecret: process.env.CONSUMER_SECRET,
 				version: 'wc/v3',
 			} );
-			await api.put( 'settings/advanced/woocommerce_analytics_enabled', {
+			await api.put( 'settings/advanced/woocommerce_allow_tracking', {
 				value: 'no',
 			} );
 			await api.put(
