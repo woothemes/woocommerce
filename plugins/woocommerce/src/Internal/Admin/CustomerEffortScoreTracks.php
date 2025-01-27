@@ -453,7 +453,7 @@ class CustomerEffortScoreTracks {
 			return;
 		}
 
-		$queue           = get_option(
+		$queue = get_option(
 			self::CES_TRACKS_QUEUE_OPTION_NAME,
 			array()
 		);
