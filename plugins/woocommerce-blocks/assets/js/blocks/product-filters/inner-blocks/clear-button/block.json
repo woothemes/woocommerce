@@ -30,6 +30,6 @@
 	},
 	"supports": {
 		"interactivity": true,
-		"inserter": false
+		"inserter": true
 	}
 }
