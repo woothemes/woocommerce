@@ -2,11 +2,24 @@
 
 declare( strict_types = 1 );
 
+/**
+ * Custom product class.
+ */
 class WC_Product_Custom extends \WC_Product {
+	/**
+	 * Initialize custom product.
+	 *
+	 * @param WC_Product|int $product Product instance or ID.
+	 */
 	public function __construct( $product = 0 ) {
 		parent::__construct();
 	}
 
+	/**
+	 * Get internal type.
+	 *
+	 * @return string
+	 */
 	public function get_type() {
 		return 'custom';
 	}
