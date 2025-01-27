@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { exec } = require( 'child_process' );
 
 test.describe( 'WC Home Task List >', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );

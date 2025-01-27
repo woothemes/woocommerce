@@ -35,7 +35,7 @@ exports.test = base.test.extend( {
 	 * Fixture for interacting with the [WordPress REST API](https://developer.wordpress.org/rest-api/reference/) endpoints.
 	 *
 	 * @param {{baseURL: string}} fixtures
-	 * @param {function(base.APIRequestContext): Promise<void>} use
+	 * @param {(fixture: base.APIRequestContext)} use
 	 */
 	wpApi: async ( { baseURL }, use ) => {
 		const wpApi = await base.request.newContext( {
