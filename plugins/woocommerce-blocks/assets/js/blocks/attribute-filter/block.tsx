@@ -519,6 +519,21 @@ const AttributeFilterBlock = ( {
 		heading
 	);
 
+	const descriptionId = `attribute-filter-description-${
+		blockAttributes.attributeId
+	}-${ Math.floor( Math.random() * 100 ) }-${ Date.now() }`;
+	const description = (
+		<p id={ descriptionId } className="screen-reader-text">
+			{
+				/* translators: %s attribute name. */
+				__(
+					'Selecting an option will submit the filter and refresh the page',
+					'woocommerce'
+				)
+			}
+		</p>
+	);
+
 	setWrapperVisibility( true );
 
 	const getIsApplyButtonDisabled = () => {
@@ -639,13 +654,21 @@ const AttributeFilterBlock = ( {
 						) }
 					</>
 				) : (
-					<CheckboxFilter
-						options={ displayedOptions }
-						checked={ checked }
-						onChange={ onChange }
-						isLoading={ isLoading }
-						isDisabled={ isLoading }
-					/>
+					<>
+						<CheckboxFilter
+							options={ displayedOptions }
+							descriptionId={
+								! blockAttributes.showFilterButton
+									? descriptionId
+									: undefined
+							}
+							checked={ checked }
+							onChange={ onChange }
+							isLoading={ isLoading }
+							isDisabled={ isLoading }
+						/>
+						{ ! blockAttributes.showFilterButton && description }
+					</>
 				) }
 			</div>
 

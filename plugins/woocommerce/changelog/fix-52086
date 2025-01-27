@@ -1,0 +1,4 @@
+Significance: patch
+Type: enhancement
+
+Inform changes to screen reader users when a filter attribute checkbox option is focused

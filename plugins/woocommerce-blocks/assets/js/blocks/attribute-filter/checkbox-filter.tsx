@@ -10,6 +10,7 @@ import { DisplayOption } from './types';
 
 interface CheckboxFilterProps {
 	className?: string;
+	descriptionId?: string | undefined;
 	isLoading?: boolean;
 	isDisabled?: boolean;
 	limit?: number;
@@ -19,6 +20,7 @@ interface CheckboxFilterProps {
 }
 
 const CheckboxFilter = ( {
+	descriptionId,
 	isLoading = false,
 	options,
 	checked,
@@ -36,6 +38,7 @@ const CheckboxFilter = ( {
 	return (
 		<CheckboxList
 			className="wc-block-attribute-filter-list"
+			descriptionId={ descriptionId }
 			options={ options }
 			checked={ checked }
 			onChange={ onChange }
