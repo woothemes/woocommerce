@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 /**
- * BlockifiedProductDetails class.
+ * BlockifiedProductDetails clazz.
  */
 class BlockifiedProductDetails extends AbstractBlock {
 	/**
