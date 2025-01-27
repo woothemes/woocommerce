@@ -30,9 +30,14 @@ class WC_Product_Custom extends WC_Product {
 	}
 }
 
-add_filter( 'woocommerce_product_class', function ( $classname, $product_type ) {
-	if ( 'custom' === $product_type ) {
-		$classname = 'Automattic\WooCommerce\Tests\Blocks\Utils\WC_Product_Custom';
-	}
-	return $classname;
-} , 10, 2 );
+add_filter(
+	'woocommerce_product_class',
+	function ( $classname, $product_type ) {
+		if ( 'custom' === $product_type ) {
+			$classname = 'Automattic\WooCommerce\Tests\Blocks\Utils\WC_Product_Custom';
+		}
+		return $classname;
+	},
+	10,
+	2
+);
