@@ -34,7 +34,7 @@ class WC_Admin {
 		// Disable WXR export of schedule action posts.
 		add_filter( 'action_scheduler_post_type_args', array( $this, 'disable_webhook_post_export' ) );
 
-		// Add body class for WP 5.3+ compatibility.
+		// Add body class with WC version & WP 5.3+ compatibility.
 		add_filter( 'admin_body_class', array( $this, 'include_admin_body_class' ), 9999 );
 
 		// Add body class for Marketplace and My Subscriptions pages.
@@ -300,9 +300,12 @@ class WC_Admin {
 	 * @return string
 	 */
 	public function include_admin_body_class( $classes ) {
-		if ( in_array( array( 'wc-wp-version-gte-53', 'wc-wp-version-gte-55' ), explode( ' ', $classes ), true ) ) {
+		$wc_version = 'wc-version-' . str_replace( '.', '-', WC()->version );
+
+		if ( in_array( array( 'wc-wp-version-gte-53', 'wc-wp-version-gte-55', $wc_version ), explode( ' ', $classes ), true ) ) {
 			return $classes;
 		}
+		$classes .= ' ' . $wc_version;
 
 		$raw_version   = get_bloginfo( 'version' );
 		$version_parts = explode( '-', $raw_version );
