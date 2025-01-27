@@ -44,13 +44,15 @@ class BlockifiedProductDetails extends AbstractBlock {
 		foreach ( $parsed_block['innerBlocks'] as &$inner_block ) {
 			if ( 'woocommerce/accordion-group' === $inner_block['blockName'] ) {
 					$inner_block['innerBlocks'] = array_merge( $inner_block['innerBlocks'], $parsed_tabs_added_via_hook );
-					array_pop( $inner_block['innerContent'] );
 				foreach ( $parsed_tabs_added_via_hook as $block ) {
-					// It is necessary update the innerContent given that the block is being added to the innerBlocks array.
-					$inner_block['innerContent'][] = "\n\n";
-					$inner_block['innerContent'][] = null;
+					// It is necessary update the innerContent given that a new inner block is added.
+					array_splice(
+						$inner_block['innerContent'],
+						-1,
+						0,
+						array( "\n\n", null )
+					);
 				}
-				$inner_block['innerContent'][] = "</div>\n";
 			}
 			self::add_new_accordion_item( $inner_block, $parsed_tabs_added_via_hook );
 		}
