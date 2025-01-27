@@ -4,13 +4,7 @@
 import { useSelect } from '@wordpress/data';
 import { Spinner } from '@wordpress/components';
 import { useEntityBlockEditor, store as coreStore } from '@wordpress/core-data';
-import {
-	InnerBlocks,
-	useInnerBlocksProps,
-	useBlockProps,
-	store as blockEditorStore,
-	useBlockEditingMode,
-} from '@wordpress/block-editor';
+import { useInnerBlocksProps, useBlockProps } from '@wordpress/block-editor';
 
 export type FeaturesKeys = 'isBlockifiedAddToCart';
 
@@ -20,20 +14,6 @@ export type FeaturesProps = {
 
 export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
 
-function useRenderAppender( hasInnerBlocks: boolean ) {
-	const blockEditingMode = useBlockEditingMode();
-	// Disable appending when the editing mode is 'contentOnly'. This is so that the user can't
-	// append into a template part when editing a page in the site editor. See
-	// DisableNonPageContentBlocks. Ideally instead of (mis)using editing mode there would be a
-	// block editor API for achieving this.
-	if ( blockEditingMode === 'contentOnly' ) {
-		return false;
-	}
-	if ( ! hasInnerBlocks ) {
-		return InnerBlocks.ButtonBlockAppender;
-	}
-}
-
 const TemplatePartInnerBlocks = ( {
 	blockProps,
 	templatePartId,
@@ -41,12 +21,6 @@ const TemplatePartInnerBlocks = ( {
 	blockProps: Record< string, unknown >;
 	templatePartId: string | undefined;
 } ) => {
-	const onNavigateToEntityRecord = useSelect(
-		( select ) =>
-			select( blockEditorStore ).getSettings().onNavigateToEntityRecord,
-		[]
-	);
-
 	const [ blocks, onInput, onChange ] = useEntityBlockEditor(
 		'postType',
 		'wp_template_part',
@@ -76,31 +50,18 @@ const TemplatePartInnerBlocks = ( {
 		value: blocks,
 		onInput,
 		onChange,
-		renderAppender: useRenderAppender( ! isLoading && blocks.length > 0 ),
+		renderAppender: ! isLoading && blocks.length > 0,
 	} );
-
-	const blockEditingMode = useBlockEditingMode();
 
 	if ( isLoading ) {
 		return (
-			<form { ...blockProps }>
+			<div { ...blockProps }>
 				<Spinner />
-			</form>
+			</div>
 		);
 	}
 
-	const customProps =
-		blockEditingMode === 'contentOnly' && onNavigateToEntityRecord
-			? {
-					onDoubleClick: () =>
-						onNavigateToEntityRecord( {
-							postId: templatePartId,
-							postType: 'wp_template_part',
-						} ),
-			  }
-			: {};
-
-	return <form { ...innerBlocksProps } { ...customProps } />;
+	return <div { ...innerBlocksProps } />;
 };
 
 export const AddToCartWithOptionsEditTemplatePart = ( {
