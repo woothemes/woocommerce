@@ -265,8 +265,8 @@ export const updatePaymentMethodData = ( paymentMethodData: {
 				signal: CheckoutPutAbortController.signal,
 			} );
 
-			if ( response?.response?.cart ) {
-				receiveCart( response.response.cart );
+			if ( response?.response?.__experimentalCart ) {
+				receiveCart( response?.response?.__experimentalCart );
 			}
 		} catch ( error ) {
 			return Promise.reject( error );
