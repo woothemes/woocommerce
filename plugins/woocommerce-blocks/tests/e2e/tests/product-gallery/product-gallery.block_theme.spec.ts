@@ -81,47 +81,6 @@ const getThumbnailImageIdByNth = async (
 	return imageId;
 };
 
-/**
- * Get the focused image in the container.
- *
- * @param {Locator} containerLocator - The container locator.
- * @return {Promise<string | null>} The image ID or null if no focused image is found.
- */
-export const getFocusedImage = async ( containerLocator: Locator ) => {
-	const focusedImage = containerLocator.locator(
-		'img:focus, img[aria-selected="true"]'
-	);
-
-	if ( ( await focusedImage.count() ) > 0 ) {
-		const imageContext = ( await focusedImage.getAttribute(
-			'data-wc-context'
-		) ) as string;
-		return JSON.parse( imageContext ).imageId;
-	}
-
-	return null;
-};
-
-/**
- * Gets the image ID from the currently focused element.
- *
- * @param {Page} page - The Playwright page object.
- * @return {Promise<string | null>} The image ID or null if no focused element or context found.
- */
-export const getActiveElementImageId = async ( page: Page ) => {
-	return page.evaluate( () => {
-		const element = document?.activeElement;
-		if ( ! element ) {
-			return null;
-		}
-		const context = element.getAttribute( 'data-wc-context' );
-		if ( ! context ) {
-			return null;
-		}
-		return JSON.parse( context ).imageId;
-	} );
-};
-
 test.describe( `${ blockData.name }`, () => {
 	test.beforeEach( async ( { admin, editor, requestUtils } ) => {
 		const template = await requestUtils.createTemplate( 'wp_template', {
@@ -369,7 +328,10 @@ test.describe( `${ blockData.name }`, () => {
 
 			// eslint-disable-next-line playwright/no-wait-for-timeout, no-restricted-syntax
 			await page.waitForTimeout( 300 );
-			const popUpSelectedImageId = await getActiveElementImageId( page );
+			const popUpSelectedImageId =
+				await pageObject.getActiveElementImageId( {
+					page,
+				} );
 
 			expect( popUpSelectedImageId ).toBe( nextImageId );
 		} );
@@ -422,13 +384,16 @@ test.describe( `${ blockData.name }`, () => {
 
 			await largeImageBlock.click();
 
-			const popUpInitialSelectedImageId = await getActiveElementImageId(
-				page
-			);
+			const popUpInitialSelectedImageId =
+				await pageObject.getActiveElementImageId( {
+					page,
+				} );
 
 			await page.keyboard.press( 'Tab' );
 
-			const popUpNextImageId = await getActiveElementImageId( page );
+			const popUpNextImageId = await pageObject.getActiveElementImageId( {
+				page,
+			} );
 
 			expect( popUpInitialSelectedImageId ).not.toBe( popUpNextImageId );
 
