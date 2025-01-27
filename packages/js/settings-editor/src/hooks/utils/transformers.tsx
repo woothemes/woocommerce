@@ -11,13 +11,26 @@ import type { Field, FormField } from '@wordpress/dataviews';
  */
 import { CustomView } from '../../components/custom-view';
 import { SettingsGroup } from '../../components/settings-group';
-import { CheckboxEdit } from '../../components/checkbox-edit';
+import { getCheckboxEdit } from '../../components/checkbox-edit';
 import { getInputEdit } from '../../components/inputEdit';
-import { SelectEdit } from '../../components/selectEdit';
 import { getTextareaEdit } from '../../components/textareaEdit';
 import { getColorEdit } from '../../components/colorEdit';
+import { getSelectEdit } from '../../components/selectEdit';
 
 export type DataItem = Record< string, BaseSettingsField[ 'value' ] >;
+
+/**
+ * Helper function to determine label and help text from setting
+ * If desc_tip is true, we should display the desc as the help text.
+ */
+const getLabelAndHelp = (
+	setting: BaseSettingsField | CheckboxSettingsField
+) => {
+	return {
+		label: setting.desc_tip === true ? '' : setting.desc,
+		help: setting.desc_tip === true ? setting.desc : setting.desc_tip,
+	};
+};
 
 /**
  * Transforms a single setting into initial form data.
@@ -66,21 +79,26 @@ export const transformToField = (
 			};
 
 		case 'checkboxgroup':
-			return setting.settings?.map( ( subSetting ) => ( {
-				id: subSetting.id,
-				type: 'text',
-				label: subSetting.desc,
-				Edit: CheckboxEdit,
-			} ) );
+			return setting.settings?.map( ( subSetting ) => {
+				const { label, help } = getLabelAndHelp( subSetting );
 
-		case 'checkbox':
+				return {
+					id: subSetting.id,
+					type: 'text',
+					label,
+					Edit: getCheckboxEdit( help ),
+				};
+			} );
+
+		case 'checkbox': {
+			const { label, help } = getLabelAndHelp( setting );
 			return {
 				id: setting.id,
 				type: 'text',
-				label: setting.desc,
-				Edit: CheckboxEdit,
+				label,
+				Edit: getCheckboxEdit( help ),
 			};
-
+		}
 		case 'text':
 		case 'password':
 		case 'datetime':
@@ -92,28 +110,33 @@ export const transformToField = (
 		case 'number':
 		case 'email':
 		case 'url':
-		case 'tel':
-			return {
-				id: setting.id,
-				type: 'text',
-				label: setting.desc,
-				Edit: getInputEdit( setting.type ),
-			};
+		case 'tel': {
+			const { label, help } = getLabelAndHelp( setting );
 
-		case 'select':
 			return {
 				id: setting.id,
 				type: 'text',
-				label: setting.desc + ' (TO BE IMPLEMENTED)',
+				label,
+				placeholder: setting.placeholder,
+				Edit: getInputEdit( setting.type, help ),
+			};
+		}
+		case 'select': {
+			const { label, help } = getLabelAndHelp( setting );
+
+			return {
+				id: setting.id,
+				type: 'text',
+				label,
 				elements: Object.entries( setting.options || {} ).map(
-					( [ label, value ] ) => ( {
-						label,
+					( [ _label, value ] ) => ( {
+						label: _label,
 						value,
 					} )
 				),
-				Edit: SelectEdit,
+				Edit: getSelectEdit( help ),
 			};
-
+		}
 		case 'textarea':
 			return {
 				id: setting.id,
