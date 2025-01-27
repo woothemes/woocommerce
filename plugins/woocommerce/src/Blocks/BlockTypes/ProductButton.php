@@ -137,7 +137,6 @@ class ProductButton extends AbstractBlock {
 			* @param number $default_quantity The default quantity.
 			* @param number $product_id The product id.
 			*/
-			// Question: Is this info in the Store API cart?
 			$quantity_to_add = apply_filters( 'woocommerce_add_to_cart_quantity', $default_quantity, $product->get_id() );
 
 			$context = array(

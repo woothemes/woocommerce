@@ -111,11 +111,7 @@ const { state } = ( store as typeof StoreType )< Store >(
 					'../../../../base/stores/add-to-cart'
 				) ) as WooStore;
 
-				actions.addToCart(
-					productId,
-					// Question: is quantityToAdd available in the cart or we need to pass it down?
-					state.quantity + quantityToAdd
-				);
+				actions.addToCart( productId, state.quantity + quantityToAdd );
 			},
 			*refreshCart() {
 				// Question: use `splitTask` here? Does it make sense?
