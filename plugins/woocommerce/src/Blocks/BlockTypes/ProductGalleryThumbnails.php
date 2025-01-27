@@ -182,13 +182,19 @@ class ProductGalleryThumbnails extends AbstractBlock {
 				++$thumbnails_count;
 			}
 
+			$allowed_html                    = wp_kses_allowed_html( 'post' );
+			$allowed_html['img']['tabindex'] = true;
+
 			return sprintf(
 				'<div class="wc-block-product-gallery-thumbnails wp-block-woocommerce-product-gallery-thumbnails %1$s" style="%2$s" data-wc-interactive=\'%4$s\'>
 					%3$s
 				</div>',
 				esc_attr( $classes_and_styles['classes'] ),
 				esc_attr( $classes_and_styles['styles'] ),
-				$html,
+				wp_kses(
+					$html,
+					$allowed_html
+				),
 				wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
 			);
 		}
