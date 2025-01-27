@@ -63,13 +63,14 @@ class ShippingControllerTest extends \WP_UnitTestCase {
 		add_filter(
 			'woocommerce_get_country_locale',
 			function ( $locale ) {
-				$locale['US']['state']['required'] = false;
-				$locale['GB']['state']['required'] = true;
+				$locale['US']['state']['required']      = false;
+				$locale['GB']['state']['required']      = true;
+				$locale['default']['state']['required'] = false;
 				return $locale;
 			}
 		);
 
-		// Unset the cached locale because this filter runs later. Typically that sort of filter would be applied before
+		// Unset the cached locale because this filter runs later. Typically, that sort of filter would be applied before
 		// the locale is cached, but in unit tests the site is already set up before the test runs.
 		unset( WC()->countries->locale );
 
