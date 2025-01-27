@@ -103,6 +103,8 @@ export {
 export * from './onboarding/types';
 export * from './plugins/types';
 export { PluginSelectors } from './plugins/selectors';
+export { PaymentSelectors } from './payment-gateways/selectors';
+export { OnboardingSelectors } from './onboarding/selectors';
 export { PaymentSettingsSelectors } from './payment-settings/selectors';
 export { ActionDispatchers as PluginActions } from './plugins/actions';
 export * from './products/types';

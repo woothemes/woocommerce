@@ -2,7 +2,7 @@
 	"name": "@woocommerce/plugin-woocommerce",
 	"private": true,
 	"title": "WooCommerce",
-	"version": "9.7.0",
+	"version": "9.8.0",
 	"homepage": "https://woocommerce.com/",
 	"repository": {
 		"type": "git",
@@ -719,7 +719,7 @@
 		"@babel/preset-env": "7.12.7",
 		"@babel/register": "7.12.1",
 		"@faker-js/faker": "^9.3.0",
-		"@playwright/test": "^1.46.1",
+		"@playwright/test": "^1.49.1",
 		"@typescript-eslint/eslint-plugin": "^5.62.0",
 		"@typescript-eslint/experimental-utils": "^5.62.0",
 		"@typescript-eslint/parser": "^5.62.0",

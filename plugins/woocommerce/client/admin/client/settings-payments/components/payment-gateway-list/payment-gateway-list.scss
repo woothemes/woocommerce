@@ -35,6 +35,12 @@
 		&-inner {
 			padding: $gap-large 0;
 			align-items: flex-start;
+
+			@media screen and ( max-width: 782px ) {
+				display: grid;
+				// Configuring the grid layout to three columns, resulting in the buttons shifting to a new row.
+				grid-template-columns: 30px minmax(200px, 1fr) 40px;
+			}
 		}
 
 		&-inner:focus {
@@ -48,11 +54,20 @@
 			.drag-handle {
 				min-height: 40px;
 			}
+
+			@media screen and ( max-width: 782px ) {
+				margin-right: 0;
+
+				.drag-handle {
+					min-height: 25px;
+					padding-bottom: 15px;
+				}
+			}
 		}
 
 		&-image {
 			max-width: 40px;
-			height: 40px;
+			max-height: 40px;
 			border-radius: 4px;
 		}
 
@@ -62,8 +77,18 @@
 			color: $gray-900;
 			font-weight: 600;
 			display: inline-flex;
+			flex-wrap: wrap;
 			gap: 10px;
 			align-items: start;
+
+			@media screen and ( max-width: 782px ) {
+				font-size: 15px;
+				font-weight: 500;
+
+				.woocommerce-status-badge {
+					white-space: nowrap;
+				}
+			}
 		}
 
 		&-text {
@@ -78,10 +103,47 @@
 
 			.woocommerce-woopayments-payment-methods-logos {
 				flex-wrap: wrap;
+				padding: $gap-small 0 0 0; /* Top, Right, Bottom, Left */
+			}
+
+			@media screen and ( max-width: 782px ) {
+				margin-top: $gap-small;
+			}
+		}
+
+		&-buttons {
+			margin-left: auto;
+
+			@media screen and ( max-width: 782px ) {
+				order: 4; /* Position the column in the 4th spot to ensure the buttons appear on a new row */
+				grid-column: 2; /* Start below the 2nd column */
+				grid-row: 2; /* Move to the second row */
+				margin-left: 0;
+				margin-top: $gap;
+			}
+
+			&__actions {
+				display: flex;
+				gap: $gap;
+
+				@media screen and ( min-width: 782px ) and ( max-width: 1024px ) {
+					flex-wrap: wrap;
+					justify-content: flex-end;
+				}
+
+				.components-button {
+					height: 32px;
+				}
 			}
 		}
 
 		&-after {
+			margin-left: $gap;
+
+			@media screen and ( max-width: 782px ) {
+				order: 3; /* Position the column in the 3rd spot to ensure the dots appear on the first row */
+			}
+
 			&.centered {
 				align-self: center;
 			}
@@ -89,9 +151,32 @@
 			&__actions {
 				display: flex;
 				gap: $gap;
+			}
+		}
 
-				.components-button {
-					height: 32px;
+		&-after.no-buttons {
+			margin-left: auto;
+		}
+	}
+}
+
+@media screen and ( max-width: 1024px ) {
+	.settings-payment-gateways__list {
+		.woocommerce-list__item {
+			padding: 0 $gap-large;
+		}
+	}
+}
+
+@media screen and ( max-width: 782px ) {
+	.settings-payment-gateways__list {
+		.woocommerce-list__item {
+			padding: 0 $gap;
+
+			&-before {
+				&-image,
+				img {
+					display: none;
 				}
 			}
 		}

@@ -165,8 +165,10 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 	 * @return WP_REST_Request
 	 */
 	private function get_email_preview_request( ?string $type = null, ?string $email = null ) {
+		$nonce   = wp_create_nonce( EmailPreviewRestController::NONCE_KEY );
 		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/send-preview' );
-		$params  = array();
+		$request->set_query_params( array( 'nonce' => $nonce ) );
+		$params = array();
 		if ( $type ) {
 			$params['type'] = $type;
 		}
@@ -232,8 +234,11 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 	 * @return WP_REST_Request
 	 */
 	private function get_preview_subject_request( ?string $type = null ) {
+		$nonce   = wp_create_nonce( EmailPreviewRestController::NONCE_KEY );
 		$request = new WP_REST_Request( 'GET', self::ENDPOINT . '/preview-subject' );
-		$params  = array();
+		$params  = array(
+			'nonce' => $nonce,
+		);
 		if ( $type ) {
 			$params['type'] = $type;
 		}
@@ -375,8 +380,10 @@ class EmailPreviewRestControllerTest extends WC_REST_Unit_Test_Case {
 	 * @return WP_REST_Request
 	 */
 	private function get_save_transient_request( ?string $key = null, ?string $value = null ) {
+		$nonce   = wp_create_nonce( EmailPreviewRestController::NONCE_KEY );
 		$request = new WP_REST_Request( 'POST', self::ENDPOINT . '/save-transient' );
-		$params  = array();
+		$request->set_query_params( array( 'nonce' => $nonce ) );
+		$params = array();
 		if ( $key ) {
 			$params['key'] = $key;
 		}

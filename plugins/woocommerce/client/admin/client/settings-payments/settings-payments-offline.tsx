@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import {
 	type OfflinePaymentMethodProvider,
 	PAYMENT_SETTINGS_STORE_NAME,
@@ -40,6 +40,13 @@ export const SettingsPaymentsOffline = () => {
 	// State to hold the sorted gateways in case of changing the order, otherwise it will be null
 	const [ sortedOfflinePaymentGateways, setSortedOfflinePaymentGateways ] =
 		useState< OfflinePaymentMethodProvider[] | null >( null );
+
+	/**
+	 * Clear sortedOfflinePaymentGateways when data store updates.
+	 */
+	useEffect( () => {
+		setSortedOfflinePaymentGateways( null );
+	}, [ offlinePaymentGateways ] );
 
 	/**
 	 * Handles updating the order of offline payment gateways.

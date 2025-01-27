@@ -94,10 +94,6 @@
 		"hideEmpty": {
 			"type": "boolean",
 			"default": true
-		},
-		"clearButton": {
-			"type": "boolean",
-			"default":true
 		}
 	},
 	"example": {

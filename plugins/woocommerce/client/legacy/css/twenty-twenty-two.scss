@@ -200,6 +200,10 @@ $tt2-gray: #f7f7f7;
 		margin-top: -0.2rem;
 		margin-bottom: 3rem;
 
+		> label {
+			margin-right: 0.25rem;
+		}
+
 		select {
 			padding: 0.2rem 0 0.2rem 0.5rem;
 		}
@@ -322,7 +326,7 @@ $tt2-gray: #f7f7f7;
 
 		}
 
-		button.reset_variations {
+		a.reset_variations {
 			margin-left: 0.5em;
 		}
 

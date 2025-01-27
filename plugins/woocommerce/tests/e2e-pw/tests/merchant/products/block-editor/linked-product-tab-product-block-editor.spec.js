@@ -185,7 +185,10 @@ test.describe( 'General tab', { tag: tags.GUTENBERG }, () => {
 			await page.goto( `?post_type=product&p=${ productId }` );
 
 			await expect(
-				page.getByRole( 'heading', { name: productData.name } )
+				page.getByRole( 'heading', {
+					name: productData.name,
+					level: 1,
+				} )
 			).toBeVisible();
 
 			const productsList = page.locator(
