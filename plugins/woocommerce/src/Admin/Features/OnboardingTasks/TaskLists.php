@@ -6,9 +6,9 @@
 namespace Automattic\WooCommerce\Admin\Features\OnboardingTasks;
 
 use Automattic\WooCommerce\Admin\Features\Features;
-use Automattic\WooCommerce\Admin\Features\OnboardingTasks\DeprecatedExtendedTask;
-use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Task;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\ReviewShippingOptions;
+use WooCommerce\Admin\Experimental_Abtest;
+
 /**
  * Task Lists class.
  */
@@ -135,7 +135,8 @@ class TaskLists {
 		}
 
 		// If the React-based Payments settings page is enabled, we don't need the dedicated WooPayments task.
-		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+		if ( Features::is_enabled( 'reactify-classic-payments-settings'
+            && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2024_v1' ) ) ) {
 			$key = array_search( 'WooCommercePayments', $tasks, true );
 			if ( false !== $key ) {
 				unset( $tasks[ $key ] );

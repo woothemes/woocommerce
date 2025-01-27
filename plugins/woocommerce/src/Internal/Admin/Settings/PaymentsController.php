@@ -6,6 +6,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Settings;
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
 use Exception;
+use WooCommerce\Admin\Experimental_Abtest;
 
 defined( 'ABSPATH' ) || exit;
 /**
@@ -37,7 +38,7 @@ class PaymentsController {
 	 */
 	public function delayed_register() {
 		// Don't do anything if the feature is not enabled.
-		if ( ! Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+		if ( ! Features::is_enabled( 'reactify-classic-payments-settings' ) || ! Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2024_v1' ) ) {
 			return;
 		}
 

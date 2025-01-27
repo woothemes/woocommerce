@@ -11,6 +11,7 @@ use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\EvaluateSuggestion;
 use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 use Automattic\WooCommerce\Admin\RemoteSpecs\RemoteSpecsEngine;
+use WooCommerce\Admin\Experimental_Abtest;
 
 /**
  * WooPayments Promotion engine.
@@ -22,7 +23,7 @@ class Init extends RemoteSpecsEngine {
 	public function __construct() {
 		// If the React-based Payments settings page is enabled, we don't need the old WooPayments promotion system,
 		// as we will show the WooPayments suggestion with the new system.
-		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2024_v1' ) ) {
 			return;
 		}
 
