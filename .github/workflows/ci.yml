@@ -138,18 +138,11 @@ jobs:
       matrix:
         include: ${{ fromJSON( needs.project-jobs.outputs.lint-jobs ) }}
     steps:
-      - name: Setup - checkout base branch
-        uses: 'actions/checkout@v4'
+      - uses: 'actions/checkout@v4'
+        name: 'Checkout'
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.base.ref }}
-
-      - name: Setup - checkout branch
-        uses: 'actions/checkout@v4'
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          # WooCommerce core package uses phpcs-changed for linting, which requires non-shallow git-history.
+          fetch-depth: ${{ ( ( matrix.projectName == '@woocommerce/plugin-woocommerce' && '0' ) || '1' ) }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
         id: 'setup-monorepo'
