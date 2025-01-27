@@ -158,10 +158,7 @@
 					event.preventDefault();
 					$( this ).WCBackboneModal({
 						template : 'wc-shipping-class-configure',
-						variable : {
-							action: 'edit',
-							...rowData
-						},
+						variable: Object.assign( { action: 'edit' }, rowData ),
 						data : {
 							action: 'edit',
 							...rowData
