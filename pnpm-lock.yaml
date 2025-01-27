@@ -1586,7 +1586,7 @@ importers:
     dependencies:
       '@automattic/puppeteer-utils':
         specifier: github:Automattic/puppeteer-utils#0f3ec50
-        version: https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50
+        version: https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))
       '@woocommerce/api':
         specifier: ^0.2.0
         version: 0.2.0
@@ -2923,15 +2923,7 @@ importers:
         version: 10.0.2(react@18.3.1)
       '@wordpress/dataviews':
         specifier: ^4.11.1
-<<<<<<< HEAD
-<<<<<<< HEAD
-        version: 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-=======
         version: 4.12.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-        version: 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> e55b9de5b2 (text area)
       '@wordpress/date':
         specifier: wp-6.6
         version: 5.0.1
@@ -3357,8 +3349,8 @@ importers:
         specifier: ^9.3.0
         version: 9.3.0
       '@playwright/test':
-        specifier: ^1.46.1
-        version: 1.46.1
+        specifier: ^1.49.1
+        version: 1.49.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.62.0
         version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.55.0)(typescript@5.7.2))(eslint@8.55.0)(typescript@5.7.2)
@@ -3387,13 +3379,8 @@ importers:
         specifier: 3.0.2
         version: 3.0.2(@babel/core@7.12.9)
       '@wordpress/e2e-test-utils-playwright':
-<<<<<<< HEAD
-        specifier: wp-6.6
-        version: 1.0.1(@playwright/test@1.46.1)(encoding@0.1.13)(typescript@5.7.2)
-=======
         specifier: ^1.15.0
         version: 1.16.0(@playwright/test@1.49.1)
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
       '@wordpress/env':
         specifier: 10.14.0
         version: 10.14.0(patch_hash=nycgcwcabap5g2lmhb3gkbhvhq)
@@ -3639,8 +3626,8 @@ importers:
         specifier: 9.36.0
         version: 9.36.0
       '@wordpress/notices':
-        specifier: 3.12.0
-        version: 3.12.0(react@18.3.1)
+        specifier: 5.15.1
+        version: 5.15.1(react@18.3.1)
       '@wordpress/plugins':
         specifier: 4.10.0
         version: 4.10.0(react@18.3.1)
@@ -3773,8 +3760,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0
       '@playwright/test':
-        specifier: ^1.46.1
-        version: 1.46.1
+        specifier: ^1.49.1
+        version: 1.49.1
       '@storybook/addon-a11y':
         specifier: 7.5.2
         version: 7.5.2(@types/react-dom@18.0.10)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3880,9 +3867,6 @@ importers:
       '@types/wordpress__editor':
         specifier: ^13.6.7
         version: 13.6.7(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__notices':
-        specifier: ^3.27.6
-        version: 3.27.6(react@18.3.1)
       '@types/wordpress__wordcount':
         specifier: ^2.4.5
         version: 2.4.5
@@ -3938,18 +3922,8 @@ importers:
         specifier: 4.44.0
         version: 4.44.0
       '@wordpress/dependency-extraction-webpack-plugin':
-<<<<<<< HEAD
-<<<<<<< HEAD
-        specifier: 4.28.0
-        version: 4.28.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-=======
         specifier: 6.16.0
-        version: 6.16.0(webpack@5.91.0)
->>>>>>> de9a1b5fad (Update @wordpress/dependency-extraction-webpack-plugin to 6.16.0 in @woocommerce/block-library (#54703))
-=======
-        specifier: 4.28.0
-        version: 4.28.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
->>>>>>> e55b9de5b2 (text area)
+        version: 6.16.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       '@wordpress/dom':
         specifier: 3.27.0
         version: 3.27.0
@@ -3960,19 +3934,11 @@ importers:
         specifier: 10.12.0
         version: 10.12.0(encoding@0.1.13)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(puppeteer-core@23.11.1)
       '@wordpress/e2e-test-utils-playwright':
-<<<<<<< HEAD
-        specifier: wp-6.6
-        version: 1.0.1(@playwright/test@1.46.1)(encoding@0.1.13)(typescript@5.7.2)
-      '@wordpress/e2e-tests':
-        specifier: ^4.9.2
-        version: 4.9.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(node-notifier@8.0.2)(puppeteer-core@23.10.3)(puppeteer@17.1.3(encoding@0.1.13))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)
-=======
         specifier: ^1.15.0
         version: 1.16.0(@playwright/test@1.49.1)
       '@wordpress/e2e-tests':
         specifier: ^4.9.2
-        version: 4.9.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(file-loader@6.2.0(webpack@5.91.0))(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(node-notifier@8.0.2)(puppeteer-core@23.11.1)(puppeteer@17.1.3(encoding@0.1.13))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
+        version: 4.9.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(node-notifier@8.0.2)(puppeteer-core@23.11.1)(puppeteer@17.1.3(encoding@0.1.13))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)
       '@wordpress/editor':
         specifier: wp-6.7
         version: 14.8.12(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.0.10)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4005,19 +3971,7 @@ importers:
         version: 1.4.0(wp-prettier@2.8.5)
       '@wordpress/scripts':
         specifier: 30.6.0
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-        version: 30.6.0(@playwright/test@1.46.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)
-=======
-        version: 30.6.0(@playwright/test@1.49.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(file-loader@6.2.0(webpack@5.91.0))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-        version: 30.6.0(@playwright/test@1.46.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)
->>>>>>> e55b9de5b2 (text area)
-=======
-        version: 30.6.0(@playwright/test@1.49.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(file-loader@6.2.0(webpack@5.91.0))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
+        version: 30.6.0(@playwright/test@1.49.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)
       '@wordpress/stylelint-config':
         specifier: ^21.36.0
         version: 21.36.0(postcss@8.4.32)(stylelint@14.16.1)
@@ -4202,13 +4156,8 @@ importers:
         specifier: ^14.16.1
         version: 14.16.1
       terser-webpack-plugin:
-<<<<<<< HEAD
-        specifier: 5.3.6
-        version: 5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-=======
         specifier: 5.3.11
-        version: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+        version: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       typescript:
         specifier: 5.7.x
         version: 5.7.2
@@ -8591,8 +8540,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@playwright/test@1.46.1':
-    resolution: {integrity: sha512-Fq6SwLujA/DOIvNC2EL/SojJnkKf/rAwJ//APpJJHRyMi1PdKrY3Az+4XNQ51N4RTbItbIByQ0jgd1tayq1aeA==}
+  '@playwright/test@1.49.1':
+    resolution: {integrity: sha512-Ky+BVzPz8pL6PQxHqNRW1k3mIyv933LML7HktS8uik0bUXNCdPhoS/kLihiO1tMf/egaJb4IutXd7UywvXEW+g==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -11641,18 +11590,8 @@ packages:
     resolution: {integrity: sha512-fp7C0Ofy95a+jzK126CxAXV+uXSFQs2Clm6PCeE9Y1BowUiL9l7juUCh1R+2NDAKATxH4r3QplxVftDqn+ctUw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/a11y@4.15.1':
-    resolution: {integrity: sha512-FQmTpffgFw2M/7MbgD83OemFWMQM05oomnkqMYtTKaJo5WPn4eL5wjJ+wk+XjeT+SdflQK0ZOgeEns998USdVA==}
-=======
   '@wordpress/a11y@4.16.0':
     resolution: {integrity: sha512-i3zrNFx+N+dNivQxUeQXWKGT1ccWePXcqPkVTqjdO+lACv+MtJoyE9PXZCmaxHWq00g1RTvIpLtrzV5L4gzZkA==}
->>>>>>> f617c09681 (Prevent a "Maximum update depth exceeded" error when adding notices to the `woocommerce/checkout-totals-block` context (#54380))
-=======
-  '@wordpress/a11y@4.15.1':
-    resolution: {integrity: sha512-FQmTpffgFw2M/7MbgD83OemFWMQM05oomnkqMYtTKaJo5WPn4eL5wjJ+wk+XjeT+SdflQK0ZOgeEns998USdVA==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/api-fetch@3.23.1':
@@ -11948,18 +11887,8 @@ packages:
       react: ^18.0.0
       react-dom: ^18.0.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/components@29.1.1':
-    resolution: {integrity: sha512-rHYKLz62hDTXs+9WxyMRRPW0hWqAdIDlSp6FPYQi0utMtyD7yL+MQa9i4O/RVarzlKdj9Hv82KXU6cVFg7V3Vg==}
-=======
   '@wordpress/components@29.2.0':
     resolution: {integrity: sha512-a7vUL4oUGu4Jicqf0cFSdQvGtZVw9h4Gvxr53o8yJYmXY8YRVrbeEsZjA/twaqRa8WxGzzWnWNQ/XwtMEXNG0w==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/components@29.1.1':
-    resolution: {integrity: sha512-rHYKLz62hDTXs+9WxyMRRPW0hWqAdIDlSp6FPYQi0utMtyD7yL+MQa9i4O/RVarzlKdj9Hv82KXU6cVFg7V3Vg==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       react: ^18.0.0
@@ -12002,18 +11931,8 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/compose@7.15.1':
-    resolution: {integrity: sha512-ILDpfUSLNqXhNX+qbVOzbokGO78oKhK/czHrUHWxKCPsopMSR2e/oNptcwE8zA13AKq8/hSlFJPsKS2hi4Y9zA==}
-=======
   '@wordpress/compose@7.16.0':
     resolution: {integrity: sha512-FTpfEUeEyH3LnVRlNZxRwce3sEUPDAVI1P+AaF7ZrbzcV2ita4WamCoEHFDS4OMOnvISnSbVh2Rz3gF9oLvomQ==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/compose@7.15.1':
-    resolution: {integrity: sha512-ILDpfUSLNqXhNX+qbVOzbokGO78oKhK/czHrUHWxKCPsopMSR2e/oNptcwE8zA13AKq8/hSlFJPsKS2hi4Y9zA==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       react: ^18.0.0
@@ -12102,18 +12021,8 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/dataviews@4.11.1':
-    resolution: {integrity: sha512-2ECjY83j36ZqAQ1t71FXk95hEau2E3OvdgmArKPdyNpXp2usePFvZezBbcO6Gzd7yMaDKmqYMqO18XQolyi4KQ==}
-=======
   '@wordpress/dataviews@4.12.0':
     resolution: {integrity: sha512-hxUJ7OyXL131r1nY0Fm5PiN12+oMclCVooON3hwlh5/x0t/FydcsMp0toGrLmtQQz38VVKl9dIpjjLgUmpSbEw==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/dataviews@4.11.1':
-    resolution: {integrity: sha512-2ECjY83j36ZqAQ1t71FXk95hEau2E3OvdgmArKPdyNpXp2usePFvZezBbcO6Gzd7yMaDKmqYMqO18XQolyi4KQ==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       react: ^18.0.0
@@ -12150,18 +12059,8 @@ packages:
     resolution: {integrity: sha512-TT9HN0H72Eqhlaiy+XMDyZBlTBf2iZ936Q2tJdxsB4qBlG2ntLT3PviIPa+G44QYYxLomrUqTEYQ6FBxiJaNHg==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/date@5.15.1':
-    resolution: {integrity: sha512-TaDAZVnZaLbGrxYFwd5JKYbyK/pwQYVUXa22em7ng8GAW5thbx/8w16NRDZBJBqY0HJD0EvgnA5FMLbJPzyCtA==}
-=======
   '@wordpress/date@5.16.0':
     resolution: {integrity: sha512-Sb2eJ7S7bn7ODfe0WVgNEqLpilgwpKIoJjVxMxT8wtJpx4rEs25+BAyQ6Bpj6lxX9P99ZmPsdrq5YavxP9NKHg==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/date@5.15.1':
-    resolution: {integrity: sha512-TaDAZVnZaLbGrxYFwd5JKYbyK/pwQYVUXa22em7ng8GAW5thbx/8w16NRDZBJBqY0HJD0EvgnA5FMLbJPzyCtA==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/dependency-extraction-webpack-plugin@3.7.0':
@@ -12170,11 +12069,11 @@ packages:
     peerDependencies:
       webpack: ^4.8.3 || ^5.0.0
 
-  '@wordpress/dependency-extraction-webpack-plugin@4.28.0':
-    resolution: {integrity: sha512-/qfcNv6+cp+8guuNO88/inlFWf21UqeqxxcmcD+41rRfDr8+xqsHMmLwRvSip4KbT8veR2i7Gvem5H5E5x8uVA==}
-    engines: {node: '>=14'}
+  '@wordpress/dependency-extraction-webpack-plugin@6.16.0':
+    resolution: {integrity: sha512-AU6SFATdbUJsd/hqD6wUaZxbikibJ4L7RGpQ2MPUsXxXZCJU8pfPE3WWIOM1VemG4dJRJO+jk0lG8uH9pwdsfA==}
+    engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
-      webpack: ^4.8.3 || ^5.0.0
+      webpack: ^5.0.0
 
   '@wordpress/deprecated@2.12.3':
     resolution: {integrity: sha512-qr+yDfTQfI3M4h6oY6IeHWwoHr4jxbILjSlV+Ht6Jjto9Owap6OuzSqR13Ev4xqIoG4C7b5B3gZXVfwVDae1zg==}
@@ -12195,18 +12094,8 @@ packages:
     resolution: {integrity: sha512-lktJKX3AxrskTuLbJuKY/Mzg9De6MYcOzEEL+RUHxfIx8wMtiDnVTAf7epur9XuHVOmdgCCRT6D44I23MoS0sw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/deprecated@4.15.1':
-    resolution: {integrity: sha512-+N0fzjoBzoxGSKOtmJnnQD/jOL8oLPCfST/b0AB/LNaqgxi5IdKNqoONxcvrwcBKQYPM3dgm8as5OSDgldg3BA==}
-=======
   '@wordpress/deprecated@4.16.0':
     resolution: {integrity: sha512-apv94cskjvWqkanqNn3vP7lugJODkSkPlLqjKPY5iBXI0RATaKuxcTNxuO9/Gn5QcuM89fjhsGTcZ4X/SZTGNQ==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/deprecated@4.15.1':
-    resolution: {integrity: sha512-+N0fzjoBzoxGSKOtmJnnQD/jOL8oLPCfST/b0AB/LNaqgxi5IdKNqoONxcvrwcBKQYPM3dgm8as5OSDgldg3BA==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/dom-ready@3.27.0':
@@ -12225,18 +12114,8 @@ packages:
     resolution: {integrity: sha512-qpadyGMRvLf7zOe4XtoIo409ZRJ7IrBI36fdEXjRWV8E+Cmcx3ldr5/2iLKJ2cqYg9geQWXDeiykSWOClNJx+w==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/dom-ready@4.15.0':
-    resolution: {integrity: sha512-Hzd4UZvsGhCrVOxdG++H3UseEj1rt5pNrvGvDg+hkLaBMnM1T4s8HUhHO77AYCYohyTvp6qR6SdiqMgiwnEnmg==}
-=======
   '@wordpress/dom-ready@4.16.0':
     resolution: {integrity: sha512-rlp7gZRRPsob8z+//tS8bHHRTlkRiOfbKA1SJmyfakU/p4fcEXskLfdq/0wGPZtoHnia6kLKUyFMWhIBe8SuYQ==}
->>>>>>> f617c09681 (Prevent a "Maximum update depth exceeded" error when adding notices to the `woocommerce/checkout-totals-block` context (#54380))
-=======
-  '@wordpress/dom-ready@4.15.0':
-    resolution: {integrity: sha512-Hzd4UZvsGhCrVOxdG++H3UseEj1rt5pNrvGvDg+hkLaBMnM1T4s8HUhHO77AYCYohyTvp6qR6SdiqMgiwnEnmg==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/dom@2.18.0':
@@ -12266,18 +12145,8 @@ packages:
     resolution: {integrity: sha512-1ZRCrDB2TV44GLwaUH9HRGQGQqXcawSEmzVPABQwfwzkUKijfbRdsWqpHrTLqlSZRImHEdp6oSON+1JmCNhXSw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/dom@4.15.1':
-    resolution: {integrity: sha512-sE5PSo20Q08LQd1t+yeOzu968EOtSV1SUrjW4a9zgzEOufdbFWmH6vOoRMGTbrqLnISttT0hfFWGifVUhcA0+g==}
-=======
   '@wordpress/dom@4.16.0':
     resolution: {integrity: sha512-iT9D8BnoSgD9w+viDCKtO7lfMmzku3tC7oLEakH6LNZRas0jQuTC46cfokMAz6HTchxiAnuXoPYHsCPhGzWy8Q==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/dom@4.15.1':
-    resolution: {integrity: sha512-sE5PSo20Q08LQd1t+yeOzu968EOtSV1SUrjW4a9zgzEOufdbFWmH6vOoRMGTbrqLnISttT0hfFWGifVUhcA0+g==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/e2e-test-utils-playwright@1.16.0':
@@ -12406,18 +12275,8 @@ packages:
     resolution: {integrity: sha512-7zW+14vHqEn45nszSLMUqE5IbzOtvgUUgF56qlMhwabpG4l/zhaj3gO3wLDI19C13ih1vOdSjzPc3At4fB3tRQ==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/element@6.15.1':
-    resolution: {integrity: sha512-RTKQwu+sgpdemzMPa/PT6XF+YqFxHIMH2MVEnCsDwaEusPYNmjJ3Lu8oTkgP+iWn2mhI21M/Xkb9jCgXeTnTyQ==}
-=======
   '@wordpress/element@6.16.0':
     resolution: {integrity: sha512-1Db9jeu7dxil/fJqAiLN5dA6gwoHWcgMSqZJ4dmZ0kMDMs40rtm6o60GFmAQGlrj+mmUvhOHTTwrBdpyfuv4bA==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/element@6.15.1':
-    resolution: {integrity: sha512-RTKQwu+sgpdemzMPa/PT6XF+YqFxHIMH2MVEnCsDwaEusPYNmjJ3Lu8oTkgP+iWn2mhI21M/Xkb9jCgXeTnTyQ==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/env@10.14.0':
@@ -12444,18 +12303,8 @@ packages:
     resolution: {integrity: sha512-3glY3MhXEHlPP0/hrS3vkRmAOHtutvoHGhkr8vnva6TLg4CsAeo42nYbuFJ+ukVMWdCtmV+28UjOeiYtG/fZOA==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/escape-html@3.15.0':
-    resolution: {integrity: sha512-m+bdBFMbii7Bm0q3L6ntVH0jr+/sUJC4sgpPuVpsjZTFrxGIiXa0J5Kv6lQoBCFM6I3zaVdjroUA24l7JVjXaA==}
-=======
   '@wordpress/escape-html@3.16.0':
     resolution: {integrity: sha512-Rb3nUsqK2tzLpKhSRO5IID5O+gvNlyHRkKVmTszTB+0vjK+yh0Mc4UPzdHksPo8K7KnlAFt3SgjcfWYo3LYyUA==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/escape-html@3.15.0':
-    resolution: {integrity: sha512-m+bdBFMbii7Bm0q3L6ntVH0jr+/sUJC4sgpPuVpsjZTFrxGIiXa0J5Kv6lQoBCFM6I3zaVdjroUA24l7JVjXaA==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/eslint-plugin@12.9.0':
@@ -12517,18 +12366,8 @@ packages:
     resolution: {integrity: sha512-LcorV5Z9XoJCKyj5Ulgw1HPHyM2mxsSInC7wl5cuIgDFmuwPTfRndUDGWz/v86GX1GnUIB0h/ggd53vx1HiW4A==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/hooks@4.15.0':
-    resolution: {integrity: sha512-cFf41dos4ng/XQ8cLBdR78kixNHUHoNooVIsK5b/W5d55UxPJViF2ifds0+1zFiytE7nKKfYM/SQDSSL1cY+cw==}
-=======
   '@wordpress/hooks@4.16.0':
     resolution: {integrity: sha512-W82L1PdIhJPNpEb2F+0NWzrDoUqZo6NnYID7qHCexBiagq4+QS4uydM6anyFvUNrpL51CmkCNu31Xi8HjpSTGg==}
->>>>>>> f617c09681 (Prevent a "Maximum update depth exceeded" error when adding notices to the `woocommerce/checkout-totals-block` context (#54380))
-=======
-  '@wordpress/hooks@4.15.0':
-    resolution: {integrity: sha512-cFf41dos4ng/XQ8cLBdR78kixNHUHoNooVIsK5b/W5d55UxPJViF2ifds0+1zFiytE7nKKfYM/SQDSSL1cY+cw==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/html-entities@3.24.0':
@@ -12551,18 +12390,8 @@ packages:
     resolution: {integrity: sha512-Bnop0k3yjtRhm4CedbsGG22OMLEeob4mYmTR9z0g0QP7OofEw1TINspizr+kQbOu4n1ubJ6YVC8T13Z2va1j0g==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/html-entities@4.15.0':
-    resolution: {integrity: sha512-fdvNXWHtylrVMurRXd9OXVR79FvyCgk7ypGSKyWkVplAaW2GR31t+vWAYhlufSB13dWcG/CRSngMnT30b4/7/w==}
-=======
   '@wordpress/html-entities@4.16.0':
     resolution: {integrity: sha512-wnCtif4GsQ3gZgINN2GK6+yLH+vIsW3ASvUfdUlxYMcvMagNhJsqaE6dqsnKkezD8q/WNL7zv82BDyGSLKeHNQ==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/html-entities@4.15.0':
-    resolution: {integrity: sha512-fdvNXWHtylrVMurRXd9OXVR79FvyCgk7ypGSKyWkVplAaW2GR31t+vWAYhlufSB13dWcG/CRSngMnT30b4/7/w==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/i18n@3.20.0':
@@ -12589,18 +12418,8 @@ packages:
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     hasBin: true
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/i18n@5.15.1':
-    resolution: {integrity: sha512-LDHGmFFevIVJoohvHnke2edCP5jPOfJJwjifANT/KrUvbulQhvYNeiBcecwvgVPZKyi0Jas/xGrtH6362YdhCg==}
-=======
   '@wordpress/i18n@5.16.0':
     resolution: {integrity: sha512-O4ZUvjS8AlYzTxvw7fmp3xk51rpKv1h2/dGFc/L+IB97UrCBAiC9HBv6FIHRF1gci4Vdu/QnCDw3qpC+N/2gCw==}
->>>>>>> f617c09681 (Prevent a "Maximum update depth exceeded" error when adding notices to the `woocommerce/checkout-totals-block` context (#54380))
-=======
-  '@wordpress/i18n@5.15.1':
-    resolution: {integrity: sha512-LDHGmFFevIVJoohvHnke2edCP5jPOfJJwjifANT/KrUvbulQhvYNeiBcecwvgVPZKyi0Jas/xGrtH6362YdhCg==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     hasBin: true
 
@@ -12612,18 +12431,8 @@ packages:
     resolution: {integrity: sha512-RMetpFwUIeh3sVj2+p6+QX5AW8pF7DvQzxH9jUr8YjaF2iLE64vy6m0cZz/X8xkSktHrXMuPJIr7YIVF20TEyw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/icons@10.15.1':
-    resolution: {integrity: sha512-62GlyUePiF7+AOUNWjVYQ6ghWtgdl0FU5Fl0wS1EKRP6oBFXJ1DdHgXKJImKSY72KC8Yk8uS6VfqIiK2tsOeGg==}
-=======
   '@wordpress/icons@10.16.0':
     resolution: {integrity: sha512-fHZujKpOkYD3JnPGCYqB1VafUiqsUOnpdVGdBd7En5ELwRg189a0NcI4EmM8OkeItNDml4LU/4nCCkypSy29eA==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/icons@10.15.1':
-    resolution: {integrity: sha512-62GlyUePiF7+AOUNWjVYQ6ghWtgdl0FU5Fl0wS1EKRP6oBFXJ1DdHgXKJImKSY72KC8Yk8uS6VfqIiK2tsOeGg==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/icons@10.6.0':
@@ -12702,18 +12511,8 @@ packages:
     resolution: {integrity: sha512-KOkZzOnmjpH7hzPiaXUjhUlfKIGTzL7qUdNHBC1SFDOYpnRUSw8f1AtWxRpPBHl5dieYVx0x1qjOWjm/DtTOXg==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/is-shallow-equal@5.15.0':
-    resolution: {integrity: sha512-HiYwLkLbztEk4xUpMH+OCjq9RimuW1A2lf5joJEmD6rEdb0NyeMWaU//IvuqMVfoTRACFTbxioIk0T8X57dX/g==}
-=======
   '@wordpress/is-shallow-equal@5.16.0':
     resolution: {integrity: sha512-9JI0bz7bQ9PdXPtXSnZXtbkyh0h7ZtojeG0lFtf9xtFkA56JUuMALa623v1YeuHKYbYmCc03/pqtpDKc/8QfVQ==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/is-shallow-equal@5.15.0':
-    resolution: {integrity: sha512-HiYwLkLbztEk4xUpMH+OCjq9RimuW1A2lf5joJEmD6rEdb0NyeMWaU//IvuqMVfoTRACFTbxioIk0T8X57dX/g==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/jest-console@4.1.1':
@@ -12800,18 +12599,8 @@ packages:
     resolution: {integrity: sha512-2i+N90HBMqQegtGqeVB8pJz8ZgKAY1eZmQegE9MXczYVac85DDOoxhY/41c44s6Kwl3waJ2Zght6UXE0OUFMxw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/keycodes@4.15.1':
-    resolution: {integrity: sha512-j+Ow7HTZgnI3kO48KIR/hevfOkozpX+CfiRlMF8LU/+YupmBDUKRKj6ZeOC1oIFkCKmZIHlXAa8uIfPxVMiaQw==}
-=======
   '@wordpress/keycodes@4.16.0':
     resolution: {integrity: sha512-T4kaFkw6R1VkcBk+F7B4gmzEhSPRJwpMdkP7roNvENzKGtXs49K4xO0koOZhWUlGpZvhPJ1WWERyoub8S7rX2A==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/keycodes@4.15.1':
-    resolution: {integrity: sha512-j+Ow7HTZgnI3kO48KIR/hevfOkozpX+CfiRlMF8LU/+YupmBDUKRKj6ZeOC1oIFkCKmZIHlXAa8uIfPxVMiaQw==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/lazy-import@2.14.0':
@@ -12848,8 +12637,8 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-  '@wordpress/notices@5.10.0':
-    resolution: {integrity: sha512-7FNcLsX2yV6VHtiJa+Hv++LnC9MgGT5VFHiufnBy6dUmEglwuI7cAgTeWqkL9HY2+eZcwEPU/0zoImCF93Lx+A==}
+  '@wordpress/notices@5.15.1':
+    resolution: {integrity: sha512-GozlClo8uWJ582WaAtGio2qfGns9IPRJxRI8tY7hPf8DQC9Uebz4CbVUHVndIEXULcDbUJQIQX3k3ZA5SDgmtA==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       react: ^18.0.0
@@ -12989,18 +12778,8 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/primitives@4.15.1':
-    resolution: {integrity: sha512-hLBgrnKoEjROuqqlRPjAI5A903LsnOCUnPgBJLuREXgSRFVmVJocRHmvD8o3HGSaaTLcHivfowUhhmdlVkeYfw==}
-=======
   '@wordpress/primitives@4.16.0':
     resolution: {integrity: sha512-mf5LPcA500KOo/UPiwNanNlH6Satwf4xBB1DPzw4InE67eACvAlde3oSYsoE6Uce6+7URRIefg9j47yXP2jkxw==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/primitives@4.15.1':
-    resolution: {integrity: sha512-hLBgrnKoEjROuqqlRPjAI5A903LsnOCUnPgBJLuREXgSRFVmVJocRHmvD8o3HGSaaTLcHivfowUhhmdlVkeYfw==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       react: ^18.0.0
@@ -13020,18 +12799,8 @@ packages:
     resolution: {integrity: sha512-Gjbw5NmRLrZ9KkiROJlL4I/s96bMlpd7gGkQbcCyyeLIZduGxQDzI4Jih5s0Xrm7Gj8WFd57wRDe/voZJR0ZsQ==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/priority-queue@3.15.0':
-    resolution: {integrity: sha512-7GVvayRW62f6Worl1uxYoodgEV5qMUOuTfrFdYailo9Ri++RdKKagPOSBHdHndqHeywmXFo8qgZYpHKy9HWnTg==}
-=======
   '@wordpress/priority-queue@3.16.0':
     resolution: {integrity: sha512-YmVPE/kHmAIEYiSnnfxQI7JBAvXxlCyVoGlfWxCJ/IH8W7gbZtl1R+iuRvT8L4Cdr+sUybT68Ry+o4o39OqURg==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/priority-queue@3.15.0':
-    resolution: {integrity: sha512-7GVvayRW62f6Worl1uxYoodgEV5qMUOuTfrFdYailo9Ri++RdKKagPOSBHdHndqHeywmXFo8qgZYpHKy9HWnTg==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/private-apis@0.20.0':
@@ -13062,18 +12831,8 @@ packages:
     resolution: {integrity: sha512-gH6ZHmkc01MC431nMyjxFmU/77jVliOwjuv6SffQUgHMJyM75LiKC8CU8LEeLWbn3obG87m/n7Quj5p2MjtaeA==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/private-apis@1.15.0':
-    resolution: {integrity: sha512-6AArbUvOUHSF3aXKE9QXoPNTfFCtFhQA2P4DoIDPrA9S8orwjpK2NQWiBS7XhbFrnETHix/JcEGiTbHLwhhizw==}
-=======
   '@wordpress/private-apis@1.16.0':
     resolution: {integrity: sha512-k/AQ11+vlbpSWhyOU5t8huoGdN+PursA8bUxVfhEnqcKRWTK+LKSmSEpdyL1sv6XJqznWYjgaNSdIxTkadsPpg==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/private-apis@1.15.0':
-    resolution: {integrity: sha512-6AArbUvOUHSF3aXKE9QXoPNTfFCtFhQA2P4DoIDPrA9S8orwjpK2NQWiBS7XhbFrnETHix/JcEGiTbHLwhhizw==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/private-apis@1.6.0':
@@ -13139,18 +12898,8 @@ packages:
     peerDependencies:
       react: ^18.0.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/rich-text@7.15.1':
-    resolution: {integrity: sha512-jUlAmAz+h+FERf5OoHW5mfEWbZGFpr/XAXOTso4irGiVOdB2CyRFb7YqXQ3RkkObbEaPjx0M6LbXrrRg2wJjfQ==}
-=======
   '@wordpress/rich-text@7.16.0':
     resolution: {integrity: sha512-p+9WPzVo5pXLr1Xt04gQ1kdYQYmw05r2Kp42tgIfFNjgCBH1plpSrzjCyV/dyHrZ7APpJFg8sNjlOJmyLQiCFg==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/rich-text@7.15.1':
-    resolution: {integrity: sha512-jUlAmAz+h+FERf5OoHW5mfEWbZGFpr/XAXOTso4irGiVOdB2CyRFb7YqXQ3RkkObbEaPjx0M6LbXrrRg2wJjfQ==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
     peerDependencies:
       react: ^18.0.0
@@ -13299,18 +13048,8 @@ packages:
     resolution: {integrity: sha512-WaLwZ+AlfXQm9PhLf6kwCBaD5DoKaIqelRsgAaqa4APjgMBlxktQ1dadime0CO9+e8R2kLwAE3rxQXhGjicRMw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/undo-manager@1.15.1':
-    resolution: {integrity: sha512-OJ/MSgHEn0pizpF4/ukJsoHpAfie8kFnJOJat8kEsqUVCFC1T58FgUcLiDf6cdDRZULS215cMueqJ7RF2hy6Hg==}
-=======
   '@wordpress/undo-manager@1.16.0':
     resolution: {integrity: sha512-IE3u5Yk8QzUhiLAiGmYostsygxQExs9mVWlZ1BAXniEGCAcVdvDv7IB16dIgQxCYG3/idvmFdNbN8aQGX+nEIg==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/undo-manager@1.15.1':
-    resolution: {integrity: sha512-OJ/MSgHEn0pizpF4/ukJsoHpAfie8kFnJOJat8kEsqUVCFC1T58FgUcLiDf6cdDRZULS215cMueqJ7RF2hy6Hg==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/url@2.22.2':
@@ -13378,18 +13117,8 @@ packages:
     resolution: {integrity: sha512-IhvIBhhzsNYuLT61ZtKWm7oMg4G0x//eQD8dlnsBA4edP8BiX1VzwA3wCtz9+QdEFzraPJAq9NG4RPxGQas4Nw==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/warning@3.15.0':
-    resolution: {integrity: sha512-qBE1kWiyey9rlLGQHf3ngdWgov58CV2a8tQR8UMy1EwKUDAS56UXJcAvfAi7b7aMN5gZ+hVa4LWK9WbVuKEdRg==}
-=======
   '@wordpress/warning@3.16.0':
     resolution: {integrity: sha512-XsgqRPvB+VSecXnD3VfvJJxhcdTTX4EkgdzvWspmQnw0rNCV636KByZVgolzYhvr3La9EgqO+MqXzwvPHg/xfQ==}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/warning@3.15.0':
-    resolution: {integrity: sha512-qBE1kWiyey9rlLGQHf3ngdWgov58CV2a8tQR8UMy1EwKUDAS56UXJcAvfAi7b7aMN5gZ+hVa4LWK9WbVuKEdRg==}
->>>>>>> e55b9de5b2 (text area)
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/warning@3.8.1':
@@ -22234,13 +21963,13 @@ packages:
     resolution: {integrity: sha512-Ie9z/WINcxxLp27BKOCHGde4ITq9UklYKDzVo1nhk5sqGEXU3FpkwP5GM2voTGJkGd9B3Otl+Q4uwSOeSUtOBA==}
     engines: {node: '>=14.16'}
 
-  playwright-core@1.46.1:
-    resolution: {integrity: sha512-h9LqIQaAv+CYvWzsZ+h3RsrqCStkBHlgo6/TJlFst3cOTlLghBQlJwPOZKQJTKNaD3QIB7aAVQ+gfWbN3NXB7A==}
+  playwright-core@1.49.1:
+    resolution: {integrity: sha512-BzmpVcs4kE2CH15rWfzpjzVGhWERJfmnXmniSyKeRZUs9Ws65m+RGIi7mjJK/euCegfn3i7jvqWeWyHe9y3Vgg==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.46.1:
-    resolution: {integrity: sha512-oPcr1yqoXLCkgKtD5eNUPLiN40rYEM39odNpIb6VE6S7/15gJmA1NzVv6zJYusV0e7tzvkU/utBFNa/Kpxmwng==}
+  playwright@1.49.1:
+    resolution: {integrity: sha512-VYL8zLoNTBxVOrJBbDuRgDWa3i+mfQgDTrL8Ah9QXZ7ax4Dsj0MSq5bYgytRnDVVe+njoKnfsYkH3HzqVj5UZA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -27311,25 +27040,6 @@ snapshots:
       - supports-color
 
   '@automattic/material-design-icons@1.0.0': {}
-
-  '@automattic/puppeteer-utils@https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50':
-    dependencies:
-      '@babel/cli': 7.23.4(@babel/core@7.23.5)
-      '@babel/core': 7.23.5
-      '@babel/preset-env': 7.23.5(@babel/core@7.23.5)
-      '@slack/web-api': 5.15.0
-      '@wordpress/e2e-test-utils': 3.0.0(jest@24.9.0)(puppeteer@2.1.1)
-      config: 3.3.7
-      eslint: 6.7.2
-      jest: 24.9.0
-      prettier: wp-prettier@1.19.1
-      puppeteer: 2.1.1
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - react-native
-      - supports-color
-      - utf-8-validate
 
   '@automattic/puppeteer-utils@https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))':
     dependencies:
@@ -34454,19 +34164,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   '@jest/test-sequencer@26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2))':
-=======
-  '@jest/test-sequencer@26.6.3':
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-  '@jest/test-sequencer@26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2))':
->>>>>>> e55b9de5b2 (text area)
-=======
-  '@jest/test-sequencer@26.6.3(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))':
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
     dependencies:
       '@jest/test-result': 26.6.2
       graceful-fs: 4.2.11
@@ -35429,9 +35127,9 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@playwright/test@1.46.1':
+  '@playwright/test@1.49.1':
     dependencies:
-      playwright: 1.46.1
+      playwright: 1.49.1
 
   '@pmmmwh/react-refresh-webpack-plugin@0.5.11(@types/webpack@4.41.38)(react-refresh@0.10.0)(type-fest@3.13.1)(webpack-dev-server@4.15.1(webpack-cli@4.10.0)(webpack@5.91.0))(webpack-hot-middleware@2.25.4)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))':
     dependencies:
@@ -37709,15 +37407,9 @@ snapshots:
       path-browserify: 1.0.1
       process: 0.11.10
       semver: 7.6.3
-<<<<<<< HEAD
       style-loader: 3.3.3(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       swc-loader: 0.2.3(@swc/core@1.3.100)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-      terser-webpack-plugin: 5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-=======
-      style-loader: 3.3.3(webpack@5.91.0)
-      swc-loader: 0.2.3(@swc/core@1.3.100)(webpack@5.91.0)
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       ts-dedent: 2.2.0
       url: 0.11.3
       util: 0.12.5
@@ -39008,7 +38700,7 @@ snapshots:
       flat-cache: 3.2.0
       micromatch: 4.0.7
       react-docgen-typescript: 2.2.2(typescript@5.7.2)
-      tslib: 2.6.3
+      tslib: 2.8.1
       typescript: 5.7.2
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
     transitivePeerDependencies:
@@ -39036,7 +38728,7 @@ snapshots:
       flat-cache: 3.2.0
       micromatch: 4.0.7
       react-docgen-typescript: 2.2.2(typescript@5.7.2)
-      tslib: 2.8.1
+      tslib: 2.6.3
       typescript: 5.7.2
       webpack: 5.91.0(esbuild@0.18.20)(webpack-cli@3.3.12(webpack@5.89.0))
     transitivePeerDependencies:
@@ -40831,15 +40523,7 @@ snapshots:
       '@types/node': 20.17.8
     optional: true
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   '@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)(typescript@5.7.2)':
-=======
-  '@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@8.55.0)(typescript@5.7.2))(eslint@8.55.0)(typescript@5.7.2)':
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-  '@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)(typescript@5.7.2)':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@typescript-eslint/experimental-utils': 4.33.0(eslint@7.32.0)(typescript@5.7.2)
       '@typescript-eslint/parser': 4.33.0(eslint@7.32.0)(typescript@5.7.2)
@@ -41607,11 +41291,7 @@ snapshots:
 
   '@woocommerce/e2e-environment@0.3.0(@babel/core@7.23.5)(encoding@0.1.13)(react-dom@18.3.1(react@18.3.1))(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))(react@18.3.1)':
     dependencies:
-<<<<<<< HEAD
       '@automattic/puppeteer-utils': https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))
-=======
-      '@automattic/puppeteer-utils': https://codeload.github.com/Automattic/puppeteer-utils/tar.gz/0f3ec50
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
       '@jest/test-sequencer': 25.5.4
       '@slack/web-api': 6.10.0
       '@woocommerce/api': 0.2.0
@@ -41698,27 +41378,11 @@ snapshots:
       '@wordpress/dom-ready': 4.10.0
       '@wordpress/i18n': 5.10.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/a11y@4.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/dom-ready': 4.15.0
-      '@wordpress/i18n': 5.15.1
-=======
   '@wordpress/a11y@4.16.0':
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/dom-ready': 4.16.0
       '@wordpress/i18n': 5.16.0
->>>>>>> f617c09681 (Prevent a "Maximum update depth exceeded" error when adding notices to the `woocommerce/checkout-totals-block` context (#54380))
-=======
-  '@wordpress/a11y@4.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/dom-ready': 4.15.0
-      '@wordpress/i18n': 5.15.1
->>>>>>> e55b9de5b2 (text area)
 
   '@wordpress/api-fetch@3.23.1(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))':
     dependencies:
@@ -42041,7 +41705,7 @@ snapshots:
       '@wordpress/is-shallow-equal': 5.10.0
       '@wordpress/keyboard-shortcuts': 5.10.0(react@18.3.1)
       '@wordpress/keycodes': 4.10.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/preferences': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/rich-text': 7.14.0(react@18.3.1)
@@ -42099,7 +41763,7 @@ snapshots:
       '@wordpress/is-shallow-equal': 5.10.0
       '@wordpress/keyboard-shortcuts': 5.10.0(react@18.3.1)
       '@wordpress/keycodes': 4.10.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/preferences': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/rich-text': 7.14.0(react@18.3.1)
@@ -42987,15 +42651,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/components@29.1.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-=======
   '@wordpress/components@29.2.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/components@29.1.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@ariakit/react': 0.4.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@babel/runtime': 7.25.7
@@ -43009,29 +42665,6 @@ snapshots:
       '@types/gradient-parser': 0.1.3
       '@types/highlight-words-core': 1.2.1
       '@use-gesture/react': 10.3.1(react@18.3.1)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e55b9de5b2 (text area)
-      '@wordpress/a11y': 4.15.1
-      '@wordpress/compose': 7.15.1(react@18.3.1)
-      '@wordpress/date': 5.15.1
-      '@wordpress/deprecated': 4.15.1
-      '@wordpress/dom': 4.15.1
-      '@wordpress/element': 6.15.1
-      '@wordpress/escape-html': 3.15.0
-      '@wordpress/hooks': 4.15.0
-      '@wordpress/html-entities': 4.15.0
-      '@wordpress/i18n': 5.15.1
-      '@wordpress/icons': 10.15.1(react@18.3.1)
-      '@wordpress/is-shallow-equal': 5.15.0
-      '@wordpress/keycodes': 4.15.1
-      '@wordpress/primitives': 4.15.1(react@18.3.1)
-      '@wordpress/private-apis': 1.15.0
-      '@wordpress/rich-text': 7.15.1(react@18.3.1)
-      '@wordpress/warning': 3.15.0
-<<<<<<< HEAD
-=======
       '@wordpress/a11y': 4.16.0
       '@wordpress/compose': 7.16.0(react@18.3.1)
       '@wordpress/date': 5.16.0
@@ -43049,9 +42682,6 @@ snapshots:
       '@wordpress/private-apis': 1.16.0
       '@wordpress/rich-text': 7.16.0(react@18.3.1)
       '@wordpress/warning': 3.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
->>>>>>> e55b9de5b2 (text area)
       change-case: 4.1.2
       clsx: 2.1.1
       colord: 2.9.3
@@ -43197,20 +42827,6 @@ snapshots:
       react: 18.3.1
       use-memo-one: 1.1.3(react@18.3.1)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/compose@7.15.1(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@types/mousetrap': 1.6.15
-      '@wordpress/deprecated': 4.15.1
-      '@wordpress/dom': 4.15.1
-      '@wordpress/element': 6.15.1
-      '@wordpress/is-shallow-equal': 5.15.0
-      '@wordpress/keycodes': 4.15.1
-      '@wordpress/priority-queue': 3.15.0
-      '@wordpress/undo-manager': 1.15.1
-=======
   '@wordpress/compose@7.16.0(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.7
@@ -43222,20 +42838,6 @@ snapshots:
       '@wordpress/keycodes': 4.16.0
       '@wordpress/priority-queue': 3.16.0
       '@wordpress/undo-manager': 1.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/compose@7.15.1(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@types/mousetrap': 1.6.15
-      '@wordpress/deprecated': 4.15.1
-      '@wordpress/dom': 4.15.1
-      '@wordpress/element': 6.15.1
-      '@wordpress/is-shallow-equal': 5.15.0
-      '@wordpress/keycodes': 4.15.1
-      '@wordpress/priority-queue': 3.15.0
-      '@wordpress/undo-manager': 1.15.1
->>>>>>> e55b9de5b2 (text area)
       change-case: 4.1.2
       clipboard: 2.0.11
       mousetrap: 1.6.5
@@ -43567,48 +43169,19 @@ snapshots:
       rememo: 4.0.2
       use-memo-one: 1.1.3(react@18.3.1)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/dataviews@4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@ariakit/react': 0.4.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@babel/runtime': 7.25.7
-      '@wordpress/components': 29.1.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@wordpress/compose': 7.15.1(react@18.3.1)
-      '@wordpress/data': 10.0.2(react@18.3.1)
-      '@wordpress/element': 6.15.1
-      '@wordpress/i18n': 5.15.1
-      '@wordpress/icons': 10.15.1(react@18.3.1)
-      '@wordpress/primitives': 4.15.1(react@18.3.1)
-      '@wordpress/private-apis': 1.15.0
-      '@wordpress/warning': 3.15.0
-=======
   '@wordpress/dataviews@4.12.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-=======
-  '@wordpress/dataviews@4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@ariakit/react': 0.4.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@babel/runtime': 7.25.7
-      '@wordpress/components': 29.1.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@wordpress/compose': 7.15.1(react@18.3.1)
+      '@wordpress/components': 29.2.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@wordpress/compose': 7.16.0(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-<<<<<<< HEAD
       '@wordpress/element': 6.16.0
       '@wordpress/i18n': 5.16.0
       '@wordpress/icons': 10.16.0(react@18.3.1)
       '@wordpress/primitives': 4.16.0(react@18.3.1)
       '@wordpress/private-apis': 1.16.0
       '@wordpress/warning': 3.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-      '@wordpress/element': 6.15.1
-      '@wordpress/i18n': 5.15.1
-      '@wordpress/icons': 10.15.1(react@18.3.1)
-      '@wordpress/primitives': 4.15.1(react@18.3.1)
-      '@wordpress/private-apis': 1.15.0
-      '@wordpress/warning': 3.15.0
->>>>>>> e55b9de5b2 (text area)
       clsx: 2.1.1
       react: 18.3.1
       remove-accents: 0.5.0
@@ -43697,33 +43270,14 @@ snapshots:
       moment: 2.29.4
       moment-timezone: 0.5.43
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/date@5.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/deprecated': 4.15.1
-      moment: 2.29.4
-      moment-timezone: 0.5.43
-
-  '@wordpress/dependency-extraction-webpack-plugin@3.7.0(webpack@5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0))':
-=======
   '@wordpress/date@5.16.0':
-=======
-  '@wordpress/date@5.15.1':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
-      '@wordpress/deprecated': 4.15.1
+      '@wordpress/deprecated': 4.16.0
       moment: 2.29.4
       moment-timezone: 0.5.43
 
-<<<<<<< HEAD
-  '@wordpress/dependency-extraction-webpack-plugin@3.7.0(webpack@5.89.0)':
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
   '@wordpress/dependency-extraction-webpack-plugin@3.7.0(webpack@5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0))':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       json2php: 0.0.4
       webpack: 5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0)
@@ -43747,19 +43301,10 @@ snapshots:
       webpack: 5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
       webpack-sources: 3.2.3
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/dependency-extraction-webpack-plugin@4.28.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))':
-=======
-  '@wordpress/dependency-extraction-webpack-plugin@6.16.0(webpack@5.91.0)':
->>>>>>> de9a1b5fad (Update @wordpress/dependency-extraction-webpack-plugin to 6.16.0 in @woocommerce/block-library (#54703))
-=======
-  '@wordpress/dependency-extraction-webpack-plugin@4.28.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))':
->>>>>>> e55b9de5b2 (text area)
+  '@wordpress/dependency-extraction-webpack-plugin@6.16.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))':
     dependencies:
       json2php: 0.0.7
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
-      webpack-sources: 3.2.3
 
   '@wordpress/deprecated@2.12.3':
     dependencies:
@@ -43786,24 +43331,10 @@ snapshots:
       '@babel/runtime': 7.25.7
       '@wordpress/hooks': 4.10.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/deprecated@4.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/hooks': 4.15.0
-=======
   '@wordpress/deprecated@4.16.0':
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/hooks': 4.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/deprecated@4.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/hooks': 4.15.0
->>>>>>> e55b9de5b2 (text area)
 
   '@wordpress/dom-ready@3.27.0':
     dependencies:
@@ -43821,15 +43352,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/dom-ready@4.15.0':
-=======
   '@wordpress/dom-ready@4.16.0':
->>>>>>> f617c09681 (Prevent a "Maximum update depth exceeded" error when adding notices to the `woocommerce/checkout-totals-block` context (#54380))
-=======
-  '@wordpress/dom-ready@4.15.0':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
 
@@ -43868,43 +43391,14 @@ snapshots:
       '@babel/runtime': 7.25.7
       '@wordpress/deprecated': 4.10.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/dom@4.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/deprecated': 4.15.1
-
-<<<<<<< HEAD
-  '@wordpress/e2e-test-utils-playwright@1.0.1(@playwright/test@1.46.1)(encoding@0.1.13)(typescript@5.7.2)':
-=======
-=======
   '@wordpress/dom@4.16.0':
-=======
-  '@wordpress/dom@4.15.1':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
-      '@wordpress/deprecated': 4.15.1
+      '@wordpress/deprecated': 4.16.0
 
-<<<<<<< HEAD
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-  '@wordpress/e2e-test-utils-playwright@1.0.1(@playwright/test@1.49.1)(encoding@0.1.13)(typescript@5.7.2)':
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-  '@wordpress/e2e-test-utils-playwright@1.0.1(@playwright/test@1.46.1)(encoding@0.1.13)(typescript@5.7.2)':
->>>>>>> e55b9de5b2 (text area)
-    dependencies:
-      '@playwright/test': 1.46.1
-      '@wordpress/api-fetch': 7.0.1
-      '@wordpress/keycodes': 4.0.1
-      '@wordpress/url': 4.0.1
-=======
   '@wordpress/e2e-test-utils-playwright@1.16.0(@playwright/test@1.49.1)':
     dependencies:
       '@playwright/test': 1.49.1
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
       change-case: 4.1.2
       form-data: 4.0.0
       get-port: 5.1.1
@@ -43944,18 +43438,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@wordpress/e2e-test-utils@3.0.0(jest@24.9.0)(puppeteer@2.1.1)':
-    dependencies:
-      '@babel/runtime': 7.26.0
-      '@wordpress/keycodes': 2.19.3
-      '@wordpress/url': 2.22.2(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))
-      jest: 24.9.0
-      lodash: 4.17.21
-      node-fetch: 1.7.3
-      puppeteer: 2.1.1
-    transitivePeerDependencies:
-      - react-native
-
   '@wordpress/e2e-test-utils@3.0.0(jest@24.9.0)(puppeteer@2.1.1)(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))':
     dependencies:
       '@babel/runtime': 7.26.0
@@ -43985,22 +43467,6 @@ snapshots:
       '@babel/runtime': 7.23.5
       '@wordpress/keycodes': 2.19.3
       '@wordpress/url': 2.22.2(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))
-<<<<<<< HEAD
-=======
-      jest: 29.7.0(@types/node@22.9.1)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))
-      lodash: 4.17.21
-      node-fetch: 2.7.0(encoding@0.1.13)
-      puppeteer: 17.1.3(encoding@0.1.13)
-    transitivePeerDependencies:
-      - encoding
-      - react-native
-
-  '@wordpress/e2e-test-utils@4.16.1(jest@25.5.4)(puppeteer@2.1.1)':
-    dependencies:
-      '@babel/runtime': 7.23.5
-      '@wordpress/keycodes': 2.19.3
-      '@wordpress/url': 2.22.2(react-native@0.73.0(@babel/core@7.23.5)(@babel/preset-env@7.25.7(@babel/core@7.23.5))(encoding@0.1.13)(react@18.3.1))
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
       jest: 25.5.4
       lodash: 4.17.21
       node-fetch: 2.7.0(encoding@0.1.13)
@@ -44009,7 +43475,6 @@ snapshots:
       - encoding
       - react-native
 
-<<<<<<< HEAD
   '@wordpress/e2e-test-utils@4.16.1(encoding@0.1.13)(jest@27.5.1(node-notifier@8.0.2)(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2)))(puppeteer@2.1.1)(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))':
     dependencies:
       '@babel/runtime': 7.23.5
@@ -44036,10 +43501,7 @@ snapshots:
       - encoding
       - react-native
 
-  '@wordpress/e2e-test-utils@7.11.0(encoding@0.1.13)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(puppeteer-core@23.10.3)':
-=======
   '@wordpress/e2e-test-utils@7.11.0(encoding@0.1.13)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(puppeteer-core@23.11.1)':
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
     dependencies:
       '@babel/runtime': 7.26.0
       '@wordpress/api-fetch': 6.21.0
@@ -44054,11 +43516,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-<<<<<<< HEAD
-  '@wordpress/e2e-tests@4.9.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(node-notifier@8.0.2)(puppeteer-core@23.10.3)(puppeteer@17.1.3(encoding@0.1.13))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
-=======
-  '@wordpress/e2e-tests@4.9.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(file-loader@6.2.0(webpack@5.91.0))(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(node-notifier@8.0.2)(puppeteer-core@23.11.1)(puppeteer@17.1.3(encoding@0.1.13))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
+  '@wordpress/e2e-tests@4.9.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(node-notifier@8.0.2)(puppeteer-core@23.11.1)(puppeteer@17.1.3(encoding@0.1.13))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
     dependencies:
       '@wordpress/e2e-test-utils': 7.11.0(encoding@0.1.13)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(puppeteer-core@23.11.1)
       '@wordpress/jest-console': 5.4.0(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))
@@ -44234,15 +43692,7 @@ snapshots:
       '@wordpress/core-commands': 1.11.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/core-data': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-<<<<<<< HEAD
-<<<<<<< HEAD
-      '@wordpress/dataviews': 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-=======
       '@wordpress/dataviews': 4.12.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-      '@wordpress/dataviews': 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> e55b9de5b2 (text area)
       '@wordpress/date': 5.10.0
       '@wordpress/deprecated': 4.10.0
       '@wordpress/dom': 4.10.0
@@ -44255,7 +43705,7 @@ snapshots:
       '@wordpress/icons': 10.11.0
       '@wordpress/keyboard-shortcuts': 5.10.0(react@18.3.1)
       '@wordpress/keycodes': 4.10.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/patterns': 2.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/plugins': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/preferences': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -44409,15 +43859,7 @@ snapshots:
       '@wordpress/compose': 7.0.1(react@18.3.1)
       '@wordpress/core-data': 7.0.7(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-<<<<<<< HEAD
-<<<<<<< HEAD
-      '@wordpress/dataviews': 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-=======
       '@wordpress/dataviews': 4.12.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-      '@wordpress/dataviews': 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> e55b9de5b2 (text area)
       '@wordpress/date': 5.0.1
       '@wordpress/deprecated': 4.0.1
       '@wordpress/dom': 4.0.1
@@ -44491,7 +43933,7 @@ snapshots:
       '@wordpress/keyboard-shortcuts': 5.10.0(react@18.3.1)
       '@wordpress/keycodes': 4.10.0
       '@wordpress/media-utils': 5.10.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/patterns': 2.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.0.10)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/plugins': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/preferences': 4.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -44598,28 +44040,12 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/element@6.15.1':
-=======
   '@wordpress/element@6.16.0':
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/element@6.15.1':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
       '@types/react': 18.3.16
       '@types/react-dom': 18.3.0
-<<<<<<< HEAD
-<<<<<<< HEAD
-      '@wordpress/escape-html': 3.15.0
-=======
       '@wordpress/escape-html': 3.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-      '@wordpress/escape-html': 3.15.0
->>>>>>> e55b9de5b2 (text area)
       change-case: 4.1.2
       is-plain-object: 5.0.0
       react: 18.3.1
@@ -44662,27 +44088,11 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/escape-html@3.15.0':
-    dependencies:
-      '@babel/runtime': 7.25.7
-
-  '@wordpress/eslint-plugin@12.9.0(@babel/core@7.26.0)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(eslint@8.55.0)(jest@27.5.1(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(typescript@5.7.2)(wp-prettier@2.6.2)':
-=======
   '@wordpress/escape-html@3.16.0':
     dependencies:
       '@babel/runtime': 7.25.7
 
-  '@wordpress/eslint-plugin@12.9.0(@babel/core@7.26.0)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(eslint@8.55.0)(jest@27.5.1(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(typescript@5.7.2)(wp-prettier@2.6.2)':
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/escape-html@3.15.0':
-    dependencies:
-      '@babel/runtime': 7.25.7
-
   '@wordpress/eslint-plugin@12.9.0(@babel/core@7.26.0)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(eslint@8.55.0)(jest@27.5.1(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(typescript@5.7.2)(wp-prettier@2.6.2)':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/core': 7.26.0
       '@babel/eslint-parser': 7.23.3(@babel/core@7.26.0)(eslint@8.55.0)
@@ -44801,29 +44211,13 @@ snapshots:
   '@wordpress/eslint-plugin@9.3.0(@babel/core@7.26.0)(eslint@7.32.0)(typescript@5.7.2)':
     dependencies:
       '@babel/eslint-parser': 7.23.3(@babel/core@7.26.0)(eslint@7.32.0)
-<<<<<<< HEAD
-<<<<<<< HEAD
       '@typescript-eslint/eslint-plugin': 4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)(typescript@5.7.2)
-=======
-      '@typescript-eslint/eslint-plugin': 4.33.0(@typescript-eslint/parser@4.33.0(eslint@8.55.0)(typescript@5.7.2))(eslint@8.55.0)(typescript@5.7.2)
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-      '@typescript-eslint/eslint-plugin': 4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)(typescript@5.7.2)
->>>>>>> e55b9de5b2 (text area)
       '@typescript-eslint/parser': 4.33.0(eslint@7.32.0)(typescript@5.7.2)
       '@wordpress/prettier-config': 1.4.0(wp-prettier@2.2.1-beta-1)
       cosmiconfig: 7.1.0
       eslint: 7.32.0
       eslint-config-prettier: 7.2.0(eslint@7.32.0)
-<<<<<<< HEAD
-<<<<<<< HEAD
       eslint-plugin-import: 2.29.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)
-=======
-      eslint-plugin-import: 2.29.0(@typescript-eslint/parser@4.33.0(eslint@8.55.0)(typescript@5.7.2))(eslint@7.32.0)
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-      eslint-plugin-import: 2.29.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)
->>>>>>> e55b9de5b2 (text area)
       eslint-plugin-jest: 24.7.0(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)(typescript@5.7.2)
       eslint-plugin-jsdoc: 36.1.1(eslint@7.32.0)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@7.32.0)
@@ -44850,21 +44244,13 @@ snapshots:
       '@wordpress/compose': 7.10.0(react@18.3.1)
       '@wordpress/core-data': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.0.10)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-<<<<<<< HEAD
-<<<<<<< HEAD
-      '@wordpress/dataviews': 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-=======
       '@wordpress/dataviews': 4.12.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-      '@wordpress/dataviews': 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> e55b9de5b2 (text area)
       '@wordpress/element': 6.10.0
       '@wordpress/hooks': 4.10.0
       '@wordpress/html-entities': 4.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/patterns': 2.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.0.10)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/primitives': 4.11.0(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
@@ -44891,21 +44277,13 @@ snapshots:
       '@wordpress/compose': 7.10.0(react@18.3.1)
       '@wordpress/core-data': 7.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-<<<<<<< HEAD
-<<<<<<< HEAD
-      '@wordpress/dataviews': 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-=======
       '@wordpress/dataviews': 4.12.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-      '@wordpress/dataviews': 4.11.1(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
->>>>>>> e55b9de5b2 (text area)
       '@wordpress/element': 6.10.0
       '@wordpress/hooks': 4.10.0
       '@wordpress/html-entities': 4.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/patterns': 2.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/primitives': 4.11.0(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
@@ -44939,15 +44317,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/hooks@4.15.0':
-=======
   '@wordpress/hooks@4.16.0':
->>>>>>> f617c09681 (Prevent a "Maximum update depth exceeded" error when adding notices to the `woocommerce/checkout-totals-block` context (#54380))
-=======
-  '@wordpress/hooks@4.15.0':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
 
@@ -44971,15 +44341,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/html-entities@4.15.0':
-=======
   '@wordpress/html-entities@4.16.0':
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/html-entities@4.15.0':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
 
@@ -45029,24 +44391,10 @@ snapshots:
       sprintf-js: 1.1.3
       tannin: 1.2.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/i18n@5.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/hooks': 4.15.0
-=======
   '@wordpress/i18n@5.16.0':
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/hooks': 4.16.0
->>>>>>> f617c09681 (Prevent a "Maximum update depth exceeded" error when adding notices to the `woocommerce/checkout-totals-block` context (#54380))
-=======
-  '@wordpress/i18n@5.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/hooks': 4.15.0
->>>>>>> e55b9de5b2 (text area)
       gettext-parser: 1.4.0
       memize: 2.1.0
       sprintf-js: 1.1.3
@@ -45066,27 +44414,11 @@ snapshots:
       '@wordpress/element': 6.0.1
       '@wordpress/primitives': 3.4.1
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/icons@10.15.1(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/element': 6.15.1
-      '@wordpress/primitives': 4.15.1(react@18.3.1)
-=======
   '@wordpress/icons@10.16.0(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/element': 6.16.0
       '@wordpress/primitives': 4.16.0(react@18.3.1)
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/icons@10.15.1(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/element': 6.15.1
-      '@wordpress/primitives': 4.15.1(react@18.3.1)
->>>>>>> e55b9de5b2 (text area)
     transitivePeerDependencies:
       - react
 
@@ -45243,15 +44575,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/is-shallow-equal@5.15.0':
-=======
   '@wordpress/is-shallow-equal@5.16.0':
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/is-shallow-equal@5.15.0':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
 
@@ -45452,24 +44776,10 @@ snapshots:
       '@babel/runtime': 7.25.7
       '@wordpress/i18n': 5.10.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/keycodes@4.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/i18n': 5.15.1
-=======
   '@wordpress/keycodes@4.16.0':
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/i18n': 5.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/keycodes@4.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/i18n': 5.15.1
->>>>>>> e55b9de5b2 (text area)
 
   '@wordpress/lazy-import@2.14.0':
     dependencies:
@@ -45522,10 +44832,10 @@ snapshots:
       '@wordpress/data': 10.0.2(react@18.3.1)
       react: 18.3.1
 
-  '@wordpress/notices@5.10.0(react@18.3.1)':
+  '@wordpress/notices@5.15.1(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.7
-      '@wordpress/a11y': 4.10.0
+      '@wordpress/a11y': 4.16.0
       '@wordpress/data': 10.0.2(react@18.3.1)
       react: 18.3.1
 
@@ -45577,7 +44887,7 @@ snapshots:
       '@wordpress/html-entities': 4.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/url': 4.10.0
       react: 18.3.1
@@ -45604,7 +44914,7 @@ snapshots:
       '@wordpress/html-entities': 4.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/url': 4.10.0
       react: 18.3.1
@@ -45837,24 +45147,10 @@ snapshots:
       clsx: 2.1.1
       react: 18.3.1
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/primitives@4.15.1(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/element': 6.15.1
-=======
   '@wordpress/primitives@4.16.0(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/element': 6.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/primitives@4.15.1(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/element': 6.15.1
->>>>>>> e55b9de5b2 (text area)
       clsx: 2.1.1
       react: 18.3.1
 
@@ -45877,15 +45173,7 @@ snapshots:
       '@babel/runtime': 7.25.7
       requestidlecallback: 0.3.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/priority-queue@3.15.0':
-=======
   '@wordpress/priority-queue@3.16.0':
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/priority-queue@3.15.0':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
       requestidlecallback: 0.3.0
@@ -45918,15 +45206,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.7
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/private-apis@1.15.0':
-=======
   '@wordpress/private-apis@1.16.0':
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/private-apis@1.15.0':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
 
@@ -46011,7 +45291,7 @@ snapshots:
       '@wordpress/element': 6.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/url': 4.10.0
       react: 18.3.1
@@ -46035,7 +45315,7 @@ snapshots:
       '@wordpress/element': 6.10.0
       '@wordpress/i18n': 5.10.0
       '@wordpress/icons': 10.11.0
-      '@wordpress/notices': 5.10.0(react@18.3.1)
+      '@wordpress/notices': 5.15.1(react@18.3.1)
       '@wordpress/private-apis': 1.10.0
       '@wordpress/url': 4.10.0
       react: 18.3.1
@@ -46122,43 +45402,17 @@ snapshots:
       memize: 2.1.0
       react: 18.3.1
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/rich-text@7.15.1(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/a11y': 4.15.1
-      '@wordpress/compose': 7.15.1(react@18.3.1)
-      '@wordpress/data': 10.0.2(react@18.3.1)
-      '@wordpress/deprecated': 4.15.1
-      '@wordpress/element': 6.15.1
-      '@wordpress/escape-html': 3.15.0
-      '@wordpress/i18n': 5.15.1
-      '@wordpress/keycodes': 4.15.1
-=======
   '@wordpress/rich-text@7.16.0(react@18.3.1)':
-=======
-  '@wordpress/rich-text@7.15.1(react@18.3.1)':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/runtime': 7.25.7
-      '@wordpress/a11y': 4.15.1
-      '@wordpress/compose': 7.15.1(react@18.3.1)
+      '@wordpress/a11y': 4.16.0
+      '@wordpress/compose': 7.16.0(react@18.3.1)
       '@wordpress/data': 10.0.2(react@18.3.1)
-<<<<<<< HEAD
       '@wordpress/deprecated': 4.16.0
       '@wordpress/element': 6.16.0
       '@wordpress/escape-html': 3.16.0
       '@wordpress/i18n': 5.16.0
       '@wordpress/keycodes': 4.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-      '@wordpress/deprecated': 4.15.1
-      '@wordpress/element': 6.15.1
-      '@wordpress/escape-html': 3.15.0
-      '@wordpress/i18n': 5.15.1
-      '@wordpress/keycodes': 4.15.1
->>>>>>> e55b9de5b2 (text area)
       memize: 2.1.0
       react: 18.3.1
 
@@ -46207,22 +45461,8 @@ snapshots:
       eslint-plugin-markdown: 2.2.1(eslint@7.32.0)
       expect-puppeteer: 4.4.0
       filenamify: 4.3.0
-<<<<<<< HEAD
-<<<<<<< HEAD
       jest: 26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2))
       jest-circus: 26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2))
-=======
-      jest: 26.6.3(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))
-<<<<<<< HEAD
-      jest-circus: 26.6.3
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-      jest: 26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2))
-      jest-circus: 26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2))
->>>>>>> e55b9de5b2 (text area)
-=======
-      jest-circus: 26.6.3(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
       jest-dev-server: 5.0.3(debug@4.3.4)
       jest-environment-node: 26.6.2
       markdownlint: 0.23.1
@@ -46273,94 +45513,7 @@ snapshots:
       - utf-8-validate
       - webpack-dev-server
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   '@wordpress/scripts@23.7.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
-=======
-  '@wordpress/scripts@19.2.4(@babel/core@7.26.0)(@swc/core@1.3.100)(file-loader@6.2.0(webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))(typescript@5.7.2)(uglify-js@3.17.4)':
-    dependencies:
-      '@svgr/webpack': 5.5.0
-      '@wordpress/babel-preset-default': 6.17.0
-      '@wordpress/browserslist-config': 4.1.3
-      '@wordpress/dependency-extraction-webpack-plugin': 3.7.0(webpack@5.89.0)
-      '@wordpress/eslint-plugin': 9.3.0(@babel/core@7.26.0)(eslint@7.32.0)(typescript@5.7.2)
-      '@wordpress/jest-preset-default': 7.1.3(@babel/core@7.26.0)(jest@26.6.3(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@wordpress/npm-package-json-lint-config': 4.32.0(npm-package-json-lint@5.4.2)
-      '@wordpress/postcss-plugins-preset': 3.6.1(postcss@8.4.32)
-      '@wordpress/prettier-config': 1.4.0(wp-prettier@2.2.1-beta-1)
-      '@wordpress/stylelint-config': 19.1.0(stylelint@13.13.1)
-      babel-jest: 26.6.3(@babel/core@7.26.0)
-      babel-loader: 8.3.0(@babel/core@7.26.0)(webpack@5.89.0)
-      browserslist: 4.19.3
-      chalk: 4.1.2
-      check-node-version: 4.2.1
-      clean-webpack-plugin: 3.0.0(webpack@5.89.0)
-      cross-spawn: 5.1.0
-      css-loader: 6.8.1(webpack@5.89.0)
-      cssnano: 5.1.12(postcss@8.4.32)
-      cwd: 0.10.0
-      dir-glob: 3.0.1
-      eslint: 7.32.0
-      eslint-plugin-markdown: 2.2.1(eslint@7.32.0)
-      expect-puppeteer: 4.4.0
-      filenamify: 4.3.0
-      jest: 26.6.3(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))
-      jest-circus: 26.6.3(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))
-      jest-dev-server: 5.0.3(debug@4.3.4)
-      jest-environment-node: 26.6.2
-      markdownlint: 0.23.1
-      markdownlint-cli: 0.27.1
-      merge-deep: 3.0.3
-      mini-css-extract-plugin: 2.7.6(webpack@5.89.0)
-      minimist: 1.2.8
-      npm-package-json-lint: 5.4.2
-      postcss: 8.4.32
-      postcss-loader: 6.2.1(postcss@8.4.32)(webpack@5.89.0)
-      prettier: wp-prettier@2.2.1-beta-1
-      puppeteer-core: 10.4.0
-      read-pkg-up: 1.0.1
-      resolve-bin: 0.4.3
-      sass: 1.69.5
-      sass-loader: 12.6.0(sass@1.69.5)(webpack@5.89.0)
-      source-map-loader: 3.0.2(webpack@5.89.0)
-      stylelint: 13.13.1
-      terser-webpack-plugin: 5.3.6(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0)
-      url-loader: 4.1.1(file-loader@6.2.0(webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4)))(webpack@5.89.0)
-      webpack: 5.89.0(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack-cli@4.10.0)
-      webpack-bundle-analyzer: 4.7.0
-      webpack-cli: 4.10.0(webpack-bundle-analyzer@4.7.0)(webpack@5.89.0)
-      webpack-livereload-plugin: 3.0.2(webpack@5.89.0)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@swc/core'
-      - '@webpack-cli/generators'
-      - '@webpack-cli/migrate'
-      - bufferutil
-      - canvas
-      - debug
-      - esbuild
-      - eslint-import-resolver-typescript
-      - eslint-import-resolver-webpack
-      - fibers
-      - file-loader
-      - node-sass
-      - postcss-jsx
-      - postcss-markdown
-      - react
-      - react-dom
-      - sass-embedded
-      - supports-color
-      - ts-node
-      - typescript
-      - uglify-js
-      - utf-8-validate
-      - webpack-dev-server
-
-  '@wordpress/scripts@23.7.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(file-loader@6.2.0(webpack@5.91.0))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-  '@wordpress/scripts@23.7.2(@swc/core@1.3.100)(@types/webpack@4.41.38)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
->>>>>>> e55b9de5b2 (text area)
     dependencies:
       '@babel/core': 7.26.0
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.11(@types/webpack@4.41.38)(react-refresh@0.10.0)(type-fest@3.13.1)(webpack-dev-server@4.15.1(webpack-cli@4.10.0)(webpack@5.91.0))(webpack-hot-middleware@2.25.4)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))
@@ -46413,13 +45566,8 @@ snapshots:
       sass-loader: 12.6.0(sass@1.69.5)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))
       source-map-loader: 3.0.2(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))
       stylelint: 14.16.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
-      url-loader: 4.1.1(file-loader@6.2.0(webpack@5.91.0))(webpack@5.91.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
       webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-bundle-analyzer: 4.7.0
       webpack-cli: 4.10.0(webpack-bundle-analyzer@4.7.0)(webpack-dev-server@4.15.1)(webpack@5.91.0)
@@ -46451,45 +45599,17 @@ snapshots:
       - webpack-hot-middleware
       - webpack-plugin-serve
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/scripts@30.6.0(@playwright/test@1.46.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
-=======
-  '@wordpress/scripts@30.6.0(@playwright/test@1.49.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(file-loader@6.2.0(webpack@5.91.0))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
+  '@wordpress/scripts@30.6.0(@playwright/test@1.49.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
     dependencies:
       '@babel/core': 7.25.7
-      '@playwright/test': 1.46.1
+      '@playwright/test': 1.49.1
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.11(@types/webpack@4.41.38)(react-refresh@0.14.2)(type-fest@3.13.1)(webpack-dev-server@4.15.1(webpack-cli@5.1.4)(webpack@5.97.1))(webpack-hot-middleware@2.25.4)(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       '@svgr/webpack': 8.1.0(typescript@5.7.2)
       '@wordpress/babel-preset-default': 8.13.0
       '@wordpress/browserslist-config': 6.0.1
       '@wordpress/dependency-extraction-webpack-plugin': 3.7.0(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-      '@wordpress/e2e-test-utils-playwright': 1.0.1(@playwright/test@1.46.1)(encoding@0.1.13)(typescript@5.7.2)
-      '@wordpress/eslint-plugin': 14.7.0(@babel/core@7.25.7)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(eslint@8.55.0)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(typescript@5.7.2)(wp-prettier@3.0.3)
-=======
-  '@wordpress/scripts@30.6.0(@playwright/test@1.49.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(file-loader@6.2.0(webpack@5.91.0))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
-=======
-  '@wordpress/scripts@30.6.0(@playwright/test@1.46.1)(@swc/core@1.3.100)(@types/node@20.17.8)(@types/webpack@4.41.38)(babel-plugin-macros@3.1.0)(encoding@0.1.13)(esbuild@0.18.20)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(node-notifier@8.0.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2))(type-fest@3.13.1)(typescript@5.7.2)(webpack-hot-middleware@2.25.4)':
->>>>>>> e55b9de5b2 (text area)
-    dependencies:
-      '@babel/core': 7.25.7
-      '@playwright/test': 1.46.1
-      '@pmmmwh/react-refresh-webpack-plugin': 0.5.11(@types/webpack@4.41.38)(react-refresh@0.14.2)(type-fest@3.13.1)(webpack-dev-server@4.15.1(webpack-cli@5.1.4)(webpack@5.97.1))(webpack-hot-middleware@2.25.4)(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-      '@svgr/webpack': 8.1.0(typescript@5.7.2)
-      '@wordpress/babel-preset-default': 8.13.0
-      '@wordpress/browserslist-config': 6.0.1
-<<<<<<< HEAD
-      '@wordpress/dependency-extraction-webpack-plugin': 3.7.0(webpack@5.97.1)
       '@wordpress/e2e-test-utils-playwright': 1.16.0(@playwright/test@1.49.1)
-      '@wordpress/eslint-plugin': 14.7.0(@babel/core@7.25.7)(eslint-import-resolver-typescript@3.6.1)(eslint-import-resolver-webpack@0.13.2)(eslint@8.55.0)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(typescript@5.7.2)(wp-prettier@3.0.3)
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-      '@wordpress/dependency-extraction-webpack-plugin': 3.7.0(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-      '@wordpress/e2e-test-utils-playwright': 1.0.1(@playwright/test@1.46.1)(encoding@0.1.13)(typescript@5.7.2)
       '@wordpress/eslint-plugin': 14.7.0(@babel/core@7.25.7)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint-import-resolver-webpack@0.13.2)(eslint-plugin-import@2.28.1)(eslint@8.55.0))(eslint-import-resolver-webpack@0.13.2(eslint-plugin-import@2.28.1)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(eslint@8.55.0)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(typescript@5.7.2)(wp-prettier@3.0.3)
->>>>>>> e55b9de5b2 (text area)
       '@wordpress/jest-preset-default': 8.5.2(@babel/core@7.25.7)(jest@29.7.0(@types/node@20.17.8)(babel-plugin-macros@3.1.0)(node-notifier@8.0.2)(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@20.17.8)(typescript@5.7.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/npm-package-json-lint-config': 4.32.0(npm-package-json-lint@6.4.0(typescript@5.7.2))
       '@wordpress/postcss-plugins-preset': 1.6.0
@@ -46538,13 +45658,8 @@ snapshots:
       schema-utils: 4.2.0
       source-map-loader: 3.0.2(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       stylelint: 16.11.0(typescript@5.7.2)
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)))(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1)
-      url-loader: 4.1.1(file-loader@6.2.0(webpack@5.91.0))(webpack@5.97.1)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
       webpack: 5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
       webpack-bundle-analyzer: 4.10.2
       webpack-cli: 5.1.4(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@4.15.1)(webpack@5.97.1)
@@ -46804,24 +45919,10 @@ snapshots:
       '@babel/runtime': 7.25.7
       '@wordpress/is-shallow-equal': 5.10.0
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/undo-manager@1.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/is-shallow-equal': 5.15.0
-=======
   '@wordpress/undo-manager@1.16.0':
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/is-shallow-equal': 5.16.0
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/undo-manager@1.15.1':
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@wordpress/is-shallow-equal': 5.15.0
->>>>>>> e55b9de5b2 (text area)
 
   '@wordpress/url@2.22.2(react-native@0.73.0(@babel/core@7.12.9)(@babel/preset-env@7.12.7(@babel/core@7.12.9))(encoding@0.1.13)(react@18.3.1))':
     dependencies:
@@ -46900,15 +46001,7 @@ snapshots:
 
   '@wordpress/warning@3.10.0': {}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-  '@wordpress/warning@3.15.0': {}
-=======
   '@wordpress/warning@3.16.0': {}
->>>>>>> be602de39d ([Settings] Use DataForms to render settings fields (#54041))
-=======
-  '@wordpress/warning@3.15.0': {}
->>>>>>> e55b9de5b2 (text area)
 
   '@wordpress/warning@3.8.1': {}
 
@@ -51859,15 +50952,7 @@ snapshots:
       '@typescript-eslint/experimental-utils': 4.33.0(eslint@7.32.0)(typescript@5.7.2)
       eslint: 7.32.0
     optionalDependencies:
-<<<<<<< HEAD
-<<<<<<< HEAD
       '@typescript-eslint/eslint-plugin': 4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)(typescript@5.7.2)
-=======
-      '@typescript-eslint/eslint-plugin': 4.33.0(@typescript-eslint/parser@4.33.0(eslint@8.55.0)(typescript@5.7.2))(eslint@8.55.0)(typescript@5.7.2)
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-      '@typescript-eslint/eslint-plugin': 4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@5.7.2))(eslint@7.32.0)(typescript@5.7.2)
->>>>>>> e55b9de5b2 (text area)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -55302,19 +54387,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   jest-circus@26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2)):
-=======
-  jest-circus@26.6.3:
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-  jest-circus@26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2)):
->>>>>>> e55b9de5b2 (text area)
-=======
-  jest-circus@26.6.3(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2)):
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
     dependencies:
       '@babel/traverse': 7.25.3
       '@jest/environment': 26.6.2
@@ -55577,19 +54650,7 @@ snapshots:
   jest-config@26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2)):
     dependencies:
       '@babel/core': 7.26.0
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
       '@jest/test-sequencer': 26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2))
-=======
-      '@jest/test-sequencer': 26.6.3
->>>>>>> 4ea5334467 ([dev] Bump Playwright to version 1.49.1 (#54346))
-=======
-      '@jest/test-sequencer': 26.6.3(ts-node@10.9.2(@types/node@20.17.8)(typescript@5.7.2))
->>>>>>> e55b9de5b2 (text area)
-=======
-      '@jest/test-sequencer': 26.6.3(ts-node@10.9.2(@swc/core@1.3.100)(@types/node@22.9.1)(typescript@5.7.2))
->>>>>>> ccc6eb86c7 (Bump e2e-test-utils-playwright package to use latest version (#54635))
       '@jest/types': 26.6.2
       babel-jest: 26.6.3(@babel/core@7.26.0)
       chalk: 4.1.2
@@ -60272,11 +59333,11 @@ snapshots:
     dependencies:
       find-up: 6.3.0
 
-  playwright-core@1.46.1: {}
+  playwright-core@1.49.1: {}
 
-  playwright@1.46.1:
+  playwright@1.49.1:
     dependencies:
-      playwright-core: 1.46.1
+      playwright-core: 1.49.1
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -64499,46 +63560,13 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 5.0.1
       source-map: 0.6.1
-<<<<<<< HEAD
-      terser: 5.31.6
-      webpack: 4.47.0(webpack-cli@3.3.12(webpack@5.89.0))
-=======
       terser: 5.36.0
-      webpack: 4.47.0(webpack-cli@3.3.12)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      webpack: 4.47.0(webpack-cli@3.3.12(webpack@5.89.0))
       webpack-sources: 1.4.3
     transitivePeerDependencies:
       - bluebird
 
-<<<<<<< HEAD
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
-
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
-
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)):
-=======
   terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)):
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
@@ -64546,6 +63574,30 @@ snapshots:
       serialize-javascript: 6.0.2
       terser: 5.36.0
       webpack: 5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)
+    optionalDependencies:
+      '@swc/core': 1.3.100
+      esbuild: 0.18.20
+
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)
+    optionalDependencies:
+      '@swc/core': 1.3.100
+      esbuild: 0.18.20
+
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
     optionalDependencies:
       '@swc/core': 1.3.100
       esbuild: 0.18.20
@@ -64562,23 +63614,7 @@ snapshots:
       '@swc/core': 1.3.100
       esbuild: 0.18.20
 
-<<<<<<< HEAD
-  terser-webpack-plugin@5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)):
-=======
-  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 4.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.36.0
-      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
-
-  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1):
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
@@ -64590,142 +63626,92 @@ snapshots:
       '@swc/core': 1.3.100
       esbuild: 0.18.20
 
-<<<<<<< HEAD
-  terser-webpack-plugin@5.3.10(esbuild@0.18.20)(webpack@5.91.0(esbuild@0.18.20)(webpack-cli@3.3.12(webpack@5.89.0))):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.91.0(esbuild@0.18.20)(webpack-cli@3.3.12(webpack@5.89.0))
-=======
-  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0):
+  terser-webpack-plugin@5.3.11(esbuild@0.18.20)(webpack@5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.89.0(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack-cli@4.10.0)
+      webpack: 5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12)
     optionalDependencies:
-      '@swc/core': 1.3.100
+      esbuild: 0.18.20
+
+  terser-webpack-plugin@5.3.11(esbuild@0.18.20)(webpack@5.91.0(esbuild@0.18.20)(webpack-cli@3.3.12(webpack@5.89.0))):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.91.0(esbuild@0.18.20)(webpack-cli@3.3.12(webpack@5.89.0))
+    optionalDependencies:
+      esbuild: 0.18.20
+
+  terser-webpack-plugin@5.3.11(uglify-js@3.17.4)(webpack@5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0)
+    optionalDependencies:
       uglify-js: 3.17.4
 
-  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4)):
+  terser-webpack-plugin@5.3.11(webpack@5.70.0(webpack-cli@3.3.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
-    optionalDependencies:
-      esbuild: 0.18.20
+      webpack: 5.70.0(webpack-cli@3.3.12)
 
-<<<<<<< HEAD
-  terser-webpack-plugin@5.3.10(webpack@5.91.0(webpack-cli@3.3.12(webpack@5.89.0))):
+  terser-webpack-plugin@5.3.11(webpack@5.89.0(webpack-cli@3.3.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.89.0(webpack-cli@3.3.12)
+
+  terser-webpack-plugin@5.3.11(webpack@5.89.0(webpack-cli@4.10.0)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.89.0(webpack-cli@4.10.0)
+
+  terser-webpack-plugin@5.3.11(webpack@5.89.0):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
+      webpack: 5.89.0
+
+  terser-webpack-plugin@5.3.11(webpack@5.91.0(webpack-cli@3.3.12(webpack@5.89.0))):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.25
+      jest-worker: 27.5.1
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
       webpack: 5.91.0(webpack-cli@3.3.12(webpack@5.89.0))
 
-  terser-webpack-plugin@5.3.10(webpack@5.91.0(webpack-cli@3.3.12)):
+  terser-webpack-plugin@5.3.11(webpack@5.91.0(webpack-cli@3.3.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
+      schema-utils: 4.3.0
+      serialize-javascript: 6.0.2
+      terser: 5.36.0
       webpack: 5.91.0(webpack-cli@3.3.12)
-
-  terser-webpack-plugin@5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.20
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0)
-=======
-  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(webpack@5.70.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 4.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.36.0
-      webpack: 5.70.0(@swc/core@1.3.100)(webpack-cli@3.3.12)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-
-  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(webpack@5.89.0(@swc/core@1.3.100)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 4.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.36.0
-      webpack: 5.89.0(@swc/core@1.3.100)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-
-  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(webpack@5.89.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 4.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.36.0
-      webpack: 5.89.0(@swc/core@1.3.100)(webpack-cli@3.3.12)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-
-  terser-webpack-plugin@5.3.11(@swc/core@1.3.100)(webpack@5.91.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 4.3.0
-      serialize-javascript: 6.0.2
-      terser: 5.36.0
-      webpack: 5.91.0(@swc/core@1.3.100)(webpack-cli@3.3.12)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
-
-  terser-webpack-plugin@5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.20
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
-
-<<<<<<< HEAD
-  terser-webpack-plugin@5.3.6(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)):
-=======
-  terser-webpack-plugin@5.3.6(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0):
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.20
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-<<<<<<< HEAD
-      webpack: 5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
 
   terser-webpack-plugin@5.3.6(uglify-js@3.17.4)(webpack@5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0)):
     dependencies:
@@ -64738,83 +63724,6 @@ snapshots:
     optionalDependencies:
       uglify-js: 3.17.4
 
-  terser-webpack-plugin@5.3.6(webpack@5.70.0(webpack-cli@3.3.12)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.20
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.70.0(webpack-cli@3.3.12)
-
-  terser-webpack-plugin@5.3.9(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(@swc/core@1.3.100)(esbuild@0.18.20)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      esbuild: 0.18.20
-
-  terser-webpack-plugin@5.3.9(esbuild@0.18.20)(webpack@5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12)
-    optionalDependencies:
-      esbuild: 0.18.20
-
-  terser-webpack-plugin@5.3.9(uglify-js@3.17.4)(webpack@5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0)
-    optionalDependencies:
-      uglify-js: 3.17.4
-
-  terser-webpack-plugin@5.3.9(webpack@5.89.0(webpack-cli@3.3.12)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(webpack-cli@3.3.12)
-
-  terser-webpack-plugin@5.3.9(webpack@5.89.0(webpack-cli@4.10.0)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0(webpack-cli@4.10.0)
-
-  terser-webpack-plugin@5.3.9(webpack@5.89.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 3.3.0
-      serialize-javascript: 6.0.1
-      terser: 5.26.0
-      webpack: 5.89.0
-
-=======
-      webpack: 5.89.0(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack-cli@4.10.0)
-    optionalDependencies:
-      '@swc/core': 1.3.100
-      uglify-js: 3.17.4
-
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
   terser@4.8.1:
     dependencies:
       acorn: 8.12.1
@@ -66629,11 +65538,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.6(webpack@5.70.0(webpack-cli@3.3.12))
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.70.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      terser-webpack-plugin: 5.3.11(webpack@5.70.0(webpack-cli@3.3.12))
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -66666,11 +65571,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.9(webpack@5.89.0)
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.89.0(@swc/core@1.3.100))
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      terser-webpack-plugin: 5.3.11(webpack@5.89.0)
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     transitivePeerDependencies:
@@ -66732,44 +65633,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.9(esbuild@0.18.20)(webpack@5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12))
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.89.0)
-      watchpack: 2.4.0
-      webpack-sources: 3.2.3
-    optionalDependencies:
-      webpack-cli: 4.10.0(webpack-bundle-analyzer@4.7.0)(webpack@5.89.0)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
-
-  webpack@5.89.0(@swc/core@1.3.100)(webpack-cli@3.3.12):
-    dependencies:
-      '@types/eslint-scope': 3.7.7
-      '@types/estree': 1.0.5
-      '@webassemblyjs/ast': 1.11.6
-      '@webassemblyjs/wasm-edit': 1.11.6
-      '@webassemblyjs/wasm-parser': 1.11.6
-      acorn: 8.12.1
-      acorn-import-assertions: 1.9.0(acorn@8.12.1)
-      browserslist: 4.19.3
-      chrome-trace-event: 1.0.3
-      enhanced-resolve: 5.16.0
-      es-module-lexer: 1.4.1
-      eslint-scope: 5.1.1
-      events: 3.3.0
-      glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.11
-      json-parse-even-better-errors: 2.3.1
-      loader-runner: 4.3.0
-      mime-types: 2.1.35
-      neo-async: 2.6.2
-      schema-utils: 3.3.0
-      tapable: 2.2.1
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.89.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      terser-webpack-plugin: 5.3.11(esbuild@0.18.20)(webpack@5.89.0(esbuild@0.18.20)(webpack-cli@3.3.12))
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -66802,8 +65666,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.9(uglify-js@3.17.4)(webpack@5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0))
+      terser-webpack-plugin: 5.3.11(uglify-js@3.17.4)(webpack@5.89.0(uglify-js@3.17.4)(webpack-cli@4.10.0))
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -66836,7 +65699,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(webpack@5.89.0(webpack-cli@3.3.12))
+      terser-webpack-plugin: 5.3.11(webpack@5.89.0(webpack-cli@3.3.12))
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -66869,10 +65732,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.9(webpack@5.89.0(webpack-cli@4.10.0))
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.89.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      terser-webpack-plugin: 5.3.11(webpack@5.89.0(webpack-cli@4.10.0))
       watchpack: 2.4.0
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -66936,11 +65796,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@4.10.0))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -66973,11 +65829,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.91.0(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -67010,8 +65862,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.10(esbuild@0.18.20)(webpack@5.91.0(esbuild@0.18.20)(webpack-cli@3.3.12(webpack@5.89.0)))
+      terser-webpack-plugin: 5.3.11(esbuild@0.18.20)(webpack@5.91.0(esbuild@0.18.20)(webpack-cli@3.3.12(webpack@5.89.0)))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -67044,7 +65895,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(webpack@5.91.0(webpack-cli@3.3.12(webpack@5.89.0)))
+      terser-webpack-plugin: 5.3.11(webpack@5.91.0(webpack-cli@3.3.12(webpack@5.89.0)))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -67077,10 +65928,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(webpack@5.91.0(webpack-cli@3.3.12))
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(webpack@5.91.0)
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
+      terser-webpack-plugin: 5.3.11(webpack@5.91.0(webpack-cli@3.3.12))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -67112,49 +65960,11 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-<<<<<<< HEAD
-      terser-webpack-plugin: 5.3.10(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
+      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1(@swc/core@1.3.100)(esbuild@0.18.20)(webpack-cli@5.1.4))
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:
       webpack-cli: 5.1.4(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@4.15.1)(webpack@5.97.1)
-=======
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(esbuild@0.18.20)(webpack@5.97.1)
-      watchpack: 2.4.1
-      webpack-sources: 3.2.3
-    optionalDependencies:
-      webpack-cli: 5.1.4(webpack-bundle-analyzer@4.7.0)(webpack-dev-server@4.15.1)(webpack@5.91.0)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
-
-  webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4):
-    dependencies:
-      '@types/eslint-scope': 3.7.7
-      '@types/estree': 1.0.6
-      '@webassemblyjs/ast': 1.14.1
-      '@webassemblyjs/wasm-edit': 1.14.1
-      '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.14.0
-      browserslist: 4.24.2
-      chrome-trace-event: 1.0.3
-      enhanced-resolve: 5.17.1
-      es-module-lexer: 1.4.1
-      eslint-scope: 5.1.1
-      events: 3.3.0
-      glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.11
-      json-parse-even-better-errors: 2.3.1
-      loader-runner: 4.3.0
-      mime-types: 2.1.35
-      neo-async: 2.6.2
-      schema-utils: 3.3.0
-      tapable: 2.2.1
-      terser-webpack-plugin: 5.3.11(@swc/core@1.3.100)(uglify-js@3.17.4)(webpack@5.97.1(@swc/core@1.3.100)(uglify-js@3.17.4))
-      watchpack: 2.4.1
-      webpack-sources: 3.2.3
->>>>>>> 2c221f8697 (Update Webpack Terser Plugin, use a shared config in blocks webpack configs to reduce duplication (#54706))
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild
