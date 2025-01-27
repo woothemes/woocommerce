@@ -21,7 +21,7 @@ class DefaultFreeExtensions {
 	 * @return string
 	 */
 	private static function get_woo_logo() {
-		return plugins_url( '/assets/images/core-profiler/logo-woo', WC_PLUGIN_FILE );
+		return plugins_url( '/assets/images/core-profiler/logo-woo.svg', WC_PLUGIN_FILE );
 	}
 
 	/**
