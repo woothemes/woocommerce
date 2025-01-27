@@ -8,7 +8,7 @@ import type { store as StoreType } from '@wordpress/interactivity'; // Todo: if 
 /**
  * Internal dependencies
  */
-import type { Store as WooStore } from '../../../../base/stores/add-to-cart';
+import type { Store as WooStore } from '../../../../base/stores/cart-items';
 
 interface Context {
 	addToCartText: string;
@@ -38,8 +38,8 @@ interface Store {
 		displayViewCart: boolean;
 	};
 	actions: {
-		addToCart: () => void;
-		refreshCart: () => void;
+		addCartItem: () => void;
+		refreshCartItems: () => void;
 		handleAnimationEnd: ( event: AnimationEvent ) => void;
 	};
 	callbacks: {
@@ -102,25 +102,26 @@ const { state } = ( store as typeof StoreType )< Store >(
 			},
 		},
 		actions: {
-			*addToCart() {
+			*addCartItem() {
 				const context = getContext();
 				const { productId, quantityToAdd } = context;
 
-				// Todo: move the addToCart store to its own module.
+				// Todo: move the CartItems store part to its own module.
 				const { actions } = ( yield import(
-					'../../../../base/stores/add-to-cart'
+					'../../../../base/stores/cart-items'
 				) ) as WooStore;
 
-				actions.addToCart( productId, state.quantity + quantityToAdd );
+				actions.addCartItem( {
+					id: productId,
+					quantity: state.quantity + quantityToAdd,
+				} );
 			},
-			*refreshCart() {
-				// Question: use `splitTask` here? Does it make sense?
-				// Question: does it make sense to use a dynamic import instead of a static one?
-				// Todo: move the addToCart store to its own module.
+			*refreshCartItems() {
+				// Todo: move the CartItems store part to its own module.
 				const { actions } = ( yield import(
-					'../../../../base/stores/add-to-cart'
+					'../../../../base/stores/cart-items'
 				) ) as WooStore;
-				actions.refreshCart();
+				actions.refreshCartItems();
 			},
 			handleAnimationEnd( event: AnimationEvent ) {
 				const context = getContext();
