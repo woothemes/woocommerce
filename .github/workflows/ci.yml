@@ -142,6 +142,7 @@ jobs:
         name: 'Checkout'
         with:
           # WooCommerce core package uses phpcs-changed for linting, which requires non-shallow git-history.
+          # We tried to speed checkout, but `git merge-base ...` used on different levels of tooling forces us to follow this approach. 
           fetch-depth: ${{ ( ( matrix.projectName == '@woocommerce/plugin-woocommerce' && '0' ) || '1' ) }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
