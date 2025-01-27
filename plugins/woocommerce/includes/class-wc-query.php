@@ -981,7 +981,7 @@ class WC_Query {
 	 * @param string $status (default: 'instock').
 	 * @return array
 	 */
-	public function stock_status_meta_query( $status = ProductStockStatus::IN_STOCK ) {
+	public function stock_status_meta_query( $status = ProductStockStatus::IN_STOCK ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		return array();
 	}
 

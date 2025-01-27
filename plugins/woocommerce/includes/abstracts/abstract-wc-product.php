@@ -1719,6 +1719,13 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_in_stock() {
+		/**
+		 * Filters whether a product is in stock.
+		 *
+		 * @since 2.7.0
+		 * @param bool          $in_stock Whether the product is in stock.
+		 * @param WC_Product    $product  Product object.
+		 */
 		return apply_filters( 'woocommerce_product_is_in_stock', ProductStockStatus::OUT_OF_STOCK !== $this->get_stock_status(), $this );
 	}
 
