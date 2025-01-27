@@ -191,7 +191,7 @@ const productGallery = {
 		openDialog: () => {
 			const context = getContext();
 			context.isDialogOpen = true;
-			const triggerElement = getElement()?.ref as HTMLElement;
+			const triggerElement = getElement()?.ref;
 			if ( triggerElement ) {
 				context.elementThatTriggeredDialogOpening = triggerElement;
 			}
