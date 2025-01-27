@@ -2,12 +2,8 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import {
-	type Options as NoticeOptions,
-	store as noticesStore,
-} from '@wordpress/notices';
+import type { Options as NoticeOptions } from '@wordpress/notices';
 import { select, dispatch } from '@wordpress/data';
-import { paymentStore, storeNoticesStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -38,13 +34,13 @@ export const createNotice = (
 ) => {
 	const noticeContext = options?.context;
 	const suppressNotices =
-		select( paymentStore ).isExpressPaymentMethodActive();
+		select( 'wc/store/payment' ).isExpressPaymentMethodActive();
 
 	if ( suppressNotices || noticeContext === undefined ) {
 		return;
 	}
 
-	dispatch( noticesStore ).createNotice( status, message, {
+	dispatch( 'core/notices' ).createNotice( status, message, {
 		isDismissible: true,
 		...options,
 		context: noticeContext,
@@ -58,9 +54,11 @@ export const createNotice = (
  * @see https://github.com/WordPress/gutenberg/pull/44059
  */
 export const removeAllNotices = () => {
-	const containers = select( storeNoticesStore ).getRegisteredContainers();
-	const { removeNotice } = dispatch( noticesStore );
-	const { getNotices } = select( noticesStore );
+	const containers = select(
+		'wc/store/store-notices'
+	).getRegisteredContainers();
+	const { removeNotice } = dispatch( 'core/notices' );
+	const { getNotices } = select( 'core/notices' );
 
 	containers.forEach( ( container ) => {
 		getNotices( container ).forEach( ( notice ) => {
@@ -70,8 +68,8 @@ export const removeAllNotices = () => {
 };
 
 export const removeNoticesWithContext = ( context: string ) => {
-	const { removeNotice } = dispatch( noticesStore );
-	const { getNotices } = select( noticesStore );
+	const { removeNotice } = dispatch( 'core/notices' );
+	const { getNotices } = select( 'core/notices' );
 
 	getNotices( context ).forEach( ( notice ) => {
 		removeNotice( notice.id, context );
