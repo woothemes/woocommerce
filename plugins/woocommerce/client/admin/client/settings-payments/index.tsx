@@ -200,16 +200,18 @@ export const SettingsPaymentsMethods = () => {
 	const onPaymentMethodsContinueClick = useCallback( () => {
 		// Record the event along with payment methods selected
 		recordEvent( 'wcpay_settings_payment_methods_continue', {
-			selected_payment_methods: Object.keys( paymentMethodsState ).filter(
-				( paymentMethod ) =>
-					paymentMethodsState[ paymentMethod ] === true
-			),
-			deselected_payment_methods: Object.keys(
-				paymentMethodsState
-			).filter(
-				( paymentMethod ) =>
-					paymentMethodsState[ paymentMethod ] === false
-			),
+			selected_payment_methods: Object.keys( paymentMethodsState )
+				.filter(
+					( paymentMethod ) =>
+						paymentMethodsState[ paymentMethod ] === true
+				)
+				.join( ', ' ),
+			deselected_payment_methods: Object.keys( paymentMethodsState )
+				.filter(
+					( paymentMethod ) =>
+						paymentMethodsState[ paymentMethod ] === false
+				)
+				.join( ', ' ),
 		} );
 
 		setIsCompleted( true );
