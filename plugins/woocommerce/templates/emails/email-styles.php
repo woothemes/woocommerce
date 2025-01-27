@@ -31,6 +31,7 @@ $base             = get_option( 'woocommerce_email_base_color' );
 $text             = get_option( 'woocommerce_email_text_color' );
 $footer_text      = get_option( 'woocommerce_email_footer_text_color' );
 $header_alignment = get_option( 'woocommerce_email_header_alignment', $email_improvements_enabled ? 'left' : false );
+$logo_image_width = get_option( 'woocommerce_email_header_image_width', '120' );
 $default_font     = 'Helvetica';
 $font_family      = $email_improvements_enabled ? get_option( 'woocommerce_email_font_family', $default_font ) : $default_font;
 
@@ -142,7 +143,7 @@ body {
 }
 
 #template_header_image img {
-	width: 120px
+	width: <?php echo esc_attr( $logo_image_width ); ?>px;
 }
 
 .email-logo-text {
