@@ -3,7 +3,7 @@
     {
       "post_title": "WooCommerce developer documentation",
       "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/README.md",
-      "hash": "e2fcc6ad9781cad5abc6ae17f31eae7c930fc07c37848d7a8141fa5bbe13110f",
+      "hash": "f6c49a9bd5838c85a648be084ff5d65326f3394b5c7927a65dd7f0c8bf073c5e",
       "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/README.md",
       "id": "65f434b31529b2793f7f7adcadfec487c797bdd2",
       "links": {
@@ -298,7 +298,7 @@
               "menu_title": "Checkout Flow and Events",
               "tags": "reference",
               "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/checkout-payment-methods/checkout-flow-and-events.md",
-              "hash": "dcc4af69b2614b0722431f81a312558bf3c5fa349021849d241bf896e02813a7",
+              "hash": "8759412c671ef972d4ce737f14f786387a9cd8ea628a65bff13a2648245b407c",
               "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/checkout-payment-methods/checkout-flow-and-events.md",
               "id": "499384cbb48ed96a2e12653cd68bd82d123a20a1",
               "links": {
@@ -821,7 +821,7 @@
           "post_title": "WooCommerce extension development best practices",
           "menu_title": "Best Practices",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/extension-development-best-practices.md",
-          "hash": "e70da25a57254820d094df736e79974d345deee234dcd2e56897d1feb76700d4",
+          "hash": "e834979b88a8cad198b2dbf0e1d0a59d3b1d3ffee424325b0aeb5ba83782659b",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/extension-development-best-practices.md",
           "id": "83050f0142b6de00b73b3638d46ddddc5a2f8b12",
           "links": {
@@ -1915,5 +1915,5 @@
       "categories": []
     }
   ],
-  "hash": "35c7649104b1618028b6e2dcaeb2cd79bcc1b12af5b3b6506d2ca3809f277541"
+  "hash": "fde09b69fe66305c8599d0a5b9678f67fe72d825177637ba26f225a17fd80774"
 }
