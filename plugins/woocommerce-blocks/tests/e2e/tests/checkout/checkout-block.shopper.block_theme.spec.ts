@@ -19,6 +19,7 @@ import {
 	FREE_SHIPPING_PRICE,
 	FLAT_RATE_SHIPPING_NAME,
 	FLAT_RATE_SHIPPING_PRICE,
+	SIMPLE_VIRTUAL_PRODUCT_NAME,
 } from './constants';
 import { CheckoutPage } from './checkout.page';
 
@@ -702,6 +703,43 @@ test.describe( 'Shopper → Place Virtual Order', () => {
 			path: 'wc/v3/settings/general/woocommerce_ship_to_countries',
 			data: { value: 'disabled' },
 		} );
+	} );
+
+	test( 'Does not see shipping options for digital orders when shipping is enabled', async ( {
+		checkoutPageObject,
+		frontendUtils,
+		localPickupUtils,
+		page,
+		requestUtils,
+	} ) => {
+		await requestUtils.rest( {
+			method: 'PUT',
+			path: 'wc/v3/settings/general/woocommerce_ship_to_countries',
+			data: { value: 'all' },
+		} );
+		await localPickupUtils.enableLocalPickup();
+
+		await frontendUtils.goToShop();
+		await frontendUtils.addToCart( SIMPLE_VIRTUAL_PRODUCT_NAME );
+		await frontendUtils.goToCart();
+
+		await expect(
+			page.getByText( 'Delivery', { exact: true } )
+		).toBeHidden();
+
+		await frontendUtils.goToCheckout();
+
+		await expect( page.getByText( 'Ship', { exact: true } ) ).toBeHidden();
+		await expect(
+			page.getByText( 'Pickup', { exact: true } )
+		).toBeHidden();
+
+		await checkoutPageObject.fillInCheckoutWithTestData();
+		await checkoutPageObject.placeOrder();
+
+		await expect(
+			page.getByText( 'Thank you. Your order has been received.' )
+		).toBeVisible();
 	} );
 
 	test( 'can place a digital order when shipping is disabled', async ( {
