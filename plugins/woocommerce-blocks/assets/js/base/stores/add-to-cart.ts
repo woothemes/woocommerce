@@ -22,6 +22,18 @@ export interface Store {
 	};
 }
 
+type CartResponse =
+	| Store[ 'state' ][ 'cart' ]
+	| { data: { status: number }; message: string; code: string };
+
+function isSuccessfulCartResponse(
+	json: CartResponse
+): json is Store[ 'state' ][ 'cart' ] {
+	return (
+		! ( 'data' in json ) || json.data.status?.toString().startsWith( '2' )
+	);
+}
+
 let pendingRefresh = false;
 
 // Todo: Remove the type cast once we import from `@wordpress/interactivity`.
@@ -48,7 +60,7 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 
 				// Updates the database.
 				try {
-					const res: Response = yield fetch(
+					const json: CartResponse = yield fetch(
 						`${ state.restUrl }wc/store/v1/cart/${ endpoint }`,
 						{
 							method: 'POST',
@@ -58,13 +70,17 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 							},
 							body: JSON.stringify( item ),
 						}
-					);
+					).then( ( res ) => res.json() );
 
-					if ( ! res.status.toString().startsWith( '2' ) )
-						// Question: what error string should we use? Is there a standard in Woo?
-						throw new Error( 'Failed to add item to cart.' );
+					// Checks if the response contains an error.
+					if ( ! isSuccessfulCartResponse( json ) ) {
+						throw Object.assign( new Error( json.message ), {
+							code: json.code,
+						} );
+					}
 
-					state.cart = yield res.json();
+					// Updates the local cart.
+					state.cart = json;
 				} catch ( error ) {
 					// Todo: Handle error using the new Store Notices block.
 					// const { actions } = store('woocommerce/store-notices');
@@ -82,17 +98,24 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 				pendingRefresh = true;
 
 				try {
-					const res: Response = yield fetch(
+					const json: CartResponse = yield fetch(
 						`${ state.restUrl }wc/store/v1/cart`,
 						{ headers: { 'Content-Type': 'application/json' } }
-					);
-					state.cart = yield res.json();
+					).then( ( res ) => res.json() );
 
-					if ( ! res.status.toString().startsWith( '2' ) )
-						// Question: what error string should we use? Is there a standard in Woo?
-						throw new Error( 'Failed to refresh the cart.' );
+					// Checks if the response contains an error.
+					if ( ! isSuccessfulCartResponse( json ) ) {
+						throw Object.assign( new Error( json.message ), {
+							code: json.code,
+						} );
+					}
+
+					// Updates the local cart.
+					state.cart = json;
 				} catch ( error ) {
 					// Question: what should we do if this fails? Should we retry? Inform the user?
+					// eslint-disable-next-line no-console
+					console.error( error );
 				} finally {
 					pendingRefresh = false;
 				}
