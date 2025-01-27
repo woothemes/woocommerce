@@ -22,16 +22,20 @@ export interface Store {
 	};
 }
 
-type CartResponse =
-	| Store[ 'state' ][ 'cart' ]
-	| { data: { status: number }; message: string; code: string };
+type StoreAPIError = { message: string; code: string };
+type CartResponse = Store[ 'state' ][ 'cart' ] | StoreAPIError;
 
 function isSuccessfulCartResponse(
+	res: Response,
 	json: CartResponse
 ): json is Store[ 'state' ][ 'cart' ] {
-	return (
-		! ( 'data' in json ) || json.data.status?.toString().startsWith( '2' )
-	);
+	return res.status.toString().startsWith( '2' );
+}
+
+function generateError( json: StoreAPIError ) {
+	return Object.assign( new Error( json.message || 'Unknown error.' ), {
+		code: json.code || 'unknown_error',
+	} );
 }
 
 let pendingRefresh = false;
@@ -60,7 +64,7 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 
 				// Updates the database.
 				try {
-					const json: CartResponse = yield fetch(
+					const res: Response = yield fetch(
 						`${ state.restUrl }wc/store/v1/cart/${ endpoint }`,
 						{
 							method: 'POST',
@@ -70,14 +74,12 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 							},
 							body: JSON.stringify( item ),
 						}
-					).then( ( res ) => res.json() );
+					);
+					const json: CartResponse = yield res.json();
 
 					// Checks if the response contains an error.
-					if ( ! isSuccessfulCartResponse( json ) ) {
-						throw Object.assign( new Error( json.message ), {
-							code: json.code,
-						} );
-					}
+					if ( ! isSuccessfulCartResponse( res, json ) )
+						throw generateError( json );
 
 					// Updates the local cart.
 					state.cart = json;
@@ -98,17 +100,15 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 				pendingRefresh = true;
 
 				try {
-					const json: CartResponse = yield fetch(
+					const res: Response = yield fetch(
 						`${ state.restUrl }wc/store/v1/cart`,
 						{ headers: { 'Content-Type': 'application/json' } }
-					).then( ( res ) => res.json() );
+					);
+					const json: CartResponse = yield res.json();
 
 					// Checks if the response contains an error.
-					if ( ! isSuccessfulCartResponse( json ) ) {
-						throw Object.assign( new Error( json.message ), {
-							code: json.code,
-						} );
-					}
+					if ( ! isSuccessfulCartResponse( res, json ) )
+						throw generateError( json );
 
 					// Updates the local cart.
 					state.cart = json;
