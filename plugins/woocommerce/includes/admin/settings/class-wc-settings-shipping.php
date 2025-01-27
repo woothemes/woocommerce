@@ -133,7 +133,6 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 
 				array(
 					'desc'          => __( 'Hide shipping costs until an address is entered', 'woocommerce' ),
-					'desc_tip'      => __( 'Local pickup rates will display in the Checkout, even without an address.', 'woocommerce' ),
 					'id'            => 'woocommerce_shipping_cost_requires_address',
 					'default'       => 'no',
 					'type'          => 'checkbox',
