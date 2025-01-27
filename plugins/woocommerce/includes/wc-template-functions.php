@@ -12,6 +12,7 @@ use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\Utilities\HtmlSanitizer;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -1559,23 +1560,47 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 
 	/**
 	 * Output the product sorting options.
+	 *
+	 * @param array|null $attributes Block attributes.
 	 */
-	function woocommerce_catalog_ordering() {
+	function woocommerce_catalog_ordering( $attributes = null ) {
 		if ( ! wc_get_loop_prop( 'is_paginated' ) || ! woocommerce_products_will_display() ) {
 			return;
 		}
 		$show_default_orderby    = 'menu_order' === apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', 'menu_order' ) );
-		$catalog_orderby_options = apply_filters(
-			'woocommerce_catalog_orderby',
-			array(
-				'menu_order' => __( 'Default sorting', 'woocommerce' ),
-				'popularity' => __( 'Sort by popularity', 'woocommerce' ),
-				'rating'     => __( 'Sort by average rating', 'woocommerce' ),
-				'date'       => __( 'Sort by latest', 'woocommerce' ),
-				'price'      => __( 'Sort by price: low to high', 'woocommerce' ),
-				'price-desc' => __( 'Sort by price: high to low', 'woocommerce' ),
-			)
-		);
+
+		if ( isset( $attributes ) && isset( $attributes['useLabel'] ) && $attributes['useLabel'] ) {
+			/**
+			 * Filters the catalog orderby options.
+			 *
+			 * @since 9.7.0
+			 * @param array $catalog_orderby_options Array of catalog orderby options.
+			 */
+			$catalog_orderby_options = apply_filters(
+				'woocommerce_catalog_orderby',
+				array(
+					'menu_order' => __( 'Default', 'woocommerce' ),
+					'popularity' => __( 'Popularity', 'woocommerce' ),
+					'rating'     => __( 'Average rating', 'woocommerce' ),
+					'date'       => __( 'Latest', 'woocommerce' ),
+					'price'      => __( 'Price: low to high', 'woocommerce' ),
+					'price-desc' => __( 'Price: high to low', 'woocommerce' ),
+				)
+			);
+		} else {
+			// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+			$catalog_orderby_options = apply_filters(
+				'woocommerce_catalog_orderby',
+				array(
+					'menu_order' => __( 'Default sorting', 'woocommerce' ),
+					'popularity' => __( 'Sort by popularity', 'woocommerce' ),
+					'rating'     => __( 'Sort by average rating', 'woocommerce' ),
+					'date'       => __( 'Sort by latest', 'woocommerce' ),
+					'price'      => __( 'Sort by price: low to high', 'woocommerce' ),
+					'price-desc' => __( 'Sort by price: high to low', 'woocommerce' ),
+				)
+			);
+		}
 
 		$default_orderby = wc_get_loop_prop( 'is_search' ) ? 'relevance' : apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', '' ) );
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
@@ -1606,6 +1631,7 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 				'catalog_orderby_options' => $catalog_orderby_options,
 				'orderby'                 => $orderby,
 				'show_default_orderby'    => $show_default_orderby,
+				'use_label'               => isset( $attributes['useLabel'] ) ? $attributes['useLabel'] : false,
 			)
 		);
 	}
@@ -3567,10 +3593,13 @@ if ( ! function_exists( 'wc_get_email_order_items' ) ) {
 	function wc_get_email_order_items( $order, $args = array() ) {
 		ob_start();
 
+		$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+		$image_size                 = $email_improvements_enabled ? 48 : 32;
+
 		$defaults = array(
 			'show_sku'      => false,
-			'show_image'    => false,
-			'image_size'    => array( 32, 32 ),
+			'show_image'    => $email_improvements_enabled,
+			'image_size'    => array( $image_size, $image_size ),
 			'plain_text'    => false,
 			'sent_to_admin' => false,
 		);

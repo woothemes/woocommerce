@@ -28,8 +28,8 @@ final class ProductFilterAttribute extends AbstractBlock {
 	protected function initialize() {
 		parent::initialize();
 
-		add_filter( 'collection_filter_query_param_keys', array( $this, 'get_filter_query_param_keys' ), 10, 2 );
-		add_filter( 'collection_active_filters_data', array( $this, 'register_active_filters_data' ), 10, 2 );
+		add_filter( 'woocommerce_blocks_product_filters_param_keys', array( $this, 'get_filter_query_param_keys' ), 10, 2 );
+		add_filter( 'woocommerce_blocks_product_filters_selected_items', array( $this, 'prepare_selected_filters' ), 10, 2 );
 		add_action( 'deleted_transient', array( $this, 'delete_default_attribute_id_transient' ) );
 		add_action( 'wp_loaded', array( $this, 'register_block_patterns' ) );
 	}
@@ -83,13 +83,13 @@ final class ProductFilterAttribute extends AbstractBlock {
 	}
 
 	/**
-	 * Register the active filters data.
+	 * Prepare the active filter items.
 	 *
-	 * @param array $data   The active filters data.
+	 * @param array $items  The active filter items.
 	 * @param array $params The query param parsed from the URL.
-	 * @return array Active filters data.
+	 * @return array Active filters items.
 	 */
-	public function register_active_filters_data( $data, $params ) {
+	public function prepare_selected_filters( $items, $params ) {
 		$product_attributes_map = array_reduce(
 			wc_get_attribute_taxonomies(),
 			function ( $acc, $attribute_object ) {
@@ -117,40 +117,29 @@ final class ProductFilterAttribute extends AbstractBlock {
 			}
 		);
 
-		$action_namespace = $this->get_full_block_name();
-
 		foreach ( $active_product_attributes as $product_attribute ) {
-			$terms = explode( ',', get_query_var( "filter_{$product_attribute}" ) );
+			if ( empty( $params[ "filter_{$product_attribute}" ] ) ) {
+				continue;
+			}
+			$terms           = explode( ',', $params[ "filter_{$product_attribute}" ] );
+			$attribute_label = wc_attribute_label( "pa_{$product_attribute}" );
 
 			// Get attribute term by slug.
-			$terms = array_map(
-				function ( $term ) use ( $product_attribute, $action_namespace ) {
-					$term_object = get_term_by( 'slug', $term, "pa_{$product_attribute}" );
-					return array(
-						'title'      => $term_object->name,
-						'attributes' => array(
-							'value'             => $term,
-							'data-wc-on--click' => "$action_namespace::actions.toggleFilter",
-							'data-wc-context'   => "$action_namespace::" . wp_json_encode(
-								array(
-									'attributeSlug' => $product_attribute,
-									'queryType'     => get_query_var( "query_type_{$product_attribute}" ),
-								),
-								JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-							),
-						),
-					);
-				},
-				$terms
-			);
-
-			$data[ $product_attribute ] = array(
-				'type'  => $product_attributes_map[ $product_attribute ],
-				'items' => $terms,
-			);
+			foreach ( $terms as $term ) {
+				$term_object = get_term_by( 'slug', $term, "pa_{$product_attribute}" );
+				$items[]     = array(
+					'type'      => 'attribute',
+					'value'     => $term,
+					'label'     => $attribute_label . ': ' . $term_object->name,
+					'attribute' => array(
+						'slug'      => $product_attribute,
+						'queryType' => 'or',
+					),
+				);
+			}
 		}
 
-		return $data;
+		return $items;
 	}
 
 	/**
@@ -205,33 +194,33 @@ final class ProductFilterAttribute extends AbstractBlock {
 		if ( ! empty( $attribute_counts ) ) {
 			$attribute_options = array_map(
 				function ( $term ) use ( $block_attributes, $attribute_counts, $selected_terms ) {
-					$term             = (array) $term;
-					$term['count']    = $attribute_counts[ $term['term_id'] ] ?? 0;
-					$term['selected'] = in_array( $term['slug'], $selected_terms, true );
+					$term          = (array) $term;
+					$term['count'] = $attribute_counts[ $term['term_id'] ] ?? 0;
 					return array(
-						'label'    => $block_attributes['showCounts'] ? sprintf( '%1$s (%2$d)', $term['name'], $term['count'] ) : $term['name'],
-						'value'    => $term['slug'],
-						'selected' => $term['selected'],
-						'rawData'  => $term,
+						'label'     => $block_attributes['showCounts'] ? sprintf( '%1$s (%2$d)', $term['name'], $term['count'] ) : $term['name'],
+						'ariaLabel' => $block_attributes['showCounts'] ? sprintf( '%1$s (%2$d)', $term['name'], $term['count'] ) : $term['name'],
+						'value'     => $term['slug'],
+						'selected'  => in_array( $term['slug'], $selected_terms, true ),
+						'type'      => 'attribute',
+						'data'      => $term,
 					);
 				},
 				$attribute_terms
 			);
 
 			$filter_context = array(
-				'items'   => $attribute_options,
-				'actions' => array(
-					'toggleFilter' => "{$this->get_full_block_name()}::actions.toggleFilter",
-				),
+				'items'  => $attribute_options,
+				'parent' => $this->get_full_block_name(),
 			);
 		}
 
 		$context = array(
-			'attributeSlug'      => str_replace( 'pa_', '', $product_attribute->slug ),
-			'queryType'          => $block_attributes['queryType'],
-			'selectType'         => 'multiple',
-			'hasSelectedFilters' => count( $selected_terms ) > 0,
-			'hasFilterOptions'   => ! empty( $filter_context ),
+			'attributeSlug'       => str_replace( 'pa_', '', $product_attribute->slug ),
+			'queryType'           => $block_attributes['queryType'],
+			'selectType'          => 'multiple',
+			'hasFilterOptions'    => ! empty( $filter_context ),
+			/* translators: {{label}} is the product attribute filter item label. */
+			'activeLabelTemplate' => "{$product_attribute->name}: {{label}}",
 		);
 
 		$wrapper_attributes = array(
@@ -240,6 +229,10 @@ final class ProductFilterAttribute extends AbstractBlock {
 			'data-wc-context'      => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 			'data-wc-bind--hidden' => '!context.hasFilterOptions',
 		);
+
+		if ( empty( $filter_context ) ) {
+			$wrapper_attributes['hidden'] = true;
+		}
 
 		return sprintf(
 			'<div %1$s>%2$s</div>',

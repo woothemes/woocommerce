@@ -46,6 +46,7 @@ const TableCard: React.VFC< TableCardProps > = ( {
 	actions,
 	className,
 	hasSearch,
+	tablePreface,
 	headers = [],
 	ids,
 	isLoading = false,
@@ -183,6 +184,11 @@ const TableCard: React.VFC< TableCardProps > = ( {
 			{ /* Ignoring the error to make it backward compatible for now. */ }
 			{ /* @ts-expect-error: size must be one of small, medium, largel, xSmall, extraSmall. */ }
 			<CardBody size={ null }>
+				{ tablePreface && (
+					<div className="woocommerce-table__preface">
+						{ tablePreface }
+					</div>
+				) }
 				{ isLoading ? (
 					<Fragment>
 						<span className="screen-reader-text">
