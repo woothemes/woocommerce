@@ -13,8 +13,17 @@ type NoticeWithId = Notice & {
 	id: string;
 };
 
+const getContext = getContextFn< {
+	notice: NoticeWithId;
+} >;
+
 type StoreNoticesState = {
 	notices: NoticeWithId[];
+	get role(): string;
+	get iconPath(): string;
+	get isError(): boolean;
+	get isSuccess(): boolean;
+	get isInfo(): boolean;
 };
 
 export type StoreNoticesStore = {
@@ -22,13 +31,9 @@ export type StoreNoticesStore = {
 	actions: {
 		addNotice: ( notice: Notice ) => string;
 		removeNotice: ( noticeId: string ) => void;
+		dismissNotice: () => void;
 	};
 	callbacks: {
-		dismissNotice: () => void;
-		isNoticeDismissible: () => boolean;
-		getNoticeClass: () => string;
-		getNoticeIconPath: () => string;
-		getNoticeRole: () => string;
 		renderNoticeContent: () => void;
 		scrollIntoView: () => void;
 	};
@@ -50,84 +55,78 @@ const generateNoticeId = () => {
 		.substring( 2, 15 ) }`;
 };
 
-const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
-	state: {
-		notices: [],
-	},
-	actions: {
-		addNotice: ( notice: Notice ) => {
-			const noticeId = generateNoticeId();
-			state.notices = [
-				...state.notices,
-				{
+const { state, actions } = ( store as typeof StoreType )< StoreNoticesStore >(
+	'woocommerce/store-notices',
+	{
+		state: {
+			get role() {
+				const context = getContext();
+				if (
+					context.notice.type === 'error' ||
+					context.notice.type === 'success'
+				) {
+					return 'alert';
+				}
+
+				return 'status';
+			},
+			get iconPath() {
+				const context = getContext();
+				const noticeType = context.notice.type;
+				return ICON_PATHS[ noticeType ];
+			},
+			get isError() {
+				const { notice } = getContext();
+				return notice.type === 'error';
+			},
+			get isSuccess() {
+				const { notice } = getContext();
+				return notice.type === 'success';
+			},
+			get isInfo() {
+				const { notice } = getContext();
+				return notice.type === 'notice';
+			},
+		},
+		actions: {
+			addNotice: ( notice: Notice ) => {
+				const noticeId = generateNoticeId();
+				const noticeWithId = {
 					...notice,
 					id: noticeId,
-				},
-			];
+				};
+				state.notices.push( noticeWithId );
 
-			return noticeId;
+				return noticeId;
+			},
+
+			removeNotice: ( noticeId: string ) => {
+				const index = state.notices.findIndex(
+					( { id } ) => id === noticeId
+				);
+
+				if ( index !== -1 ) {
+					state.notices.splice( index, 1 );
+				}
+			},
+
+			dismissNotice: () => {
+				const context = getContext();
+				actions.removeNotice( context.notice.id );
+			},
 		},
+		callbacks: {
+			renderNoticeContent: () => {
+				const context = getContext();
+				const { ref } = getElement();
 
-		removeNotice: ( noticeId: string ) => {
-			state.notices = state.notices.filter(
-				( notice ) => notice.id !== noticeId
-			);
+				ref.innerHTML = context.notice.notice;
+			},
+
+			scrollIntoView: () => {
+				const { ref } = getElement();
+				ref.scrollIntoView( { behavior: 'smooth' } );
+			},
 		},
-	},
-	callbacks: {
-		dismissNotice: () => {
-			const context = getContext< { notice: NoticeWithId } >();
-
-			state.notices = state.notices.filter(
-				( notice ) => notice.id !== context.notice.id
-			);
-		},
-
-		getNoticeClass: () => {
-			const context = getContext< { notice: NoticeWithId } >();
-
-			const noticeTypeClass = {
-				error: 'is-error',
-				success: 'is-success',
-				notice: 'is-info',
-			}[ context.notice.type ];
-
-			return `wc-block-components-notice-banner ${ noticeTypeClass }`;
-		},
-
-		getNoticeIconPath: () => {
-			const context = getContext< { notice: NoticeWithId } >();
-			const noticeType = context.notice.type;
-			return ICON_PATHS[ noticeType ];
-		},
-
-		getNoticeRole: () => {
-			const context = getContext< { notice: NoticeWithId } >();
-			if (
-				context.notice.type === 'error' ||
-				context.notice.type === 'success'
-			) {
-				return 'alert';
-			}
-
-			return 'status';
-		},
-
-		isNoticeDismissible: () => {
-			const context = getContext< { notice: NoticeWithId } >();
-			return context.notice.dismissible;
-		},
-
-		renderNoticeContent: () => {
-			const context = getContext< { notice: NoticeWithId } >();
-			const { ref } = getElement();
-
-			ref.innerHTML = context.notice.notice;
-		},
-
-		scrollIntoView: () => {
-			const { ref } = getElement();
-			ref.scrollIntoView( { behavior: 'smooth' } );
-		},
-	},
-} );
+	}
+);

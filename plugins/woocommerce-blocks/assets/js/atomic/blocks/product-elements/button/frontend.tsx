@@ -5,7 +5,7 @@ import { store, getContext as getContextFn } from '@woocommerce/interactivity';
 import { select, subscribe, dispatch } from '@wordpress/data';
 import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
 import { Cart } from '@woocommerce/type-defs/cart';
-import { decodeEntities } from '@wordpress/html-entities';
+import type { store as StoreType } from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
@@ -66,144 +66,150 @@ const getButtonText = (
 // The `getContextFn` function is wrapped just to avoid prettier issues.
 const getContext = ( ns?: string ) => getContextFn< Context >( ns );
 
-const { state } = store< Store >( 'woocommerce/product-button', {
-	state: {
-		noticeId: '',
-		get slideInAnimation() {
-			const { animationStatus } = getContext();
-			return animationStatus === AnimationStatus.SLIDE_IN;
-		},
-		get slideOutAnimation() {
-			const { animationStatus } = getContext();
-			return animationStatus === AnimationStatus.SLIDE_OUT;
-		},
-		get numberOfItemsInTheCart() {
-			const { productId } = getContext();
-			const product = getProductById( state.cart, productId );
-			return product?.quantity || 0;
-		},
-		get hasCartLoaded(): boolean {
-			return !! state.cart;
-		},
-		get addToCartText(): string {
-			const context = getContext();
-			const inTheCartText = state.inTheCartText || '';
-			// We use the temporary number of items when there's no animation, or the
-			// second part of the animation hasn't started.
-			const showTemporaryNumber =
-				context.animationStatus === AnimationStatus.IDLE ||
-				context.animationStatus === AnimationStatus.SLIDE_OUT;
-			const numberOfItems = showTemporaryNumber
-				? context.temporaryNumberOfItems
-				: state.numberOfItemsInTheCart;
+const { state } = ( store as typeof StoreType )< Store >(
+	'woocommerce/product-button',
+	{
+		state: {
+			get slideInAnimation() {
+				const { animationStatus } = getContext();
+				return animationStatus === AnimationStatus.SLIDE_IN;
+			},
+			get slideOutAnimation() {
+				const { animationStatus } = getContext();
+				return animationStatus === AnimationStatus.SLIDE_OUT;
+			},
+			get numberOfItemsInTheCart() {
+				const { productId } = getContext();
+				const product = getProductById( state.cart, productId );
+				return product?.quantity || 0;
+			},
+			get hasCartLoaded(): boolean {
+				return !! state.cart;
+			},
+			get addToCartText(): string {
+				const context = getContext();
+				const inTheCartText = state.inTheCartText || '';
+				// We use the temporary number of items when there's no animation, or the
+				// second part of the animation hasn't started.
+				const showTemporaryNumber =
+					context.animationStatus === AnimationStatus.IDLE ||
+					context.animationStatus === AnimationStatus.SLIDE_OUT;
+				const numberOfItems = showTemporaryNumber
+					? context.temporaryNumberOfItems
+					: state.numberOfItemsInTheCart;
 
-			return getButtonText(
-				context.addToCartText,
-				inTheCartText,
-				numberOfItems
-			);
-		},
-		get displayViewCart(): boolean {
-			const { displayViewCart, temporaryNumberOfItems } = getContext();
-			if ( ! displayViewCart ) return false;
-			if ( ! state.hasCartLoaded ) {
-				return temporaryNumberOfItems > 0;
-			}
-			return state.numberOfItemsInTheCart > 0;
-		},
-	},
-	actions: {
-		*addToCart() {
-			const context = getContext();
-			const { productId, quantityToAdd } = context;
-
-			context.isLoading = true;
-
-			try {
-				yield dispatch( storeKey ).addItemToCart(
-					productId,
-					quantityToAdd
+				return getButtonText(
+					context.addToCartText,
+					inTheCartText,
+					numberOfItems
 				);
+			},
+			get displayViewCart(): boolean {
+				const { displayViewCart, temporaryNumberOfItems } =
+					getContext();
+				if ( ! displayViewCart ) return false;
+				if ( ! state.hasCartLoaded ) {
+					return temporaryNumberOfItems > 0;
+				}
+				return state.numberOfItemsInTheCart > 0;
+			},
+		},
+		actions: {
+			*addToCart() {
+				const context = getContext();
+				const { productId, quantityToAdd } = context;
 
-				// After the cart is updated, sync the temporary number of items again.
-				context.temporaryNumberOfItems = state.numberOfItemsInTheCart;
-			} catch ( error ) {
-				const message = ( error as Error ).message;
-				const noticesStore = store< StoreNoticesStore >(
-					'woocommerce/store-notices'
-				);
+				context.isLoading = true;
 
-				// If the user deleted the hooked store notice block, the store won't be present
-				// and we should not add a notice.
-				if ( noticesStore ) {
-					// The old implementation always overwrites the last notice, so
-					// we remove the last notice before adding a new one.
-					if ( state.noticeId !== '' ) {
-						noticesStore.actions.removeNotice( state.noticeId );
+				try {
+					yield dispatch( storeKey ).addItemToCart(
+						productId,
+						quantityToAdd
+					);
+
+					// After the cart is updated, sync the temporary number of items again.
+					context.temporaryNumberOfItems =
+						state.numberOfItemsInTheCart;
+				} catch ( error ) {
+					const message = ( error as Error ).message;
+					const noticesStore = store< StoreNoticesStore >(
+						'woocommerce/store-notices'
+					);
+
+					// If the user deleted the hooked store notice block, the store won't be present
+					// and we should not add a notice.
+					if ( 'addNotice' in noticesStore.actions ) {
+						// The old implementation always overwrites the last notice, so
+						// we remove the last notice before adding a new one.
+						if ( state.noticeId !== '' ) {
+							noticesStore.actions.removeNotice( state.noticeId );
+						}
+
+						const noticeId = noticesStore.actions.addNotice( {
+							notice: message,
+							type: 'error',
+							dismissible: true,
+						} );
+
+						state.noticeId = noticeId;
 					}
 
-					const noticeId = noticesStore.actions.addNotice( {
-						notice: decodeEntities( message ),
-						type: 'error',
-						dismissible: true,
-					} );
-
-					state.noticeId = noticeId;
+					// We don't care about errors blocking execution, but will
+					// console.error for troubleshooting.
+					// eslint-disable-next-line no-console
+					console.error( error );
+				} finally {
+					context.displayViewCart = true;
+					context.isLoading = false;
 				}
-
-				// We don't care about errors blocking execution, but will
-				// console.error for troubleshooting.
-				// eslint-disable-next-line no-console
-				console.error( error );
-			} finally {
-				context.displayViewCart = true;
-				context.isLoading = false;
-			}
+			},
+			handleAnimationEnd: ( event: AnimationEvent ) => {
+				const context = getContext();
+				if ( event.animationName === 'slideOut' ) {
+					// When the first part of the animation (slide-out) ends, we move
+					// to the second part (slide-in).
+					context.animationStatus = AnimationStatus.SLIDE_IN;
+				} else if ( event.animationName === 'slideIn' ) {
+					// When the second part of the animation ends, we update the
+					// temporary number of items to sync it with the cart and reset the
+					// animation status so it can be triggered again.
+					context.temporaryNumberOfItems =
+						state.numberOfItemsInTheCart;
+					context.animationStatus = AnimationStatus.IDLE;
+				}
+			},
 		},
-		handleAnimationEnd: ( event: AnimationEvent ) => {
-			const context = getContext();
-			if ( event.animationName === 'slideOut' ) {
-				// When the first part of the animation (slide-out) ends, we move
-				// to the second part (slide-in).
-				context.animationStatus = AnimationStatus.SLIDE_IN;
-			} else if ( event.animationName === 'slideIn' ) {
-				// When the second part of the animation ends, we update the
-				// temporary number of items to sync it with the cart and reset the
-				// animation status so it can be triggered again.
-				context.temporaryNumberOfItems = state.numberOfItemsInTheCart;
-				context.animationStatus = AnimationStatus.IDLE;
-			}
+		callbacks: {
+			syncTemporaryNumberOfItemsOnLoad: () => {
+				const context = getContext();
+				// If the cart has loaded when we instantiate this element, we sync
+				// the temporary number of items with the number of items in the cart
+				// to avoid triggering the animation. We do this only once, but we
+				// use useLayoutEffect to avoid the useEffect flickering.
+				if ( state.hasCartLoaded ) {
+					context.temporaryNumberOfItems =
+						state.numberOfItemsInTheCart;
+				}
+			},
+			startAnimation: () => {
+				const context = getContext();
+				// We start the animation if the cart has loaded, the temporary number
+				// of items is out of sync with the number of items in the cart, the
+				// button is not loading (because that means the user started the
+				// interaction) and the animation hasn't started yet.
+				if (
+					state.hasCartLoaded &&
+					context.temporaryNumberOfItems !==
+						state.numberOfItemsInTheCart &&
+					! context.isLoading &&
+					context.animationStatus === AnimationStatus.IDLE
+				) {
+					context.animationStatus = AnimationStatus.SLIDE_OUT;
+				}
+			},
 		},
-	},
-	callbacks: {
-		syncTemporaryNumberOfItemsOnLoad: () => {
-			const context = getContext();
-			// If the cart has loaded when we instantiate this element, we sync
-			// the temporary number of items with the number of items in the cart
-			// to avoid triggering the animation. We do this only once, but we
-			// use useLayoutEffect to avoid the useEffect flickering.
-			if ( state.hasCartLoaded ) {
-				context.temporaryNumberOfItems = state.numberOfItemsInTheCart;
-			}
-		},
-		startAnimation: () => {
-			const context = getContext();
-			// We start the animation if the cart has loaded, the temporary number
-			// of items is out of sync with the number of items in the cart, the
-			// button is not loading (because that means the user started the
-			// interaction) and the animation hasn't started yet.
-			if (
-				state.hasCartLoaded &&
-				context.temporaryNumberOfItems !==
-					state.numberOfItemsInTheCart &&
-				! context.isLoading &&
-				context.animationStatus === AnimationStatus.IDLE
-			) {
-				context.animationStatus = AnimationStatus.SLIDE_OUT;
-			}
-		},
-	},
-} );
+	}
+);
 
 // Subscribe to changes in Cart data.
 subscribe( () => {

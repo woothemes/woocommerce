@@ -66,7 +66,7 @@ class StoreNotices extends AbstractBlock {
 	 * can be added client-side.
 	 */
 	protected function render_interactivity_notices_region() {
-		$namespace = array( 'namespace' => 'woocommerce/store-notices' );
+		$namespace = wp_json_encode( array( 'namespace' => 'woocommerce/store-notices' ), JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
 
 		wc_initial_state(
 			'woocommerce/store-notices',
@@ -76,25 +76,31 @@ class StoreNotices extends AbstractBlock {
 		);
 
 		ob_start();
-		// Adding the is-layout-constrained class to the wrapper is a hack, to ensure the notice looks the same as it used to when prepended to post content.
 		?>
-		<div data-wc-interactive="<?php echo esc_attr( wp_json_encode( $namespace ) ); ?>" class="woocommerce-notices-wrapper">
+		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="woocommerce-notices-wrapper">
 			<template
 				data-wc-each--notice="state.notices"
 				data-wc-each-key="context.notice.id"
 			>
-				<div data-wc-init="callbacks.scrollIntoView" data-wc-bind--class="callbacks.getNoticeClass" data-wc-bind--role="callbacks.getNoticeRole" >
+				<div
+					class="wc-block-components-notice-banner"
+					data-wc-init="callbacks.scrollIntoView"
+					data-wc-class--is-error="state.isError"
+					data-wc-class--is-success ="state.isSuccess"
+					data-wc-class--is-info="state.isInfo"
+					data-wc-bind--role="state.role"
+				>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-						<path data-wc-bind--d="callbacks.getNoticeIconPath"></path>
+						<path data-wc-bind--d="state.iconPath"></path>
 					</svg>
 					<div class="wc-block-components-notice-banner__content">
 						<span data-wc-init="callbacks.renderNoticeContent"></span>
 					</div>
 					<button
-						data-wc-bind--hidden="!callbacks.isNoticeDismissible"
+						data-wc-bind--hidden="!context.notice.dismissible"
 						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
 						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
-						data-wc-on--click="callbacks.dismissNotice"
+						data-wc-on--click="actions.dismissNotice"
 						hidden
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -106,14 +112,5 @@ class StoreNotices extends AbstractBlock {
 		</div>
 		<?php
 		return ob_get_clean();
-	}
-
-	/**
-	 * Get the frontend style handle for this block type.
-	 *
-	 * @return null
-	 */
-	protected function get_block_type_style() {
-		return null;
 	}
 }

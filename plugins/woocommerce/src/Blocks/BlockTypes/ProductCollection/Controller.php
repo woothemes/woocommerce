@@ -78,23 +78,27 @@ class Controller extends AbstractBlock {
 		add_filter( 'render_block_data', array( $this, 'disable_enhanced_pagination' ), 10, 1 );
 
 		// Hook the store notices block to ensure woocommerce/product-button can add error notices client-side.
-		add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback_store_notice' ), 1, 4 );
+		if ( ! is_admin() ) {
+			add_filter( 'hooked_block_types', array( $this, 'block_hook_fallback' ), 1, 4 );
+		}
+
 		add_filter( 'hooked_block_woocommerce/store-notices', array( $this, 'augment_hooked_store_notices_block' ), 10, 5 );
 
 		$this->register_core_collections_and_set_handler_store();
 	}
 
 	/**
-	 * Hook the store notices block to post-content/before to ensure that error notices can be shown
+	 * Hook the store notices block to post-content to ensure that error notices can be shown
 	 * client-side even when the store notices block is not present as part of the template.
 	 *
 	 * @param array  $hooked_blocks The array of hooked blocks.
 	 * @param string $position The position of the block.
 	 * @param string $anchor_block The anchor block.
+	 * @param array  $context The context of the block.
 	 * @return array The array of hooked blocks.
 	 */
-	public function block_hook_fallback_store_notice( $hooked_blocks, $position, $anchor_block ) {
-		if ( 'core/post-content' === $anchor_block && 'before' === $position ) {
+	public function block_hook_fallback( $hooked_blocks, $position, $anchor_block, $context ) {
+		if ( $context instanceof \WP_Block_Template && 'core/post-content' === $anchor_block && 'before' === $position ) {
 			$hooked_blocks[] = 'woocommerce/store-notices';
 		}
 
@@ -113,6 +117,11 @@ class Controller extends AbstractBlock {
 	 * @return array|null
 	 */
 	public function augment_hooked_store_notices_block( $parsed_hooked_block, $hooked_block_type, $relative_position, $parsed_anchor_block, $context ) {
+		// Don't hook the block if there is not a product collection block in the content.
+		if ( $context instanceof \WP_Post && ! str_contains( $context->post_content, 'woocommerce/product-collection' ) ) {
+			return null;
+		}
+
 		// Do not default to wide, as it will break the layout for this fallback block.
 		$parsed_hooked_block['attrs']['align'] = '';
 
