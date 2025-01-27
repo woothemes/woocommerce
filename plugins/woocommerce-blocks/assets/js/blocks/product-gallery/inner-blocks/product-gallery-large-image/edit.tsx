@@ -3,7 +3,7 @@
  */
 import { WC_BLOCKS_IMAGE_URL } from '@woocommerce/block-settings';
 import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
-import { memo, useMemo } from '@wordpress/element';
+import { memo } from '@wordpress/element';
 import clsx from 'clsx';
 
 /**
@@ -12,7 +12,6 @@ import clsx from 'clsx';
 import largeImageNextPreviousButtonMetadata from '../product-gallery-large-image-next-previous/block.json';
 import pagerMetadata from '../product-gallery-pager/block.json';
 import './editor.scss';
-import { ProductGalleryContext } from '../../types';
 
 const getInnerBlocksTemplate = () => [
 	[ largeImageNextPreviousButtonMetadata.name ],
@@ -30,11 +29,7 @@ const Placeholder = memo( () => {
 	);
 } );
 
-export const Edit = ( {
-	context,
-}: {
-	context: ProductGalleryContext;
-} ): JSX.Element => {
+export const Edit = () => {
 	const innerBlocksProps = useInnerBlocksProps(
 		{
 			className: 'wc-block-product-gallery-large-image__inner-blocks',
@@ -45,32 +40,10 @@ export const Edit = ( {
 		}
 	);
 
-	const previousNextImage = useMemo( () => {
-		switch ( context.nextPreviousButtonsPosition ) {
-			case 'insideTheImage':
-				return {
-					className: 'inside-image',
-				};
-			case 'outsideTheImage':
-				return {
-					className: 'outside-image',
-				};
-			case 'off':
-				return {
-					className: 'off',
-				};
-			default:
-				return {
-					className: 'off',
-				};
-		}
-	}, [ context.nextPreviousButtonsPosition ] );
-
 	const blockProps = useBlockProps( {
 		className: clsx(
 			'wc-block-product-gallery-large-image',
-			'wc-block-editor-product-gallery-large-image',
-			`wc-block-editor-product-gallery-large-image-next-previous--${ previousNextImage?.className }`
+			'wc-block-editor-product-gallery-large-image'
 		),
 	} );
 
