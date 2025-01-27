@@ -2,10 +2,14 @@
 
 declare( strict_types = 1 );
 
+namespace Automattic\WooCommerce\Tests\Blocks\Utils;
+
+use WC_Product;
+
 /**
  * Custom product class.
  */
-class WC_Product_Custom extends \WC_Product {
+class WcProductCustom extends WC_Product {
 	/**
 	 * Initialize custom product.
 	 *
