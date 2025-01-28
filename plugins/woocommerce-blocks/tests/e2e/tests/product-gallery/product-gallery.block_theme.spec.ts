@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Locator, Page } from '@playwright/test';
+import { Locator } from '@playwright/test';
 import { test as base, expect } from '@woocommerce/e2e-utils';
 
 /**
