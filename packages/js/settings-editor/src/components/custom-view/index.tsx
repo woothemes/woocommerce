@@ -20,18 +20,13 @@ const processCustomView = ( html: string ) => {
 	const parser = new DOMParser();
 	const doc = parser.parseFromString( html, 'text/html' );
 
-	const scriptElements = Array.from(
-		doc.getElementsByTagName( 'script' )
-	).filter(
-		( script ) =>
-			script.getAttribute( 'type' ) === 'text/javascript' &&
-			script.textContent?.trim()
+	const scripts = Array.from( doc.getElementsByTagName( 'script' ) ).filter(
+		( script ) => script.textContent?.trim()
 	);
 
-	const scripts = scriptElements.map( ( script ) => {
-		const content = script.textContent as string;
+	// Remove scripts from the HTML.
+	scripts.forEach( ( script ) => {
 		script.remove();
-		return content;
 	} );
 
 	return {
@@ -40,22 +35,18 @@ const processCustomView = ( html: string ) => {
 	};
 };
 
-const SettingsScript = ( { content }: { content: string } ) => {
+const SettingsScript = ( { script }: { script: HTMLScriptElement } ) => {
 	useEffect( () => {
 		try {
-			const scriptElement = document.createElement( 'script' );
-			scriptElement.type = 'text/javascript';
-			scriptElement.innerHTML = content;
-			document.body.appendChild( scriptElement );
-
+			document.body.appendChild( script );
 			return () => {
-				document.body.removeChild( scriptElement );
+				document.body.removeChild( script );
 			};
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( 'Failed to execute script:', error );
 		}
-	}, [ content ] );
+	}, [ script ] );
 	return null;
 };
 
@@ -69,7 +60,7 @@ export const CustomView = ( { html }: { html: string } ) => {
 		<Fragment>
 			<div dangerouslySetInnerHTML={ { __html: cleanHTML } } />
 			{ scripts.map( ( script, index ) => (
-				<SettingsScript key={ index } content={ script } />
+				<SettingsScript key={ index } script={ script } />
 			) ) }
 		</Fragment>
 	);
