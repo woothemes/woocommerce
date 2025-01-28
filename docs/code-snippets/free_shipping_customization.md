@@ -90,7 +90,7 @@ function hide_shipping_when_free_is_available( $rates, $package ) {
 add_filter( 'woocommerce_package_rates', 'hide_shipping_when_free_is_available', 10, 2 );
 ```
 
-### Only show free shipping in all states except a few that are not eligible for free shipping.
+### Only show free shipping in all states except a few that are not eligible for free shipping
 
 This snippet results in showing only free shipping in all states except the exclusion list. It hides free shipping if the customer is in one of the states listed:
 
