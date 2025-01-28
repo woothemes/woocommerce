@@ -42,6 +42,7 @@ class EmailPreview {
 		'woocommerce_email_footer_text_color',
 		'woocommerce_email_header_alignment',
 		'woocommerce_email_header_image',
+		'woocommerce_email_header_image_width',
 		'woocommerce_email_text_color',
 	);
 
@@ -160,10 +161,10 @@ class EmailPreview {
 			$this->email->set_object( $object );
 		} else {
 			$object = $this->get_dummy_order();
-			if ( $email_type === 'WC_Email_Customer_Note' ) {
+			if ( 'WC_Email_Customer_Note' === $email_type ) {
 				$this->email->customer_note = $object->get_customer_note();
 			}
-			if ( $email_type === 'WC_Email_Customer_Refunded_Order' ) {
+			if ( 'WC_Email_Customer_Refunded_Order' === $email_type ) {
 				$this->email->partial_refund = false;
 			}
 			$this->email->set_object( $object );

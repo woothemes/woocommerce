@@ -2,12 +2,12 @@
 
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { admin, customer } = require( '../../test-data/data' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const emailContent = '#wp-mail-logging-modal-content-body-content';
 const emailContentHtml = '#wp-mail-logging-modal-format-html';
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	user: async ( { api }, use ) => {
 		const now = Date.now();
 		const user = {
@@ -27,10 +27,6 @@ test.describe(
 	'Shopper Account Email Receiving',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
-		test.beforeAll( async ( { baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
-		} );
-
 		test.beforeEach( async ( { page, user } ) => {
 			await page.goto(
 				`wp-admin/tools.php?page=wpml_plugin_log&s=${ encodeURIComponent(
