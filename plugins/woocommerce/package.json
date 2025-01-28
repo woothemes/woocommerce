@@ -343,7 +343,7 @@
 				{
 					"name": "Core e2e tests - HPOS disabled",
 					"testType": "e2e",
-					"command": "test:e2e:with-env default-hpos-disabled --project=ui",
+					"command": "test:e2e:with-env default-hpos-disabled --project=e2e-hpos-disabled",
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
