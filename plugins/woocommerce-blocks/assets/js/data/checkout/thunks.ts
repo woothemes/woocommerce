@@ -32,6 +32,7 @@ import {
 import type {
 	emitValidateEventType,
 	emitAfterProcessingEventsType,
+	CheckoutPutData,
 } from './types';
 import { apiFetchWithHeaders } from '../shared-controls';
 import { CheckoutPutAbortController } from '../utils/clear-put-requests';
@@ -148,23 +149,14 @@ export const __internalEmitAfterProcessingEvents: emitAfterProcessingEventsType 
 		};
 	};
 
-export const updateDraftOrder = ( {
-	orderNotes,
-	additionalFields,
-}: {
-	orderNotes: string;
-	additionalFields: AdditionalValues;
-} ) => {
+export const updateDraftOrder = ( data: CheckoutPutData ) => {
 	return async ( { registry } ) => {
 		const { receiveCart } = registry.dispatch( CART_STORE_KEY );
 		try {
 			const response = await apiFetchWithHeaders( {
 				path: '/wc/store/v1/checkout?calc_totals=true',
 				method: 'PUT',
-				data: {
-					additional_fields: { ...additionalFields },
-					order_notes: orderNotes,
-				},
+				data,
 				signal: CheckoutPutAbortController.signal,
 			} );
 			if ( response?.response?.__experimentalCart ) {

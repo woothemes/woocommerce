@@ -12,7 +12,7 @@ import { STORE_KEY } from './constants';
 import * as actions from './actions';
 import { controls as sharedControls } from '../shared-controls';
 import * as selectors from './selectors';
-import { pushChanges } from './push-changes';
+import { pushChanges } from '../checkout/push-changes';
 
 export const config = {
 	reducer,
