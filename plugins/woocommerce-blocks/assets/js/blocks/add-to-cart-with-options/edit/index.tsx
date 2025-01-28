@@ -17,7 +17,6 @@ import {
  * Internal dependencies
  */
 import { useIsDescendentOfSingleProductBlock } from '../../../atomic/blocks/product-elements/shared/use-is-descendent-of-single-product-block';
-import { AddToCartOptionsSettings } from '../settings';
 import ToolbarProductTypeGroup from '../components/toolbar-type-product-selector-group';
 import { DowngradeNotice } from '../components/downgrade-notice';
 import useProductTypeSelector from '../hooks/use-product-type-selector';
@@ -80,11 +79,6 @@ const AddToCartOptionsEdit = ( props: BlockEditProps< Attributes > ) => {
 			<BlockControls>
 				<ToolbarProductTypeGroup />
 			</BlockControls>
-			<AddToCartOptionsSettings
-				features={ {
-					isBlockifiedAddToCart: true,
-				} }
-			/>
 			{ isCoreProductType ? (
 				<AddToCartWithOptionsEditTemplatePart
 					productType={ productType }
