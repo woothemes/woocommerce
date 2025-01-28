@@ -164,13 +164,13 @@ class Checkout extends AbstractBlock {
 		}
 
 		if ( Features::is_enabled( 'experimental-blocks' ) ) {
-				$checkout_fields = Package::container()->get( CheckoutFields::class );
-				$checkout_schema = Package::container()->get( CheckoutFieldsSchema::class );
+			$checkout_fields = Package::container()->get( CheckoutFields::class );
+			$checkout_schema = Package::container()->get( CheckoutFieldsSchema::class );
 
-				// Load schema parser asynchronously if we need it.
-				if ( $checkout_schema->has_valid_schema( $checkout_fields->get_additional_fields() ) ) {
-					$dependencies[] = 'wc-schema-parser';
-				}
+			// Load schema parser asynchronously if we need it.
+			if ( $checkout_schema->has_valid_schema( $checkout_fields->get_additional_fields() ) ) {
+				$dependencies[] = 'wc-schema-parser';
+			}
 		}
 
 		$script = [
