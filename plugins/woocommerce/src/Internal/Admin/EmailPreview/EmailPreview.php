@@ -160,6 +160,12 @@ class EmailPreview {
 			$this->email->set_object( $object );
 		} else {
 			$object = $this->get_dummy_order();
+			if ( 'WC_Email_Customer_Note' === $email_type ) {
+				$this->email->customer_note = $object->get_customer_note();
+			}
+			if ( 'WC_Email_Customer_Refunded_Order' === $email_type ) {
+				$this->email->partial_refund = false;
+			}
 			$this->email->set_object( $object );
 		}
 		$this->email->placeholders = array_merge(

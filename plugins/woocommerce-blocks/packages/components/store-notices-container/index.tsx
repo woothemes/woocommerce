@@ -2,10 +2,7 @@
  * External dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
-import {
-	PAYMENT_STORE_KEY,
-	STORE_NOTICES_STORE_KEY,
-} from '@woocommerce/block-data';
+import { PAYMENT_STORE_KEY, storeNoticesStore } from '@woocommerce/block-data';
 import { getNoticeContexts } from '@woocommerce/base-utils';
 import type { Notice } from '@wordpress/notices';
 import { useMemo, useEffect } from '@wordpress/element';
@@ -31,16 +28,14 @@ const StoreNoticesContainer = ( {
 	context = '',
 	additionalNotices = [],
 }: StoreNoticesContainerProps ): JSX.Element | null => {
-	const { registerContainer, unregisterContainer } = useDispatch(
-		STORE_NOTICES_STORE_KEY
-	);
+	const { registerContainer, unregisterContainer } =
+		useDispatch( storeNoticesStore );
 	const { suppressNotices, registeredContainers } = useSelect(
 		( select ) => ( {
 			suppressNotices:
 				select( PAYMENT_STORE_KEY ).isExpressPaymentMethodActive(),
-			registeredContainers: select(
-				STORE_NOTICES_STORE_KEY
-			).getRegisteredContainers(),
+			registeredContainers:
+				select( storeNoticesStore ).getRegisteredContainers(),
 		} )
 	);
 	const contexts = useMemo< string[] >(
