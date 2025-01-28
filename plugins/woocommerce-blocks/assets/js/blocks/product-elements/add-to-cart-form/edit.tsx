@@ -22,22 +22,7 @@ import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '../../add-to-c
 import { UpgradeNotice } from './components/upgrade-notice';
 import type { Attributes } from './';
 
-export type FeaturesKeys =
-	| 'isStepperLayoutFeatureEnabled'
-	| 'isBlockifiedAddToCart';
-
-export type FeaturesProps = {
-	[ key in FeaturesKeys ]?: boolean;
-};
-
 export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
-
-// Pick the value of the "blockify add to cart flag"
-const isBlockifiedAddToCart = getSettingWithCoercion(
-	'isBlockifiedAddToCart',
-	false,
-	isBoolean
-);
 
 const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 	const { setAttributes } = props;
@@ -85,7 +70,6 @@ const AddToCartFormEdit = ( props: BlockEditProps< Attributes > ) => {
 				setAttributes={ setAttributes }
 				features={ {
 					isStepperLayoutFeatureEnabled,
-					isBlockifiedAddToCart,
 				} }
 			/>
 			<div { ...blockProps }>
