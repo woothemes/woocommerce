@@ -40,6 +40,7 @@ function generateError( json: StoreAPIError ) {
 }
 
 let pendingRefresh = false;
+let refreshTimeout = 3000;
 
 // Todo: Remove the type cast once we import from `@wordpress/interactivity`.
 // Question: disable "used before defined" lint rule?
@@ -116,10 +117,15 @@ const woo = {
 
 				// Updates the local cart.
 				state.cart.items = json;
+
+				// Resets the timeout.
+				refreshTimeout = 3000;
 			} catch ( error ) {
-				// Question: what should we do if this fails? Should we retry? Inform the user?
-				// eslint-disable-next-line no-console
-				console.error( error );
+				// Tries again after the timeout.
+				setTimeout( actions.refreshCartItems, refreshTimeout );
+
+				// Increases the timeout exponentially.
+				refreshTimeout *= 2;
 			} finally {
 				pendingRefresh = false;
 			}
