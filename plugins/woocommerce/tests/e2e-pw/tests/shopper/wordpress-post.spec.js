@@ -1,7 +1,7 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
+const { CUSTOMER_STATE_PATH } = require( '../../playwright.config' );
 const test = baseTest.extend( {
-	storageState: process.env.CUSTOMERSTATE,
+	storageState: CUSTOMER_STATE_PATH,
 } );
 
 test.beforeAll( async ( { wpApi } ) => {
@@ -39,8 +39,7 @@ test(
 	{
 		tag: [ tags.WP_CORE ],
 	},
-	async ( { baseURL, page } ) => {
-		await setComingSoon( { baseURL, enabled: 'no' } );
+	async ( { page } ) => {
 		await page.goto( 'hello-world/' );
 		await expect(
 			page.getByRole( 'heading', { name: 'Hello world!', exact: true } )

@@ -1,6 +1,7 @@
 const { test, expect, Page, Locator } = require( '@playwright/test' );
 const { admin } = require( '../../test-data/data' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const EXPECTED_SECTION_HEADERS = [ 'Performance', 'Charts', 'Leaderboards' ];
 
@@ -116,7 +117,7 @@ test.describe(
 	'Analytics pages',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { browser } ) => {
 			page = await browser.newPage();
