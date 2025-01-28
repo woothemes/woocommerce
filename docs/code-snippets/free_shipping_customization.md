@@ -57,12 +57,12 @@ add_filter( 'woocommerce_package_rates', 'my_hide_shipping_when_free_is_availabl
 
 ### How do I only show Local Pickup and Free Shipping?
 
-The snippet below hides everything but `free_shipping`, `local_pickup` and the new Local Pickup `pickup_location`, if it's available and the customer's cart qualifies. 
+The snippet below hides everything but `free_shipping` and Local Pickup supporting methods, if it's available and the customer's cart qualifies. 
 
 ```php
 
 /**
- * Hide shipping rates when free shipping is available, but keep "Local pickup" 
+ * Hide shipping rates when free shipping is available, but keep "Local pickup" supporting methods. 
  */
 
 function hide_shipping_when_free_is_available( $rates, $package ) {
@@ -77,7 +77,8 @@ function hide_shipping_when_free_is_available( $rates, $package ) {
 	if ( ! empty( $new_rates ) ) {
 		// Save local pickup and pickup locations if present.
 		foreach ( $rates as $rate_id => $rate ) {
-			if ('local_pickup' === $rate->method_id || 'pickup_location' === $rate->method_id) {
+			$method = WC()->shipping()->shipping_methods[ $rate->method_id ];
+      if ( $method instanceof WC_Shipping_Method && $method->supports( 'local-pickup' ) ) {
 				$new_rates[ $rate_id ] = $rate;
 			}
 		}
@@ -97,7 +98,7 @@ This snippet results in showing only free shipping in all states except the excl
 ```php
 /**
  * Show only free shipping when free shipping is available and customer is NOT in certain states, otherwise show all rates except free shipping.
- * Change $excluded_states = array( 'CA','FL','NY' ); to include all the states that DO NOT have free shipping
+ * Change $excluded_states = array( 'AK','HI','GU','PR' ); to include all the states that DO NOT have free shipping
  *
  * @param array $rates
  * @return array
@@ -105,7 +106,7 @@ This snippet results in showing only free shipping in all states except the excl
 function hide_all_shipping_when_free_is_available( $rates ) {
  
   // List of states that do not get free shipping.
-	$excluded_states = array( 'CA','FL','NY' );
+	$excluded_states = array( 'AK','HI','GU','PR' );
 	
 	$free_shipping_rates = array();
 	foreach( $rates as $rate_id => $rate ) {
