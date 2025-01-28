@@ -584,12 +584,12 @@ class WC_Settings_Emails extends WC_Settings_Page {
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">
 										<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=email&section=' . strtolower( $email_key ) ) ) . '">' . esc_html( $email->get_title() ) . '</a>
 										' . wc_help_tip( $email->get_description() ) . '
-									</td>';
+										</td>';
 										break;
 									case 'recipient':
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">
 										' . esc_html( $email->is_customer_email() ? __( 'Customer', 'woocommerce' ) : $email->get_recipient() ) . '
-									</td>';
+										</td>';
 										break;
 									case 'status':
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">';
@@ -607,12 +607,12 @@ class WC_Settings_Emails extends WC_Settings_Page {
 									case 'email_type':
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">
 										' . esc_html( $email->get_content_type() ) . '
-									</td>';
+										</td>';
 										break;
 									case 'actions':
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">
 										<a class="button alignright" href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=email&section=' . strtolower( $email_key ) ) ) . '">' . esc_html__( 'Manage', 'woocommerce' ) . '</a>
-									</td>';
+										</td>';
 										break;
 									default:
 										do_action( 'woocommerce_email_setting_column_' . $key, $email );
