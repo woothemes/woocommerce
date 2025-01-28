@@ -10,6 +10,11 @@ config = {
 	projects: [
 		...config.setupProjects,
 		{
+			name: 'reset',
+			testDir: `${ config.TESTS_ROOT_PATH }/fixtures`,
+			testMatch: 'reset.setup.js',
+		},
+		{
 			name: 'e2e-wpcom',
 			testIgnore: [
 				'**/api-tests/**',

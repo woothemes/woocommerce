@@ -95,11 +95,6 @@ export const setupProjects = [
 		testMatch: `site.setup.js`,
 		dependencies: [ 'consumer token setup' ],
 	},
-	{
-		name: 'reset',
-		testDir: `${ TESTS_ROOT_PATH }/fixtures`,
-		testMatch: 'reset.setup.js',
-	},
 ];
 
 export default defineConfig( {
