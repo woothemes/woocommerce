@@ -18,7 +18,8 @@ import {
 	getPaymentMethods,
 } from '@woocommerce/blocks-registry';
 import { previewCart } from '@woocommerce/resource-previews';
-
+import { staticFormFields } from '@woocommerce/base-components/cart-checkout/form/prepare-form-fields';
+import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 /**
  * Internal dependencies
  */
@@ -63,9 +64,27 @@ export const getCanMakePaymentArg = (): CanMakePaymentArgument => {
 			cartTotals,
 			cartIsLoading,
 			cartErrors,
-			billingData: emptyHiddenAddressFields( cart.billingAddress ),
-			billingAddress: emptyHiddenAddressFields( cart.billingAddress ),
-			shippingAddress: emptyHiddenAddressFields( cart.shippingAddress ),
+			billingData: emptyHiddenAddressFields(
+				cart.billingAddress,
+				staticFormFields(
+					ADDRESS_FORM_KEYS,
+					cart.billingAddress.country
+				)
+			),
+			billingAddress: emptyHiddenAddressFields(
+				cart.billingAddress,
+				staticFormFields(
+					ADDRESS_FORM_KEYS,
+					cart.billingAddress.country
+				)
+			),
+			shippingAddress: emptyHiddenAddressFields(
+				cart.shippingAddress,
+				staticFormFields(
+					ADDRESS_FORM_KEYS,
+					cart.shippingAddress.country
+				)
+			),
 			extensions: cart.extensions,
 			shippingRates: cart.shippingRates,
 			isLoadingRates,

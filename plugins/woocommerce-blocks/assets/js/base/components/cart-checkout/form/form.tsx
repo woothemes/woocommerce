@@ -21,14 +21,13 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 import clsx from 'clsx';
 import { AddressFormValues, ContactFormValues } from '@woocommerce/settings';
 import { objectHasProp } from '@woocommerce/types';
-import { useCheckoutAddress } from '@woocommerce/base-context';
 import fastDeepEqual from 'fast-deep-equal/es6';
 
 /**
  * Internal dependencies
  */
 import { AddressFormProps } from './types';
-import prepareFormFields from './prepare-form-fields';
+import { useFormFields } from './prepare-form-fields';
 import validateCountry from './validate-country';
 import customValidationHandler from './custom-validation-handler';
 import AddressLineFields from './address-line-fields';
@@ -55,7 +54,6 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 }: AddressFormProps< T > ): JSX.Element => {
 	const instanceId = useInstanceId( Form );
 	const isFirstRender = useRef( true );
-	const { defaultFields } = useCheckoutAddress();
 
 	// Track incoming props.
 	const currentFields = useShallowEqual( fields );
@@ -64,11 +62,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	);
 
 	// Prepare address form fields by combining fields from the locale and default fields.
-	const formFields = prepareFormFields(
-		currentFields,
-		defaultFields,
-		currentCountry
-	);
+	const formFields = useFormFields( currentFields, addressType );
 
 	// Store previous fields to track changes.
 	const previousFormFields = usePrevious( formFields );

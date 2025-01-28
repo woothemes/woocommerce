@@ -20,6 +20,8 @@ import { useSelect } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
 import { emptyAddressFields } from '@woocommerce/base-utils';
 import type { CartResponseBillingAddress } from '@woocommerce/types';
+import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
+import { useFormFields } from '@woocommerce/base-components/cart-checkout/form/prepare-form-fields';
 
 /**
  * Internal dependencies
@@ -36,6 +38,7 @@ const Block = (): JSX.Element => {
 		setUseShippingAsBilling,
 		setEditingBillingAddress,
 	} = useCheckoutAddress();
+	const billingFields = useFormFields( ADDRESS_FORM_KEYS, 'billing' );
 	const { isEditor } = useEditorContext();
 	const isGuest = getSetting( 'currentUserId' ) === 0;
 
@@ -63,7 +66,8 @@ const Block = (): JSX.Element => {
 			return;
 		}
 		const emptyAddress = emptyAddressFields(
-			address as CartResponseBillingAddress
+			address as CartResponseBillingAddress,
+			billingFields
 		);
 		setBillingAddress( emptyAddress );
 	};

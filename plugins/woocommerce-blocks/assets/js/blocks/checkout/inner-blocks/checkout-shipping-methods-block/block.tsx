@@ -27,6 +27,8 @@ import type {
 import NoticeBanner from '@woocommerce/base-components/notice-banner';
 import type { ReactElement } from 'react';
 import { useMemo } from '@wordpress/element';
+import { useFormFields } from '@woocommerce/base-components/cart-checkout/form/prepare-form-fields';
+import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 
 /**
  * Renders a shipping rate control option.
@@ -92,7 +94,7 @@ const Block = ( {
 	} = useShippingData();
 
 	const { shippingAddress } = useCustomerData();
-
+	const shippingFields = useFormFields( ADDRESS_FORM_KEYS, 'shipping' );
 	const filteredShippingRates = useMemo( () => {
 		return isCollectable
 			? shippingRates.map( ( shippingRatesPackage ) => {
@@ -120,7 +122,10 @@ const Block = ( {
 	if ( ! hasCalculatedShipping && ! shippingRatesPackageCount ) {
 		return <NoShippingAddressMessage />;
 	}
-	const addressComplete = isAddressComplete( shippingAddress );
+	const addressComplete = isAddressComplete(
+		shippingAddress,
+		shippingFields
+	);
 
 	return (
 		<>

@@ -7,10 +7,12 @@ import {
 	CountryAddressFields,
 	KeyedFormField,
 	LocaleSpecificFormField,
+	defaultFields as DEFAULT_FIELDS,
 } from '@woocommerce/settings';
 import { __, sprintf } from '@wordpress/i18n';
 import { isNumber, isString } from '@woocommerce/types';
 import { COUNTRY_LOCALE } from '@woocommerce/block-settings';
+import { useCheckoutAddress } from '@woocommerce/base-context';
 
 /**
  * Gets props from the core locale, then maps them to the shape we require in the client.
@@ -94,14 +96,22 @@ const countryAddressFields: CountryAddressFields = Object.entries(
 /**
  * Combines address fields, including fields from the locale, and sorts them by index.
  */
-const prepareFormFields = (
-	// ist of field keys--only address fields matching these will be returned
+const useFormFields = (
+	// List of field keys to include in the form.
 	fieldKeys: ( keyof FormFields )[],
-	// Default fields from settings.
-	defaultFields: FormFields | Record< string, never >,
-	// Address country code. If unknown, locale fields will not be merged.
-	addressCountry = ''
+	// Form type, can be billing, shipping, contact, additional-information, or calculator.
+	formType: string
 ): KeyedFormField[] => {
+	const { defaultFields, billingAddress, shippingAddress } =
+		useCheckoutAddress();
+	let addressCountry = '';
+	if ( formType === 'billing' || formType === 'shipping' ) {
+		addressCountry =
+			formType === 'billing'
+				? billingAddress.country
+				: shippingAddress.country;
+	}
+
 	const localeConfigs: FormFields =
 		addressCountry && countryAddressFields[ addressCountry ] !== undefined
 			? countryAddressFields[ addressCountry ]
@@ -121,4 +131,27 @@ const prepareFormFields = (
 		.sort( ( a, b ) => a.index - b.index );
 };
 
-export default prepareFormFields;
+const staticFormFields = (
+	fieldKeys: ( keyof FormFields )[],
+	country: string
+): KeyedFormField[] => {
+	const localeConfigs: FormFields =
+		country && countryAddressFields[ country ] !== undefined
+			? countryAddressFields[ country ]
+			: ( {} as FormFields );
+
+	return fieldKeys
+		.map( ( field ) => {
+			const defaultConfig = DEFAULT_FIELDS[ field ] || {};
+			const localeConfig = localeConfigs[ field ] || {};
+
+			return {
+				key: field,
+				...defaultConfig,
+				...localeConfig,
+			};
+		} )
+		.sort( ( a, b ) => a.index - b.index );
+};
+
+export { useFormFields, staticFormFields };
