@@ -10,7 +10,7 @@ type Item = {
 	quantity: number;
 };
 
-type Store = {
+export type Store = {
 	state: {
 		restUrl: string;
 		nonce: string;
