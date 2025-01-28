@@ -15,7 +15,7 @@
 		"build:storybook": "wireit",
 		"watch:build": "pnpm --if-present --workspace-concurrency=Infinity --filter=\"$npm_package_name...\" --parallel '/^watch:build:storybook$/'",
 		"watch:build:storybook": "wireit",
-		"copy-blocks-storybook-iframe": "cp ../../plugins/woocommerce-blocks/storybook/dist/iframe.html ./storybook-static/assets/woocommerce-blocks",
+		"copy-blocks-storybook-iframe": "cp ../../plugins/woocommerce/client/blocks/storybook/dist/iframe.html ./storybook-static/assets/woocommerce-blocks",
 		"storybook-rtl": "USE_RTL_STYLE=true pnpm storybook",
 		"preinstall": "npx only-allow pnpm"
 	},

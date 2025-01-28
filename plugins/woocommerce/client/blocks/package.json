@@ -5,7 +5,7 @@
 	"author": "Automattic",
 	"version": "11.8.0-dev",
 	"description": "WooCommerce blocks for the Gutenberg editor.",
-	"homepage": "https://github.com/woocommerce/woocommerce/plugins/woocommerce-blocks/",
+	"homepage": "https://github.com/woocommerce/woocommerce/plugins/woocommerce/client/blocks/",
 	"keywords": [
 		"woocommerce",
 		"wordpress",
