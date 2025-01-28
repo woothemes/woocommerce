@@ -1,11 +1,5 @@
-/**
- * Internal dependencies
- */
-import { ThumbnailsPosition } from './constants';
-
 export type ProductGalleryThumbnailsBlockAttributes = {
 	numberOfThumbnails: number;
-	thumbnailsPosition: ThumbnailsPosition;
 };
 
 export type ProductGalleryThumbnailsSettingsProps = {
