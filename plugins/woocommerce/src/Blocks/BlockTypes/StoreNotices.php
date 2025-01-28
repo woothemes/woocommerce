@@ -98,7 +98,7 @@ class StoreNotices extends AbstractBlock {
 						data-wc-bind--hidden="!context.notice.dismissible"
 						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
 						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
-						data-wc-on--click="actions.dismissNotice"
+						data-wc-on--click="actions.removeNotice"
 						hidden
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

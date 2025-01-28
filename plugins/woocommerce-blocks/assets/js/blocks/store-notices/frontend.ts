@@ -40,8 +40,7 @@ export type StoreNoticesStore = {
 	state: StoreNoticesState;
 	actions: {
 		addNotice: ( notice: Notice ) => string;
-		removeNotice: ( noticeId: string ) => void;
-		dismissNotice: () => void;
+		removeNotice: ( noticeId: string | PointerEvent ) => void;
 	};
 	callbacks: {
 		renderNoticeContent: () => void;
@@ -110,19 +109,17 @@ const { state, actions } = ( store as typeof StoreType )< StoreNoticesStore >(
 				return noticeId;
 			},
 
-			removeNotice: ( noticeId: string ) => {
+			removeNotice: ( noticeId: string | PointerEvent ) => {
+				noticeId =
+					typeof noticeId === 'string'
+						? noticeId
+						: getContext().notice.id;
 				const index = state.notices.findIndex(
 					( { id } ) => id === noticeId
 				);
-
 				if ( index !== -1 ) {
 					state.notices.splice( index, 1 );
 				}
-			},
-
-			dismissNotice: () => {
-				const context = getContext();
-				actions.removeNotice( context.notice.id );
 			},
 		},
 		callbacks: {
