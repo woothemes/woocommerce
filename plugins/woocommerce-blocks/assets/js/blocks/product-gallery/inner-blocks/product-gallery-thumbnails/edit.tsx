@@ -39,12 +39,15 @@ export const Edit = ( {
 				{ [ ...Array( attributes.numberOfThumbnails ).keys() ].map(
 					( index ) => {
 						return (
-							<img
-								key={ index }
+							<div
 								className="wc-block-product-gallery-thumbnails__thumbnail"
-								src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
-								alt=""
-							/>
+								key={ index }
+							>
+								<img
+									src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
+									alt=""
+								/>
+							</div>
 						);
 					}
 				) }
