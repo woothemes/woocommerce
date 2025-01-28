@@ -22,6 +22,7 @@ export const debounce = < T extends ( ...args: any[] ) => any >(
 		if ( immediate && ! timeout ) func( ...args );
 	} ) as DebouncedFunction< T >;
 
+	// Clear the debounce queue and execute any pending function immediately.
 	debounced.flush = () => {
 		if ( timeout && latestArgs ) {
 			func( ...latestArgs );
@@ -30,6 +31,7 @@ export const debounce = < T extends ( ...args: any[] ) => any >(
 		}
 	};
 
+	// Clear the debounce queue without executing any functions.
 	debounced.clear = () => {
 		if ( timeout ) {
 			clearTimeout( timeout );
