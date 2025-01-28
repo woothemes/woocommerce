@@ -12,6 +12,7 @@ import type { BlockConfiguration } from '@wordpress/blocks';
 import ProductTypeSelectorPlugin from './plugins';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
+import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from './utils';
 import './style.scss';
 import type { Attributes } from './types';
 
