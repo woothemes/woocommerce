@@ -602,7 +602,7 @@
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report",
-						"resultsPath": "../woocommerce-blocks/tests/e2e/artifacts/test-results",
+						"resultsPath": "./client/blocks/tests/e2e/artifacts/test-results",
 						"allure": true
 					}
 				},
@@ -640,7 +640,7 @@
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report-wp-pre-release",
-						"resultsPath": "../woocommerce-blocks/tests/e2e/artifacts/test-results",
+						"resultsPath": "./client/blocks/tests/e2e/artifacts/test-results",
 						"allure": true
 					}
 				},
@@ -674,7 +674,7 @@
 					],
 					"report": {
 						"resultsBlobName": "blocks-e2e-report-wp-latest-1",
-						"resultsPath": "../woocommerce-blocks/tests/e2e/artifacts/test-results",
+						"resultsPath": "./client/blocks/tests/e2e/artifacts/test-results",
 						"allure": true
 					}
 				},
