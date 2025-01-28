@@ -174,6 +174,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 			$args['template_id'] = array(
 				'description'       => __( 'The ID of the template to use for sending the email.', 'woocommerce' ),
 				'type'              => 'string',
+				'enum'              => $this->get_template_id_enum(),
 				'context'           => array( 'edit' ),
 				'required'          => true,
 				'validate_callback' => 'rest_validate_request_arg',
@@ -197,6 +198,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 				'id'          => array(
 					'description' => __( 'A unique ID string for the email template.', 'woocommerce' ),
 					'type'        => 'string',
+					'enum'        => $this->get_template_id_enum(),
 					'context'     => array( 'view', 'embed' ),
 				),
 				'title'       => array(
@@ -239,11 +241,39 @@ class OrderActionsRestController extends RestApiControllerBase {
 	}
 
 	/**
+	 * Get the list of possible template ID values.
+	 *
+	 * Note that this gets the IDs of all email templates. This does not mean all of these templates are available to
+	 * send through the API endpoint.
+	 *
+	 * @return string[]
+	 */
+	private function get_template_id_enum(): array {
+		$enum = array();
+
+		if ( is_array( WC()->mailer()->emails ) ) {
+			$enum = array_map(
+				function ( $template ) {
+					if ( ! $template instanceof WC_Email || empty( $template->id )  ) {
+						return null;
+					}
+
+					return $template->id;
+				},
+				WC()->mailer()->emails,
+				array() // Strip off the associative array keys.
+			);
+		}
+
+		return array_filter( $enum );
+	}
+
+	/**
 	 * Determine which email templates are available for the given order.
 	 *
 	 * @param WC_Order $order The order in question.
 	 *
-	 * @return array
+	 * @return WC_Email[]
 	 */
 	private function get_available_email_templates( WC_Order $order ): array {
 		$all_email_templates = WC()->mailer()->emails;
