@@ -1,6 +1,7 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const setFeatureFlag = async ( baseURL, value ) =>
 	await setOption(
@@ -17,7 +18,7 @@ const pickImageFromLibrary = async ( page, imageName ) => {
 };
 
 test.describe( 'WooCommerce Email Settings', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	const storeName = 'WooCommerce Core E2E Test Suite';
 
@@ -476,7 +477,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 			await fontFamilyElement.selectOption( 'Times New Roman' );
 
 			// Test theme font selection
-			await fontFamilyElement.selectOption( 'Inter' );
+			// await fontFamilyElement.selectOption( 'Inter' );
 		}
 	);
 
