@@ -15,11 +15,6 @@ import {
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 
-/**
- * Internal dependencies
- */
-import type { FeaturesProps } from './edit';
-
 export enum QuantitySelectorStyle {
 	Input = 'input',
 	Stepper = 'stepper',
@@ -31,7 +26,9 @@ type AddToCartFormSettingsProps = {
 		quantitySelectorStyle: QuantitySelectorStyle;
 	} ) => void;
 
-	features: FeaturesProps;
+	features: {
+		isStepperLayoutFeatureEnabled?: boolean;
+	};
 };
 
 const getHelpText = ( quantitySelectorStyle: QuantitySelectorStyle ) => {
