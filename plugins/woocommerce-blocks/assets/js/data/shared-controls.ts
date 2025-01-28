@@ -129,7 +129,7 @@ export const apiFetchWithHeadersControl = ( options: APIFetchOptions ) =>
 const preventBatching = [
 	'/wc/store/v1/cart/select-shipping-rate',
 	'/wc/store/v1/checkout',
-	'/wc/store/v1/checkout?calc_totals=true',
+	'/wc/store/v1/checkout?__experimental_calc_totals=true',
 ];
 
 /**

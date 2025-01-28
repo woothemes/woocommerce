@@ -283,7 +283,7 @@ class Checkout extends AbstractCartRoute {
 		$this->persist_order_notes_for_order( $request );
 		$this->persist_payment_method_for_order( $request );
 
-		if ( $request->get_param( 'calc_totals' ) ) {
+		if ( $request->get_param( '__experimental_calc_totals' ) ) {
 			/**
 			 * Before triggering validation, ensure totals are current and in turn, things such as shipping costs are present.
 			 * This is so plugins that validate other cart data (e.g. conditional shipping and payments) can access this data.
