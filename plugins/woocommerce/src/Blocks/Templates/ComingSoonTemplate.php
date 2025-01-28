@@ -79,7 +79,7 @@ class ComingSoonTemplate extends AbstractPageTemplate {
 		}
 
 		if ( ! function_exists( 'wp_get_global_settings' ) ) {
-			require_once ABSPATH . WPINC . '/global-styles-and-settings.php';
+			return $default_fonts;
 		}
 
 		$settings = wp_get_global_settings();
