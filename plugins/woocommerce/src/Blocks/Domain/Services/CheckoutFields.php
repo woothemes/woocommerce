@@ -873,12 +873,10 @@ class CheckoutFields {
 			$location = 'order';
 		}
 
-		$fields = [];
-
 		if ( in_array( $location, array_keys( $this->fields_locations ), true ) ) {
 			$order_fields_keys = $this->fields_locations[ $location ];
 
-			$fields = array_filter(
+			return array_filter(
 				$this->get_additional_fields(),
 				function ( $key ) use ( $order_fields_keys ) {
 					return in_array( $key, $order_fields_keys, true );
@@ -887,7 +885,7 @@ class CheckoutFields {
 			);
 		}
 
-		return $fields;
+		return [];
 	}
 
 	/**
