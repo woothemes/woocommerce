@@ -24,6 +24,7 @@ import {
 import { getHistory, getNewPath } from '@woocommerce/navigation';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -171,9 +172,11 @@ const SettingsPaymentsMain = () => {
 /**
  * Renders the recommended payment methods settings page with a fallback while loading.
  */
-const SettingsPaymentsMethods = () => {
+export const SettingsPaymentsMethods = () => {
 	const location = useLocation();
-	const [ paymentMethodsState, setPaymentMethodsState ] = useState( {} );
+	const [ paymentMethodsState, setPaymentMethodsState ] = useState< {
+		[ key: string ]: boolean;
+	} >( {} );
 	const [ isCompleted, setIsCompleted ] = useState( false );
 	const { providers } = useSelect( ( select ) => {
 		return {
@@ -194,7 +197,23 @@ const SettingsPaymentsMethods = () => {
 	// Retrieve wooPayments gateway
 	const wooPayments = getWooPaymentsFromProviders( providers );
 
-	const onClick = useCallback( () => {
+	const onPaymentMethodsContinueClick = useCallback( () => {
+		// Record the event along with payment methods selected
+		recordEvent( 'wcpay_settings_payment_methods_continue', {
+			selected_payment_methods: Object.keys( paymentMethodsState )
+				.filter(
+					( paymentMethod ) =>
+						paymentMethodsState[ paymentMethod ] === true
+				)
+				.join( ', ' ),
+			deselected_payment_methods: Object.keys( paymentMethodsState )
+				.filter(
+					( paymentMethod ) =>
+						paymentMethodsState[ paymentMethod ] === false
+				)
+				.join( ', ' ),
+		} );
+
 		setIsCompleted( true );
 		// Get the onboarding URL or fallback to the test drive account link
 		const onboardUrl =
@@ -216,6 +235,7 @@ const SettingsPaymentsMethods = () => {
 
 		if ( location.pathname === '/payment-methods' ) {
 			hideWooCommerceNavTab( 'none' );
+			recordEvent( 'wcpay_settings_payment_methods_pageview' );
 		}
 	}, [ location ] );
 
@@ -238,7 +258,7 @@ const SettingsPaymentsMethods = () => {
 					</h1>
 					<Button
 						className="components-button is-primary"
-						onClick={ onClick }
+						onClick={ onPaymentMethodsContinueClick }
 						isBusy={ isCompleted }
 						disabled={ isCompleted }
 					>
