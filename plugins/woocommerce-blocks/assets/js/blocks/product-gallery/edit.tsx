@@ -8,13 +8,13 @@ import {
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import { BlockEditProps, InnerBlockTemplate } from '@wordpress/blocks';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { ProductGalleryBlockSettings } from './block-settings/index';
 import type { ProductGalleryAttributes } from './types';
-import { useEffect } from '@wordpress/element';
 import { moveInnerBlocksToPosition } from './utils';
 
 const TEMPLATE: InnerBlockTemplate[] = [
