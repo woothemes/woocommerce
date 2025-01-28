@@ -30,6 +30,10 @@ wp-env run tests-cli wp user create customer customer@woocommercecoree2etestsuit
 	--last_name='Smith' \
 	--user_registered='2022-01-01 12:23:45'
 
+wp-env run tests-cli wp post create --post_type=page --post_status=publish --post_title='Confirmation email' --post_name='confirmation-email' --post_content='[confirmation_received_email]'
+wp-env run tests-cli wp post create --post_type=page --post_status=publish --post_title='Verification email' --post_name='verification-email' --post_content='[verify_received_email]'
+wp-env run tests-cli wp post create --post_type=page --post_status=publish --post_title='Notification email' --post_name='notification-email' --post_content='[notification_received_email]'
+
 echo -e 'Update Blog Name \n'
 wp-env run tests-cli wp option update blogname 'WooCommerce Core E2E Test Suite'
 

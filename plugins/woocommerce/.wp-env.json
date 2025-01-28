@@ -23,7 +23,8 @@
 				".",
 				"https://downloads.wordpress.org/plugin/akismet.zip",
 				"https://github.com/WP-API/Basic-Auth/archive/master.zip",
-				"https://downloads.wordpress.org/plugin/wp-mail-logging.zip"
+				"https://downloads.wordpress.org/plugin/wp-mail-logging.zip",
+				"https://paypal-test-for-peter.mystagingwebsite.com/wp-content/uploads/2025/01/woocommerce-back-in-stock-notifications.zip"
 			],
 			"themes": [],
 			"config": {
@@ -32,6 +33,7 @@
 			},
 			"mappings": {
 				"wp-cli.yml": "./tests/wp-cli.yml",
+				"wp-content/mu-plugins/bis-acceptance-test-helper.php": "./tests/e2e-pw/bin/bis-acceptance-test-helper.php",
 				"wp-content/plugins/filter-setter.php": "./tests/e2e-pw/bin/filter-setter.php",
 				"wp-content/plugins/process-waiting-actions.php": "./tests/e2e-pw/bin/process-waiting-actions.php",
 				"wp-content/plugins/test-helper-apis.php": "./tests/e2e-pw/bin/test-helper-apis.php",
