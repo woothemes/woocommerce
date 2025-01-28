@@ -457,7 +457,7 @@ jobs:
       - name: 'Validate - mismatches'
         run: syncpack list-mismatches
 
-      - name: 'Explain Remedy'
+      - name: 'Validate - prompt mitigation on failed validation'
         if: failure()
         run: |
           echo "Dependency version mismatch detected. This can usually be fixed automatically by updating the pinned version in \`.syncpackrc\` and then running: \`pnpm sync-dependencies\`"
