@@ -1,14 +1,15 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+
+test.use( { storageState: ADMIN_STATE_PATH } );
 
 test.describe.serial(
 	'WooCommerce Orders > Refund an order',
 	{ tag: [ tags.PAYMENTS, tags.HPOS ] },
 	() => {
 		let productId, orderId, currencySymbol;
-
-		test.use( { storageState: process.env.ADMINSTATE } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -147,8 +148,6 @@ test.describe(
 	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		let productWithStockId, productWithNoStockId, orderId;
-
-		test.use( { storageState: process.env.ADMINSTATE } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

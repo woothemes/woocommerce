@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+Comment: Updated k6 testing to use dynamically obtained default product instead of hardcoded id.
+
