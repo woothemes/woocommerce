@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: Migrate global setup and teardown to project dependencies

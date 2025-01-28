@@ -1,5 +1,5 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const productData = {
 	virtual: {
 		name: `Virtual product ${ Date.now() }`,
@@ -36,7 +36,7 @@ const productData = {
 };
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	product: async ( { api }, use ) => {
 		const product = {};
 		await use( product );
@@ -67,7 +67,7 @@ for ( const productType of Object.keys( productData ) ) {
 	test(
 		`can create a simple ${ productType } product`,
 		{ tag: [ tags.GUTENBERG ] },
-		async ( { page, category, product, baseURL } ) => {
+		async ( { page, category, product } ) => {
 			await test.step( 'add new product', async () => {
 				await page.goto( 'wp-admin/post-new.php?post_type=product' );
 			} );
@@ -300,8 +300,6 @@ for ( const productType of Object.keys( productData ) ) {
 			} );
 
 			await test.step( 'shopper can add the product to cart', async () => {
-				await setComingSoon( { baseURL, enabled: 'no' } );
-
 				// logout admin user
 				await page.context().clearCookies();
 				await page.reload();

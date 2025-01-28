@@ -69,6 +69,20 @@ export class ProductGalleryPage {
 		}
 	}
 
+	async getActiveElementImageId( { page }: { page: Page } ) {
+		return page.evaluate( () => {
+			const element = document?.activeElement;
+			if ( ! element ) {
+				return null;
+			}
+			const context = element.getAttribute( 'data-wc-context' );
+			if ( ! context ) {
+				return null;
+			}
+			return JSON.parse( context ).imageId;
+		} );
+	}
+
 	async toggleZoomWhileHoveringSetting( enable: boolean ) {
 		const button = this.page.locator(
 			selectors.editor.zoomWhileHoveringSetting

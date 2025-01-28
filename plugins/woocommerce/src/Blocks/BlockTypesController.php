@@ -526,6 +526,7 @@ final class BlockTypesController {
 			$block_types[] = 'Accordion\AccordionItem';
 			$block_types[] = 'Accordion\AccordionPanel';
 			$block_types[] = 'Accordion\AccordionHeader';
+			$block_types[] = 'BlockifiedProductDetails';
 		}
 
 		/**
