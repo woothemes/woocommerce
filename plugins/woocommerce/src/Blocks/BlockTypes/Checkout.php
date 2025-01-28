@@ -163,12 +163,14 @@ class Checkout extends AbstractBlock {
 			$dependencies[] = 'zxcvbn-async';
 		}
 
-		$checkout_fields = Package::container()->get( CheckoutFields::class );
-		$checkout_schema = Package::container()->get( CheckoutFieldsSchema::class );
+		if ( Features::is_enabled( 'experimental-blocks' ) ) {
+				$checkout_fields = Package::container()->get( CheckoutFields::class );
+				$checkout_schema = Package::container()->get( CheckoutFieldsSchema::class );
 
-		// Load schema parser asynchronously if we need it.
-		if ( $checkout_schema->has_valid_schema( $checkout_fields->get_additional_fields() ) && Features::is_enabled( 'experimental-blocks' ) ) {
-			$dependencies[] = 'wc-schema-parser';
+				// Load schema parser asynchronously if we need it.
+				if ( $checkout_schema->has_valid_schema( $checkout_fields->get_additional_fields() ) ) {
+					$dependencies[] = 'wc-schema-parser';
+				}
 		}
 
 		$script = [
