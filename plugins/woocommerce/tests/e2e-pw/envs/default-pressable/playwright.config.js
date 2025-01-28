@@ -6,21 +6,24 @@ const grepInvert = new RegExp(
 );
 
 config = {
-	...config,
+	...config.default,
 	projects: [
+		...config.setupProjects,
 		{
-			name: 'ui',
+			name: 'e2e-pressable',
 			testIgnore: [
 				'**/api-tests/**',
 				'**/customize-store/**',
 				'**/js-file-monitor/**',
 			],
 			grepInvert,
+			dependencies: [ 'reset', 'site setup' ],
 		},
 		{
-			name: 'api',
+			name: 'api-pressable',
 			testMatch: [ '**/api-tests/**' ],
 			grepInvert,
+			dependencies: [ 'reset', 'site setup' ],
 		},
 	],
 };

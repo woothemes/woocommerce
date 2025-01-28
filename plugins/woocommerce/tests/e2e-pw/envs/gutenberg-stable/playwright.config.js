@@ -4,11 +4,12 @@ const { tags } = require( '../../fixtures/fixtures' );
 process.env.USE_WP_ENV = 'true';
 
 config = {
-	...config,
+	...config.default,
 	projects: [
 		{
 			name: 'Gutenberg',
 			grep: new RegExp( tags.GUTENBERG ),
+			dependencies: [ 'site setup' ],
 		},
 	],
 };
