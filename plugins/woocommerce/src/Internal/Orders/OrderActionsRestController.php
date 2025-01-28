@@ -254,7 +254,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 		if ( is_array( WC()->mailer()->emails ) ) {
 			$enum = array_map(
 				function ( $template ) {
-					if ( ! $template instanceof WC_Email || empty( $template->id )  ) {
+					if ( ! $template instanceof WC_Email || empty( $template->id ) ) {
 						return null;
 					}
 
