@@ -479,6 +479,48 @@ class WC_Email extends WC_Settings_API {
 	}
 
 	/**
+	 * Get valid Cc recipients.
+	 *
+	 * @return string
+	 */
+	public function get_cc_recipient() {
+		$cc = $this->get_option( 'cc' );
+		/**
+		 * Filter the Cc recipient for the email.
+		 *
+		 * @since 9.8.0
+		 * @param string   $cc     Cc recipient.
+		 * @param object   $object The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email $email  WC_Email instance managing the email.
+		 */
+		$cc  = apply_filters( 'woocommerce_email_cc_recipient_' . $this->id, $cc, $this->object, $this );
+		$ccs = array_map( 'trim', explode( ',', $cc ) );
+		$ccs = array_filter( $ccs, 'is_email' );
+		return implode( ', ', $ccs );
+	}
+
+	/**
+	 * Get valid Bcc recipients.
+	 *
+	 * @return string
+	 */
+	public function get_bcc_recipient() {
+		$bcc = $this->get_option( 'bcc' );
+		/**
+		 * Filter the Bcc recipient for the email.
+		 *
+		 * @since 9.8.0
+		 * @param string   $bcc    CC recipient.
+		 * @param object   $object The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email $email  WC_Email instance managing the email.
+		 */
+		$bcc  = apply_filters( 'woocommerce_email_bcc_recipient_' . $this->id, $bcc, $this->object, $this );
+		$bccs = array_map( 'trim', explode( ',', $bcc ) );
+		$bccs = array_filter( $bccs, 'is_email' );
+		return implode( ', ', $bccs );
+	}
+
+	/**
 	 * Get email headers.
 	 *
 	 * @return string
@@ -492,6 +534,18 @@ class WC_Email extends WC_Settings_API {
 			}
 		} elseif ( $this->get_from_address() && $this->get_from_name() ) {
 			$header .= 'Reply-to: ' . $this->get_from_name() . ' <' . $this->get_from_address() . ">\r\n";
+		}
+
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			$cc = $this->get_cc_recipient();
+			if ( ! empty( $cc ) ) {
+				$header .= 'Cc: ' . $cc . "\r\n";
+			}
+
+			$bcc = $this->get_bcc_recipient();
+			if ( ! empty( $bcc ) ) {
+				$header .= 'Bcc: ' . $bcc . "\r\n";
+			}
 		}
 
 		return apply_filters( 'woocommerce_email_headers', $header, $this->id, $this->object, $this );
