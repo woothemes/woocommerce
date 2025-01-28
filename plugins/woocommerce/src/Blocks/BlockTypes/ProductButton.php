@@ -106,7 +106,6 @@ class ProductButton extends AbstractBlock {
 					__( '%s in cart', 'woocommerce' ),
 					'###'
 				),
-				'noticeId'      => '',
 			)
 		);
 

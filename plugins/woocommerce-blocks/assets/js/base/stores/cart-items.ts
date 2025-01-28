@@ -4,6 +4,11 @@
 import { store } from '@woocommerce/interactivity';
 import type { store as StoreType } from '@wordpress/interactivity'; // Todo: remove once we import from `@wordpress/interactivity`.
 
+/**
+ * Internal dependencies
+ */
+import type { StoreNoticesStore } from '../../blocks/store-notices/frontend';
+
 type Item = {
 	key?: string;
 	id: number;
@@ -14,6 +19,7 @@ export type Store = {
 	state: {
 		restUrl: string;
 		nonce: string;
+		noticeId: string;
 		cart: {
 			items: Item[];
 		};
@@ -93,9 +99,37 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 					// Updates the local cart.
 					state.cart.items[ itemIndex ] = json;
 				} catch ( error ) {
-					// Todo: Handle error using the new Store Notices block.
-					// const { actions } = store('woocommerce/store-notices');
-					// actions.addNotice(...);
+					const message = ( error as Error ).message;
+
+					// Question: can we import this dynamically so it's not loaded on page load?
+					const { actions } = store< StoreNoticesStore >(
+						'woocommerce/store-notices'
+					);
+
+					// If the user deleted the hooked store notice block, the
+					// store won't be present and we should not add a notice.
+					if ( 'addNotice' in actions ) {
+						// The old implementation always overwrites the last
+						// notice, so we remove the last notice before adding a
+						// new one.
+						// Todo: Review this implementation.
+						if ( state.noticeId !== '' ) {
+							actions.removeNotice( state.noticeId );
+						}
+
+						const noticeId = actions.addNotice( {
+							notice: message,
+							type: 'error',
+							dismissible: true,
+						} );
+
+						state.noticeId = noticeId;
+					}
+
+					// We don't care about errors blocking execution, but will
+					// console.error for troubleshooting.
+					// eslint-disable-next-line no-console
+					console.error( error );
 
 					// Reverts the optimistic update.
 					state.cart.items[ itemIndex ].quantity =
