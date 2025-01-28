@@ -145,4 +145,30 @@ class CheckoutFieldsSchema {
 
 		return true;
 	}
+
+	/**
+	 * Check if the fields have a valid schema.
+	 *
+	 * @param array $fields The fields.
+	 * @return bool
+	 */
+	public function has_valid_schema( $fields ) {
+		$has_valid_schema = false;
+
+		foreach ( $fields as $field ) {
+			if (
+				isset( $field['rules'] ) &&
+				(
+					! empty( $field['rules']['required'] ) ||
+					! empty( $field['rules']['hidden'] ) ||
+					! empty( $field['rules']['validation'] )
+				)
+			) {
+				$has_valid_schema = true;
+				break;
+			}
+		}
+
+		return $has_valid_schema;
+	}
 }
