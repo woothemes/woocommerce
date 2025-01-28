@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Add rating stars as aria-describedby of product name
