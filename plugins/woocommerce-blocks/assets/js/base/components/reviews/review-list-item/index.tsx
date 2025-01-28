@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
+import { useId } from '@wordpress/element';
 import clsx from 'clsx';
 import ReadMore from '@woocommerce/base-components/read-more';
 import { ReviewBlockAttributes } from '@woocommerce/blocks/reviews/attributes';
@@ -172,9 +173,7 @@ const ReviewListItem = ( { attributes, review = {} }: ReviewListItemProps ) => {
 	const { rating } = review;
 	const isLoading = ! ( Object.keys( review ).length > 0 );
 	const showReviewRating = Number.isFinite( rating ) && showReviewRatingAttr;
-	const reviewRatingId = `rating-stars-${ Math.floor(
-		Math.random() * 100
-	) }-${ Date.now() }`;
+	const reviewRatingId = useId();
 
 	return (
 		<li
