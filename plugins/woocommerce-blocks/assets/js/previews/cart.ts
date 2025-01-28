@@ -2,7 +2,10 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { WC_BLOCKS_IMAGE_URL } from '@woocommerce/block-settings';
+import {
+	SHIPPING_ENABLED,
+	WC_BLOCKS_IMAGE_URL,
+} from '@woocommerce/block-settings';
 import { CartResponse } from '@woocommerce/types';
 import { getSetting } from '@woocommerce/settings';
 
@@ -542,7 +545,7 @@ export const previewCart: CartResponse = {
 	items_count: 3,
 	items_weight: 0,
 	needs_payment: true,
-	needs_shipping: getSetting( 'shippingEnabled', true ),
+	needs_shipping: SHIPPING_ENABLED,
 	has_calculated_shipping: true,
 	shipping_address: {
 		first_name: '',

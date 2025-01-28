@@ -10,6 +10,7 @@ import { useShippingData } from '@woocommerce/base-context/hooks';
 import {
 	LOCAL_PICKUP_ENABLED,
 	SHIPPING_METHODS_EXIST,
+	SHIPPING_ENABLED,
 } from '@woocommerce/block-settings';
 import { useCheckoutBlockContext } from '@woocommerce/blocks/checkout/context';
 
@@ -48,20 +49,15 @@ const FrontendBlock = ( {
 			};
 		}
 	);
+
 	const { setPrefersCollection } = useDispatch( checkoutStoreDescriptor );
-	const {
-		shippingRates,
-		needsShipping,
-		hasCalculatedShipping,
-		isCollectable,
-	} = useShippingData();
+	const { needsShipping, isCollectable } = useShippingData();
 
 	// Note that display logic is also found in plugins/woocommerce-blocks/assets/js/blocks/checkout/inner-blocks/register-components.ts
 	// where the block is not registered if the conditions are not met.
 	if (
+		! SHIPPING_ENABLED ||
 		! needsShipping ||
-		! hasCalculatedShipping ||
-		! shippingRates ||
 		! isCollectable ||
 		! LOCAL_PICKUP_ENABLED ||
 		! SHIPPING_METHODS_EXIST
