@@ -7,17 +7,12 @@ import { recordEvent } from '@woocommerce/tracks';
 import { dispatch, select } from '@wordpress/data';
 import { UpgradeDowngradeNotice as Notice } from '@woocommerce/editor-components/upgrade-downgrade-notice';
 import { findBlock } from '@woocommerce/utils';
-import {
-	createBlock,
-	// @ts-expect-error Type definitions for this function are missing in Gutenberg
-	createBlocksFromInnerBlocksTemplate,
-} from '@wordpress/blocks';
+import { createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
 import metadata from '../../block.json';
-import getInnerBlocksTemplate from '../../../../add-to-cart-with-options/utils/get-inner-blocks-template';
 
 const upgradeToBlockifiedAddToCartWithOptions = async (
 	blockClientId: string
@@ -33,18 +28,10 @@ const upgradeToBlockifiedAddToCartWithOptions = async (
 		return false;
 	}
 
-	const newBlock = createBlock(
-		'woocommerce/add-to-cart-with-options',
-		{
-			isDescendentOfSingleProductBlock:
-				foundBlock.attributes.isDescendentOfSingleProductBlock,
-		},
-		createBlocksFromInnerBlocksTemplate(
-			getInnerBlocksTemplate(
-				foundBlock.attributes.quantitySelectorStyle
-			)
-		)
-	);
+	const newBlock = createBlock( 'woocommerce/add-to-cart-with-options', {
+		isDescendentOfSingleProductBlock:
+			foundBlock.attributes.isDescendentOfSingleProductBlock,
+	} );
 	dispatch( 'core/block-editor' ).replaceBlock(
 		foundBlock.clientId,
 		newBlock
