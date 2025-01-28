@@ -1,8 +1,10 @@
-name: 'Process stale issues'
+name: 'Process stale issues and PRs'
 on:
     schedule:
         - cron: '21 0 * * *'
     workflow_dispatch:
+    pull_request:
+        types: [converted_to_draft]
 
 permissions: {}
 
@@ -13,6 +15,7 @@ jobs:
             contents: read
             issues: write
             pull-requests: write
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         steps:
             - name: Process stale issues
               uses: actions/stale@v9.0.0
@@ -50,3 +53,34 @@ jobs:
                   enable-statistics: true
                   ascending: true
                   operations-per-run: 120
+            - name: Remove stale PR approvals (over 30 days old)
+              uses: actions/stale@v9.0.0
+              with:
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+                  only-pr-labels: '*'
+                  days-before-stale: -1
+                  days-before-close: -1
+                  days-before-pr-stale: 30
+                  days-before-pr-close: -1
+                  stale-pr-message: 'This PR approval has been removed due to being stale (30+ days old). Please request a new review.'
+                  operations-per-run: 120
+                  ascending: true
+
+    remove-draft-approvals:
+        runs-on: ubuntu-20.04
+        permissions:
+            pull-requests: write
+        if: github.event_name == 'pull_request' && github.event.action == 'converted_to_draft'
+        steps:
+            - name: Remove approvals from draft PR
+              uses: actions/stale@v9.0.0
+              with:
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
+                  only-pr-labels: '*'
+                  days-before-stale: -1
+                  days-before-close: -1
+                  days-before-pr-stale: 0
+                  days-before-pr-close: -1
+                  operations-per-run: 120
+                  stale-pr-message: 'This PR approval has been removed due to it being moved back to draft status after being approved. Please request a new review.'
+                  ascending: true
