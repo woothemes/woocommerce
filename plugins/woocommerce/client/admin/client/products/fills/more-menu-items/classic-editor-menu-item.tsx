@@ -75,7 +75,7 @@ export const ClassicEditorMenuItem = ( {
 				'woocommerce'
 			) }
 		>
-			{ __( 'Turn off the new product form', 'woocommerce' ) }
+			{ __( 'Turn off the new product editor', 'woocommerce' ) }
 		</MenuItem>
 	);
 };
