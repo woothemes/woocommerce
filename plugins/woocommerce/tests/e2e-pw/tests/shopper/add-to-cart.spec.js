@@ -6,7 +6,6 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
  * External dependencies
  */
 import { addAProductToCart } from '@woocommerce/e2e-utils-playwright';
-const { setComingSoon } = require( '../../utils/coming-soon' );
 
 const productName = `Cart product test ${ Date.now() }`;
 const productPrice = '13.99';
@@ -18,8 +17,6 @@ test.describe(
 		let productId;
 
 		test.beforeAll( async ( { baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
-
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

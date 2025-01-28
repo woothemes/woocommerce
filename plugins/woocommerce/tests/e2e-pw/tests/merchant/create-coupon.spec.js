@@ -1,4 +1,5 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const couponData = {
 	fixedCart: {
@@ -31,7 +32,7 @@ const couponData = {
 };
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	coupon: async ( { api }, use ) => {
 		const coupon = {};
 		await use( coupon );

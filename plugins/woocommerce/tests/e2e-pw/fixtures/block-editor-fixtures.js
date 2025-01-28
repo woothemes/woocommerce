@@ -1,4 +1,5 @@
 const { test } = require( './fixtures' );
+const { ADMIN_STATE_PATH } = require( '../playwright.config' );
 
 exports.test = test.extend( {
 	page: async ( { page, api, wcAdminApi }, use ) => {
@@ -25,5 +26,5 @@ exports.test = test.extend( {
 			}
 		);
 	},
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 } );
