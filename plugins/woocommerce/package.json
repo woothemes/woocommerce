@@ -57,7 +57,7 @@
 		"test:e2e:with-env": "pnpm test:e2e:install && bash ./tests/e2e-pw/run-tests-with-env.sh",
 		"test:e2e:pressable": "pnpm test:e2e:with-env default-pressable",
 		"test:e2e:wpcom": "pnpm test:e2e:with-env default-wpcom",
-		"test:e2e:hpos": "pnpm test:e2e:with-env default-hpos-disabled",
+		"test:e2e:hpos": "pnpm test:e2e:with-env default-hpos-disabled --project=e2e-hpos-disabled",
 		"test:e2e:gb-stable": "pnpm test:e2e:with-env gutenberg-stable",
 		"test:e2e:gb-nightly": "pnpm test:e2e:with-env gutenberg-nightly",
 		"test:env:start": "pnpm env:test",
