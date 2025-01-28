@@ -15,12 +15,12 @@ permissions: {}
 
 jobs:
   verify:
-    name: 'Verify if any PR is left open by author:app/github-actions or with "cherry" in the title'
+    name: 'Verify if any PR is left open by author:app/github-actions'
     outputs:
       runBuildZipJob: ${{ steps.verify-prs.outputs.runBuildZipJob }}
     runs-on: ubuntu-20.04
     steps:
-        - name: Verify if any PR is left open by author:app/github-actions or with "cherry" in the title
+        - name: Verify if any PR is left open by author:app/github-actions
           id: verify-prs
           uses: actions/github-script@v6
           with:

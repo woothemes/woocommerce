@@ -15,6 +15,7 @@ const defaultProductData: ProductResponseItem = {
 	variation: '',
 	permalink: '',
 	sku: '',
+	slug: '',
 	short_description: '',
 	description: '',
 	on_sale: false,
@@ -57,6 +58,7 @@ const defaultProductData: ProductResponseItem = {
 		maximum: 99,
 		multiple_of: 1,
 	},
+	grouped_products: [],
 };
 
 /**

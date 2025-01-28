@@ -42,6 +42,13 @@ export const Block = ( props: Props ): JSX.Element | null => {
 
 	const isDescendentOfAllProductsBlock =
 		parentName === 'woocommerce/all-products';
+	const isDescendentOfAddToCartGroupedProductSelectorBlock =
+		parentName ===
+		'woocommerce/add-to-cart-with-options-grouped-product-selector-item';
+
+	const showPricePreview =
+		isDescendentOfSingleProductTemplate &&
+		! isDescendentOfAddToCartGroupedProductSelectorBlock;
 
 	const wrapperClassName = clsx(
 		'wc-block-components-product-price',
@@ -67,7 +74,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	}
 
 	const prices: PriceProps = product.prices;
-	const currency = isDescendentOfSingleProductTemplate
+	const currency = showPricePreview
 		? getCurrencyFromPriceResponse()
 		: getCurrencyFromPriceResponse( prices );
 
@@ -87,19 +94,13 @@ export const Block = ( props: Props ): JSX.Element | null => {
 			priceStyle={ styleProps.style }
 			priceClassName={ priceClassName }
 			currency={ currency }
-			price={
-				isDescendentOfSingleProductTemplate
-					? pricePreview
-					: prices.price
-			}
+			price={ showPricePreview ? pricePreview : prices.price }
 			// Range price props
 			minPrice={ prices?.price_range?.min_amount }
 			maxPrice={ prices?.price_range?.max_amount }
 			// This is the regular or original price when the `price` value is a sale price.
 			regularPrice={
-				isDescendentOfSingleProductTemplate
-					? pricePreview
-					: prices.regular_price
+				showPricePreview ? pricePreview : prices.regular_price
 			}
 			regularPriceClassName={ clsx( {
 				[ `${ parentClassName }__product-price__regular` ]:

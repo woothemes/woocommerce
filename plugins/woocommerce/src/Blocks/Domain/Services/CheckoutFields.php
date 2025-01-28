@@ -4,6 +4,7 @@ namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
 use WC_Customer;
 use WC_Data;
 use WC_Order;
@@ -79,14 +80,22 @@ class CheckoutFields {
 	const OTHER_FIELDS_PREFIX = '_wc_other/';
 
 	/**
+	 * Instance of the checkout fields schema.
+	 *
+	 * @var CheckoutFieldsSchema
+	 */
+	private $schema;
+
+	/**
 	 * Sets up core fields.
 	 *
-	 * @param AssetDataRegistry $asset_data_registry Instance of the asset data registry.
+	 * @param AssetDataRegistry    $asset_data_registry Instance of the asset data registry.
+	 * @param CheckoutFieldsSchema $schema Instance of the checkout fields schema.
 	 */
-	public function __construct( AssetDataRegistry $asset_data_registry ) {
+	public function __construct( AssetDataRegistry $asset_data_registry, CheckoutFieldsSchema $schema ) {
 		$this->asset_data_registry = $asset_data_registry;
-
-		$this->fields_locations = [
+		$this->schema              = $schema;
+		$this->fields_locations    = [
 			// omit email from shipping and billing fields.
 			'address' => array_merge( \array_diff_key( $this->get_core_fields_keys(), array( 'email' ) ) ),
 			'contact' => array( 'email' ),
@@ -195,23 +204,26 @@ class CheckoutFields {
 		// The above validate_options function ensures these options are valid. Type might not be supplied but then it defaults to text.
 		$field_data = wp_parse_args(
 			$options,
-			[
-				'id'                         => '',
-				'label'                      => '',
-				'optionalLabel'              => sprintf(
-					/* translators: %s Field label. */
-					__( '%s (optional)', 'woocommerce' ),
-					$options['label']
-				),
-				'location'                   => '',
-				'type'                       => 'text',
-				'hidden'                     => false,
-				'required'                   => false,
-				'attributes'                 => [],
-				'show_in_order_confirmation' => true,
-				'sanitize_callback'          => array( $this, 'default_sanitize_callback' ),
-				'validate_callback'          => array( $this, 'default_validate_callback' ),
-			]
+			array_merge(
+				[
+					'id'                         => '',
+					'label'                      => '',
+					'optionalLabel'              => sprintf(
+						/* translators: %s Field label. */
+						__( '%s (optional)', 'woocommerce' ),
+						$options['label']
+					),
+					'location'                   => '',
+					'type'                       => 'text',
+					'hidden'                     => false,
+					'required'                   => false,
+					'attributes'                 => [],
+					'show_in_order_confirmation' => true,
+					'sanitize_callback'          => array( $this, 'default_sanitize_callback' ),
+					'validate_callback'          => array( $this, 'default_validate_callback' ),
+				],
+				$this->schema->get_schema_properties()
+			)
 		);
 
 		$field_data['attributes'] = $this->register_field_attributes( $field_data['id'], $field_data['attributes'] );
@@ -336,6 +348,10 @@ class CheckoutFields {
 			$message = sprintf( 'Registering a field with hidden set to true is not supported. The field "%s" will be registered as visible.', $id );
 			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '8.6.0' );
 			// Don't return here unlike the other fields because this is not an issue that will prevent registration.
+		}
+
+		if ( ! $this->schema->validate_schema( $options ) ) {
+			return false;
 		}
 
 		return true;

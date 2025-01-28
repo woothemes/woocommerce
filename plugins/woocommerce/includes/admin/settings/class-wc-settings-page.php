@@ -198,7 +198,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 				// Replace empty string section ids with 'default'.
 				$normalized_section_id                   = '' === $section_id ? 'default' : $section_id;
 				$sections_data[ $normalized_section_id ] = array(
-					'label'    => html_entity_decode( $section_label ),
+					'label'    => html_entity_decode( esc_html( $section_label ) ),
 					'settings' => $section_settings_data,
 				);
 			}
@@ -240,6 +240,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			// If the custom view has output, add it to the settings data.
 			if ( ! empty( $custom_view ) ) {
 				$section_settings_data[] = array(
+					'id'      => wp_unique_prefixed_id( 'settings_custom_view' ),
 					'type'    => 'custom',
 					'content' => $custom_view,
 				);
@@ -320,7 +321,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			$html = ob_get_contents();
 			ob_end_clean();
 			$setting['content'] = trim( $html );
-			$setting['id']      = isset( $setting['id'] ) ? $setting['id'] : $setting['type'];
+			$setting['id']      = isset( $setting['id'] ) ? $setting['id'] : wp_unique_prefixed_id( 'settings_custom_view' );
 			$setting['type']    = 'custom';
 
 			return $setting;

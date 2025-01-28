@@ -206,7 +206,8 @@ describe( 'Plugins Component', () => {
 			?.querySelector( 'input[type="checkbox"]' );
 		expect( checkbox3 ).not.toBeChecked();
 		const checkbox4 = screen
-			.getByText( 'Plugin 4' )
+			// use role because error message also contains the plugin name
+			.getByRole( 'heading', { level: 3, name: 'Plugin 4' } )
 			.closest( '.woocommerce-profiler-plugins-plugin-card' )
 			?.querySelector( 'input[type="checkbox"]' );
 		expect( checkbox4 ).toBeChecked();

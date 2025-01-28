@@ -146,12 +146,13 @@ export const PaymentGateways = ( {
 							{ isPopoverVisible && (
 								<Popover
 									position="top left"
+									className="settings-payment-gateways__header-select-container--indicator-popover"
 									noArrow={ true }
 									onClose={ () =>
 										setIsPopoverVisible( false )
 									}
 								>
-									<div className="settings-payment-gateways__header-select-container--indicator-popover">
+									<div className="settings-payment-gateways__header-select-container--indicator-popover-content">
 										{ interpolateComponents( {
 											mixedString: __(
 												'Your business location does not match your store location. {{link}}Edit store location.{{/link}}',

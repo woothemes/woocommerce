@@ -218,6 +218,16 @@ class TransformerTest extends WC_Unit_Test_Case {
 							),
 						),
 					),
+					'section2' => array(
+						'settings' => array(
+							array(
+								'type' => 'title',
+							),
+							array(
+								'type' => 'text',
+							),
+						),
+					),
 				),
 			),
 		);
@@ -229,6 +239,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 						'settings' => array(
 							array(
 								'type'     => 'group',
+								'id'       => 'setting_group1',
 								'title'    => 'group 1',
 								'desc'     => 'Description 1',
 								'settings' => array(
@@ -241,6 +252,18 @@ class TransformerTest extends WC_Unit_Test_Case {
 										'id'   => 'setting2',
 									),
 								),
+							),
+						),
+					),
+					'section2' => array(
+						'settings' => array(
+							array(
+								'type' => 'title',
+								'id'   => 'setting_title1',
+							),
+							array(
+								'type' => 'text',
+								'id'   => 'setting_field1',
 							),
 						),
 					),
@@ -414,6 +437,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 							),
 							// Valid checkbox group gets transformed.
 							array(
+								'id'       => 'setting_checkboxgroup1',
 								'type'     => 'checkboxgroup',
 								'title'    => 'Valid Group',
 								'settings' => array(
@@ -483,6 +507,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 					'section1' => array(
 						'settings' => array(
 							array(
+								'id'       => 'setting_checkboxgroup2',
 								'type'     => 'checkboxgroup',
 								'title'    => 'Checkbox Group',
 								'settings' => array(
@@ -725,6 +750,7 @@ class TransformerTest extends WC_Unit_Test_Case {
 								'title'    => 'group 1',
 								'settings' => array(
 									array(
+										'id'       => 'setting_checkboxgroup3',
 										'type'     => 'checkboxgroup',
 										'title'    => 'Checkbox Group',
 										'settings' => array(

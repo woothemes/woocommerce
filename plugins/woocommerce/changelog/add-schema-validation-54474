@@ -1,0 +1,4 @@
+Significance: minor
+Type: dev
+
+Add validation schema for additional checkout fields (experimental, behind feature flag)

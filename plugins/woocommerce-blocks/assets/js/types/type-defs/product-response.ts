@@ -95,4 +95,5 @@ export interface ProductResponseItem {
 		multiple_of: number;
 	};
 	slug: string;
+	grouped_products: Array< number >;
 }

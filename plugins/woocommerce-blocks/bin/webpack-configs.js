@@ -9,7 +9,6 @@ const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const ProgressBarPlugin = require( 'progress-bar-webpack-plugin' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const WebpackRTLPlugin = require( './webpack-rtl-plugin' );
-const TerserPlugin = require( 'terser-webpack-plugin' );
 const CreateFileWebpack = require( 'create-file-webpack' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
@@ -29,6 +28,7 @@ const {
 	getCacheGroups,
 } = require( './webpack-helpers' );
 const AddSplitChunkDependencies = require( './add-split-chunk-dependencies' );
+const { sharedOptimizationConfig } = require( './webpack-shared-config' );
 
 const isProduction = NODE_ENV === 'production';
 
@@ -137,32 +137,13 @@ woocommerce_blocks_env = ${ NODE_ENV }
 			} ),
 		],
 		optimization: {
-			// Only concatenate modules in production, when not analyzing bundles.
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		resolve: {
 			...resolve,
@@ -240,8 +221,7 @@ const getMainConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				minSize: 200000,
 				automaticNameDelimiter: '--',
@@ -255,23 +235,6 @@ const getMainConfig = ( options = {} ) => {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -394,8 +357,7 @@ const getFrontConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				minSize: 200000,
 				automaticNameDelimiter: '--',
@@ -414,23 +376,6 @@ const getFrontConfig = ( options = {} ) => {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -516,31 +461,13 @@ const getPaymentsConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -627,31 +554,13 @@ const getExtensionsConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -737,31 +646,13 @@ const getSiteEditorConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -1103,8 +994,7 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				minSize: 200000,
 				automaticNameDelimiter: '--',
@@ -1125,23 +1015,6 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {

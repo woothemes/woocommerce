@@ -1,0 +1,4 @@
+Significance: minor
+Type: dev
+
+@woocommerce/block-library: Extract some shared config for optimization in webpack-configs.js. Update webpack terser plugin to latest.

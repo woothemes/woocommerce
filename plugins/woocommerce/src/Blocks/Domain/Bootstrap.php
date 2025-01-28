@@ -22,6 +22,7 @@ use Automattic\WooCommerce\Blocks\Domain\Services\Hydration;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsAdmin;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsFrontend;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
 use Automattic\WooCommerce\Blocks\InboxNotifications;
 use Automattic\WooCommerce\Blocks\Installer;
 use Automattic\WooCommerce\Blocks\Migration;
@@ -299,9 +300,16 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
+			CheckoutFieldsSchema::class,
+			function () {
+				return new CheckoutFieldsSchema();
+			}
+		);
+		$this->container->register(
 			CheckoutFields::class,
 			function ( Container $container ) {
-				return new CheckoutFields( $container->get( AssetDataRegistry::class ) );
+				$schema = $container->get( CheckoutFieldsSchema::class );
+				return new CheckoutFields( $container->get( AssetDataRegistry::class ), $schema );
 			}
 		);
 		$this->container->register(

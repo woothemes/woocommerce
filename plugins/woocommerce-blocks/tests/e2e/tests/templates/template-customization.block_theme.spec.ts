@@ -27,6 +27,7 @@ test.describe( 'Template customization', () => {
 				frontendUtils,
 				editor,
 				page,
+				requestUtils,
 			} ) => {
 				await admin.visitSiteEditor( {
 					postId: `woocommerce/woocommerce//${ testData.templatePath }`,
@@ -50,7 +51,13 @@ test.describe( 'Template customization', () => {
 					} )
 				).toBeVisible();
 
-				await testData.visitPage( { frontendUtils, page } );
+				await testData.visitPage( {
+					admin,
+					editor,
+					frontendUtils,
+					requestUtils,
+					page,
+				} );
 				await expect(
 					page.getByText( userText ).first()
 				).toBeVisible();
@@ -62,7 +69,13 @@ test.describe( 'Template customization', () => {
 				await editor.revertTemplate( {
 					templateName: testData.templateName,
 				} );
-				await testData.visitPage( { frontendUtils, page } );
+				await testData.visitPage( {
+					admin,
+					editor,
+					frontendUtils,
+					requestUtils,
+					page,
+				} );
 				await expect( page.getByText( userText ) ).toBeHidden();
 			} );
 
@@ -70,6 +83,7 @@ test.describe( 'Template customization', () => {
 				test( `defaults to the ${ testData.fallbackTemplate.templateName } template`, async ( {
 					admin,
 					frontendUtils,
+					requestUtils,
 					editor,
 					page,
 				} ) => {
@@ -89,7 +103,13 @@ test.describe( 'Template customization', () => {
 					await editor.saveSiteEditorEntities( {
 						isOnlyCurrentEntityDirty: true,
 					} );
-					await testData.visitPage( { frontendUtils, page } );
+					await testData.visitPage( {
+						admin,
+						editor,
+						frontendUtils,
+						requestUtils,
+						page,
+					} );
 					await expect(
 						page.getByText( fallbackTemplateUserText ).first()
 					).toBeVisible();
@@ -102,7 +122,13 @@ test.describe( 'Template customization', () => {
 						templateName:
 							testData.fallbackTemplate?.templateName || '',
 					} );
-					await testData.visitPage( { frontendUtils, page } );
+					await testData.visitPage( {
+						admin,
+						editor,
+						frontendUtils,
+						requestUtils,
+						page,
+					} );
 					await expect(
 						page.getByText( fallbackTemplateUserText )
 					).toBeHidden();
@@ -164,7 +190,13 @@ test.describe( 'Template customization', () => {
 				} );
 
 				// Verify the template is the one modified by the user based on the theme.
-				await testData.visitPage( { frontendUtils, page } );
+				await testData.visitPage( {
+					admin,
+					editor,
+					frontendUtils,
+					requestUtils,
+					page,
+				} );
 				await expect(
 					page.getByText( userText ).first()
 				).toBeVisible();
@@ -185,7 +217,13 @@ test.describe( 'Template customization', () => {
 					templateName: testData.templateName,
 				} );
 
-				await testData.visitPage( { frontendUtils, page } );
+				await testData.visitPage( {
+					admin,
+					editor,
+					frontendUtils,
+					requestUtils,
+					page,
+				} );
 
 				await expect(
 					page.getByText( woocommerceTemplateUserText ).first()

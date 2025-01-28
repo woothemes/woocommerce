@@ -3,11 +3,57 @@
  */
 import { __, _x } from '@wordpress/i18n';
 import type { CartResponseShippingRate } from '@woocommerce/types';
+import { getSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
  */
 import { API_SITE_CURRENCY, displayForMinorUnit } from './utils';
+
+// Get local pickup locations from the settings and format into some preview shipping rates for the response.
+const localPickupEnabled = getSetting< boolean >( 'localPickupEnabled', false );
+const localPickupCost = getSetting< string >( 'localPickupCost', '' );
+const localPickupLocations = localPickupEnabled
+	? getSetting<
+			{
+				enabled: boolean;
+				name: string;
+				formatted_address: string;
+				details: string;
+			}[]
+	  >( 'localPickupLocations', [] )
+	: [];
+
+const localPickupRates = localPickupLocations
+	? Object.values( localPickupLocations ).map(
+			( location, index: number ) => ( {
+				...API_SITE_CURRENCY,
+				name: __( 'Local pickup #1', 'woocommerce' ),
+				description: '',
+				delivery_time: '',
+				price: displayForMinorUnit( localPickupCost, 0 ) || '0',
+				taxes: '0',
+				rate_id: `pickup_location:${ index + 1 }`,
+				instance_id: index + 1,
+				meta_data: [
+					{
+						key: 'pickup_location',
+						value: location.name,
+					},
+					{
+						key: 'pickup_address',
+						value: location.formatted_address,
+					},
+					{
+						key: 'pickup_details',
+						value: location.details,
+					},
+				],
+				method_id: 'pickup_location',
+				selected: false,
+			} )
+	  )
+	: [];
 
 export const previewShippingRates: CartResponseShippingRate[] = [
 	{
@@ -68,50 +114,7 @@ export const previewShippingRates: CartResponseShippingRate[] = [
 				method_id: 'flat_rate',
 				selected: true,
 			},
-			{
-				...API_SITE_CURRENCY,
-				name: __( 'Local pickup #1', 'woocommerce' ),
-				description: '',
-				delivery_time: '',
-				price: '0',
-				taxes: '0',
-				rate_id: 'pickup_location:1',
-				instance_id: 1,
-				meta_data: [
-					{
-						key: 'pickup_location',
-						value: 'New York',
-					},
-					{
-						key: 'pickup_address',
-						value: '123 Easy Street, New York, 12345',
-					},
-				],
-				method_id: 'pickup_location',
-				selected: false,
-			},
-			{
-				...API_SITE_CURRENCY,
-				name: __( 'Local pickup #2', 'woocommerce' ),
-				description: '',
-				delivery_time: '',
-				price: '0',
-				taxes: '0',
-				rate_id: 'pickup_location:2',
-				instance_id: 1,
-				meta_data: [
-					{
-						key: 'pickup_location',
-						value: 'Los Angeles',
-					},
-					{
-						key: 'pickup_address',
-						value: '123 Easy Street, Los Angeles, California, 90210',
-					},
-				],
-				method_id: 'pickup_location',
-				selected: false,
-			},
+			...localPickupRates,
 		],
 	},
 ];

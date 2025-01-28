@@ -16,8 +16,10 @@ class LocalPickupUtils {
 		$pickup_location_settings = get_option(
 			'woocommerce_pickup_location_settings',
 			[
-				'enabled' => 'no',
-				'title'   => __( 'Pickup', 'woocommerce' ),
+				'enabled'    => 'no',
+				'title'      => __( 'Pickup', 'woocommerce' ),
+				'cost'       => '',
+				'tax_status' => 'taxable',
 			]
 		);
 

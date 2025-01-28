@@ -435,6 +435,7 @@ class Checkout extends AbstractBlock {
 
 		$this->asset_data_registry->add( 'localPickupEnabled', $pickup_location_settings['enabled'] );
 		$this->asset_data_registry->add( 'localPickupText', $pickup_location_settings['title'] );
+		$this->asset_data_registry->add( 'localPickupCost', $pickup_location_settings['cost'] );
 		$this->asset_data_registry->add( 'collectableMethodIds', $local_pickup_method_ids );
 
 		// Local pickup is included with legacy shipping methods since they do not support shipping zones.
@@ -451,6 +452,19 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 0 );
 
 		$is_block_editor = $this->is_block_editor();
+
+		if ( $is_block_editor && ! $this->asset_data_registry->exists( 'localPickupLocations' ) ) {
+			$this->asset_data_registry->add(
+				'localPickupLocations',
+				array_map(
+					function ( $location ) {
+						$location['formatted_address'] = wc()->countries->get_formatted_address( $location['address'], ', ' );
+						return $location;
+					},
+					get_option( 'pickup_location_pickup_locations', array() )
+				)
+			);
+		}
 
 		if ( $is_block_editor && ! $this->asset_data_registry->exists( 'globalShippingMethods' ) ) {
 			$shipping_methods           = WC()->shipping()->get_shipping_methods();
@@ -548,18 +562,6 @@ class Checkout extends AbstractBlock {
 				return 'yes' === $payment_gateway->enabled;
 			}
 		);
-	}
-
-	/**
-	 * Are we currently on the admin block editor screen?
-	 */
-	protected function is_block_editor() {
-		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
-			return false;
-		}
-		$screen = get_current_screen();
-
-		return $screen && $screen->is_block_editor();
 	}
 
 	/**
