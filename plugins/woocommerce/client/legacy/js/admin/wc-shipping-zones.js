@@ -1,6 +1,13 @@
 /* global shippingZonesLocalizeScript, ajaxurl */
 ( function( $, data, wp, ajaxurl ) {
 	$( function() {
+		if ( 
+			! document.getElementById( 'tmpl-wc-shipping-zone-row' ) || 
+			! document.getElementById( 'tmpl-wc-shipping-zone-row-blank' ) 
+		) {
+			return;
+		}
+		
 		var $table          = $( '.wc-shipping-zones' ),
 			$tbody          = $( '.wc-shipping-zone-rows' ),
 			$save_button    = $( '.wc-shipping-zone-save' ),

@@ -34,7 +34,6 @@
 	display: flex;
 	gap: 48px;
 
-
 	.dataforms-layouts-regular__header:not(:first-child) {
 		margin-top: 40px;
 	}
@@ -44,7 +43,7 @@
 	}
 }
 
-.dataforms-layouts-regular__field:has( > .woocommerce-settings-group ) {
+.dataforms-layouts-regular__field:has(> .woocommerce-settings-group) {
 	padding-block: 48px;
 
 	&:not(:last-child) {
@@ -74,4 +73,11 @@
 	.components-input-control__label {
 		white-space: normal;
 	}
+}
+
+.woocommerce-settings-color-picker {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	margin: 8px 0;
 }
