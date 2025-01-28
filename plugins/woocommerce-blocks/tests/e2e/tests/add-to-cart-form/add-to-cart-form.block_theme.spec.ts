@@ -213,12 +213,6 @@ test.describe( `${ blockData.name } Block`, () => {
 	} );
 
 	test.describe( 'Stepper Layout', () => {
-		test.beforeEach( async ( { requestUtils } ) => {
-			await requestUtils.setFeatureFlag(
-				'add-to-cart-with-options-stepper-layout',
-				true
-			);
-		} );
 		test( 'has the stepper option visible', async ( {
 			admin,
 			editor,
@@ -462,5 +456,50 @@ test.describe( `${ blockData.name } Block`, () => {
 
 			expect( eventFired ).toBeUndefined();
 		} );
+	} );
+
+	test( 'can be migrated to the blockified Add to Cart with Options block', async ( {
+		page,
+		editor,
+		blockUtils,
+		admin,
+		requestUtils,
+	} ) => {
+		await requestUtils.setFeatureFlag( 'experimental-blocks', true );
+		await requestUtils.setFeatureFlag( 'blockified-add-to-cart', true );
+
+		await admin.createNewPost();
+		await editor.insertBlock( { name: 'woocommerce/single-product' } );
+
+		const productName = 'Hoodie with Logo';
+		await blockUtils.configureSingleProductBlock( productName );
+
+		const addToCartFormBlock = await editor.getBlockByName(
+			blockData.slug
+		);
+		await editor.selectBlocks( addToCartFormBlock );
+
+		await page
+			.getByRole( 'button', { name: 'Upgrade to the blockified' } )
+			.click();
+
+		await expect(
+			editor.canvas.getByLabel(
+				'Block: Quantity Selector (Experimental)'
+			)
+		).toBeVisible();
+
+		const addToCartWithOptionsBlock = await editor.getBlockByName(
+			'woocommerce/add-to-cart-with-options'
+		);
+		await editor.selectBlocks( addToCartWithOptionsBlock );
+
+		await page.getByRole( 'button', { name: 'Switch back' } ).click();
+
+		await expect(
+			editor.canvas.getByLabel(
+				'Block: Quantity Selector (Experimental)'
+			)
+		).toBeHidden();
 	} );
 } );

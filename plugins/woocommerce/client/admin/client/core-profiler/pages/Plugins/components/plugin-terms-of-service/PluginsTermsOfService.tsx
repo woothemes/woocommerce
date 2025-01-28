@@ -20,6 +20,9 @@ export const PluginsTermsOfService = ( {
 			'jetpack',
 			'woocommerce-services:shipping',
 			'woocommerce-services:tax',
+			'woocommerce-shipping',
+			'woocommerce-tax',
+			'woocommerce-payments',
 		].includes( plugin.key )
 	);
 

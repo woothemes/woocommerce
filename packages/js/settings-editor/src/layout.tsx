@@ -15,9 +15,7 @@ import {
 	privateApis as editorPrivateApis,
 } from '@wordpress/editor';
 import {
-	// @ts-expect-error missing type.
 	__unstableMotion as motion,
-	// @ts-expect-error missing type.
 	__unstableAnimatePresence as AnimatePresence,
 } from '@wordpress/components';
 import { createElement, Fragment, useRef } from '@wordpress/element';

@@ -124,36 +124,23 @@ const Blueprint = () => {
 					{ error }
 				</Notice>
 			) }
-			<p className="blueprint-settings-slotfill-description">
-				{ __(
-					'Blueprints are setup files that contain all the installation instructions. including plugins, themes and settings. Ease the setup process, allow teams to apply each others’ changes and much more.',
-					'woocommerce'
-				) }
-			</p>
-			<p>
-				<strong>
-					Please{ ' ' }
-					<a
-						href="https://automattic.survey.fm/woocommerce-blueprint-survey"
-						target="_blank"
-						rel="noreferrer"
-					>
-						complete the survey
-					</a>{ ' ' }
-					to help shape the direction of this feature!
-				</strong>
-			</p>
-			<h3>Import</h3>
+			<h3>Import Blueprint</h3>
 			<p>
 				{ createInterpolateElement(
 					__(
-						"Import your blueprint schema to ease the setup process for your store or allow teams to apply each others' changes. You can import only one Blueprint at the time. Want to know more? Check our <docLink/>",
+						'Import your blueprint schema to ease the setup process for your store or allow teams to apply each others’ changes. You can import only one Blueprint at the time. Want to know more? <docLink/>',
 						'woocommerce'
 					),
 					{
 						docLink: (
-							<a href="#tba">
-								{ __( 'documentation', 'woocommerce' ) }
+							<a
+								href="#tba"
+								className="woocommerce-admin-inline-documentation-link"
+							>
+								{ __(
+									'Check our documentation',
+									'woocommerce'
+								) }
 							</a>
 						),
 					}
@@ -165,12 +152,15 @@ const Blueprint = () => {
 			<p className="export-intro">
 				{ createInterpolateElement(
 					__(
-						'Export your blueprint schema. Select the options you want to export, then click on "Export". Want to know more? <docLink/> ',
+						'Export your blueprint schema. Select the options you want to export, then click on “Export”. Want to know more? <docLink/> ',
 						'woocommerce'
 					),
 					{
 						docLink: (
-							<a href="#tba">
+							<a
+								href="#tba"
+								className="woocommerce-admin-inline-documentation-link"
+							>
 								{ __(
 									'Check our documentation',
 									'woocommerce'

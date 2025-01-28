@@ -6,6 +6,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Admin\PluginsHelper;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -918,8 +919,14 @@ class WC_Helper {
 
 		// Enable tracking when connected.
 		if ( class_exists( 'WC_Tracker' ) ) {
+			$prev_value = get_option( 'woocommerce_allow_tracking', 'no' );
 			update_option( 'woocommerce_allow_tracking', 'yes' );
 			WC_Tracker::send_tracking_data( true );
+
+			// Track woocommerce_allow_tracking_toggled in case was set as 'no' before.
+			if ( class_exists( 'WC_Tracks' ) && 'no' === $prev_value ) {
+				WC_Tracks::track_woocommerce_allow_tracking_toggled( $prev_value, 'yes', 'wccom_connect' );
+			}
 		}
 
 		// If connecting through in-app purchase, redirects back to WooCommerce.com
@@ -1057,24 +1064,7 @@ class WC_Helper {
 		$product_id = $subscription['product_id'];
 
 		// Activate subscription.
-		$activation_response = WC_Helper_API::post(
-			'activate',
-			array(
-				'authenticated' => true,
-				'body'          => wp_json_encode(
-					array(
-						'product_key' => $product_key,
-					)
-				),
-			)
-		);
-
-		$activated = wp_remote_retrieve_response_code( $activation_response ) === 200;
-		$body      = json_decode( wp_remote_retrieve_body( $activation_response ), true );
-
-		if ( ! $activated && ! empty( $body['code'] ) && 'already_connected' === $body['code'] ) {
-			$activated = true;
-		}
+		list( $activation_response, $activated, $body ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
 			/**
@@ -1987,57 +1977,17 @@ class WC_Helper {
 			return;
 		}
 
-		$plugin        = $plugins[ $filename ];
-		$product_id    = $plugin['_product_id'];
-		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
-
-		// No valid subscriptions for this product.
-		if ( empty( $subscriptions ) ) {
-			return;
-		}
-
-		$subscription = null;
-		foreach ( $subscriptions as $_sub ) {
-
-			// Don't attempt to activate expired subscriptions.
-			if ( $_sub['expired'] ) {
-				continue;
-			}
-
-			// No more sites available in this subscription.
-			if ( isset( $_sub['maxed'] ) && $_sub['maxed'] ) {
-				continue;
-			}
-
-			// Looks good.
-			$subscription = $_sub;
-			break;
-		}
+		$plugin       = $plugins[ $filename ];
+		$product_id   = $plugin['_product_id'];
+		$subscription = self::get_available_subscription( $product_id );
 
 		// No valid subscription found.
 		if ( ! $subscription ) {
 			return;
 		}
 
-		$product_key         = $subscription['product_key'];
-		$activation_response = WC_Helper_API::post(
-			'activate',
-			array(
-				'authenticated' => true,
-				'body'          => wp_json_encode(
-					array(
-						'product_key' => $product_key,
-					)
-				),
-			)
-		);
-
-		$activated = wp_remote_retrieve_response_code( $activation_response ) === 200;
-		$body      = json_decode( wp_remote_retrieve_body( $activation_response ), true );
-
-		if ( ! $activated && ! empty( $body['code'] ) && 'already_connected' === $body['code'] ) {
-			$activated = true;
-		}
+		$product_key                                    = $subscription['product_key'];
+		list( $activation_response, $activated, $body ) = self::wccom_activate( $product_key );
 
 		if ( $activated ) {
 			self::log( 'Auto-activated a subscription for ' . $filename );
@@ -2047,10 +1997,81 @@ class WC_Helper {
 			 * @param int    $product_id Product ID being activated.
 			 * @param string $product_key Subscription product key.
 			 * @param array  $activation_response The response object from wp_safe_remote_request().
+			 * @since 9.7
 			 */
 			do_action( 'woocommerce_helper_subscription_activate_success', $product_id, $product_key, $activation_response );
 		} else {
 			self::log( 'Could not activate a subscription upon plugin activation: ' . $filename );
+
+			/**
+			 * Fires when the Helper fails to activate a product.
+			 *
+			 * @param int    $product_id Product ID being activated.
+			 * @param string $product_key Subscription product key.
+			 * @param array  $activation_response The response object from wp_safe_remote_request().
+			 * @since 9.7
+			 */
+			do_action( 'woocommerce_helper_subscription_activate_error', $product_id, $product_key, $activation_response );
+		}
+
+		self::_flush_subscriptions_cache();
+		self::_flush_updates_cache();
+	}
+
+	/**
+	 * Connect theme to the WCCOM.
+	 *
+	 * Depending on the activated theme attempts to look through available
+	 * subscriptions and auto-activate one if possible, so the user does not
+	 * need to visit the Helper UI at all after installing a new extension.
+	 *
+	 * @param string $product_id The product id of the activated theme.
+	 */
+	public static function connect_theme( $product_id ) {
+		// Make sure we have a connection.
+		$auth = WC_Helper_Options::get( 'auth' );
+		if ( empty( $auth ) ) {
+			return;
+		}
+
+		wp_clean_themes_cache( false );
+		$themes = self::get_local_woo_themes();
+
+		$themes = array_filter(
+			$themes,
+			function ( $theme ) use ( $product_id ) {
+				return $theme['_product_id'] === $product_id;
+			}
+		);
+
+		if ( empty( $themes ) ) {
+			return;
+		}
+
+		$theme = reset( $themes );
+
+		$subscription = self::get_available_subscription( $product_id );
+
+		// No valid subscription found.
+		if ( ! $subscription ) {
+			return;
+		}
+
+		$product_key                                    = $subscription['product_key'];
+		list( $activation_response, $activated, $body ) = self::wccom_activate( $product_key );
+
+		if ( $activated ) {
+			self::log( 'Auto-activated a subscription for ' . $theme['Name'] );
+			/**
+			 * Fires when the Helper activates a product successfully.
+			 *
+			 * @param int    $product_id Product ID being activated.
+			 * @param string $product_key Subscription product key.
+			 * @param array  $activation_response The response object from wp_safe_remote_request().
+			 */
+			do_action( 'woocommerce_helper_subscription_activate_success', $product_id, $product_key, $activation_response );
+		} else {
+			self::log( 'Could not activate a subscription for theme: ' . $theme['Name'] );
 
 			/**
 			 * Fires when the Helper fails to activate a product.
@@ -2340,6 +2361,11 @@ class WC_Helper {
 			)
 		);
 
+		$data = WC_Helper_Options::get( 'auth_user_data' );
+		WC_Helper_Options::update( 'last_disconnected_user_data', $data );
+		// Ignore all previously dismissed disconnect notices.
+		delete_metadata( 'user', 0, PluginsHelper::DISMISS_DISCONNECT_NOTICE, '', true );
+
 		WC_Helper_Options::update( 'auth', array() );
 		WC_Helper_Options::update( 'auth_user_data', array() );
 
@@ -2496,6 +2522,72 @@ class WC_Helper {
 
 		set_transient( $cache_key, $data, 1 * HOUR_IN_SECONDS );
 		return $data;
+	}
+
+	/**
+	 * Activate the product subscription to WCCOM
+	 *
+	 * @param string $product_key the product key to be activated.
+	 *
+	 * @return array
+	 */
+	protected static function wccom_activate( $product_key ): array {
+		$activation_response = WC_Helper_API::post(
+			'activate',
+			array(
+				'authenticated' => true,
+				'body'          => wp_json_encode(
+					array(
+						'product_key' => $product_key,
+					)
+				),
+			)
+		);
+
+		$activated = wp_remote_retrieve_response_code( $activation_response ) === 200;
+		$body      = json_decode( wp_remote_retrieve_body( $activation_response ), true );
+
+		if ( ! $activated && ! empty( $body['code'] ) && 'already_connected' === $body['code'] ) {
+			$activated = true;
+		}
+
+		return array( $activation_response, $activated, $body );
+	}
+
+	/**
+	 * Get subscriptions for a product if it is available
+	 *
+	 * @param string|int $product_id the product id to get subscriptions for.
+	 *
+	 * @return mixed|null
+	 */
+	protected static function get_available_subscription( $product_id ) {
+		$subscriptions = self::_get_subscriptions_from_product_id( $product_id, false );
+
+		// No valid subscriptions for this product.
+		if ( empty( $subscriptions ) ) {
+			return null;
+		}
+
+		$subscription = null;
+		foreach ( $subscriptions as $_sub ) {
+
+			// Don't attempt to activate expired subscriptions.
+			if ( $_sub['expired'] ) {
+				continue;
+			}
+
+			// No more sites available in this subscription.
+			if ( isset( $_sub['maxed'] ) && $_sub['maxed'] ) {
+				continue;
+			}
+
+			// Looks good.
+			$subscription = $_sub;
+			break;
+		}
+
+		return $subscription;
 	}
 }
 

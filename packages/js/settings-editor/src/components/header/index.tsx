@@ -4,11 +4,8 @@
 import { createElement } from '@wordpress/element';
 import classnames from 'classnames';
 import {
-	// @ts-expect-error missing types.
 	__experimentalHeading as Heading,
-	// @ts-expect-error missing types.
 	__experimentalHStack as HStack,
-	// @ts-expect-error missing types.
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 

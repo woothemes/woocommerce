@@ -15,10 +15,12 @@ import { usePrevious } from '@woocommerce/base-hooks';
 import deprecated from '@wordpress/deprecated';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 	PAYMENT_STORE_KEY,
-	VALIDATION_STORE_KEY,
+	validationStore,
 } from '@woocommerce/block-data';
+import { store as noticesStore } from '@wordpress/notices';
+import type { WPNotice } from '@wordpress/notices/build-types/store/selectors';
 
 /**
  * Internal dependencies
@@ -112,7 +114,7 @@ export const CheckoutEventsProvider = ( {
 		__internalEmitValidateEvent,
 		__internalEmitAfterProcessingEvents,
 		__internalSetBeforeProcessing,
-	} = useDispatch( CHECKOUT_STORE_KEY );
+	} = useDispatch( checkoutStore );
 
 	const {
 		checkoutRedirectUrl,
@@ -124,7 +126,7 @@ export const CheckoutEventsProvider = ( {
 		checkoutOrderNotes,
 		checkoutCustomerId,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			checkoutRedirectUrl: store.getRedirectUrl(),
 			checkoutStatus: store.getCheckoutStatus(),
@@ -141,30 +143,34 @@ export const CheckoutEventsProvider = ( {
 		__internalSetRedirectUrl( redirectUrl );
 	}
 
-	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { setValidationErrors } = useDispatch( validationStore );
 	const { dispatchCheckoutEvent } = useStoreEvents();
-	const { checkoutNotices, paymentNotices, expressPaymentNotices } =
-		useSelect( ( select ) => {
-			const { getNotices } = select( 'core/notices' );
-			const checkoutContexts = Object.values( noticeContexts ).filter(
-				( context ) =>
-					context !== noticeContexts.PAYMENTS &&
-					context !== noticeContexts.EXPRESS_PAYMENTS
-			);
-			const allCheckoutNotices = checkoutContexts.reduce(
-				( acc, context ) => {
-					return [ ...acc, ...getNotices( context ) ];
-				},
-				[]
-			);
-			return {
-				checkoutNotices: allCheckoutNotices,
-				paymentNotices: getNotices( noticeContexts.PAYMENTS ),
-				expressPaymentNotices: getNotices(
-					noticeContexts.EXPRESS_PAYMENTS
-				),
-			};
-		}, [] );
+
+	const checkoutContexts = Object.values( noticeContexts ).filter(
+		( context ) =>
+			context !== noticeContexts.PAYMENTS &&
+			context !== noticeContexts.EXPRESS_PAYMENTS
+	);
+
+	const checkoutNotices = useSelect(
+		( select ) => {
+			const { getNotices } = select( noticesStore );
+			return checkoutContexts.reduce( ( acc, context ) => {
+				return [ ...acc, ...getNotices( context ) ];
+			}, [] as WPNotice[] );
+		},
+		[ checkoutContexts ]
+	);
+
+	const { paymentNotices, expressPaymentNotices } = useSelect( ( select ) => {
+		const { getNotices } = select( noticesStore );
+		return {
+			paymentNotices: getNotices( noticeContexts.PAYMENTS ),
+			expressPaymentNotices: getNotices(
+				noticeContexts.EXPRESS_PAYMENTS
+			),
+		};
+	}, [] );
 
 	const [ observers, observerDispatch ] = useReducer( emitReducer, {} );
 	const currentObservers = useRef( observers );

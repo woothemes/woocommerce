@@ -146,9 +146,10 @@ class Checkout extends AbstractCartRoute {
 		if ( is_wp_error( $response ) ) {
 			$response = $this->error_to_response( $response );
 
-			// If we encountered an exception, free up stock.
+			// If we encountered an exception, free up stock and release held coupons.
 			if ( $this->order ) {
 				wc_release_stock_for_order( $this->order );
+				wc_release_coupons_for_order( $this->order );
 			}
 		}
 
@@ -267,7 +268,7 @@ class Checkout extends AbstractCartRoute {
 
 		/**
 		 * Persist customer session data from the request first so that OrderController::update_addresses_from_cart
-		 * uses the up to date customer address.
+		 * uses the up-to-date customer address.
 		 */
 		$this->update_customer_from_request( $request );
 
@@ -282,6 +283,21 @@ class Checkout extends AbstractCartRoute {
 		 * Validate updated order before payment is attempted.
 		 */
 		$this->order_controller->validate_order_before_payment( $this->order );
+
+		/**
+		 * Hold coupons for the order as soon as the draft order is created.
+		 */
+		try {
+			// $this->order->get_billing_email() is already validated by validate_order_before_payment()
+			$this->order->hold_applied_coupons( $this->order->get_billing_email() );
+		} catch ( \Exception $e ) {
+			// Turn the Exception into a RouteException for the API.
+			throw new RouteException(
+				'woocommerce_rest_coupon_reserve_failed',
+				esc_html( $e->getMessage() ),
+				400
+			);
+		}
 
 		/**
 		 * Reserve stock for the order.

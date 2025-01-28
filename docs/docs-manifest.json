@@ -3,7 +3,7 @@
     {
       "post_title": "WooCommerce developer documentation",
       "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/README.md",
-      "hash": "e2fcc6ad9781cad5abc6ae17f31eae7c930fc07c37848d7a8141fa5bbe13110f",
+      "hash": "f6c49a9bd5838c85a648be084ff5d65326f3394b5c7927a65dd7f0c8bf073c5e",
       "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/README.md",
       "id": "65f434b31529b2793f7f7adcadfec487c797bdd2",
       "links": {
@@ -113,11 +113,20 @@
           }
         },
         {
+          "post_title": "Cart and Checkout - Removing checkout fields",
+          "menu_title": "Removing checkout fields",
+          "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/removing-checkout-fields.md",
+          "hash": "6eaeb0393487dd1007367a5f2d3984420c085c6ae26dda04c4e08ee33ac6faf6",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/removing-checkout-fields.md",
+          "id": "030247059754260bce6285cfb352a4a733f1f677"
+        },
+        {
           "post_title": "Cart and Checkout - Overview of data flow between client and server",
-          "menu_title": "Data flow",
+          "menu_title": "Data flow overview",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
-          "hash": "ce9b67884f37af97d1f96a47d6bbc65e24ee49f97ec3444d3deba23bb6568d48",
+          "hash": "6953a9883ab34d238fd6a8c5f4839795e0e7f12b71b4e94a3cf626aa4fcd97aa",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/overview-of-data-flow.md",
           "id": "d2d8cf26967438f16815b129da855324be7a7ef8"
         },
@@ -140,11 +149,23 @@
           "id": "092e66dac8f44d08799ba1d2411d757fd53c9e00"
         },
         {
-          "post_title": "Cart and Checkout - Extensibility getting started guide",
-          "menu_title": "Extensibility",
+          "post_title": "Cart and Checkout - Frequently Asked Questions",
+          "menu_title": "Frequently Asked Questions",
           "tags": "reference",
+          "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/faq.md",
+          "hash": "f83f3517106b024b853718d17c3c44a522156ea55aa441de9433d3f312d5f851",
+          "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/faq.md",
+          "id": "041787aca25af363a5eff3e710bd669cc8aebc4b",
+          "links": {
+            "./removing-checkout-fields.md": "030247059754260bce6285cfb352a4a733f1f677"
+          }
+        },
+        {
+          "post_title": "Cart and Checkout - Extensibility getting started guide",
+          "menu_title": "Extensibility - Getting started",
+          "tags": "how-to",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/extensibility-getting-started.md",
-          "hash": "7d12b211f899c98aa7c0560462fdcfd547ab6e3db0b4ca526d7e235f4409f923",
+          "hash": "e5bc04784214cc1662dd23cb7ff2e2e06c6ac33070676f72cdcfd79643a32dc5",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/extensibility-getting-started.md",
           "id": "7a379c2d6d96f15fe234a707d19ebdc20f8e9dd3"
         },
@@ -277,7 +298,7 @@
               "menu_title": "Checkout Flow and Events",
               "tags": "reference",
               "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/checkout-payment-methods/checkout-flow-and-events.md",
-              "hash": "dcc4af69b2614b0722431f81a312558bf3c5fa349021849d241bf896e02813a7",
+              "hash": "8759412c671ef972d4ce737f14f786387a9cd8ea628a65bff13a2648245b407c",
               "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/checkout-payment-methods/checkout-flow-and-events.md",
               "id": "499384cbb48ed96a2e12653cd68bd82d123a20a1",
               "links": {
@@ -309,7 +330,7 @@
               "menu_title": "Hook alternatives",
               "tags": "reference",
               "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/hooks/hook-alternatives.md",
-              "hash": "ab6bfaaeace75b9b6d3d36d175136f2070f07cd8da9623224db9454d447ddbb3",
+              "hash": "3e47e81185181d6a86764ddc90c9f7700189fe217387fc79bd19018b7efe4ea6",
               "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/hooks/hook-alternatives.md",
               "id": "8eed024a999bde3db20e86556b9dd0efaba814bd"
             }
@@ -800,7 +821,7 @@
           "post_title": "WooCommerce extension development best practices",
           "menu_title": "Best Practices",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/extension-development/extension-development-best-practices.md",
-          "hash": "e70da25a57254820d094df736e79974d345deee234dcd2e56897d1feb76700d4",
+          "hash": "e834979b88a8cad198b2dbf0e1d0a59d3b1d3ffee424325b0aeb5ba83782659b",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/extension-development/extension-development-best-practices.md",
           "id": "83050f0142b6de00b73b3638d46ddddc5a2f8b12",
           "links": {
@@ -1609,7 +1630,7 @@
       "categories": []
     },
     {
-      "content": "\nThis section covers general guidelines, and best practices to follow in order to ensure your product experience aligns with WooCommerce for ease of use, seamless integration, and strong adoption.\n\nWe strongly recommend you review the current [WooCommerce setup experience](https://woocommerce.com/documentation/plugins/woocommerce/getting-started/) to get familiar with the user experience and taxonomy.\n\nWe also recommend you review the [WordPress core guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) to ensure your product isn't breaking any rules, and review [this helpful resource](https://woocommerce.com/document/grammar-punctuation-style-guide/) on content style.\n\n## General\n\nUse existing WordPress/WooCommerce UI, built in components (text fields, checkboxes, etc) and existing menu structures.\n\nPlugins which draw on WordPress' core design aesthetic will benefit from future updates to this design as WordPress continues to evolve. If you need to make an exception for your product, be prepared to provide a valid use case.\n\n- [WordPress Components library](https://wordpress.github.io/gutenberg/?path=/story/docs-introduction--page)\n- [Figma for WordPress](https://make.wordpress.org/design/2018/11/19/figma-for-wordpress/) | ([WordPress Design Library Figma](https://www.figma.com/file/e4tLacmlPuZV47l7901FEs/WordPress-Design-Library))\n- [WooCommerce Component Library](https://woocommerce.github.io/woocommerce/)\n",
+      "content": "\nThis section covers general guidelines, and best practices to follow in order to ensure your product experience aligns with WooCommerce for ease of use, seamless integration, and strong adoption.\n\nWe strongly recommend you review the current [WooCommerce setup experience](https://woocommerce.com/documentation/plugins/woocommerce/getting-started/) to get familiar with the user experience and taxonomy.\n\nWe also recommend you review the [WordPress core guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/) to ensure your product isn't breaking any rules, and review [this helpful resource](https://woocommerce.com/document/grammar-punctuation-style-guide/) on content style.\n\n## General\n\nUse existing WordPress/WooCommerce UI, built in components (text fields, checkboxes, etc) and existing menu structures.\n\nPlugins which draw on WordPress' core design aesthetic will benefit from future updates to this design as WordPress continues to evolve. If you need to make an exception for your product, be prepared to provide a valid use case.\n\n-   [WordPress Components library](https://wordpress.github.io/gutenberg/?path=/story/docs-introduction--page)\n-   [Figma for WordPress](https://make.wordpress.org/design/2018/11/19/figma-for-wordpress/) | ([WordPress Design Library Figma](https://www.figma.com/file/e4tLacmlPuZV47l7901FEs/WordPress-Design-Library))\n-   [WooCommerce Component Library](https://woocommerce.github.io/woocommerce/)\n\n## Component Library - Storybook\n\n> Storybook is an open source tool for developing UI components in isolation for React, React Native and more. It makes building stunning UIs organized and efficient.\n\nThe WooCommerce repository also includes [Storybook](https://storybook.js.org/) integration that allows testing and developing in a WooCommerce-agnostic context. This is very helpful for developing reusable components and trying generic JavaScript modules without any backend dependency.\n\nYou can launch Storybook by running `pnpm --filter=@woocommerce/storybook watch:build` locally. It will open in your browser automatically.\n\nYou can also test Storybook for the current `trunk` branch on GitHub Pages: [https://woocommerce.github.io/woocommerce](https://woocommerce.github.io/woocommerce)\n",
       "category_slug": "user-experience-extensions",
       "category_title": "Extension Guidelines",
       "posts": [
@@ -1907,5 +1928,5 @@
       "categories": []
     }
   ],
-  "hash": "bc2819683db81f4eb2235ca2f592623221490d793c31f518397328e5961c1398"
+  "hash": "9cce958e25929f29050e073351ed33af6777fed19f9aaddcf7770c3b72317936"
 }

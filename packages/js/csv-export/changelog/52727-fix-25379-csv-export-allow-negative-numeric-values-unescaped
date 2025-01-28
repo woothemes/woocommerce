@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Improved CSV export usability by allowing negative numeric values to be unescaped while continuing to escape potentially risky strings to prevent CSV Injection (client-side CSV exporting).

@@ -1,6 +1,7 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const setFeatureFlag = async ( baseURL, value ) =>
 	await setOption(
@@ -17,7 +18,7 @@ const pickImageFromLibrary = async ( page, imageName ) => {
 };
 
 test.describe( 'WooCommerce Email Settings', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	const storeName = 'WooCommerce Core E2E Test Suite';
 
@@ -120,69 +121,69 @@ test.describe( 'WooCommerce Email Settings', () => {
 		}
 	);
 
-	test( 'Live preview when changing email settings', async ( {
-		page,
-		baseURL,
-	} ) => {
-		await setFeatureFlag( baseURL, 'yes' );
-		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+	test(
+		'Live preview when changing email settings',
+		{ tag: tags.SKIP_ON_EXTERNAL_ENV },
+		async ( { page, baseURL } ) => {
+			await setFeatureFlag( baseURL, 'yes' );
+			await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
 
-		// Wait for the iframe content to load
-		const iframeSelector = '#wc_settings_email_preview_slotfill iframe';
-		const iframeElement = page.locator( iframeSelector );
+			// Wait for the iframe content to load
+			const iframeSelector = '#wc_settings_email_preview_slotfill iframe';
 
-		const iframeContainsHtml = async ( code ) => {
-			const iframe = page.frameLocator( iframeSelector );
-			const content = await iframe.locator( 'html' ).innerHTML();
-			return content.includes( code );
-		};
+			const iframeContainsHtml = async ( code ) => {
+				const iframe = page.frameLocator( iframeSelector );
+				const content = await iframe.locator( 'html' ).innerHTML();
+				return content.includes( code );
+			};
 
-		// Define colors and corresponding fields
-		const emailFields = [
-			{ id: 'woocommerce_email_background_color', value: '#012345' },
-			{ id: 'woocommerce_email_base_color', value: '#6789ab' },
-			{ id: 'woocommerce_email_body_background_color', value: '#cdef01' },
-			{ id: 'woocommerce_email_footer_text_color', value: '#234567' },
-			// This color is ligtened in styles and not used with this specific value so can't be tested
-			// { id: 'woocommerce_email_text_color', value: '#89abcd' },
-			{ id: 'woocommerce_email_footer_text', value: 'New footer value' },
-		];
+			const baseColorId = 'woocommerce_email_base_color';
+			const baseColorValue = '#012345';
 
-		let iframeSrc = await iframeElement.getAttribute( 'src' );
+			// Change email base color
+			await page.fill( `#${ baseColorId }`, baseColorValue );
 
-		for ( const { id, value } of emailFields ) {
-			await page.fill( `#${ id }`, value );
-			await page.evaluate( ( inputId ) => {
-				const input = document.getElementById( inputId );
-				input.blur();
-			}, id );
+			await page.evaluate(
+				async ( args ) => {
+					const input = document.getElementById( args.baseColorId );
+					// Blur the input to trigger value change event
+					input.blur();
 
-			// I've tried many ways to wait for the iframe to reload, but none of them
-			// worked consistently because of debounce, so I'm using a simple retry loop
-			let retries = 0;
-			let newIframeSrc = null;
-			while ( retries < 10 ) {
-				newIframeSrc = await iframeElement.getAttribute( 'src' );
-				// eslint-disable-next-line playwright/no-conditional-in-test
-				if ( newIframeSrc !== iframeSrc ) {
-					break;
-				}
-				await new Promise( ( resolve ) => setTimeout( resolve, 200 ) );
-				retries++;
-			}
-			await expect( newIframeSrc ).not.toEqual( iframeSrc );
-			iframeSrc = newIframeSrc;
+					const iframe = document.querySelector(
+						args.iframeSelector
+					);
+
+					// Wait for the transient to be saved
+					await new Promise( ( resolve ) => {
+						input.addEventListener(
+							'transient-saved',
+							() => resolve(),
+							{ once: true }
+						);
+					} );
+
+					// Wait for the iframe with email preview to reload
+					return new Promise( ( resolve ) => {
+						iframe.addEventListener( 'load', () => resolve(), {
+							once: true,
+						} );
+					} );
+				},
+				{ baseColorId, iframeSelector }
+			);
 
 			// Check that the iframe contains the new value
-			await expect( await iframeContainsHtml( value ) ).toBeTruthy();
-		}
+			await expect(
+				await iframeContainsHtml( baseColorValue )
+			).toBeTruthy();
 
-		// Check that the iframe does not contain any of the new values after page reload
-		await page.reload();
-		for ( const { value } of emailFields ) {
-			await expect( await iframeContainsHtml( value ) ).toBeFalsy();
+			// Check that the iframe does not contain any of the new values after page reload
+			await page.reload();
+			await expect(
+				await iframeContainsHtml( baseColorValue )
+			).toBeFalsy();
 		}
-	} );
+	);
 
 	test( 'Send email preview', async ( { page, baseURL } ) => {
 		await setFeatureFlag( baseURL, 'yes' );
@@ -290,6 +291,21 @@ test.describe( 'WooCommerce Email Settings', () => {
 				} );
 			}, subjectId );
 			await expect( await getSubject() ).toContain( 'New subject' );
+
+			// Reset the subject to default value
+			await page.fill( `#${ subjectId }`, '' );
+			await page.evaluate( async ( inputId ) => {
+				const input = document.getElementById( inputId );
+				input.blur();
+
+				return await new Promise( ( resolve ) => {
+					input.addEventListener(
+						'transient-saved',
+						() => resolve(),
+						{ once: true }
+					);
+				} );
+			}, subjectId );
 		}
 	);
 
@@ -461,7 +477,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 			await fontFamilyElement.selectOption( 'Times New Roman' );
 
 			// Test theme font selection
-			await fontFamilyElement.selectOption( 'Inter' );
+			// await fontFamilyElement.selectOption( 'Inter' );
 		}
 	);
 

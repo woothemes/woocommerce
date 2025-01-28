@@ -2,12 +2,9 @@
 
 namespace Automattic\WooCommerce\Admin\Features;
 
-use Automattic\WooCommerce\Admin\PageController;
 use Automattic\WooCommerce\Admin\PluginsHelper;
-use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
 use Automattic\WooCommerce\Admin\WCAdminHelper;
 use Automattic\WooCommerce\Internal\Admin\WCAdminUser;
-use Automattic\WooCommerce\Internal\Admin\WCAdminAssets;
 
 
 /**
@@ -28,6 +25,7 @@ class LaunchYourStore {
 		add_filter( 'woocommerce_admin_get_user_data_fields', array( $this, 'add_user_data_fields' ) );
 		if ( Features::is_enabled( 'coming-soon-newsletter-template' ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_newsletter_scripts' ) );
+			add_action( 'save_post_wp_template', array( $this, 'maybe_track_template_change' ), 10, 3 );
 		}
 	}
 
@@ -283,7 +281,7 @@ class LaunchYourStore {
 
 		$container = \MailPoet\DI\ContainerWrapper::getInstance( WP_DEBUG );
 
-		// SettingControll retrieves data from wp_mailpoet_settings table.
+		// SettingController retrieves data from wp_mailpoet_settings table.
 		$settings = $container->get( \MailPoet\Settings\SettingsController::class );
 
 		if ( false === $settings instanceof \MailPoet\Settings\SettingsController ) {
@@ -298,6 +296,36 @@ class LaunchYourStore {
 		}
 
 		return 'valid' === $api_state['state'] && 200 === $api_state['code'];
+	}
+
+	/**
+	 * Track when coming soon template is changed.
+	 *
+	 * @param int     $post_id The post ID.
+	 * @param WP_Post $post The post object.
+	 * @param bool    $update Whether the post is being updated.
+	 */
+	public function maybe_track_template_change( $post_id, $post, $update ) {
+		if ( ! $post instanceof \WP_Post || ! isset( $post->post_name, $post->post_title ) ) {
+			return;
+		}
+
+		// Check multiple fields to avoid false matches with non-WooCommerce templates.
+		if ( 'coming-soon' === $post->post_name && 'Page: Coming soon' === $post->post_title ) {
+			$matches = array();
+			$content = $post->post_content;
+			preg_match( '/"comingSoonPatternId":"([^"]+)"/', $content, $matches );
+
+			if ( isset( $matches[1] ) ) {
+				wc_admin_record_tracks_event(
+					'coming_soon_template_saved',
+					array(
+						'pattern_id' => $matches[1],
+						'is_update'  => $update,
+					)
+				);
+			}
+		}
 	}
 
 	/**

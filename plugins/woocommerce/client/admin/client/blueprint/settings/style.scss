@@ -28,9 +28,10 @@
 
 	p.export-intro {
 		margin: 6px 0 16px 0;
-		a {
-			text-decoration: none;
-		}
+	}
+
+	a.woocommerce-admin-inline-documentation-link {
+		text-decoration: none;
 	}
 
 	#download-link-container {
@@ -178,3 +179,4 @@
 		}
 	}
 }
+

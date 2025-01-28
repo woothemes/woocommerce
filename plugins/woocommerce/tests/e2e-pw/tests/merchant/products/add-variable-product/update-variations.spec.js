@@ -1,6 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const { variableProducts: utils } = require( '../../../../utils' );
 const { tags } = require( '../../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
 const {
 	createVariableProduct,
 	showVariableProductTour,
@@ -29,7 +30,7 @@ let productId_indivEdit,
 	variationIds_indivEdit;
 
 test.describe( 'Update variations', { tag: tags.GUTENBERG }, () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeAll( async ( { browser } ) => {
 		await test.step( 'Create variable product for individual edit test', async () => {
@@ -357,7 +358,7 @@ test.describe( 'Update variations', { tag: tags.GUTENBERG }, () => {
 		} );
 
 		await test.step( 'Click on the "Variations" tab.', async () => {
-			await page.getByRole( 'link', { name: ' Variations' } ).click();
+			await page.getByRole( 'link', { name: 'Variations' } ).click();
 		} );
 
 		await test.step( 'Expand all variations', async () => {

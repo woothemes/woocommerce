@@ -3,7 +3,6 @@
  */
 import { test, expect, tags } from '../../fixtures/fixtures';
 import { getFakeCategory, getFakeProduct } from '../../utils/data';
-const { setComingSoon } = require( '../../utils/coming-soon' );
 
 test.describe(
 	'Search, browse by categories and sort items in the shop',
@@ -12,8 +11,7 @@ test.describe(
 		let categories = [];
 		let products = [];
 
-		test.beforeAll( async ( { baseURL, api } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
+		test.beforeAll( async ( { api } ) => {
 			await api
 				.post( 'products/categories/batch', {
 					create: [
@@ -83,6 +81,7 @@ test.describe(
 				await expect(
 					page.getByRole( 'heading', {
 						name: `${ products[ 0 ].name }`,
+						level: 1,
 					} )
 				).toBeVisible();
 				await expect( page.getByLabel( 'Breadcrumb' ) ).toContainText(
@@ -119,6 +118,7 @@ test.describe(
 				await expect(
 					page.getByRole( 'heading', {
 						name: products[ 1 ].name,
+						level: 1,
 					} )
 				).toBeVisible();
 			} );

@@ -671,6 +671,11 @@ const AttributeFilterBlock = ( {
 						isLoading={ isLoading }
 						disabled={ getIsApplyButtonDisabled() }
 						onClick={ () => onSubmit( checked ) }
+						screenReaderLabel={ sprintf(
+							/* translators: %s is the attribute label */
+							__( 'Apply attribute filter: %s', 'woocommerce' ),
+							attributeObject.label
+						) }
 					/>
 				) }
 			</div>

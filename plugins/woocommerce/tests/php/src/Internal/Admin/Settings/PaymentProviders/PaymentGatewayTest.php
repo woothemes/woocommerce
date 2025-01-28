@@ -6,14 +6,14 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders;
 use Automattic\WooCommerce\Internal\Admin\Settings\PaymentProviders\PaymentGateway;
 use Automattic\WooCommerce\Tests\Internal\Admin\Settings\Mocks\FakePaymentGateway;
-use WC_REST_Unit_Test_Case;
+use WC_Unit_Test_Case;
 
 /**
  * Payment gateway provider service test.
  *
  * @class PaymentGateway
  */
-class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
+class PaymentGatewayTest extends WC_Unit_Test_Case {
 
 	/**
 	 * @var PaymentGateway
@@ -54,8 +54,8 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 				'test_mode_onboarding'        => true,
 				'plugin_slug'                 => 'woocommerce-payments',
 				'plugin_file'                 => 'woocommerce-payments/woocommerce-payments.php',
-				'method_title'                => 'WooPayments',
-				'method_description'          => 'Accept payments with WooPayments.',
+				'method_title'                => 'WooPayments has a very long title that should be truncated after some length like this',
+				'method_description'          => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
 				'supports'                    => array( 'products', 'something', 'bogus' ),
 				'icon'                        => 'https://example.com/icon.png',
 				'recommended_payment_methods' => array(
@@ -110,8 +110,8 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 			array(
 				'id'          => 'woocommerce_payments',
 				'_order'      => 999,
-				'title'       => 'WooPayments',
-				'description' => 'Accept payments with WooPayments.',
+				'title'       => 'WooPayments has a very long title that should be truncated after some length',
+				'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim…',
 				'icon'        => 'https://example.com/icon.png',
 				'supports'    => array( 'products', 'something', 'bogus' ),
 				'state'       => array(
@@ -211,6 +211,26 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 	public function test_get_icon() {
 		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => 'https://example.com/icon.png' ) );
 		$this->assertEquals( 'https://example.com/icon.png', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test invalid URL falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => 'not_good_url/icon.svg' ) );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test empty icon falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '' ) );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test missing icon falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array() );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test icon with img tag falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '<img src="https://example.com/icon.png" />' ) );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
+
+		// Test icon with list of images falls back to default icon.
+		$fake_gateway = new FakePaymentGateway( 'woocommerce_payments', array( 'icon' => '<img src="https://example.com/icon.png" /><img src="https://example.com/icon2.png" />' ) );
+		$this->assertStringContainsString( 'wp-content/plugins/woocommerce/assets/images/icons/default-payments.svg', $this->sut->get_icon( $fake_gateway ) );
 	}
 
 	/**
@@ -221,10 +241,15 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 			'gateway1',
 			array(
 				'supports' => array(
-					'key' => 'products',
-					2     => 'something',
-					3     => 'bogus',
+					'key'   => 'products',
+					2       => 'something',
+					3       => 'bogus', // Only one `bogus` entry should be returned.
 					'bogus',
+					// Sanitization.
+					'list'  => array( 'products', 'something', 'bogus' ), // This should be ignored.
+					'item'  => 1,                                         // This should be ignored.
+					'item2' => true,                                      // This should be ignored.
+					':"|<>bogus_-1%@#%^&*',
 				),
 			)
 		);
@@ -233,6 +258,7 @@ class PaymentGatewayTest extends WC_REST_Unit_Test_Case {
 				'products',
 				'something',
 				'bogus',
+				'bogus_-1',
 			),
 			$this->sut->get_supports_list( $fake_gateway )
 		);

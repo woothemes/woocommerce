@@ -335,7 +335,6 @@ export const BlueprintUploadDropzone = () => {
 			{ state.matches( 'uploading' ) && (
 				<div className="blueprint-upload-form">
 					<div className="blueprint-upload-dropzone-uploading">
-						{ /* @ts-expect-error -- it does accept a className */ }
 						<Spinner className="blueprint-upload-dropzone-spinner" />
 						<p className="blueprint-upload-dropzone-text">
 							{ __( 'Uploading your file…', 'woocommerce' ) }

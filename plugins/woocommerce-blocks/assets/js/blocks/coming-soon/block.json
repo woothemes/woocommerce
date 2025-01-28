@@ -9,11 +9,15 @@
 		"storeOnly": {
 			"type": "boolean",
 			"default": false
+		},
+		"comingSoonPatternId": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {
 		"color": {
-			"background": false,
+			"background": true,
 			"text": true
 		},
 		"inserter": false

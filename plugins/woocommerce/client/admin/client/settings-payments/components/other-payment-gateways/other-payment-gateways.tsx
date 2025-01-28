@@ -20,17 +20,37 @@ import { GridItemPlaceholder } from '~/settings-payments/components/grid-item-pl
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
 interface OtherPaymentGatewaysProps {
+	/**
+	 * Array of suggested payment extensions.
+	 */
 	suggestions: SuggestedPaymentExtension[];
+	/**
+	 * Array of categories for the suggested payment extensions.
+	 */
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
+	/**
+	 * The ID of the plugin currently being installed, or `null` if none.
+	 */
 	installingPlugin: string | null;
+	/**
+	 * Callback to handle plugin setup. Accepts the plugin ID, slug, and onboarding URL (if available).
+	 */
 	setupPlugin: (
 		id: string,
 		slug: string,
 		onboardingUrl: string | null
 	) => void;
+	/**
+	 * Indicates whether the suggestions are still being fetched.
+	 */
 	isFetching: boolean;
 }
 
+/**
+ * A component that displays a collapsible list of suggested payment extensions grouped by categories.
+ * When collapsed, it shows a few icons representing the suggestions. When expanded, it displays detailed
+ * information about each suggestion and allows the user to install them.
+ */
 export const OtherPaymentGateways = ( {
 	suggestions,
 	suggestionCategories,
@@ -39,10 +59,12 @@ export const OtherPaymentGateways = ( {
 	isFetching,
 }: OtherPaymentGatewaysProps ) => {
 	const urlParams = new URLSearchParams( window.location.search );
+
 	// Determine the initial expanded state based on URL params.
 	const initialExpanded = urlParams.get( 'other_pes_section' ) === 'expanded';
 	const [ isExpanded, setIsExpanded ] = useState( initialExpanded );
 
+	// Group suggestions by category.
 	const suggestionsByCategory = useMemo(
 		() =>
 			suggestionCategories.map(
@@ -67,23 +89,32 @@ export const OtherPaymentGateways = ( {
 	const collapsedImages = useMemo( () => {
 		return isFetching ? (
 			<>
-				<div className="other-payment-gateways__header__title__image-placeholder" />
-				<div className="other-payment-gateways__header__title__image-placeholder" />
-				<div className="other-payment-gateways__header__title__image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
+				<div className="other-payment-gateways__header__title-image-placeholder" />
 			</>
 		) : (
-			suggestions.map( ( extension ) => (
-				<img
-					key={ extension.id }
-					src={ extension.icon }
-					alt={ extension.title }
-					width="24"
-					height="24"
-					className="other-payment-gateways__header__title__image"
-				/>
-			) )
+			// Go through the category hierarchy so we render the collapsed images in the same order as when expanded.
+			suggestionsByCategory.map(
+				( { suggestions: categorySuggestions } ) => {
+					if ( categorySuggestions.length === 0 ) {
+						return null;
+					}
+
+					return categorySuggestions.map( ( extension ) => (
+						<img
+							key={ extension.id }
+							src={ extension.icon }
+							alt={ extension.title + ' small logo' }
+							width="24"
+							height="24"
+							className="other-payment-gateways__header__title-image"
+						/>
+					) );
+				}
+			)
 		);
-	}, [ suggestions, isFetching ] );
+	}, [ suggestionsByCategory, isFetching ] );
 
 	// Memoize the expanded content to avoid re-rendering when expanded
 	const expandedContent = useMemo( () => {
@@ -126,10 +157,13 @@ export const OtherPaymentGateways = ( {
 										key={ extension.id }
 									>
 										<img
+											className="other-payment-gateways__content__grid-item-image"
 											src={ extension.icon }
-											alt={ decodeEntities(
-												extension.title
-											) }
+											alt={
+												decodeEntities(
+													extension.title
+												) + ' logo'
+											}
 										/>
 										<div className="other-payment-gateways__content__grid-item__content">
 											<span className="other-payment-gateways__content__grid-item__content__title">
@@ -176,8 +210,9 @@ export const OtherPaymentGateways = ( {
 		);
 	}, [ suggestionsByCategory, installingPlugin, setupPlugin, isFetching ] );
 
+	// Don't render the component if there are no suggestions and not fetching.
 	if ( ! isFetching && suggestions.length === 0 ) {
-		return null; // Don't render the component if there are no suggestions
+		return null;
 	}
 
 	return (

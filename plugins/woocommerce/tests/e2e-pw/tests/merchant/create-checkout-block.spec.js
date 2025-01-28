@@ -1,11 +1,3 @@
-const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const {
-	fillPageTitle,
-	transformIntoBlocks,
-	publishPage,
-} = require( '../../utils/editor' );
-const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
-
 /**
  * External dependencies
  */
@@ -15,7 +7,17 @@ import {
 	getCanvas,
 	insertBlock,
 	goToPageEditor,
+	transformIntoBlocks,
+	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 
 const simpleProductName = 'Very Simple Product';
 const singleProductPrice = '999.00';
@@ -23,7 +25,7 @@ const singleProductPrice = '999.00';
 let productId, shippingZoneId;
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Transformed checkout',
 } );
 
@@ -83,8 +85,11 @@ test.describe(
 				await closeChoosePatternModal( { page } );
 
 				await fillPageTitle( page, testPage.title );
-				const wordPressVersion = await getInstalledWordPressVersion();
-				await insertBlock( page, 'Classic Checkout', wordPressVersion );
+				await insertBlock(
+					page,
+					'Classic Checkout',
+					Date.now().toString()
+				);
 				await transformIntoBlocks( page );
 
 				// When Gutenberg is active, the canvas is in an iframe
@@ -150,9 +155,7 @@ test.describe(
 					page.getByRole( 'heading', { name: testPage.title } )
 				).toBeVisible();
 				await expect(
-					page
-						.getByRole( 'group', { name: 'Contact information' } )
-						.locator( 'legend' )
+					page.getByRole( 'heading', { name: 'Contact information' } )
 				).toBeVisible();
 				await expect(
 					page

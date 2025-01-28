@@ -1,7 +1,8 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	products: async ( { api }, use ) => {
 		const keys = [ 'main', 'linked1', 'linked2' ];
 		const products = {};
@@ -50,7 +51,7 @@ test.describe(
 				// extra click somewhere in the page as a workaround for update button click not always working
 				await page
 					.getByRole( 'heading', {
-						name: 'Edit Product',
+						name: 'Edit product',
 						exact: true,
 					} )
 					.click();

@@ -1,6 +1,10 @@
 /**
  * External dependencies
  */
+import {
+	FormFields,
+	defaultFields as defaultFieldsSetting,
+} from '@woocommerce/settings';
 import { createContext, useContext } from '@wordpress/element';
 
 /**
@@ -13,6 +17,7 @@ export type CheckoutBlockContextProps = {
 	cartPageId: number;
 	showRateAfterTaxName: boolean;
 	showFormStepNumbers: boolean;
+	defaultFields: FormFields;
 };
 
 const defaultCheckoutBlockContext = {
@@ -22,20 +27,12 @@ const defaultCheckoutBlockContext = {
 	cartPageId: 0,
 	showRateAfterTaxName: false,
 	showFormStepNumbers: false,
-};
-
-export type CheckoutBlockControlsContextProps = {
-	addressFieldControls: () => JSX.Element | null;
+	defaultFields: defaultFieldsSetting,
 };
 
 export const CheckoutBlockContext: React.Context<
 	Partial< CheckoutBlockContextProps >
 > = createContext< CheckoutBlockContextProps >( defaultCheckoutBlockContext );
-
-export const CheckoutBlockControlsContext: React.Context< CheckoutBlockControlsContextProps > =
-	createContext< CheckoutBlockControlsContextProps >( {
-		addressFieldControls: () => null,
-	} );
 
 export const useCheckoutBlockContext = (): CheckoutBlockContextProps => {
 	const context = useContext( CheckoutBlockContext );
@@ -44,8 +41,3 @@ export const useCheckoutBlockContext = (): CheckoutBlockContextProps => {
 		...context,
 	};
 };
-
-export const useCheckoutBlockControlsContext =
-	(): CheckoutBlockControlsContextProps => {
-		return useContext( CheckoutBlockControlsContext );
-	};

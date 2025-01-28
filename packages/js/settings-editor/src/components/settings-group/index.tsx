@@ -1,48 +1,43 @@
 /**
  * External dependencies
  */
-/* eslint-disable @woocommerce/dependency-group */
+import { __experimentalHeading as Heading } from '@wordpress/components';
 import { createElement } from '@wordpress/element';
-import {
-	// @ts-expect-error missing types.
-	__experimentalHeading as Heading,
-} from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { sanitize } from 'dompurify';
-/* eslint-enable @woocommerce/dependency-group */
-
 /**
  * Internal dependencies
  */
-import { SettingsItem } from '../settings-item';
+import { useSettingsForm } from '../../hooks/use-settings-form';
 
 const ALLOWED_TAGS = [ 'a', 'b', 'em', 'i', 'strong', 'p', 'br' ];
 const ALLOWED_ATTR = [ 'target', 'href', 'rel', 'name', 'download' ];
+const sanitizeHTML = ( html: string ) => ( {
+	__html: sanitize( html, { ALLOWED_TAGS, ALLOWED_ATTR } ),
+} );
 
-export const SettingsGroup = ( { group }: { group: SettingsGroup } ) => {
-	const sanitizeHTML = ( html: string ) => {
-		return {
-			__html: sanitize( html, { ALLOWED_TAGS, ALLOWED_ATTR } ),
-		};
-	};
+export const SettingsGroup = ( {
+	title,
+	desc,
+	settings,
+}: GroupSettingsField ) => {
+	const { data, fields, form, updateField } = useSettingsForm( settings );
+
 	return (
 		<fieldset className="woocommerce-settings-group">
 			<div className="woocommerce-settings-group-title">
-				<Heading level={ 4 }>{ group.title }</Heading>
-				<legend
-					dangerouslySetInnerHTML={ sanitizeHTML( group.desc ) }
-				/>
+				<Heading level={ 4 }>{ title }</Heading>
+				{ desc && (
+					<legend dangerouslySetInnerHTML={ sanitizeHTML( desc ) } />
+				) }
 			</div>
 			<div className="woocommerce-settings-group-content">
-				{ group.settings.map( ( setting ) => {
-					const key =
-						setting.id +
-						'-' +
-						( setting.title ?? '' ).replace( /\s+/g, '-' ) +
-						'-' +
-						setting.type +
-						'-group';
-					return <SettingsItem key={ key } setting={ setting } />;
-				} ) }
+				<DataForm
+					data={ data }
+					fields={ fields }
+					form={ form }
+					onChange={ updateField }
+				/>
 			</div>
 		</fieldset>
 	);

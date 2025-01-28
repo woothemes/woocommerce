@@ -1,7 +1,8 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 
 	page: async ( { page, wcAdminApi }, use ) => {
 		// Disable the task list reminder bar, it can interfere with the quick actions
@@ -171,6 +172,7 @@ test.describe(
 
 			// process the Action Scheduler tasks
 			setupPage = await browser.newPage();
+			// eslint-disable-next-line playwright/no-wait-for-timeout
 			await setupPage.waitForTimeout( 5000 );
 			await setupPage.goto( '?process-waiting-actions' );
 			await setupPage.close();
@@ -645,7 +647,10 @@ test.describe(
 				.fill( 'Variable Product' );
 
 			await page
-				.getByRole( 'option', { name: 'Variable Product' } )
+				.getByRole( 'option', {
+					name: 'Variable Product',
+					exact: true,
+				} )
 				.click();
 
 			await expect(

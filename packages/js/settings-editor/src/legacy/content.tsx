@@ -4,12 +4,34 @@
 import { createElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { DataForm } from '@wordpress/dataviews';
 
 /**
  * Internal dependencies
  */
-import { SettingsGroup } from '../components/settings-group';
-import { SettingsItem } from '../components/settings-item';
+import { useSettingsForm } from '../hooks/use-settings-form';
+
+const Form = ( { settings }: { settings: SettingsField[] } ) => {
+	const { data, fields, form, updateField } = useSettingsForm( settings );
+
+	return (
+		<form id="mainform">
+			<div className="woocommerce-settings-content">
+				<DataForm
+					fields={ fields }
+					form={ form }
+					data={ data }
+					onChange={ updateField }
+				/>
+			</div>
+			<div className="woocommerce-settings-content-footer">
+				<Button variant="primary">
+					{ __( 'Save', 'woocommerce' ) }
+				</Button>
+			</div>
+		</form>
+	);
+};
 
 export const LegacyContent = ( {
 	settingsPage,
@@ -24,38 +46,5 @@ export const LegacyContent = ( {
 		return null;
 	}
 
-	return (
-		<form>
-			<div className="woocommerce-settings-content">
-				{ section.settings.map( ( data ) => {
-					const key =
-						data.id +
-						'-' +
-						( data.title ?? '' ).replace( /\s+/g, '-' ) +
-						'-' +
-						data.type;
-
-					if ( data.type === 'sectionend' ) {
-						return null;
-					}
-
-					if ( data.type === 'group' ) {
-						return <SettingsGroup key={ key } group={ data } />;
-					}
-
-					// Handle settings not in a group here.
-					return (
-						<fieldset key={ key }>
-							<SettingsItem setting={ data } />
-						</fieldset>
-					);
-				} ) }
-			</div>
-			<div className="woocommerce-settings-content-footer">
-				<Button variant="primary">
-					{ __( 'Save', 'woocommerce' ) }
-				</Button>
-			</div>
-		</form>
-	);
+	return <Form settings={ section.settings } />;
 };

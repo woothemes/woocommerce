@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-
+import React from 'react';
 import { decodeEntities } from '@wordpress/html-entities';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { WooPaymentMethodsLogos } from '@woocommerce/onboarding';
+import { WooPaymentsMethodsLogos } from '@woocommerce/onboarding';
 import { PaymentExtensionSuggestionProvider } from '@woocommerce/data';
 
 /**
@@ -18,22 +18,44 @@ import {
 	hasIncentive,
 	isActionIncentive,
 	isIncentiveDismissedInContext,
+	isWooPayEligible,
 } from '~/settings-payments/utils';
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
+import { IncentiveStatusBadge } from '~/settings-payments/components/incentive-status-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
+	/**
+	 * The payment extension suggestion to display.
+	 */
 	extension: PaymentExtensionSuggestionProvider;
+	/**
+	 * The ID of the plugin currently being installed, or `null` if none.
+	 */
 	installingPlugin: string | null;
+	/**
+	 * Callback function to handle the setup of the plugin. Receives the plugin ID, slug, and onboarding URL (if available).
+	 */
 	setupPlugin: (
 		id: string,
 		slug: string,
 		onboardingUrl: string | null
 	) => void;
+	/**
+	 * Indicates whether the plugin is already installed.
+	 */
 	pluginInstalled: boolean;
+	/**
+	 * Callback function to handle accepting an incentive. Receives the incentive ID as a parameter.
+	 */
 	acceptIncentive: ( id: string ) => void;
 };
 
+/**
+ * A component that renders an individual payment extension suggestion in a list.
+ * Displays extension details including title, description, and an action button
+ * for installation or enabling the plugin. The component highlights incentive if available.
+ */
 export const PaymentExtensionSuggestionListItem = ( {
 	extension,
 	installingPlugin,
@@ -62,10 +84,13 @@ export const PaymentExtensionSuggestionListItem = ( {
 			<div className="woocommerce-list__item-inner">
 				<div className="woocommerce-list__item-before">
 					<DefaultDragHandle />
-					<img
-						src={ extension.icon }
-						alt={ extension.title + ' logo' }
-					/>
+					{ extension.icon && (
+						<img
+							className={ 'woocommerce-list__item-image' }
+							src={ extension.icon }
+							alt={ extension.title + ' logo' }
+						/>
+					) }
 				</div>
 				<div className="woocommerce-list__item-text">
 					<span className="woocommerce-list__item-title">
@@ -75,10 +100,7 @@ export const PaymentExtensionSuggestionListItem = ( {
 								<StatusBadge status="recommended" />
 							) }
 						{ incentive && (
-							<StatusBadge
-								status="has_incentive"
-								message={ incentive.badge }
-							/>
+							<IncentiveStatusBadge incentive={ incentive } />
 						) }
 					</span>
 					<span
@@ -88,14 +110,16 @@ export const PaymentExtensionSuggestionListItem = ( {
 						) }
 					/>
 					{ isWooPayments( extension.id ) && (
-						<WooPaymentMethodsLogos
+						<WooPaymentsMethodsLogos
 							maxElements={ 10 }
-							isWooPayEligible={ true }
+							tabletWidthBreakpoint={ 1080 } // Reduce the number of logos earlier.
+							mobileWidthBreakpoint={ 768 } // Reduce the number of logos earlier.
+							isWooPayEligible={ isWooPayEligible( extension ) }
 						/>
 					) }
 				</div>
-				<div className="woocommerce-list__item-after">
-					<div className="woocommerce-list__item-after__actions">
+				<div className="woocommerce-list__item-buttons">
+					<div className="woocommerce-list__item-buttons__actions">
 						<Button
 							variant="primary"
 							onClick={ () => {
@@ -117,7 +141,10 @@ export const PaymentExtensionSuggestionListItem = ( {
 								? __( 'Enable', 'woocommerce' )
 								: __( 'Install', 'woocommerce' ) }
 						</Button>
-
+					</div>
+				</div>
+				<div className="woocommerce-list__item-after">
+					<div className="woocommerce-list__item-after__actions">
 						<EllipsisMenu
 							label={ __(
 								'Payment Provider Options',
