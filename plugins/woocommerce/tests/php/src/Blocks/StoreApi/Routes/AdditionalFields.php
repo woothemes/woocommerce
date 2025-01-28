@@ -2353,7 +2353,7 @@ class AdditionalFields extends MockeryTestCase {
 				'required' => true,
 				'rules'    => array(
 					'required' => array(
-						'cart' => array(
+						'customer' => array(
 							'properties' => array(
 								'billing_address' => array(
 									'properties' => array(

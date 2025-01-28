@@ -4,6 +4,7 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
 use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\Validator;
 
@@ -83,6 +84,29 @@ class CheckoutFieldsSchema {
 				'validation' => [],
 			],
 		];
+	}
+
+	/**
+	 * Validate the field rules.
+	 *
+	 * @param DocumentObject $document_object The document object to validate.
+	 * @param array          $rules The rules to validate against.
+	 * @return bool
+	 */
+	public function validate_document_object_rules( DocumentObject $document_object, $rules ) {
+		$validator = new Validator();
+		$result    = $validator->validate(
+			Helper::toJSON( $document_object->get_data() ),
+			Helper::toJSON(
+				[
+					'$schema'    => 'http://json-schema.org/draft-07/schema#',
+					'type'       => 'object',
+					'properties' => $rules,
+				]
+			)
+		);
+
+		return ! $result->hasError();
 	}
 
 	/**
