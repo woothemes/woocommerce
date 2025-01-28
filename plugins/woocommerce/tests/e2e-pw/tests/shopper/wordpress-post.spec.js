@@ -4,10 +4,40 @@ const test = baseTest.extend( {
 	storageState: CUSTOMER_STATE_PATH,
 } );
 
+test.beforeAll( async ( { wpApi } ) => {
+	// Jetpack Comments replaces the default WordPress comment form when activated, and will cause this test to fail.
+	// Make sure it's disabled prior to running this test.
+	const is_jetpack_active =
+		await test.step( 'See if Jetpack is installed and active', async () => {
+			const response = await wpApi.get(
+				'wp-json/wp/v2/plugins/jetpack/jetpack'
+			);
+
+			if ( response.statusText() !== 'OK' ) {
+				return false;
+			}
+
+			const { status } = await response.json();
+			return status === 'active';
+		} );
+
+	if ( is_jetpack_active ) {
+		await test.step( 'Disable Jetpack Comments', async () => {
+			await wpApi.post( 'wp-json/jetpack/v4/settings', {
+				data: { comments: false },
+			} );
+
+			const response = await wpApi.get( 'wp-json/jetpack/v4/settings' );
+			const { comments } = await response.json();
+			expect( comments ).toEqual( false );
+		} );
+	}
+} );
+
 test(
 	'logged-in customer can comment on a post',
 	{
-		tag: [ tags.WP_CORE, tags.SKIP_ON_WPCOM ],
+		tag: [ tags.WP_CORE ],
 	},
 	async ( { page } ) => {
 		await page.goto( 'hello-world/' );

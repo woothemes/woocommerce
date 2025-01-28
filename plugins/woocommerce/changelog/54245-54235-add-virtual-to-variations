@@ -1,4 +1,0 @@
-Significance: minor
-Type: add
-
-Add the `virtual` param to the list product variations endpoint.

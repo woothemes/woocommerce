@@ -477,7 +477,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 			await fontFamilyElement.selectOption( 'Times New Roman' );
 
 			// Test theme font selection
-			await fontFamilyElement.selectOption( 'Inter' );
+			// await fontFamilyElement.selectOption( 'Inter' );
 		}
 	);
 

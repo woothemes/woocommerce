@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
-import { Fragment } from '@wordpress/element';
+import { Fragment, RawHTML } from '@wordpress/element';
+import { sanitizeHTML } from '@woocommerce/utils';
 import clsx from 'clsx';
 import type { ReactElement, HTMLProps } from 'react';
 
 export interface LabelProps extends HTMLProps< HTMLElement > {
 	label?: string | undefined;
+	allowHTML?: boolean | undefined;
 	screenReaderLabel?: string | undefined;
 	wrapperElement?: string | undefined;
 	wrapperProps?: HTMLProps< HTMLElement > | undefined;
@@ -23,6 +25,7 @@ const Label = ( {
 	screenReaderLabel,
 	wrapperElement,
 	wrapperProps = {},
+	allowHTML = false,
 }: LabelProps ): ReactElement => {
 	let Wrapper;
 
@@ -45,7 +48,25 @@ const Label = ( {
 	if ( hasLabel && hasScreenReaderLabel && label !== screenReaderLabel ) {
 		return (
 			<Wrapper { ...wrapperProps }>
-				<span aria-hidden="true">{ label }</span>
+				{ allowHTML ? (
+					<RawHTML>
+						{ sanitizeHTML( label, {
+							tags: [
+								'b',
+								'em',
+								'i',
+								'strong',
+								'p',
+								'br',
+								'span',
+							],
+							attr: [ 'style' ],
+						} ) }
+					</RawHTML>
+				) : (
+					<span aria-hidden="true">{ label }</span>
+				) }
+
 				<span className="screen-reader-text">
 					{ screenReaderLabel }
 				</span>
