@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\StoreApi\Schemas\V1;
 
 use Automattic\WooCommerce\StoreApi\SchemaController;
@@ -155,8 +157,8 @@ class CheckoutSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 			],
 			'payment_result'    => [
-				'description' => __( 'Result of payment processing, or false if not yet processed.', 'woocommerce' ),
-				'type'        => 'object',
+				'description' => __( 'Result of payment processing, or null if not yet processed.', 'woocommerce' ),
+				'type'        => [ 'object', 'null' ],
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 				'properties'  => [
