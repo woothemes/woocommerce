@@ -44,7 +44,9 @@
 		&.grouped_form {
 			width: fit-content;
 			word-break: normal;
-			grid-column: 1 / 3;
+			button[type="submit"] {
+				grid-column: 1 / 3;
+			}
 		}
 	}
 
