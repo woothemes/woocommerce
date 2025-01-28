@@ -150,6 +150,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 		if ( $product_gallery_images && count( $product_gallery_images ) > 1 ) {
 			$html                 = '';
 			$number_of_thumbnails = isset( $attributes['numberOfThumbnails'] ) && is_numeric( $attributes['numberOfThumbnails'] ) ? $attributes['numberOfThumbnails'] : 3;
+			$number_of_thumbnails_class = 'wc-block-product-gallery-thumbnails--number-of-thumbnails-' . $number_of_thumbnails;
 			$mode                 = $block->context['mode'] ?? '';
 			$thumbnails_count     = 1;
 
@@ -168,6 +169,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 					$processor = new \WP_HTML_Tag_Processor( $product_gallery_image_html );
 
 					if ( $processor->next_tag( 'img' ) ) {
+						$processor->add_class( 'wc-block-product-gallery-thumbnails__image' );
 						$processor->set_attribute( 'data-wc-on--keydown', 'actions.onThumbnailKeyDown' );
 						$processor->set_attribute( 'tabindex', '0' );
 						$processor->set_attribute(
@@ -186,7 +188,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 				'<div class="wc-block-product-gallery-thumbnails wp-block-woocommerce-product-gallery-thumbnails %1$s" style="%2$s" data-wc-interactive=\'%4$s\'>
 					%3$s
 				</div>',
-				esc_attr( $classes_and_styles['classes'] ),
+				esc_attr( $classes_and_styles['classes'] . ' ' . $number_of_thumbnails_class ),
 				esc_attr( $classes_and_styles['styles'] ),
 				wp_kses_post( $html ),
 				wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
