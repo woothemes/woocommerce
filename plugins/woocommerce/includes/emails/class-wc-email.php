@@ -107,6 +107,20 @@ class WC_Email extends WC_Settings_API {
 	public $recipient;
 
 	/**
+	 * Cc recipients for the email.
+	 *
+	 * @var string
+	 */
+	public $cc;
+
+	/**
+	 * Bcc recipients for the email.
+	 *
+	 * @var string
+	 */
+	public $bcc;
+
+	/**
 	 * Object this email is for, for example a customer, product, or email.
 	 *
 	 * @var object|bool
@@ -262,6 +276,10 @@ class WC_Email extends WC_Settings_API {
 
 		$this->email_type = $this->get_option( 'email_type' );
 		$this->enabled    = $this->get_option( 'enabled' );
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			$this->cc  = $this->get_option( 'cc' );
+			$this->bcc = $this->get_option( 'bcc' );
+		}
 
 		add_action( 'phpmailer_init', array( $this, 'handle_multipart' ) );
 		add_action( 'woocommerce_update_options_email_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -484,7 +502,7 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_cc_recipient() {
-		$cc = $this->get_option( 'cc' );
+		$cc = $this->cc;
 		/**
 		 * Filter the Cc recipient for the email.
 		 *
@@ -505,7 +523,7 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_bcc_recipient() {
-		$bcc = $this->get_option( 'bcc' );
+		$bcc = $this->bcc;
 		/**
 		 * Filter the Bcc recipient for the email.
 		 *
