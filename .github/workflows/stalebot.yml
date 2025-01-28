@@ -59,6 +59,7 @@ jobs:
                   script: |
                       const thirtyDaysAgo = new Date();
                       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                      console.log(`Checking for approvals before: ${thirtyDaysAgo.toISOString()}`);
 
                       const prs = await github.paginate(github.rest.pulls.list, {
                         owner: context.repo.owner,
@@ -75,15 +76,22 @@ jobs:
                         });
                         
                         for (const review of reviews) {
-                          if (review.state === 'APPROVED' && new Date(review.submitted_at) < thirtyDaysAgo) {
-                            console.log(`Dismissing stale approval on PR #${pr.number} from ${review.user.login}`);
-                            await github.rest.pulls.dismissReview({
-                              owner: context.repo.owner,
-                              repo: context.repo.repo,
-                              pull_number: pr.number,
-                              review_id: review.id,
-                              message: 'This approval has been dismissed due to being stale (30+ days old). Please request a new review.'
-                            });
+                          const reviewDate = new Date(review.submitted_at);
+                          console.log(`PR #${pr.number} review from ${review.user.login} on ${reviewDate.toISOString()}`);
+                          
+                          if (review.state === 'APPROVED') {
+                            if (reviewDate < thirtyDaysAgo) {
+                              console.log(`Dismissing stale approval on PR #${pr.number} from ${review.user.login} (approved on ${reviewDate.toISOString()})`);
+                              await github.rest.pulls.dismissReview({
+                                owner: context.repo.owner,
+                                repo: context.repo.repo,
+                                pull_number: pr.number,
+                                review_id: review.id,
+                                message: 'This approval has been dismissed due to being stale (30+ days old). Please request a new review.'
+                              });
+                            } else {
+                              console.log(`Keeping recent approval on PR #${pr.number} from ${review.user.login} (approved on ${reviewDate.toISOString()})`);
+                            }
                           }
                         }
                       }
