@@ -82,7 +82,7 @@ async function processDirectory(
 
 	markdownFiles.forEach( ( filePath ) => {
 		const fileContent = fs.readFileSync( filePath, 'utf-8' );
-		
+
 		if ( ! hasContent( fileContent ) ) {
 			return;
 		}
