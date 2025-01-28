@@ -23,7 +23,7 @@ import { previewCart } from '@woocommerce/resource-previews';
  * Internal dependencies
  */
 import { STORE_KEY as CART_STORE_KEY } from '../../cart/constants';
-import { STORE_KEY as PAYMENT_STORE_KEY } from '../constants';
+import { store as paymentStore } from '../index';
 import { noticeContexts } from '../../../base/context/event-emit';
 import {
 	EMPTY_CART_ERRORS,
@@ -238,8 +238,8 @@ export const checkPaymentMethodsCanPay = async ( express = false ) => {
 
 	const availablePaymentMethodNames = Object.keys( availablePaymentMethods );
 	const currentlyAvailablePaymentMethods = express
-		? select( PAYMENT_STORE_KEY ).getAvailableExpressPaymentMethods()
-		: select( PAYMENT_STORE_KEY ).getAvailablePaymentMethods();
+		? select( paymentStore ).getAvailableExpressPaymentMethods()
+		: select( paymentStore ).getAvailablePaymentMethods();
 
 	if (
 		Object.keys( currentlyAvailablePaymentMethods ).length ===
@@ -255,7 +255,7 @@ export const checkPaymentMethodsCanPay = async ( express = false ) => {
 	const {
 		__internalSetAvailablePaymentMethods,
 		__internalSetAvailableExpressPaymentMethods,
-	} = dispatch( PAYMENT_STORE_KEY );
+	} = dispatch( paymentStore );
 
 	const setCallback = express
 		? __internalSetAvailableExpressPaymentMethods

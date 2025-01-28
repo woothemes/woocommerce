@@ -11,13 +11,13 @@ import clsx from 'clsx';
 import { RadioControlAccordion } from '@woocommerce/blocks-components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { getPaymentMethods } from '@woocommerce/blocks-registry';
+import { paymentStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
  */
 import PaymentMethodCard from './payment-method-card';
 import { noticeContexts } from '../../../base/context/event-emit';
-import { STORE_KEY as PAYMENT_STORE_KEY } from '../../../data/payment/constants';
 
 /**
  * Component used to render all non-saved payment method options.
@@ -32,7 +32,7 @@ const PaymentMethodOptions = () => {
 		savedPaymentMethods,
 		availablePaymentMethods,
 	} = useSelect( ( select ) => {
-		const store = select( PAYMENT_STORE_KEY );
+		const store = select( paymentStore );
 		return {
 			activeSavedToken: store.getActiveSavedToken(),
 			activePaymentMethod: store.getActivePaymentMethod(),
@@ -41,8 +41,7 @@ const PaymentMethodOptions = () => {
 			availablePaymentMethods: store.getAvailablePaymentMethods(),
 		};
 	} );
-	const { __internalSetActivePaymentMethod } =
-		useDispatch( PAYMENT_STORE_KEY );
+	const { __internalSetActivePaymentMethod } = useDispatch( paymentStore );
 	const paymentMethods = getPaymentMethods();
 	const { ...paymentMethodInterface } = usePaymentMethodInterface();
 	const { removeNotice } = useDispatch( 'core/notices' );

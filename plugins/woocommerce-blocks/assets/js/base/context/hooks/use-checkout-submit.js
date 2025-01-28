@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { checkoutStore, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore, paymentStore } from '@woocommerce/block-data';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -35,7 +35,7 @@ export const useCheckoutSubmit = () => {
 	} );
 	const { activePaymentMethod, isExpressPaymentMethodActive } = useSelect(
 		( select ) => {
-			const store = select( PAYMENT_STORE_KEY );
+			const store = select( paymentStore );
 
 			return {
 				activePaymentMethod: store.getActivePaymentMethod(),

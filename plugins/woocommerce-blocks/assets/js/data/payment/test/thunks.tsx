@@ -7,7 +7,7 @@ import { EventObserversType } from '@woocommerce/base-context';
 /**
  * Internal dependencies
  */
-import { PAYMENT_STORE_KEY } from '../index';
+import { store as paymentStore } from '../index';
 import { __internalEmitPaymentProcessingEvent } from '../thunks';
 
 /**
@@ -57,7 +57,7 @@ describe( 'wc/store/payment thunks', () => {
 			const {
 				__internalEmitPaymentProcessingEvent:
 					__internalEmitPaymentProcessingEventFromStore,
-			} = wpDataFunctions.dispatch( PAYMENT_STORE_KEY );
+			} = wpDataFunctions.dispatch( paymentStore );
 			await __internalEmitPaymentProcessingEventFromStore(
 				currentObservers,
 				jest.fn()
@@ -85,13 +85,15 @@ describe( 'wc/store/payment thunks', () => {
 			const setShippingAddressMock = jest.fn();
 			const setPaymentMethodDataMock = jest.fn();
 			const registryMock = {
-				dispatch: jest.fn().mockImplementation( ( store: string ) => {
-					return {
-						...wpDataFunctions.dispatch( store ),
-						setBillingAddress: setBillingAddressMock,
-						setShippingAddress: setShippingAddressMock,
-					};
-				} ),
+				dispatch: jest
+					.fn()
+					.mockImplementation( ( store: typeof paymentStore ) => {
+						return {
+							...wpDataFunctions.dispatch( store ),
+							setBillingAddress: setBillingAddressMock,
+							setShippingAddress: setShippingAddressMock,
+						};
+					} ),
 			};
 
 			// Await here because the function returned by the __internalEmitPaymentProcessingEvent action creator
@@ -105,7 +107,7 @@ describe( 'wc/store/payment thunks', () => {
 				// which is all we need to test this thunk.
 				registry: registryMock,
 				dispatch: {
-					...wpDataFunctions.dispatch( PAYMENT_STORE_KEY ),
+					...wpDataFunctions.dispatch( paymentStore ),
 					__internalSetPaymentMethodData: setPaymentMethodDataMock,
 				},
 			} );
@@ -137,12 +139,14 @@ describe( 'wc/store/payment thunks', () => {
 			const setBillingAddressMock = jest.fn();
 			const setPaymentMethodDataMock = jest.fn();
 			const registryMock = {
-				dispatch: jest.fn().mockImplementation( ( store: string ) => {
-					return {
-						...wpDataFunctions.dispatch( store ),
-						setBillingAddress: setBillingAddressMock,
-					};
-				} ),
+				dispatch: jest
+					.fn()
+					.mockImplementation( ( store: typeof paymentStore ) => {
+						return {
+							...wpDataFunctions.dispatch( store ),
+							setBillingAddress: setBillingAddressMock,
+						};
+					} ),
 			};
 
 			// Await here because the function returned by the __internalEmitPaymentProcessingEvent action creator
@@ -156,7 +160,7 @@ describe( 'wc/store/payment thunks', () => {
 				// which is all we need to test this thunk.
 				registry: registryMock,
 				dispatch: {
-					...wpDataFunctions.dispatch( PAYMENT_STORE_KEY ),
+					...wpDataFunctions.dispatch( paymentStore ),
 					__internalSetPaymentMethodData: setPaymentMethodDataMock,
 				},
 			} );
@@ -209,7 +213,7 @@ describe( 'wc/store/payment thunks', () => {
 				// which is all we need to test this thunk.
 				registry: registryMock,
 				dispatch: {
-					...wpDataFunctions.dispatch( PAYMENT_STORE_KEY ),
+					...wpDataFunctions.dispatch( paymentStore ),
 					__internalSetPaymentError: setPaymentErrorMock,
 					__internalSetPaymentReady: setPaymentReadyMock,
 				},

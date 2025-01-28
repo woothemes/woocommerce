@@ -16,7 +16,7 @@ import deprecated from '@wordpress/deprecated';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	checkoutStore,
-	PAYMENT_STORE_KEY,
+	paymentStore,
 	validationStore,
 } from '@woocommerce/block-data';
 import { store as noticesStore } from '@wordpress/notices';
@@ -88,7 +88,7 @@ export const CheckoutEventsProvider = ( {
 	const { isEditor } = useEditorContext();
 
 	const { __internalUpdateAvailablePaymentMethods } =
-		useDispatch( PAYMENT_STORE_KEY );
+		useDispatch( paymentStore );
 
 	// Update the payment method store when paymentMethods or expressPaymentMethods changes.
 	// Ensure this happens in the editor even if paymentMethods is empty. This won't happen instantly when the objects

@@ -20,8 +20,14 @@ const mockedUseSelect = wpData.useSelect as jest.Mock;
 // Mock use select so we can override it when wc/store/checkout is accessed, but return the original select function if any other store is accessed.
 mockedUseSelect.mockImplementation(
 	jest.fn().mockImplementation( ( passedMapSelect ) => {
+		const { paymentStore } = jest.requireActual(
+			'@woocommerce/block-data'
+		);
 		const mockedSelect = jest.fn().mockImplementation( ( storeName ) => {
-			if ( storeName === 'wc/store/payment' ) {
+			if (
+				storeName === 'wc/store/payment' ||
+				storeName === paymentStore
+			) {
 				return {
 					...jest
 						.requireActual( '@wordpress/data' )

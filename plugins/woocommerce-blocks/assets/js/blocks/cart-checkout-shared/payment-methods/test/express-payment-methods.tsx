@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { render, screen } from '@testing-library/react';
-import { PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { paymentStore } from '@woocommerce/block-data';
 import {
 	registerExpressPaymentMethod,
 	__experimentalDeRegisterExpressPaymentMethod,
@@ -57,7 +57,7 @@ const registerMockExpressPaymentMethods = () => {
 			},
 		} );
 	} );
-	dispatch( PAYMENT_STORE_KEY ).__internalUpdateAvailablePaymentMethods();
+	dispatch( paymentStore ).__internalUpdateAvailablePaymentMethods();
 };
 
 const deregisterMockExpressPaymentMethods = () => {

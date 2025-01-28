@@ -2,11 +2,7 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY as PAYMENT_STORE_KEY } from '../../data/payment/constants';
+import { paymentStore } from '@woocommerce/block-data';
 
 export const useIncompatiblePaymentGatewaysNotice = (): [
 	{ [ k: string ]: string },
@@ -14,7 +10,7 @@ export const useIncompatiblePaymentGatewaysNotice = (): [
 	number
 ] => {
 	const { incompatiblePaymentMethods } = useSelect( ( select ) => {
-		const { getIncompatiblePaymentMethods } = select( PAYMENT_STORE_KEY );
+		const { getIncompatiblePaymentMethods } = select( paymentStore );
 		return {
 			incompatiblePaymentMethods: getIncompatiblePaymentMethods(),
 		};

@@ -6,7 +6,7 @@ import { useEditorContext, noticeContexts } from '@woocommerce/base-context';
 import { Title, StoreNoticesContainer } from '@woocommerce/blocks-components';
 import LoadingMask from '@woocommerce/base-components/loading-mask';
 import { CURRENT_USER_IS_ADMIN } from '@woocommerce/settings';
-import { checkoutStore, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore, paymentStore } from '@woocommerce/block-data';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -39,7 +39,7 @@ const CheckoutExpressPayment = () => {
 		expressPaymentMethodsInitialized,
 		isExpressPaymentMethodActive,
 	} = useSelect( ( select ) => {
-		const store = select( PAYMENT_STORE_KEY );
+		const store = select( paymentStore );
 		return {
 			availableExpressPaymentMethods:
 				store.getAvailableExpressPaymentMethods(),

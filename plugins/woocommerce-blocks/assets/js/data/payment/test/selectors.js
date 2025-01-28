@@ -7,7 +7,7 @@ import { previewCart } from '@woocommerce/resource-previews';
 import * as wpDataFunctions from '@wordpress/data';
 import {
 	CART_STORE_KEY as storeKey,
-	PAYMENT_STORE_KEY,
+	paymentStore,
 } from '@woocommerce/block-data';
 import {
 	registerPaymentMethod,
@@ -141,7 +141,7 @@ const registerMockPaymentMethods = ( savedCards = true ) => {
 		} );
 	} );
 	wpDataFunctions
-		.dispatch( PAYMENT_STORE_KEY )
+		.dispatch( paymentStore )
 		.__internalUpdateAvailablePaymentMethods();
 };
 
@@ -185,7 +185,7 @@ describe( 'Payment method data store selectors/thunks', () => {
 		const TriggerActiveExpressPaymentMethod = () => {
 			const activePaymentMethod = wpDataFunctions.useSelect(
 				( select ) => {
-					return select( PAYMENT_STORE_KEY ).getActivePaymentMethod();
+					return select( paymentStore ).getActivePaymentMethod();
 				}
 			);
 
@@ -267,7 +267,7 @@ describe( 'Testing Payment Methods work correctly with saved cards turned on', (
 		const TriggerActiveExpressPaymentMethod = () => {
 			const { activePaymentMethod, paymentMethodData } =
 				wpDataFunctions.useSelect( ( select ) => {
-					const store = select( PAYMENT_STORE_KEY );
+					const store = select( paymentStore );
 					return {
 						activePaymentMethod: store.getActivePaymentMethod(),
 						paymentMethodData: store.getPaymentMethodData(),

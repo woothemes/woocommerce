@@ -16,7 +16,7 @@ import { checkoutStore } from '@woocommerce/block-data';
 /**
  * Internal dependencies
  */
-import { STORE_KEY as PAYMENT_STORE_KEY } from '../payment/constants';
+import { store as paymentStore } from '../payment';
 import { removeNoticesByStatus } from '../../utils/notices';
 import {
 	getPaymentResultFromCheckoutResponse,
@@ -52,9 +52,7 @@ export const __internalProcessCheckoutResponse = (
 		dispatch.__internalSetRedirectUrl( paymentResult?.redirectUrl || '' );
 		// The local `dispatch` here is bound  to the actions of the data store. We need to use the global dispatch here
 		// to dispatch an action on a different store.
-		wpDispatch( PAYMENT_STORE_KEY ).__internalSetPaymentResult(
-			paymentResult
-		);
+		wpDispatch( paymentStore ).__internalSetPaymentResult( paymentResult );
 		dispatch.__internalSetAfterProcessing();
 	};
 };
@@ -109,8 +107,7 @@ export const __internalEmitAfterProcessingEvents: emitAfterProcessingEventsType 
 				orderId: select.getOrderId(),
 				customerId: select.getCustomerId(),
 				orderNotes: select.getOrderNotes(),
-				processingResponse:
-					wpSelect( PAYMENT_STORE_KEY ).getPaymentResult(),
+				processingResponse: wpSelect( paymentStore ).getPaymentResult(),
 			};
 			if ( select.hasError() ) {
 				// allow payment methods or other things to customize the error

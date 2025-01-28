@@ -7,7 +7,7 @@ import { CheckboxControl } from '@woocommerce/blocks-components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import {
 	checkoutStore as checkoutStoreDescriptor,
-	PAYMENT_STORE_KEY,
+	paymentStore,
 } from '@woocommerce/block-data';
 
 /**
@@ -35,7 +35,7 @@ const PaymentMethodCard = ( {
 }: PaymentMethodCardProps ) => {
 	const { isEditor } = useEditorContext();
 	const { shouldSavePaymentMethod, customerId } = useSelect( ( select ) => {
-		const paymentMethodStore = select( PAYMENT_STORE_KEY );
+		const paymentMethodStore = select( paymentStore );
 		const checkoutStore = select( checkoutStoreDescriptor );
 		return {
 			shouldSavePaymentMethod:
@@ -44,7 +44,7 @@ const PaymentMethodCard = ( {
 		};
 	} );
 	const { __internalSetShouldSavePaymentMethod } =
-		useDispatch( PAYMENT_STORE_KEY );
+		useDispatch( paymentStore );
 	return (
 		<PaymentMethodErrorBoundary isEditor={ isEditor }>
 			{ children }
