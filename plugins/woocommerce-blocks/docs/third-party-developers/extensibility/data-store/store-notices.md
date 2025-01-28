@@ -17,10 +17,16 @@ The Store Notices Store allows to register and unregister containers for notices
 
 ## Usage
 
-To utilize this store you will import the `STORE_NOTICES_STORE_KEY` in any module referencing it. Assuming `@woocommerce/block-data` is registered as an external pointing to `wc.wcBlocksData` you can import the key via:
+To utilize this store you will import the `storeNoticesStore` `StoreDescriptor` in any module referencing it. Assuming `@woocommerce/block-data` is registered as an external pointing to `wc.wcBlocksData` you can import the `StoreDescriptor` via:
 
 ```js
-const { STORE_NOTICES_STORE_KEY } = window.wc.wcBlocksData;
+import { storeNoticesStore } from '@woocommerce/block-data';
+```
+
+If it's not, then access it from the window like so:
+
+```js
+const { storeNoticesStore } = window.wc.wcBlocksData;
 ```
 
 ## Example
@@ -28,10 +34,12 @@ const { STORE_NOTICES_STORE_KEY } = window.wc.wcBlocksData;
 The following code snippet demonstrates how to register a container for notices.
 
 ```js
+import { store as noticesStore } from '@wordpress/notices';
+
 export default function Block( attributes ) {
 	const context = 'your-namespace/custom-form-step';
 
-	dispatch( 'core/notices' ).createNotice(
+	dispatch( noticesStore ).createNotice(
 		'error',
 		'This is an example of an error notice.',
 		{ context }
@@ -69,7 +77,9 @@ This action will register a new container.
 #### _Example_ <!-- omit in toc -->
 
 ```javascript
-dispatch( registerContainer( 'someContainerContext' ) );
+import { storeNoticesStore } from '@woocommerce/block-data';
+
+dispatch( storeNoticesStore ).registerContainer( 'someContainerContext' );
 ```
 
 ### unregisterContainer( containerContext )
@@ -89,7 +99,9 @@ This action will unregister an existing container.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-dispatch( unregisterContainer( 'someContainerContext' ) );
+import { storeNoticesStore } from '@woocommerce/block-data';
+
+dispatch( storeNoticesStore ).unregisterContainer( 'someContainerContext' );
 ```
 
 ## Selectors
@@ -105,7 +117,9 @@ Returns the list of currently registered containers from the state.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( 'wc/store/store-notices' );
+import { storeNoticesStore } from '@woocommerce/block-data';
+
+const store = select( storeNoticesStore );
 const registeredContainers = store.getRegisteredContainers();
 ```
 
