@@ -668,7 +668,7 @@ importers:
         version: 13.0.7(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/block-library':
         specifier: wp-6.6
-        version: 9.0.8(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 9.0.8(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/blocks':
         specifier: wp-6.6
         version: 13.0.3(react@18.3.1)
@@ -2615,7 +2615,7 @@ importers:
         version: 4.0.1
       '@wordpress/edit-post':
         specifier: wp-6.6
-        version: 8.0.9(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 8.0.9(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/editor':
         specifier: wp-6.6
         version: 14.0.8(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2929,10 +2929,10 @@ importers:
         version: 4.0.1
       '@wordpress/edit-post':
         specifier: wp-6.6
-        version: 8.0.9(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 8.0.9(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/edit-site':
         specifier: 6.10.0
-        version: 6.10.0(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 6.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/editor':
         specifier: wp-6.6
         version: 14.0.8(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3383,7 +3383,7 @@ importers:
         version: 10.14.0
       '@wordpress/stylelint-config':
         specifier: ^21.36.0
-        version: 21.36.0(postcss@8.4.49)(stylelint@14.16.1)
+        version: 21.36.0(postcss@8.4.32)(stylelint@14.16.1)
       allure-commandline:
         specifier: ^2.25.0
         version: 2.25.0
@@ -3957,6 +3957,9 @@ importers:
       '@wordpress/i18n':
         specifier: 4.45.0
         version: 4.45.0
+      '@wordpress/interactivity':
+        specifier: ^6.16.0
+        version: 6.16.0
       '@wordpress/is-shallow-equal':
         specifier: 4.24.0
         version: 4.24.0
@@ -12380,8 +12383,8 @@ packages:
     resolution: {integrity: sha512-UCZvDUJ1AB9IQHjjPHqSDDzj4Y8/BaQruzfJe5II86FruZXBHZXx1DAZb5sAe4GCOAfatbHsIFnoUAEhLDJdjg==}
     engines: {node: '>=12'}
 
-  '@wordpress/interactivity@6.14.0':
-    resolution: {integrity: sha512-3CuCWxXbbK9nxGoR+2jgSNKYQPnvR6q3+y8cUVVIp61b8a37SWwN6Gxlnea+Sk6CVfY/VJNnt8i4MqFm3O70+Q==}
+  '@wordpress/interactivity@6.16.0':
+    resolution: {integrity: sha512-dPzunALqKq3LtCKaJXbVx0/ox239kFA9S0WeXzrtJj/513mSS/U43Y+kC449PYdIf++dGIJbMz7YxIAL30Fc8w==}
     engines: {node: '>=18.12.0', npm: '>=8.19.2'}
 
   '@wordpress/interface@5.24.0':
@@ -41673,7 +41676,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@wordpress/block-library@9.0.8(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@wordpress/block-library@9.0.8(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.0
       '@wordpress/a11y': 4.0.1
@@ -41695,8 +41698,8 @@ snapshots:
       '@wordpress/html-entities': 4.0.1
       '@wordpress/i18n': 5.0.1
       '@wordpress/icons': 10.0.2(react@18.3.1)
-      '@wordpress/interactivity': 6.14.0
-      '@wordpress/interactivity-router': 2.11.0(@preact/signals-core@1.8.0)
+      '@wordpress/interactivity': 6.16.0
+      '@wordpress/interactivity-router': 2.11.0
       '@wordpress/keyboard-shortcuts': 5.0.2(react@18.3.1)
       '@wordpress/keycodes': 4.0.1
       '@wordpress/notices': 5.0.2(react@18.3.1)
@@ -41722,15 +41725,13 @@ snapshots:
       uuid: 9.0.1
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
-      - '@preact/signals-core'
-      - '@preact/signals-react'
       - '@types/react'
       - '@types/react-dom'
       - bufferutil
       - supports-color
       - utf-8-validate
 
-  '@wordpress/block-library@9.11.0(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@wordpress/block-library@9.11.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.7
       '@wordpress/a11y': 4.0.1
@@ -41752,8 +41753,8 @@ snapshots:
       '@wordpress/html-entities': 4.0.1
       '@wordpress/i18n': 5.0.1
       '@wordpress/icons': 10.11.0
-      '@wordpress/interactivity': 3.0.1(@preact/signals-core@1.8.0)
-      '@wordpress/interactivity-router': 2.11.0(@preact/signals-core@1.8.0)
+      '@wordpress/interactivity': 6.16.0
+      '@wordpress/interactivity-router': 2.11.0
       '@wordpress/keyboard-shortcuts': 5.0.2(react@18.3.1)
       '@wordpress/keycodes': 4.0.1
       '@wordpress/notices': 5.0.2(react@18.3.1)
@@ -41779,8 +41780,6 @@ snapshots:
       uuid: 9.0.1
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
-      - '@preact/signals-core'
-      - '@preact/signals-react'
       - '@types/react'
       - '@types/react-dom'
       - bufferutil
@@ -43268,13 +43267,13 @@ snapshots:
       - webpack-hot-middleware
       - webpack-plugin-serve
 
-  '@wordpress/edit-post@8.0.9(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@wordpress/edit-post@8.0.9(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.0
       '@wordpress/a11y': 4.0.1
       '@wordpress/api-fetch': 7.0.1
       '@wordpress/block-editor': 13.0.7(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@wordpress/block-library': 9.0.8(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@wordpress/block-library': 9.0.8(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/blocks': 13.0.3(react@18.3.1)
       '@wordpress/commands': 1.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/components': 28.0.3(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -43306,8 +43305,6 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
-      - '@preact/signals-core'
-      - '@preact/signals-react'
       - '@types/react'
       - '@types/react-dom'
       - bufferutil
@@ -43381,7 +43378,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@wordpress/edit-site@6.10.0(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@wordpress/edit-site@6.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.25.7
       '@react-spring/web': 9.7.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -43389,7 +43386,7 @@ snapshots:
       '@wordpress/api-fetch': 7.10.0
       '@wordpress/blob': 4.10.0
       '@wordpress/block-editor': 14.5.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@wordpress/block-library': 9.11.0(@emotion/is-prop-valid@1.2.1)(@preact/signals-core@1.8.0)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@wordpress/block-library': 9.11.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/blocks': 13.10.0(react@18.3.1)
       '@wordpress/commands': 1.10.0(@emotion/is-prop-valid@1.2.1)(@types/react-dom@18.3.0)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@wordpress/components': 28.10.0(@emotion/is-prop-valid@1.2.1)(@types/react@18.3.16)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -43434,8 +43431,6 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
-      - '@preact/signals-core'
-      - '@preact/signals-react'
       - '@types/react'
       - '@types/react-dom'
       - bufferutil
@@ -44125,13 +44120,10 @@ snapshots:
       '@wordpress/element': 5.35.0
       '@wordpress/primitives': 3.56.0
 
-  '@wordpress/interactivity-router@2.11.0(@preact/signals-core@1.8.0)':
+  '@wordpress/interactivity-router@2.11.0':
     dependencies:
       '@wordpress/a11y': 4.0.1
-      '@wordpress/interactivity': 3.0.1(@preact/signals-core@1.8.0)
-    transitivePeerDependencies:
-      - '@preact/signals-core'
-      - '@preact/signals-react'
+      '@wordpress/interactivity': 6.16.0
 
   '@wordpress/interactivity@3.0.1(@preact/signals-core@1.8.0)':
     dependencies:
@@ -44142,7 +44134,7 @@ snapshots:
       - '@preact/signals-core'
       - '@preact/signals-react'
 
-  '@wordpress/interactivity@6.14.0':
+  '@wordpress/interactivity@6.16.0':
     dependencies:
       '@preact/signals': 1.3.1(preact@10.25.1)
       preact: 10.25.1

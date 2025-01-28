@@ -48,31 +48,67 @@ class StoreNotices extends AbstractBlock {
 		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
 
 		return sprintf(
-			'<div %1$s>%2$s</div>',
+			'<div %1$s>%2$s%3$s</div>',
 			get_block_wrapper_attributes(
 				array(
 					'class' => 'wc-block-store-notices woocommerce ' . esc_attr( $classes_and_styles['classes'] ),
 				)
 			),
-			wc_kses_notice( $notices )
+			wc_kses_notice( $notices ),
+			$this->render_interactivity_notices_region()
 		);
 	}
 
 	/**
-	 * Get the frontend script handle for this block type.
-	 *
-	 * @param string $key Data to get, or default to everything.
+	 * In addition to the server notices we render interactivity API powered notices that
+	 * can be added client-side.
 	 */
-	protected function get_block_type_script( $key = null ) {
-		return null;
-	}
+	protected function render_interactivity_notices_region() {
+		$namespace = wp_json_encode( array( 'namespace' => 'woocommerce/store-notices' ), JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
 
-	/**
-	 * Get the frontend style handle for this block type.
-	 *
-	 * @return null
-	 */
-	protected function get_block_type_style() {
-		return null;
+		wc_initial_state(
+			'woocommerce/store-notices',
+			array(
+				'notices' => array(),
+			)
+		);
+
+		ob_start();
+		?>
+		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="woocommerce-notices-wrapper">
+			<template
+				data-wc-each--notice="state.notices"
+				data-wc-each-key="context.notice.id"
+			>
+				<div
+					class="wc-block-components-notice-banner"
+					data-wc-init="callbacks.scrollIntoView"
+					data-wc-class--is-error="state.isError"
+					data-wc-class--is-success ="state.isSuccess"
+					data-wc-class--is-info="state.isInfo"
+					data-wc-bind--role="state.role"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+						<path data-wc-bind--d="state.iconPath"></path>
+					</svg>
+					<div class="wc-block-components-notice-banner__content">
+						<span data-wc-init="callbacks.renderNoticeContent"></span>
+					</div>
+					<button
+						data-wc-bind--hidden="!context.notice.dismissible"
+						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
+						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
+						data-wc-on--click="actions.removeNotice"
+						hidden
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+							<path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" />
+						</svg>	
+					</button>
+				</div>
+			</template>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 }
