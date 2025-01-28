@@ -614,7 +614,9 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 				'status'                => array(
 					'description' => __( 'Variation status.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => ProductStatus::PUBLISH,
+					// Not using ProductStatus constants here due the class not being loaded upon installation.
+					// See: https://github.com/woocommerce/woocommerce/issues/37464.
+					'default'     => 'publish',
 					'enum'        => array_keys( get_post_statuses() ),
 					'context'     => array( 'view', 'edit' ),
 				),

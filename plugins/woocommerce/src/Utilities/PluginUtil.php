@@ -187,7 +187,7 @@ class PluginUtil {
 				$full_matches[] = $wp_plugin;
 			}
 
-			if ( false !== strpos( $wp_plugin, $file_name ) ) {
+			if ( ! empty( $file_name ) && false !== strpos( $wp_plugin, $file_name ) ) {
 				$partial_matches[] = $wp_plugin;
 			}
 		}

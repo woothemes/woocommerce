@@ -15,6 +15,7 @@
 		text-align: center;
 		// Set button font size so it inherits from parent.
 		font-size: 1em;
+		width: auto;
 	}
 
 	a[hidden] {
@@ -60,7 +61,6 @@
 		line-height: inherit;
 
 		span {
-
 			&.wc-block-slide-out {
 				animation: slideOut 0.1s linear 1 normal forwards;
 			}
@@ -83,7 +83,9 @@
 
 .theme-twentytwentyone {
 	// Prevent buttons appearing disabled in the editor.
-	.editor-styles-wrapper .wc-block-components-product-button .wp-block-button__link {
+	.editor-styles-wrapper
+		.wc-block-components-product-button
+		.wp-block-button__link {
 		background-color: var(--button--color-background);
 		color: var(--button--color-text);
 		border-color: var(--button--color-background);

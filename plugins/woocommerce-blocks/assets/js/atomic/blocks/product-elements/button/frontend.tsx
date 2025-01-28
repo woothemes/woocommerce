@@ -36,6 +36,7 @@ interface Store {
 		slideOutAnimation: boolean;
 		addToCartText: string;
 		displayViewCart: boolean;
+		noticeId: string;
 	};
 	actions: {
 		addCartItem: () => void;

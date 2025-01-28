@@ -51,7 +51,6 @@
 				"@wordpress/dom",
 				"@wordpress/dom-ready",
 				"@wordpress/e2e-test-utils",
-				"@wordpress/e2e-test-utils-playwright",
 				"@wordpress/e2e-tests",
 				"@wordpress/element",
 				"@wordpress/html-entities",
@@ -71,6 +70,7 @@
 				"@wordpress/stylelint-config",
 				"@wordpress/url",
 				"@wordpress/wordcount",
+				"@wordpress/interactivity",
 				"babel*",
 				"eslint*",
 				"glob*",
@@ -190,7 +190,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "^1.46.1"
+			"pinVersion": "^1.49.1"
 		},
 		{
 			"dependencies": [
@@ -274,7 +274,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "wp-6.6"
+			"pinVersion": "^1.15.0"
 		},
 		{
 			"dependencies": [

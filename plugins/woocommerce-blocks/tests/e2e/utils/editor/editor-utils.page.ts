@@ -87,7 +87,7 @@ export class Editor extends CoreEditor {
 
 		const button = this.page
 			.getByRole( 'button', {
-				name: templateName,
+				name: new RegExp( templateName, 'i' ),
 				exact: true,
 			} )
 			.and( this.page.locator( '.is-link' ) );

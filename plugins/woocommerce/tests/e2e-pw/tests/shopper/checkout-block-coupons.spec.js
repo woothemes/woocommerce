@@ -7,10 +7,15 @@ import {
 	publishPage,
 	goToPageEditor,
 } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
 const { fillPageTitle } = require( '../../utils/editor' );
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { random } = require( '../../utils/helpers' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
 const simpleProductName = `Checkout Coupons Product ${ random() }`;
 const singleProductFullPrice = '110.00';
 const singleProductSalePrice = '55.00';
@@ -39,7 +44,7 @@ const customerBilling = {
 let productId, orderId, limitedCouponId;
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Checkout Block',
 	page: async ( { context, page, testPage }, use ) => {
 		await goToPageEditor( { page } );
@@ -65,8 +70,7 @@ test.describe(
 	() => {
 		const couponBatchId = [];
 
-		test.beforeAll( async ( { api, baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
+		test.beforeAll( async ( { api } ) => {
 			// make sure the currency is USD
 			await api.put( 'settings/general/woocommerce_currency', {
 				value: 'USD',

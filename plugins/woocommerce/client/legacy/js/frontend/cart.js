@@ -735,6 +735,7 @@ jQuery( function ( $ ) {
 					unblock( $form );
 					unblock( $( 'div.cart_totals' ) );
 					$.scroll_to_notices( $( '[role="alert"]' ) );
+					$( document.body ).trigger( 'item_removed_from_classic_cart');
 				},
 			} );
 		},

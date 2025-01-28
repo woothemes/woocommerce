@@ -6,8 +6,9 @@ import clsx from 'clsx';
 import { useBlockProps } from '@wordpress/block-editor';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore as checkoutStoreDescriptor } from '@woocommerce/block-data';
 import { LOCAL_PICKUP_ENABLED } from '@woocommerce/block-settings';
+import { Disabled } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -32,7 +33,7 @@ export const Edit = ( {
 	setAttributes: ( attributes: Record< string, unknown > ) => void;
 } ): JSX.Element | null => {
 	const { prefersCollection } = useSelect( ( select ) => {
-		const checkoutStore = select( CHECKOUT_STORE_KEY );
+		const checkoutStore = select( checkoutStoreDescriptor );
 		return {
 			prefersCollection: checkoutStore.prefersCollection(),
 		};
@@ -52,7 +53,9 @@ export const Edit = ( {
 				className
 			) }
 		>
-			<Block />
+			<Disabled>
+				<Block />
+			</Disabled>
 			<AdditionalFields block={ innerBlockAreas.PICKUP_LOCATION } />
 		</FormStepBlock>
 	);

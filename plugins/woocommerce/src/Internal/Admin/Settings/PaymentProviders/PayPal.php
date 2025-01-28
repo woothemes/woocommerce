@@ -61,9 +61,9 @@ class PayPal extends PaymentGateway {
 	 *              If the payment gateway does not provide the information, it will return true.
 	 */
 	public function is_account_connected( WC_Payment_Gateway $payment_gateway ): bool {
-		$is_paypal_onboarded = $this->is_paypal_onboarded();
-		if ( ! is_null( $is_paypal_onboarded ) ) {
-			return $is_paypal_onboarded;
+		$is_onboarded = $this->is_paypal_onboarded();
+		if ( ! is_null( $is_onboarded ) ) {
+			return $is_onboarded;
 		}
 
 		return parent::is_account_connected( $payment_gateway );
@@ -79,9 +79,9 @@ class PayPal extends PaymentGateway {
 	 *              it will infer it from having a connected account.
 	 */
 	public function is_onboarding_completed( WC_Payment_Gateway $payment_gateway ): bool {
-		$is_paypal_onboarded = $this->is_paypal_onboarded();
-		if ( ! is_null( $is_paypal_onboarded ) ) {
-			return $is_paypal_onboarded;
+		$is_onboarded = $this->is_paypal_onboarded();
+		if ( ! is_null( $is_onboarded ) ) {
+			return $is_onboarded;
 		}
 
 		return parent::is_onboarding_completed( $payment_gateway );

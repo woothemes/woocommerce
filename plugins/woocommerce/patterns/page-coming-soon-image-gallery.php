@@ -9,15 +9,11 @@
  */
 
 use Automattic\WooCommerce\Blocks\AIContent\PatternsHelper;
+use Automattic\WooCommerce\Blocks\Templates\ComingSoonTemplate;
 
-$current_theme     = wp_get_theme()->get_stylesheet();
-$inter_font_family = 'inter';
-$cardo_font_family = 'cardo';
-
-if ( 'twentytwentyfour' === $current_theme ) {
-	$inter_font_family = 'body';
-	$cardo_font_family = 'heading';
-}
+$fonts               = ComingSoonTemplate::get_font_families();
+$heading_font_family = $fonts['heading'];
+$body_font_family    = $fonts['body'];
 
 $featured_image_urls = array(
 	PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/gallery-1.jpg' ),
@@ -42,14 +38,14 @@ $featured_image_urls = array(
 				<div class="wp-block-group"><!-- wp:site-logo {"width":60} /-->
 
 					<!-- wp:group {"style":{"spacing":{"blockGap":"0px"}}} -->
-					<div class="wp-block-group"><!-- wp:site-title {"level":0,"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
+					<div class="wp-block-group"><!-- wp:site-title {"level":0,"style":{"typography":{"fontSize":"20px","letterSpacing":"0px"},"color":{"text":"#000000"},"elements":{"link":{"color":{"text":"#000000"}}}},"fontFamily":"<?php echo esc_html( $body_font_family ); ?>"} /--></div>
 					<!-- /wp:group --></div>
 				<!-- /wp:group -->
 
 				<!-- wp:group {"className":"woocommerce-coming-soon-social-login","style":{"spacing":{"blockGap":"48px"}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
 				<div class="wp-block-group woocommerce-coming-soon-social-login"><!-- wp:template-part {"slug":"coming-soon-social-links","theme":"woocommerce/woocommerce","tagName":"div"} /-->
 
-					<!-- wp:loginout {"style":{"elements":{"link":{"color":{"text":"#ffffff"}}},"color":{"background":"#000000"}},"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
+					<!-- wp:loginout {"style":{"elements":{"link":{"color":{"text":"#ffffff"}}},"color":{"background":"#000000"},"fontFamily":"<?php echo esc_html( $body_font_family ); ?>","spacing":{"padding":{"top":"12px","bottom":"12px","left":"16px","right":"16px"}},"typography":{"fontSize":"14px","lineHeight":"1.2"},"border":{"radius":"6px"}}} /--></div>
 				<!-- /wp:group --></div>
 			<!-- /wp:group --></div>
 		<!-- /wp:group -->
@@ -58,8 +54,8 @@ $featured_image_urls = array(
 		<div class="wp-block-group alignwide">
 			<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"100px","bottom":"100px"}}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
 			<div class="wp-block-group alignwide">
-				<!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"48px","lineHeight":"1.3","fontStyle":"normal","fontWeight":"400"},"spacing":{"padding":{"top":"100px","bottom":"100px"}}},"fontFamily":"heading"} -->
-					<h1 class="wp-block-heading has-heading-font-family" style="padding-top:100px;padding-bottom:100px;font-size:48px;font-style:normal;font-weight:400;line-height:1.3"><em>Great things are coming soon</em></h1>
+				<!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"48px","lineHeight":"1.3","fontStyle":"normal","fontWeight":"400"},"spacing":{"padding":{"top":"100px","bottom":"100px"}}},"fontFamily":"<?php echo esc_html( $heading_font_family ); ?>"} -->
+					<h1 class="wp-block-heading has-<?php echo esc_html( $heading_font_family ); ?>-font-family" style="padding-top:100px;padding-bottom:100px;font-size:48px;font-style:normal;font-weight:400;line-height:1.3"><em><?php echo esc_html__( 'Great things are coming soon', 'woocommerce' ); ?></em></h1>
 				<!-- /wp:heading -->
 			</div>
 			<!-- /wp:group -->
