@@ -568,7 +568,7 @@ class OrderActionsRestController extends RestApiControllerBase {
 			return new WP_Error(
 				'woocommerce_rest_order_billing_email_exists',
 				__( 'Order already has a billing email.', 'woocommerce' ),
-				array( 'status' => 500 )
+				array( 'status' => 400 )
 			);
 		}
 

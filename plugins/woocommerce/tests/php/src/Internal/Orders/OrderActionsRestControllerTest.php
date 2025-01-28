@@ -255,7 +255,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 				'email' => 'another@example.org',
 			),
 			array(
-				'status'  => 500,
+				'status'  => 400,
 				'message' => 'Order already has a billing email.',
 				'notes'   => array(),
 			),
@@ -440,7 +440,7 @@ class OrderActionsRestControllerTest extends WC_REST_Unit_Test_Case {
 
 		$response = $this->server->dispatch( $request );
 
-		$this->assertEquals( 500, $response->get_status() );
+		$this->assertEquals( 400, $response->get_status() );
 
 		$data = $response->get_data();
 		$this->assertArrayHasKey( 'message', $data );
