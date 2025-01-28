@@ -3608,8 +3608,8 @@ importers:
         specifier: ^1.3.0
         version: 1.3.1(preact@10.25.1)
       '@woocommerce/tracks':
-        specifier: workspace:^
-        version: link:../../packages/js/tracks
+        specifier: workspace:*
+        version: link:../../../../packages/js/tracks
       '@wordpress/autop':
         specifier: 3.16.0
         version: 3.16.0
