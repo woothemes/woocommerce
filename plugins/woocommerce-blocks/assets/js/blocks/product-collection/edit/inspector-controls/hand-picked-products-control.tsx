@@ -95,6 +95,25 @@ export const HandPickedProductsControlField = ( {
 	);
 	const handleSearch = useDebounce( setSearchQuery, 250 );
 
+	// Filter out any selected product IDs that no longer exist
+	const validSelectedProductIds = useMemo( () => {
+		if ( ! selectedProductIds?.length || ! productsMap.size )
+			return selectedProductIds || [];
+		return selectedProductIds.filter( ( id ) => {
+			const product = productsMap.get( Number( id ) );
+			return !! product;
+		} );
+	}, [ selectedProductIds, productsMap ] );
+
+	// Updates the query attribute when invalid products are filtered out
+	useEffect( () => {
+		if ( validSelectedProductIds.length !== selectedProductIds.length ) {
+			setQueryAttribute( {
+				woocommerceHandPickedProducts: validSelectedProductIds,
+			} );
+		}
+	}, [ validSelectedProductIds, selectedProductIds, setQueryAttribute ] );
+
 	const onTokenChange = useCallback(
 		( values: string[] ) => {
 			// Map the tokens to product ids.
@@ -125,11 +144,13 @@ export const HandPickedProductsControlField = ( {
 				// Filter out products that are already selected.
 				.filter(
 					( product ) =>
-						! selectedProductIds?.includes( String( product.id ) )
+						! validSelectedProductIds?.includes(
+							String( product.id )
+						)
 				)
 				.map( ( product ) => product.name )
 		);
-	}, [ productsList, selectedProductIds ] );
+	}, [ productsList, validSelectedProductIds ] );
 
 	/**
 	 * Transforms a token into a product name.
@@ -162,7 +183,7 @@ export const HandPickedProductsControlField = ( {
 			value={
 				! productsMap.size
 					? [ __( 'Loading…', 'woocommerce' ) ]
-					: selectedProductIds || []
+					: validSelectedProductIds || []
 			}
 			__experimentalExpandOnFocus={ true }
 			__experimentalShowHowTo={ false }

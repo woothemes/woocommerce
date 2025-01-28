@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
+use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
+use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
 
 /**
  * AddToCartWithOptions class.
@@ -88,62 +91,70 @@ class AddToCartWithOptions extends AbstractBlock {
 			return '';
 		}
 
-		$is_external_product_with_url = $product instanceof \WC_Product_External && $product->get_product_url();
-		/**
-		 * Filter to modify the add to cart with options HTML output.
-		 *
-		 * @since 9.6.0
-		 *
-		 * @param string $content The HTML content for the add to cart with options block.
-		 */
-		$product_html = apply_filters( 'woocommerce_add_to_cart_with_options_html', $content );
+		$product_type = $product->get_type();
 
-		if ( ! $product_html ) {
-			$product = $previous_product;
+		if ( in_array( $product_type, array( ProductType::SIMPLE, ProductType::EXTERNAL, ProductType::VARIABLE, ProductType::GROUPED ), true ) ) {
+			$template_part_contents = '';
+			$slug                   = $product_type . '-product-add-to-cart-with-options';
+			// Determine if we need to load the template part from the DB, the theme or WooCommerce in that order.
+			$templates_from_db = BlockTemplateUtils::get_block_templates_from_db( array( $slug ), 'wp_template_part' );
+			if ( is_countable( $templates_from_db ) && count( $templates_from_db ) > 0 ) {
+				$template_slug_to_load = $templates_from_db[0]->theme;
+			} else {
+				$theme_has_template_part = BlockTemplateUtils::theme_has_template_part( $slug );
+				$template_slug_to_load   = $theme_has_template_part ? get_stylesheet() : BlockTemplateUtils::PLUGIN_SLUG;
+			}
+			$template_part = get_block_template( $template_slug_to_load . '//' . $slug, 'wp_template_part' );
 
-			return '';
-		}
-		$product_name                          = $product->get_name();
-		$parsed_attributes                     = $this->parse_attributes( $attributes );
-		$is_descendent_of_single_product_block = $parsed_attributes['isDescendentOfSingleProductBlock'];
+			if ( $template_part && ! empty( $template_part->content ) ) {
+				$template_part_contents = do_blocks( $template_part->content );
+			}
 
-		if ( ! $is_external_product_with_url ) {
-			$product_html = $this->add_is_descendent_of_single_product_block_hidden_input_to_product_form( $product_html, $is_descendent_of_single_product_block );
-		}
+			if ( '' === $template_part_contents ) {
+				$template_part_contents = do_blocks( file_get_contents( Package::get_path() . 'templates/' . BlockTemplateUtils::DIRECTORY_NAMES['TEMPLATE_PARTS'] . '/' . $slug . '.html' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			}
 
-		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
+			$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
 
-		$product_classname = $is_descendent_of_single_product_block ? 'product' : '';
-
-		$classes = implode(
-			' ',
-			array_filter(
-				array(
-					'wp-block-add-to-cart-with-options wc-block-add-to-cart-with-options',
-					esc_attr( $classes_and_styles['classes'] ),
-					esc_attr( $product_classname ),
-					'wc-block-add-to-cart-with-options--input',
+			$classes = implode(
+				' ',
+				array_filter(
+					array(
+						'wp-block-add-to-cart-with-options wc-block-add-to-cart-with-options',
+						esc_attr( $classes_and_styles['classes'] ),
+					)
 				)
-			)
-		);
+			);
 
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'class' => $classes,
-				'style' => esc_attr( $classes_and_styles['styles'] ),
-			)
-		);
+			$wrapper_attributes = get_block_wrapper_attributes(
+				array(
+					'class' => $classes,
+					'style' => esc_attr( $classes_and_styles['styles'] ),
+				)
+			);
 
-		$form = sprintf(
-			'<div %1$s %2$s>%3$s</div>',
-			$wrapper_attributes,
-			'',
-			$product_html
-		);
+			$form_html = sprintf(
+				'<form %1$s %2$s>%3$s</form>',
+				$wrapper_attributes,
+				'',
+				$template_part_contents
+			);
 
-		$product = $previous_product;
+			$product = $previous_product;
+		} else {
+			ob_start();
 
-		return $form;
+			/**
+			 * Trigger the single product add to cart action that prints the markup.
+			 *
+			 * @since 9.7.0
+			 */
+			do_action( 'woocommerce_' . $product->get_type() . '_add_to_cart' );
+
+			$form_html = ob_get_clean();
+		}
+
+		return $form_html;
 	}
 
 	/**

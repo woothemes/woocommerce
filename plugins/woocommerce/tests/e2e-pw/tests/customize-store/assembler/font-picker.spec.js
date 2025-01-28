@@ -3,6 +3,7 @@ const { AssemblerPage } = require( './assembler.page' );
 const { activateTheme, DEFAULT_THEME } = require( '../../../utils/themes' );
 const { setOption } = require( '../../../utils/options' );
 const { tags } = require( '../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../playwright.config' );
 
 const test = base.extend( {
 	pageObject: async ( { page }, use ) => {
@@ -56,7 +57,7 @@ test.describe(
 	'Assembler -> Font Picker',
 	{ tag: [ tags.GUTENBERG, tags.NOT_E2E ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			try {
