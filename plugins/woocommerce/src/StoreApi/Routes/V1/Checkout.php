@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1);
 namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
 use Automattic\WooCommerce\StoreApi\Payments\PaymentResult;
@@ -7,7 +8,6 @@ use Automattic\WooCommerce\StoreApi\Exceptions\RouteException;
 use Automattic\WooCommerce\StoreApi\Utilities\DraftOrderTrait;
 use Automattic\WooCommerce\Checkout\Helpers\ReserveStockException;
 use Automattic\WooCommerce\StoreApi\Utilities\CheckoutTrait;
-use Automattic\WooCommerce\Utilities\RestApiUtil;
 use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
 use Automattic\WooCommerce\Admin\Features\Features;
 /**
@@ -187,17 +187,18 @@ class Checkout extends AbstractCartRoute {
 		$document_object = null;
 
 		if ( Features::is_enabled( 'experimental-blocks' ) ) {
-			$document_object = new DocumentObject();
-			$document_object->set_cart( WC()->cart );
-			$document_object->set_customer( wc()->customer );
-			$document_object->set_billing_address( $request['billing_address'] );
-			$document_object->set_shipping_address( $request['shipping_address'] );
-			$document_object->set_additional_fields( $request['additional_fields'] );
-			$document_object->set_checkout(
+			$document_object = new DocumentObject(
 				[
-					'payment_method' => $request['payment_method'],
-					'create_account' => $request['create_account'],
-					'customer_note'  => $request['customer_note'],
+					'customer' => [
+						'billing_address'  => $request['billing_address'],
+						'shipping_address' => $request['shipping_address'],
+					],
+					'checkout' => [
+						'payment_method'    => $request['payment_method'],
+						'create_account'    => $request['create_account'],
+						'customer_note'     => $request['customer_note'],
+						'additional_fields' => $request['additional_fields'],
+					],
 				]
 			);
 		}
@@ -442,7 +443,7 @@ class Checkout extends AbstractCartRoute {
 	private function add_data_to_error_object( $error, $data, $http_status_code, bool $include_cart = false ) {
 		$data = array_merge( $data, [ 'status' => $http_status_code ] );
 		if ( $include_cart ) {
-			$data = array_merge( $data, [ 'cart' => wc_get_container()->get( RestApiUtil::class )->get_endpoint_data( '/wc/store/v1/cart' ) ] );
+			$data = array_merge( $data, [ 'cart' => $this->cart_schema->get_item_response( $this->cart_controller->get_cart_for_response() ) ] );
 		}
 		$error->add_data( $data );
 		return $error;
@@ -523,7 +524,7 @@ class Checkout extends AbstractCartRoute {
 	 * @param \WP_REST_Request $request Full details about the request.
 	 */
 	private function update_customer_from_request( \WP_REST_Request $request ) {
-		$customer = wc()->customer;
+		$customer = WC()->customer;
 
 		// Billing address is a required field.
 		foreach ( $request['billing_address'] as $key => $value ) {
@@ -666,12 +667,12 @@ class Checkout extends AbstractCartRoute {
 		}
 
 		// Return false if registration is not enabled for the store.
-		if ( false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) ) {
+		if ( false === filter_var( WC()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) ) {
 			return false;
 		}
 
 		// Return true if the store requires an account for all purchases. Note - checkbox is not displayed to shopper in this case.
-		if ( true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) ) {
+		if ( true === filter_var( WC()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) ) {
 			return true;
 		}
 
@@ -693,9 +694,9 @@ class Checkout extends AbstractCartRoute {
 	private function validate_user_can_place_order() {
 		if (
 			// "woocommerce_enable_signup_and_login_from_checkout" === no.
-			false === filter_var( wc()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
+			false === filter_var( WC()->checkout()->is_registration_enabled(), FILTER_VALIDATE_BOOLEAN ) &&
 			// "woocommerce_enable_guest_checkout" === no.
-			true === filter_var( wc()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
+			true === filter_var( WC()->checkout()->is_registration_required(), FILTER_VALIDATE_BOOLEAN ) &&
 			! is_user_logged_in()
 		) {
 			throw new RouteException(
