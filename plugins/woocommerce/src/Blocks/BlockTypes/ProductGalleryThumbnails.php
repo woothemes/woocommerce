@@ -1,4 +1,6 @@
 <?php
+declare( strict_types=1 );
+
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
@@ -86,29 +88,26 @@ class ProductGalleryThumbnails extends AbstractBlock {
 	/**
 	 * Check if the thumbnails should be limited.
 	 *
-	 * @param string $mode                 Mode of the gallery. Expected values: 'standard'.
-	 * @param int    $thumbnails_count     Current count of processed thumbnails.
-	 * @param int    $number_of_thumbnails Number of thumbnails configured to display.
+	 * @param int $thumbnails_count     Current count of processed thumbnails.
+	 * @param int $number_of_thumbnails Number of thumbnails configured to display.
 	 *
 	 * @return bool
 	 */
-	protected function should_limit_thumbnails( $mode, $thumbnails_count, $number_of_thumbnails ) {
-		return 'standard' === $mode && $thumbnails_count > $number_of_thumbnails;
+	protected function limit_thumbnails( $thumbnails_count, $number_of_thumbnails ) {
+		return $thumbnails_count > $number_of_thumbnails;
 	}
 
 	/**
 	 * Check if View All markup should be displayed.
 	 *
-	 * @param string $mode                   Mode of the gallery. Expected values: 'standard'.
-	 * @param int    $thumbnails_count       Current count of processed thumbnails.
-	 * @param array  $product_gallery_images Array of product gallery image HTML strings.
-	 * @param int    $number_of_thumbnails   Number of thumbnails configured to display.
+	 * @param int   $thumbnails_count       Current count of processed thumbnails.
+	 * @param array $product_gallery_images Array of product gallery image HTML strings.
+	 * @param int   $number_of_thumbnails   Number of thumbnails configured to display.
 	 *
 	 * @return bool
 	 */
-	protected function should_display_view_all( $mode, $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) {
-		return 'standard' === $mode &&
-		$thumbnails_count === $number_of_thumbnails &&
+	protected function should_display_view_all( $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) {
+		return $thumbnails_count === $number_of_thumbnails &&
 		count( $product_gallery_images ) > $number_of_thumbnails;
 	}
 
@@ -148,41 +147,45 @@ class ProductGalleryThumbnails extends AbstractBlock {
 		$product_gallery_images = ProductGalleryUtils::get_product_gallery_images( $post_id, 'full', array(), 'wc-block-product-gallery-thumbnails__thumbnail', $crop_images );
 
 		if ( $product_gallery_images && count( $product_gallery_images ) > 1 ) {
-			$html                 = '';
-			$number_of_thumbnails = isset( $attributes['numberOfThumbnails'] ) && is_numeric( $attributes['numberOfThumbnails'] ) ? $attributes['numberOfThumbnails'] : 3;
+			$html                       = '';
+			$number_of_thumbnails       = isset( $attributes['numberOfThumbnails'] ) && is_numeric( $attributes['numberOfThumbnails'] ) ? $attributes['numberOfThumbnails'] : 3;
 			$number_of_thumbnails_class = 'wc-block-product-gallery-thumbnails--number-of-thumbnails-' . $number_of_thumbnails;
-			$mode                 = $block->context['mode'] ?? '';
-			$thumbnails_count     = 1;
+			$thumbnails_count           = 1;
 
 			foreach ( $product_gallery_images as $product_gallery_image_html ) {
 				// Limit the number of thumbnails only in the standard mode (and not in dialog).
-				if ( $this->should_limit_thumbnails( $mode, $thumbnails_count, $number_of_thumbnails ) ) {
+				if ( $this->limit_thumbnails( $thumbnails_count, $number_of_thumbnails ) ) {
 					break;
 				}
 
-				// If not in dialog and it's the last thumbnail and the number of product gallery images is greater than the number of thumbnails settings output the View All markup.
-				if ( $this->should_display_view_all( $mode, $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) ) {
-					$remaining_thumbnails_count = count( $product_gallery_images ) - $number_of_thumbnails;
+				$remaining_thumbnails_count = count( $product_gallery_images ) - $number_of_thumbnails;
+
+				// Display view all if this is the last visible thumbnail and there are more images.
+				if ( $this->should_display_view_all( $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) ) {
 					$product_gallery_image_html = $this->inject_view_all( $product_gallery_image_html, $this->generate_view_all_html( $remaining_thumbnails_count ) );
-					$html                      .= $product_gallery_image_html;
+				}
+
+				$processor = new \WP_HTML_Tag_Processor( $product_gallery_image_html );
+
+				if ( $processor->next_tag( 'img' ) ) {
+					$processor->add_class( 'wc-block-product-gallery-thumbnails__image' );
+					$processor->set_attribute( 'data-wc-on--keydown', 'actions.onThumbnailKeyDown' );
+					$processor->set_attribute( 'tabindex', '0' );
+					$processor->set_attribute(
+						'data-wc-on--click',
+						'actions.selectImage'
+					);
+
+					$html .= $processor->get_updated_html();
 				} else {
-					$processor = new \WP_HTML_Tag_Processor( $product_gallery_image_html );
-
-					if ( $processor->next_tag( 'img' ) ) {
-						$processor->add_class( 'wc-block-product-gallery-thumbnails__image' );
-						$processor->set_attribute( 'data-wc-on--keydown', 'actions.onThumbnailKeyDown' );
-						$processor->set_attribute( 'tabindex', '0' );
-						$processor->set_attribute(
-							'data-wc-on--click',
-							'actions.selectImage'
-						);
-
-						$html .= $processor->get_updated_html();
-					}
+					$html .= $product_gallery_image_html;
 				}
 
 				++$thumbnails_count;
 			}
+
+			$allowed_html                    = wp_kses_allowed_html( 'post' );
+			$allowed_html['img']['tabindex'] = true;
 
 			return sprintf(
 				'<div class="wc-block-product-gallery-thumbnails wp-block-woocommerce-product-gallery-thumbnails %1$s" style="%2$s" data-wc-interactive=\'%4$s\'>
@@ -190,7 +193,10 @@ class ProductGalleryThumbnails extends AbstractBlock {
 				</div>',
 				esc_attr( $classes_and_styles['classes'] . ' ' . $number_of_thumbnails_class ),
 				esc_attr( $classes_and_styles['styles'] ),
-				wp_kses_post( $html ),
+				wp_kses(
+					$html,
+					$allowed_html
+				),
 				wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
 			);
 		}
