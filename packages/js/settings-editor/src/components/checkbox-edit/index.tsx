@@ -13,7 +13,12 @@ import type { DataFormItem } from '../../types';
 export const getCheckboxEdit =
 	( help?: React.ReactNode ) =>
 	( { field, onChange, data }: DataFormControlProps< DataFormItem > ) => {
-		const { id, getValue, label } = field;
+		const { id, getValue } = field;
+
+		// DataForm will automatically use the id as the label if no label is provided so we conditionally set the label to undefined if it matches the id to avoid displaying it.
+		// We should contribute upstream to allow label to be optional.
+		const label = field.label === id ? undefined : field.label;
+
 		const value = getValue( { item: data } );
 		return (
 			<CheckboxControl

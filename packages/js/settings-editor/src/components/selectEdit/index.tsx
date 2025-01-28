@@ -19,7 +19,12 @@ export const getSelectEdit =
 		onChange,
 		hideLabelFromVision,
 	}: DataFormControlProps< DataFormItem > ) => {
-		const { id, label } = field;
+		const { id } = field;
+
+		// DataForm will automatically use the id as the label if no label is provided so we conditionally set the label to undefined if it matches the id to avoid displaying it.
+		// We should contribute upstream to allow label to be optional.
+		const label = field.label === id ? undefined : field.label;
+
 		const value = field.getValue( { item: data } ) ?? '';
 		const onChangeControl = useCallback(
 			( newValue: string ) =>
