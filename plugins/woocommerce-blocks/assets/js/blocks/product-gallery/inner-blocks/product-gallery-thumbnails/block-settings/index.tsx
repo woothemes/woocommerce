@@ -1,14 +1,12 @@
 /**
  * External dependencies
  */
-import { store as blockEditorStore } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import {
 	thumbnailsPositionLeft,
 	thumbnailsPositionBottom,
 	thumbnailsPositionRight,
 } from '@woocommerce/icons';
-import { useDispatch } from '@wordpress/data';
 import {
 	Icon,
 	RangeControl,
@@ -26,9 +24,9 @@ import {
  * Internal dependencies
  */
 import { ThumbnailsPosition } from '../constants';
-import type { ProductGalleryThumbnailsSettingsProps } from '../../../types';
+import type { ProductGalleryThumbnailsSettingsProps } from '../types';
 
-const positionHelp: Record< ThumbnailsPosition, string > = {
+const positionHelp = {
 	[ ThumbnailsPosition.LEFT ]: __(
 		'A strip of small images will appear to the left of the main gallery image.',
 		'woocommerce'
@@ -44,12 +42,12 @@ const positionHelp: Record< ThumbnailsPosition, string > = {
 };
 
 export const ProductGalleryThumbnailsBlockSettings = ( {
-	context,
+	attributes,
+	setAttributes,
 }: ProductGalleryThumbnailsSettingsProps ) => {
 	const maxNumberOfThumbnails = 8;
 	const minNumberOfThumbnails = 3;
-	const { productGalleryClientId } = context;
-	const { updateBlockAttributes } = useDispatch( blockEditorStore );
+	const { thumbnailsPosition, numberOfThumbnails } = attributes;
 
 	return (
 		<>
@@ -57,43 +55,33 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 				className="wc-block-editor-product-gallery-thumbnails__position-toggle"
 				isBlock
 				label={ __( 'Thumbnails', 'woocommerce' ) }
-				value={ context.thumbnailsPosition }
-				help={
-					positionHelp[
-						context.thumbnailsPosition as ThumbnailsPosition
-					]
-				}
-				onChange={ ( value: string ) =>
-					updateBlockAttributes( productGalleryClientId, {
+				value={ thumbnailsPosition }
+				help={ positionHelp[ thumbnailsPosition ] }
+				onChange={ ( value: ThumbnailsPosition ) =>
+					setAttributes( {
 						thumbnailsPosition: value,
 					} )
 				}
 			>
 				<ToggleGroupControlOption
 					value={ ThumbnailsPosition.LEFT }
-					label={
-						<Icon size={ 32 } icon={ thumbnailsPositionLeft } />
-					}
+					label={ <Icon icon={ thumbnailsPositionLeft } /> }
 				/>
 				<ToggleGroupControlOption
 					value={ ThumbnailsPosition.BOTTOM }
-					label={
-						<Icon size={ 32 } icon={ thumbnailsPositionBottom } />
-					}
+					label={ <Icon icon={ thumbnailsPositionBottom } /> }
 				/>
 				<ToggleGroupControlOption
 					value={ ThumbnailsPosition.RIGHT }
-					label={
-						<Icon size={ 32 } icon={ thumbnailsPositionRight } />
-					}
+					label={ <Icon icon={ thumbnailsPositionRight } /> }
 				/>
 			</ToggleGroupControl>
 			<RangeControl
 				label={ __( 'Number of Thumbnails', 'woocommerce' ) }
-				value={ context.thumbnailsNumberOfThumbnails }
+				value={ numberOfThumbnails }
 				onChange={ ( value: number ) =>
-					updateBlockAttributes( productGalleryClientId, {
-						thumbnailsNumberOfThumbnails: Math.round( value ),
+					setAttributes( {
+						numberOfThumbnails: Math.round( value ),
 					} )
 				}
 				help={ __(

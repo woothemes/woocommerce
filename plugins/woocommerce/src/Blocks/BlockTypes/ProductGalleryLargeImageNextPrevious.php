@@ -30,15 +30,6 @@ class ProductGalleryLargeImageNextPrevious extends AbstractBlock {
 	}
 
 	/**
-	 *  Register the context
-	 *
-	 * @return string[]
-	 */
-	protected function get_block_type_uses_context() {
-		return [ 'productGalleryClientId' ];
-	}
-
-	/**
 	 * Include and render the block.
 	 *
 	 * @param array    $attributes Block attributes. Default empty array.

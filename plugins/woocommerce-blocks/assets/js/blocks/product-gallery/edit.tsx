@@ -14,9 +14,8 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { moveInnerBlocksToPosition } from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
-import type { ProductGalleryAttributes } from './types';
+import type { ProductGalleryBlockAttributes } from './types';
 
 const TEMPLATE: InnerBlockTemplate[] = [
 	[
@@ -102,7 +101,7 @@ export const Edit = ( {
 	clientId,
 	attributes,
 	setAttributes,
-}: BlockEditProps< ProductGalleryAttributes > ) => {
+}: BlockEditProps< ProductGalleryBlockAttributes > ) => {
 	const blockProps = useBlockProps();
 
 	const { currentTemplateId, templateType } = useSelect( ( select ) => {
@@ -119,10 +118,7 @@ export const Edit = ( {
 		setAttributes( {
 			...attributes,
 			mode,
-			productGalleryClientId: clientId,
 		} );
-		// Move the Thumbnails block to the correct above or below the Large Image based on the thumbnailsPosition attribute.
-		moveInnerBlocksToPosition( attributes, clientId );
 	}, [
 		setAttributes,
 		attributes,
@@ -137,12 +133,6 @@ export const Edit = ( {
 				<ProductGalleryBlockSettings
 					attributes={ attributes }
 					setAttributes={ setAttributes }
-					context={ {
-						productGalleryClientId: clientId,
-						thumbnailsPosition: attributes.thumbnailsPosition,
-						thumbnailsNumberOfThumbnails:
-							attributes.thumbnailsNumberOfThumbnails,
-					} }
 				/>
 			</InspectorControls>
 			<InnerBlocks
