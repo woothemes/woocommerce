@@ -3,6 +3,7 @@
  */
 import { test, expect, tags } from '../../fixtures/fixtures';
 import { getFakeCustomer, getFakeProduct } from '../../utils/data';
+import { ADMIN_STATE_PATH } from '../../playwright.config';
 
 // a representation of the menu structure for WC
 const wcPages = [
@@ -187,7 +188,7 @@ for ( const currentPage of wcPages ) {
 			const customer = getFakeCustomer();
 			let orderId;
 
-			test.use( { storageState: process.env.ADMINSTATE } );
+			test.use( { storageState: ADMIN_STATE_PATH } );
 
 			test.beforeAll( async ( { api, wcAdminApi } ) => {
 				// skip onboarding

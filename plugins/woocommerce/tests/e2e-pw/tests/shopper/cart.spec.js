@@ -4,7 +4,6 @@
 import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { setComingSoon } = require( '../../utils/coming-soon' );
 const productName = `Cart product test ${ Date.now() }`;
 const productPrice = '13.99';
 const twoProductPrice = +productPrice * 2;
@@ -14,8 +13,6 @@ test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 	let productId, product2Id, product3Id;
 
 	test.beforeAll( async ( { baseURL } ) => {
-		await setComingSoon( { baseURL, enabled: 'no' } );
-
 		const api = new wcApi( {
 			url: baseURL,
 			consumerKey: process.env.CONSUMER_KEY,
