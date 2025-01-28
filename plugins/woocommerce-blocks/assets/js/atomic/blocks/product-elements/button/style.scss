@@ -16,21 +16,6 @@
 		// Set button font size so it inherits from parent.
 		font-size: 1em;
 		width: auto;
-
-		&.loading {
-			opacity: 0.25;
-		}
-
-		&.loading::after {
-			font-family: WooCommerce; /* stylelint-disable-line */
-			content: "\e031";
-			animation: spin 2s linear infinite;
-			margin-right: 0;
-			margin-left: 0.5em;
-			display: inline-block;
-			width: auto;
-			height: auto;
-		}
 	}
 
 	a[hidden] {
@@ -76,7 +61,6 @@
 		line-height: inherit;
 
 		span {
-
 			&.wc-block-slide-out {
 				animation: slideOut 0.1s linear 1 normal forwards;
 			}
@@ -97,15 +81,11 @@
 	}
 }
 
-.is-loading .wc-block-components-product-button > .wc-block-components-product-button__button {
-	@include placeholder();
-	min-width: 8em;
-	min-height: 3em;
-}
-
 .theme-twentytwentyone {
 	// Prevent buttons appearing disabled in the editor.
-	.editor-styles-wrapper .wc-block-components-product-button .wp-block-button__link {
+	.editor-styles-wrapper
+		.wc-block-components-product-button
+		.wp-block-button__link {
 		background-color: var(--button--color-background);
 		color: var(--button--color-text);
 		border-color: var(--button--color-background);
