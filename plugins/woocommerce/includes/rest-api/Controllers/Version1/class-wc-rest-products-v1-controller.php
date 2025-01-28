@@ -11,6 +11,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -1222,7 +1223,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 
 		// Stock status.
 		if ( isset( $request['in_stock'] ) ) {
-			$stock_status = true === $request['in_stock'] ? 'instock' : 'outofstock';
+			$stock_status = true === $request['in_stock'] ? ProductStockStatus::IN_STOCK : ProductStockStatus::OUT_OF_STOCK;
 		} else {
 			$stock_status = $product->get_stock_status();
 		}
@@ -1248,7 +1249,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 				$product->set_manage_stock( 'no' );
 				$product->set_backorders( 'no' );
 				$product->set_stock_quantity( '' );
-				$product->set_stock_status( 'instock' );
+				$product->set_stock_status( ProductStockStatus::IN_STOCK );
 			} elseif ( $product->get_manage_stock() ) {
 				// Stock status is always determined by children so sync later.
 				if ( ! $product->is_type( ProductType::VARIABLE ) ) {
@@ -1441,7 +1442,7 @@ class WC_REST_Products_V1_Controller extends WC_REST_Posts_Controller {
 			}
 
 			if ( isset( $data['in_stock'] ) ) {
-				$variation->set_stock_status( true === $data['in_stock'] ? 'instock' : 'outofstock' );
+				$variation->set_stock_status( true === $data['in_stock'] ? ProductStockStatus::IN_STOCK : ProductStockStatus::OUT_OF_STOCK );
 			}
 
 			if ( isset( $data['backorders'] ) ) {

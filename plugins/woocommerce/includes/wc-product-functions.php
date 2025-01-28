@@ -10,6 +10,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
@@ -993,9 +994,9 @@ function wc_get_product_stock_status_options() {
 	return apply_filters(
 		'woocommerce_product_stock_status_options',
 		array(
-			'instock'     => __( 'In stock', 'woocommerce' ),
-			'outofstock'  => __( 'Out of stock', 'woocommerce' ),
-			'onbackorder' => __( 'On backorder', 'woocommerce' ),
+			ProductStockStatus::IN_STOCK     => __( 'In stock', 'woocommerce' ),
+			ProductStockStatus::OUT_OF_STOCK => __( 'Out of stock', 'woocommerce' ),
+			ProductStockStatus::ON_BACKORDER => __( 'On backorder', 'woocommerce' ),
 		)
 	);
 }

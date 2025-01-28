@@ -9,6 +9,7 @@ use Automattic\WooCommerce\Admin\API\Reports\Orders\Stats\DataStore as OrdersSta
 use Automattic\WooCommerce\Admin\API\Reports\Orders\Stats\Query as OrdersStatsQuery;
 use Automattic\WooCommerce\Admin\API\Reports\TimeInterval;
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Class WC_Admin_Tests_Reports_Orders_Stats
@@ -3932,9 +3933,9 @@ class WC_Admin_Tests_Reports_Orders_Stats extends WC_Unit_Test_Case {
 
 		$product_2->set_children( array( $child_1->get_id(), $child_2->get_id() ) );
 
-		$child_1->set_stock_status( 'instock' );
+		$child_1->set_stock_status( ProductStockStatus::IN_STOCK );
 		$child_1->save();
-		$child_2->set_stock_status( 'instock' );
+		$child_2->set_stock_status( ProductStockStatus::IN_STOCK );
 		$child_2->save();
 		WC_Product_Variable::sync( $product_2 );
 

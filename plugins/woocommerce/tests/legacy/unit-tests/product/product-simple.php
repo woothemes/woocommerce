@@ -1,5 +1,6 @@
 <?php
 
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 /**
@@ -28,7 +29,7 @@ class WC_Tests_Product_Simple extends WC_Unit_Test_Case {
 	public function test_add_to_cart_text() {
 		$this->assertEquals( 'Add to cart', $this->product->add_to_cart_text() );
 
-		$this->product->set_stock_status( 'outofstock' );
+		$this->product->set_stock_status( ProductStockStatus::OUT_OF_STOCK );
 		$this->product->save();
 
 		$this->assertEquals( 'Read more', $this->product->add_to_cart_text() );

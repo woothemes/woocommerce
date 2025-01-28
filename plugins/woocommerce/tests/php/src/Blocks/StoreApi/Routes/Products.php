@@ -8,6 +8,7 @@ namespace Automattic\WooCommerce\Tests\Blocks\StoreApi\Routes;
 use Automattic\WooCommerce\Tests\Blocks\StoreApi\Routes\ControllerTestCase;
 use Automattic\WooCommerce\Tests\Blocks\Helpers\FixtureData;
 use Automattic\WooCommerce\Tests\Blocks\Helpers\ValidateSchema;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Products Controller Tests.
@@ -26,7 +27,7 @@ class Products extends ControllerTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'              => 'Test Product 1',
-					'stock_status'      => 'instock',
+					'stock_status'      => ProductStockStatus::IN_STOCK,
 					'regular_price'     => 10,
 					'image_id'          => $fixtures->sideload_image(),
 					'gallery_image_ids' => array(),
@@ -35,7 +36,7 @@ class Products extends ControllerTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 2',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'image_id'      => $fixtures->sideload_image(),
 				)
@@ -206,7 +207,7 @@ class Products extends ControllerTestCase {
 		$product  = $fixtures->get_simple_product(
 			array(
 				'name'              => 'Test Product 1',
-				'stock_status'      => 'instock',
+				'stock_status'      => ProductStockStatus::IN_STOCK,
 				'regular_price'     => 10,
 				'image_id'          => '',
 				'gallery_image_ids' => array(),
@@ -223,7 +224,7 @@ class Products extends ControllerTestCase {
 		$product  = $fixtures->get_simple_product(
 			array(
 				'name'              => 'Test Product 1',
-				'stock_status'      => 'instock',
+				'stock_status'      => ProductStockStatus::IN_STOCK,
 				'regular_price'     => 10,
 				'image_id'          => $image_id,
 				'gallery_image_ids' => array(),

@@ -10,6 +10,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Package;
 use WC_Gateway_BACS;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * AdditionalFields Controller Tests.
@@ -59,7 +60,7 @@ class AdditionalFields extends MockeryTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 1',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 				)
@@ -67,7 +68,7 @@ class AdditionalFields extends MockeryTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 2',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 				)
@@ -75,7 +76,7 @@ class AdditionalFields extends MockeryTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Virtual Test Product 3',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 					'virtual'       => true,
@@ -84,7 +85,7 @@ class AdditionalFields extends MockeryTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Downloadable Test Product 4',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 					'downloadable'  => true,

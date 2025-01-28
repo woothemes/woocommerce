@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 namespace Automattic\WooCommerce\Tests\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Tests\Blocks\Helpers\FixtureData;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Tests for the Checkout block type
@@ -22,7 +23,7 @@ class MiniCart extends \WP_UnitTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 1',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 				)

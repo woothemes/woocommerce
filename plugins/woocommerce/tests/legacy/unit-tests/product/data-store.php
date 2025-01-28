@@ -7,6 +7,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Class WC_Tests_Product_Data_Store
@@ -332,7 +333,7 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 		$variation->set_manage_stock( 'no' );
 		$variation->set_downloadable( 'no' );
 		$variation->set_virtual( 'no' );
-		$variation->set_stock_status( 'instock' );
+		$variation->set_stock_status( ProductStockStatus::IN_STOCK );
 		$variation->set_attributes( array( 'pa_color' => 'green' ) );
 		$variation->save();
 
@@ -353,7 +354,7 @@ class WC_Tests_Product_Data_Store extends WC_Unit_Test_Case {
 		$variation_2->set_manage_stock( 'no' );
 		$variation_2->set_downloadable( 'no' );
 		$variation_2->set_virtual( 'no' );
-		$variation_2->set_stock_status( 'instock' );
+		$variation_2->set_stock_status( ProductStockStatus::IN_STOCK );
 		$variation_2->set_attributes( array( 'pa_color' => 'red' ) );
 		$variation_2->save();
 

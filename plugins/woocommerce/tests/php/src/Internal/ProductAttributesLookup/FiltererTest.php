@@ -6,6 +6,7 @@ use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\AttributesHelper;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\ProductHelper;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Tests related to filtering for WC_Query.
@@ -195,7 +196,7 @@ class FiltererTest extends \WC_Unit_Test_Case {
 	private function create_simple_product( $attribute_terms_by_name, $in_stock ) {
 		$product = $this->create_product_core( \WC_Product_Simple::class, array( 'non_variation_defining' => $attribute_terms_by_name ) );
 
-		$product->set_stock_status( $in_stock ? 'instock' : 'outofstock' );
+		$product->set_stock_status( $in_stock ? ProductStockStatus::IN_STOCK : ProductStockStatus::OUT_OF_STOCK );
 
 		$this->save( $product );
 
@@ -290,7 +291,7 @@ class FiltererTest extends \WC_Unit_Test_Case {
 
 			}
 			$variation->set_attributes( $attributes );
-			$variation->set_stock_status( $variation_data['in_stock'] ? 'instock' : 'outofstock' );
+			$variation->set_stock_status( $variation_data['in_stock'] ? ProductStockStatus::IN_STOCK : ProductStockStatus::OUT_OF_STOCK );
 			$this->save( $variation );
 
 			$variation_ids[] = $variation->get_id();

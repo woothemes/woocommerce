@@ -10,6 +10,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Enums\ProductStockStatus;
+
 /**
  * Change get terms defaults for attributes to order by the sorting setting, or default to menu_order for sortable taxonomies.
  *
@@ -417,8 +419,8 @@ function _wc_term_recount( $terms, $taxonomy, $callback = true, $terms_are_term_
 		$exclude_term_ids[] = $product_visibility_term_ids['exclude-from-catalog'];
 	}
 
-	if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) && $product_visibility_term_ids['outofstock'] ) {
-		$exclude_term_ids[] = $product_visibility_term_ids['outofstock'];
+	if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) && $product_visibility_term_ids[ ProductStockStatus::OUT_OF_STOCK ] ) {
+		$exclude_term_ids[] = $product_visibility_term_ids[ ProductStockStatus::OUT_OF_STOCK ];
 	}
 
 	$query = array(
@@ -618,15 +620,15 @@ function wc_get_product_visibility_term_ids() {
 				'name'
 			),
 			array(
-				'exclude-from-catalog' => 0,
-				'exclude-from-search'  => 0,
-				'featured'             => 0,
-				'outofstock'           => 0,
-				'rated-1'              => 0,
-				'rated-2'              => 0,
-				'rated-3'              => 0,
-				'rated-4'              => 0,
-				'rated-5'              => 0,
+				'exclude-from-catalog'           => 0,
+				'exclude-from-search'            => 0,
+				'featured'                       => 0,
+				ProductStockStatus::OUT_OF_STOCK => 0,
+				'rated-1'                        => 0,
+				'rated-2'                        => 0,
+				'rated-3'                        => 0,
+				'rated-4'                        => 0,
+				'rated-5'                        => 0,
 			)
 		)
 	);
