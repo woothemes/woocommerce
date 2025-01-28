@@ -332,7 +332,6 @@ class CheckoutSchema extends AbstractSchema {
 				$field_schema['enum'][] = true;
 			}
 
-
 			$schema[ $key ] = $field_schema;
 		}
 		return $schema;
