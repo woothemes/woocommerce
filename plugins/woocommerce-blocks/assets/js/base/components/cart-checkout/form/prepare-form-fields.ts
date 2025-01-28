@@ -147,7 +147,8 @@ const useFormFields = (
 						additionalProperties: true,
 						properties: defaultConfig.rules.hidden,
 					};
-					defaultConfig.hidden = parser.validate( schema, data );
+					const result = parser.validate( schema, data );
+					defaultConfig.hidden = result;
 				}
 			}
 			return fieldConfig;
