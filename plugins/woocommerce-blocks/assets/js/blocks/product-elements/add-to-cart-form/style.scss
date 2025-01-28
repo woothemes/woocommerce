@@ -44,6 +44,7 @@
 		&.grouped_form {
 			width: fit-content;
 			word-break: normal;
+			grid-column: 1 / 3;
 		}
 	}
 
@@ -88,8 +89,6 @@ div.wc-block-add-to-cart-form.wc-block-add-to-cart-form--stepper {
 	// Product Variation
 	.woocommerce-variation-add-to-cart.variations_button.woocommerce-variation-add-to-cart-enabled,
 	.woocommerce-variation-add-to-cart.variations_button.woocommerce-variation-add-to-cart-disabled {
-		display: flex;
-
 		.wc-block-components-quantity-selector {
 			height: unset;
 		}
