@@ -494,7 +494,7 @@
 				{
 					"name": "Core API tests - HPOS disabled",
 					"testType": "api",
-					"command": "test:e2e:with-env default-hpos-disabled --project=api-hpos-disabled",
+					"command": "test:api:hpos",
 					"optional": false,
 					"changes": [
 						"client/admin/config/*.json",
