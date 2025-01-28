@@ -4,6 +4,7 @@
 import { useRef } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { snakeCaseKeys } from '@woocommerce/base-utils';
+import type { CoreAddress, AdditionalValues } from '@woocommerce/settings';
 import fastDeepEqual from 'fast-deep-equal/es6';
 import {
 	cartStore,
@@ -11,7 +12,7 @@ import {
 	paymentStore,
 } from '@woocommerce/block-data';
 
-const useDocumentObject = ( address: 'billing' | 'shipping' = 'shipping' ) => {
+const useDocumentObject = ( formType: string ) => {
 	const currentResults = useRef( {
 		cart: {},
 		checkout: {},
@@ -94,10 +95,14 @@ const useDocumentObject = ( address: 'billing' | 'shipping' = 'shipping' ) => {
 					guest: checkoutDataStore.getCustomerId() === 0,
 					billingAddress,
 					shippingAddress,
-					address:
-						address === 'billing'
-							? billingAddress
-							: shippingAddress,
+					...( formType === 'billing' || formType === 'shipping'
+						? {
+								address:
+									formType === 'billing'
+										? billingAddress
+										: shippingAddress,
+						  }
+						: {} ),
 				},
 			};
 
@@ -107,7 +112,7 @@ const useDocumentObject = ( address: 'billing' | 'shipping' = 'shipping' ) => {
 				customer: snakeCaseKeys( documentObject.customer ),
 			};
 		},
-		[ address ]
+		[ formType ]
 	);
 
 	if (
@@ -120,10 +125,8 @@ const useDocumentObject = ( address: 'billing' | 'shipping' = 'shipping' ) => {
 	return currentResults.current;
 };
 
-export const useSchemaParser = (
-	address: 'billing' | 'shipping' = 'shipping'
-) => {
-	const data = useDocumentObject( address );
+export const useSchemaParser = ( formType: string ) => {
+	const data = useDocumentObject( formType );
 	if ( window.schemaParser ) {
 		return {
 			parser: window.schemaParser,
@@ -135,3 +138,32 @@ export const useSchemaParser = (
 		data: null,
 	};
 };
+
+export interface DocumentObject {
+	cart: {
+		coupons: string[];
+		shippingRates: string[];
+		selectedShippingRates: string[];
+		prefersCollection: boolean;
+		items: string[];
+		itemsType: string[];
+		needsShipping: boolean;
+		totals: number;
+		extensions: Record< string, object | object[] >;
+	};
+	checkout: {
+		orderId: number;
+		customerNote: string;
+		additionalFields: AdditionalValues;
+		paymentMethod: string;
+		availableGateways: string[];
+		needsPayment: boolean;
+	};
+	customer: {
+		id: number;
+		guest: boolean;
+		billingAddress: CoreAddress;
+		shippingAddress: CoreAddress;
+		address: CoreAddress;
+	};
+}
