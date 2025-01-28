@@ -1,5 +1,4 @@
-const { test, expect } = require( '@playwright/test' );
-const { tags } = require( '../../fixtures/fixtures' );
+const { tags, test, expect } = require( '../../fixtures/fixtures' );
 const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 test.describe( 'WC Home Task List >', () => {
@@ -42,20 +41,16 @@ test.describe( 'WC Home Task List >', () => {
 		}
 	);
 
-	test.afterAll( async ( { browser } ) => {
+	test.afterAll( async ( { wcAdminApi } ) => {
 		await test.step( 'Re-enable task list', async () => {
-			const context = await browser.newContext();
-			const page = await context.newPage();
-
-			await page.goto(
-				'wp-admin/admin.php?page=wc-admin&reset_task_list=1'
+			const { statusText, data } = await wcAdminApi.post(
+				'onboarding/tasks/setup/unhide'
 			);
-			await expect(
-				page.getByText( 'Customize your store' )
-			).toBeVisible();
+			const { isHidden, isVisible } = data;
 
-			await page.close();
-			await context.close();
+			expect( statusText ).toEqual( 'OK' );
+			expect( isHidden ).toEqual( false );
+			expect( isVisible ).toEqual( true );
 		} );
 	} );
 } );
