@@ -4,7 +4,7 @@
 import { __, sprintf, getLocaleData } from '@wordpress/i18n';
 
 const defaultValidityMessage =
-	( label: string | undefined ) =>
+	( label: string | undefined, inputElement: HTMLInputElement ) =>
 	( validity: ValidityState ): string | undefined => {
 		const localeData = getLocaleData();
 		const shouldKeepOriginalCase = [ 'de', 'de_AT', 'de_CH' ].includes(
@@ -15,11 +15,18 @@ const defaultValidityMessage =
 			? label
 			: label?.toLocaleLowerCase() || __( 'field', 'woocommerce' );
 
-		const invalidFieldMessage = sprintf(
+		let invalidFieldMessage = sprintf(
 			/* translators: %s field label */
 			__( 'Please enter a valid %s', 'woocommerce' ),
 			fieldLabel
 		);
+
+		if ( inputElement.type === 'checkbox' ) {
+			invalidFieldMessage = __(
+				'Please check this box if you want to proceed.',
+				'woocommerce'
+			);
+		}
 
 		if (
 			validity.valueMissing ||
@@ -39,7 +46,7 @@ const defaultValidityMessage =
 const getValidityMessageForInput = (
 	label: string | undefined,
 	inputElement: HTMLInputElement,
-	customValidityMessage?: ( validity: ValidityState ) => string | undefined
+	customValidityMessage?: ( validity: ValidityState ) => string
 ): string => {
 	// No errors, or custom error - return early.
 	if ( inputElement.validity.valid || inputElement.validity.customError ) {
@@ -47,7 +54,7 @@ const getValidityMessageForInput = (
 	}
 
 	const validityMessageCallback =
-		customValidityMessage || defaultValidityMessage( label );
+		customValidityMessage || defaultValidityMessage( label, inputElement );
 
 	return (
 		validityMessageCallback( inputElement.validity ) ||
