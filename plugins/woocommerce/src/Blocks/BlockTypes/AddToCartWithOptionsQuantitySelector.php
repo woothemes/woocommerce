@@ -42,7 +42,7 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 	 * @param WP_Block $block Block instance.
 	 */
 	protected function enqueue_assets( $attributes, $content, $block ) {
-		if ( 'stepper' !== $attributes['quantitySelectorStyle'] ) {
+		if ( ! isset( $attributes['quantitySelectorStyle'] ) || 'stepper' !== $attributes['quantitySelectorStyle'] ) {
 			return;
 		}
 
@@ -105,18 +105,15 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 	 */
 	protected function render( $attributes, $content, $block ) {
 		global $product;
-
-		$post_id = $block->context['postId'];
-
-		if ( ! isset( $post_id ) ) {
-			return '';
-		}
-
 		$previous_product = $product;
-		$product          = wc_get_product( $post_id );
-		if ( ! $product instanceof \WC_Product ) {
-			$product = $previous_product;
 
+		// Try to load the product from the block context, if not available,
+		// use the global $product.
+		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
+		$post    = $post_id ? wc_get_product( $post_id ) : null;
+		if ( $post instanceof \WC_Product ) {
+			$product = $post;
+		} elseif ( ! $product instanceof \WC_Product ) {
 			return '';
 		}
 
@@ -127,7 +124,7 @@ class AddToCartWithOptionsQuantitySelector extends AbstractBlock {
 			return '';
 		}
 
-		$is_stepper_style = 'stepper' === $attributes['quantitySelectorStyle'] && ! $product->is_sold_individually();
+		$is_stepper_style = isset( $attributes['quantitySelectorStyle'] ) && 'stepper' === $attributes['quantitySelectorStyle'] && ! $product->is_sold_individually();
 
 		ob_start();
 
