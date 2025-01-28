@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
-const { tags } = require( '../../../../fixtures/fixtures' );
-const { variableProducts: utils } = require( '../../../../utils' );
-const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
+const { tags } = require( '../../fixtures/fixtures' );
+const { variableProducts: utils } = require( '../../utils' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const {
 	createVariableProduct,
 	showVariableProductTour,

@@ -5,10 +5,10 @@ const {
 	expectOldProductEditor,
 	isBlockProductEditorEnabled,
 	toggleBlockProductEditor,
-} = require( '../../../../utils/simple-products' );
-const { toggleBlockProductTour } = require( '../../../../utils/tours' );
-const { tags } = require( '../../../../fixtures/fixtures' );
-const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
+} = require( '../../../utils/simple-products' );
+const { toggleBlockProductTour } = require( '../../../utils/tours' );
+const { tags } = require( '../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../playwright.config' );
 
 let isNewProductEditorEnabled = false;
 

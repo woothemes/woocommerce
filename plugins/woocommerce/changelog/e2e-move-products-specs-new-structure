@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: move products test files in new folder structure

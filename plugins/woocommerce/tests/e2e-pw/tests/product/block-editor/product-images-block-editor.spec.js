@@ -1,7 +1,5 @@
-const {
-	test: baseTest,
-} = require( '../../../../fixtures/block-editor-fixtures' );
-const { expect, tags } = require( '../../../../fixtures/fixtures' );
+const { test: baseTest } = require( '../../../fixtures/block-editor-fixtures' );
+const { expect, tags } = require( '../../../fixtures/fixtures' );
 
 async function selectImagesInLibrary( page, imagesNames ) {
 	const dataIds = [];

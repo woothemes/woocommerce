@@ -1,19 +1,19 @@
 /* eslint-disable playwright/no-conditional-in-test */
-const { test } = require( '../../../../fixtures/block-editor-fixtures' );
+const { test } = require( '../../../fixtures/block-editor-fixtures' );
 const { expect } = require( '@playwright/test' );
 
-const { clickOnTab } = require( '../../../../utils/simple-products' );
+const { clickOnTab } = require( '../../../utils/simple-products' );
 const {
 	disableVariableProductBlockTour,
-} = require( '../../../../utils/product-block-editor' );
+} = require( '../../../utils/product-block-editor' );
 
-const { variableProducts: utils } = require( '../../../../utils' );
+const { variableProducts: utils } = require( '../../../utils' );
 const attributes = require( './fixtures/attributes' );
 const tabs = require( './data/tabs' );
 const {
 	waitForGlobalAttributesLoaded,
 } = require( './helpers/wait-for-global-attributes-loaded' );
-const { tags } = require( '../../../../fixtures/fixtures' );
+const { tags } = require( '../../../fixtures/fixtures' );
 
 const {
 	createVariableProduct,
