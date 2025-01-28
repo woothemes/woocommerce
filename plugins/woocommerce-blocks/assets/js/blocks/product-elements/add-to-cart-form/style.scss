@@ -18,7 +18,7 @@
 	.variations_button,
 	form.cart {
 		&::before {
-			grid-column: 1 / 4;
+			grid-column: 1 / 3;
 		}
 		grid-template-columns: min-content auto auto;
 		grid-auto-flow: column;
@@ -26,7 +26,7 @@
 
 		> *:not(.quantity) {
 			// Hack to ensure input + button stat on the same row, together.
-			grid-column: 1 / 4;
+			grid-column: 1 / 3;
 		}
 
 		> .single_add_to_cart_button {
