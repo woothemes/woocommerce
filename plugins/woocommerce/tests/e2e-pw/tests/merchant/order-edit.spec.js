@@ -2,10 +2,11 @@ const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const uuid = require( 'uuid' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
+
+test.use( { storageState: ADMIN_STATE_PATH } );
 
 test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
-
 	let orderId, secondOrderId, orderToCancel, customerId;
 	const username = `big.archie.${ Date.now() }`;
 
@@ -372,8 +373,6 @@ test.describe(
 	'Edit order > Downloadable product permissions',
 	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
 		const productName = 'TDP 001';
 		const product2Name = 'TDP 002';
 		const customerBilling = {

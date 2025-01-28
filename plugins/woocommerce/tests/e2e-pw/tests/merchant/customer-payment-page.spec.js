@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 let productId, orderId;
@@ -10,7 +11,7 @@ test.describe(
 	'WooCommerce Merchant Flow: Orders > Customer Payment Page',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

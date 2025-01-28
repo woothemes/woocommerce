@@ -1,4 +1,5 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 async function addImageFromLibrary( page, imageName, actionButtonName ) {
 	await page.getByRole( 'tab', { name: 'Media Library' } ).click();
@@ -12,7 +13,7 @@ async function addImageFromLibrary( page, imageName, actionButtonName ) {
 }
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	product: async ( { api }, use ) => {
 		let product = {
 			id: 0,

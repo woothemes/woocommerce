@@ -1,4 +1,5 @@
 const { test, expect, tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 let productId, couponId, orderId;
@@ -13,7 +14,7 @@ test.describe(
 	'WooCommerce Orders > Apply Coupon',
 	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {

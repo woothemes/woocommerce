@@ -3,6 +3,7 @@ const { setOption } = require( '../../utils/options' );
 const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
 const { AssemblerPage } = require( './assembler/assembler.page' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const CUSTOMIZE_STORE_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
@@ -20,7 +21,7 @@ test.describe(
 	'Store owner can view the Transitional page',
 	{ tag: tags.GUTENBERG },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			// In some environments the tour blocks clicking other elements.

@@ -1,6 +1,3 @@
-const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle } = require( '../../utils/editor' );
-
 /**
  * External dependencies
  */
@@ -14,13 +11,21 @@ import {
 	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+
 const simpleProductName = 'Very Simple Product';
 const singleProductPrice = '999.00';
 
 let productId, shippingZoneId;
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Transformed checkout',
 } );
 

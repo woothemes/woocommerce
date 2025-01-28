@@ -3,6 +3,7 @@ const { AssemblerPage } = require( './assembler/assembler.page' );
 const { activateTheme } = require( '../../utils/themes' );
 const { setOption } = require( '../../utils/options' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const ASSEMBLER_HUB_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fassembler-hub';
@@ -20,7 +21,7 @@ test.describe(
 	'Store owner can view Assembler Hub for store customization',
 	{ tag: [ tags.GUTENBERG, tags.NOT_E2E ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			try {

@@ -3,7 +3,6 @@ const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const { admin, customer } = require( '../../test-data/data' );
 const { setFilterValue, clearFilters } = require( '../../utils/filters' );
 const { setOption } = require( '../../utils/options' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
 /**
  * External dependencies
  */
@@ -31,7 +30,6 @@ test.describe(
 		let guestOrderId, customerOrderId, productId, shippingZoneId;
 
 		test.beforeAll( async ( { baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
 			const api = new wcApi( {
 				url: baseURL,
 				consumerKey: process.env.CONSUMER_KEY,

@@ -1,8 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe( 'WooCommerce Tax Settings > enable', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test( 'can enable tax calculation', async ( { page } ) => {
 		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=general' );
@@ -30,7 +31,7 @@ test.describe( 'WooCommerce Tax Settings > enable', () => {
 } );
 
 test.describe.serial( 'WooCommerce Tax Settings', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeEach( async ( { baseURL } ) => {
 		const api = new wcApi( {

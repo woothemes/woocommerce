@@ -1,13 +1,14 @@
 const { request } = require( '@playwright/test' );
 const { test, expect, tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Launch Your Store - logged in',
 	{ tag: [ tags.GUTENBERG, tags.SKIP_ON_WPCOM ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeEach( async ( { baseURL } ) => {
 			await new wcApi( {

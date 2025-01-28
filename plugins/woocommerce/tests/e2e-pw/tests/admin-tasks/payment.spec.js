@@ -1,7 +1,8 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	page: async ( { api, page, wpApi, wcAdminApi }, use ) => {
 		await wcAdminApi.post( 'onboarding/profile', {
 			skipped: true,

@@ -1,6 +1,3 @@
-const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle } = require( '../../utils/editor' );
-
 /**
  * External dependencies
  */
@@ -10,8 +7,16 @@ import {
 	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 } );
 
 test.describe(

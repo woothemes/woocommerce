@@ -1,6 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
-test.use( { storageState: process.env.ADMINSTATE } );
+test.use( { storageState: ADMIN_STATE_PATH } );
 
 test( 'Merchant can add brands', async ( { page } ) => {
 	/**

@@ -1,5 +1,6 @@
 const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
 const { random } = require( '../../utils/helpers' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const taxClasses = [
 	{
@@ -58,7 +59,7 @@ async function addProductToOrder( page, product, quantity ) {
 }
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	order: async ( { api }, use ) => {
 		const order = {};
 

@@ -2,13 +2,14 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
 const { admin } = require( '../../test-data/data' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Merchant > Order Action emails received',
 	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		const customerBilling = {
 			email: `john.doe.merchant.test.${ Date.now() }@example.com`,

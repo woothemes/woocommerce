@@ -1,6 +1,3 @@
-const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle } = require( '../../utils/editor' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
 /**
  * External dependencies
  */
@@ -10,6 +7,14 @@ import {
 	goToPageEditor,
 	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 
 const simpleProductName = 'Single Simple Product';
 const simpleProductDesc = 'Lorem ipsum dolor sit amet.';
@@ -26,7 +31,7 @@ const singleProductWithCrossSellProducts =
 let product1Id, product2Id, product3Id;
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Cart Block',
 } );
 
@@ -34,8 +39,7 @@ test.describe(
 	'Cart Block page',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES ] },
 	() => {
-		test.beforeAll( async ( { api, baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
+		test.beforeAll( async ( { api } ) => {
 			// make sure the currency is USD
 			await api.put( 'settings/general/woocommerce_currency', {
 				value: 'USD',

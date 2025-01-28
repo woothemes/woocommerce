@@ -1,0 +1,4 @@
+Significance: minor
+Type: enhancement
+
+Updated "Coming Soon" templates to dynamically adapt font families based on the active theme, with specific behavior for TwentyTwentyFour and non-block themes

@@ -8,6 +8,7 @@ const {
 } = require( '../../../../utils/simple-products' );
 const { toggleBlockProductTour } = require( '../../../../utils/tours' );
 const { tags } = require( '../../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
 
 let isNewProductEditorEnabled = false;
 
@@ -25,7 +26,7 @@ test.describe.serial(
 	'Disable block product editor',
 	{ tag: tags.GUTENBERG },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { request } ) => {
 			await toggleBlockProductTour( request, false );

@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const orderBatchId = [];
@@ -21,7 +22,7 @@ test.describe(
 	'WooCommerce Orders > Filter Order by Status',
 	{ tag: [ tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
