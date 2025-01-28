@@ -1,12 +1,13 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Bulk edit orders',
 	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		let orderId1, orderId2, orderId3, orderId4, orderId5;
 

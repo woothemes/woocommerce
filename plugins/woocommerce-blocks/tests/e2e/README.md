@@ -12,16 +12,10 @@ This document provides an overview of the WooCommerce Blocks end-to-end testing 
     pnpm --filter='@woocommerce/plugin-woocommerce' watch:build
     ```
 
-2. Go to the WooCommerce Blocks plugin folder:
+2. Start the environment:
 
     ```sh
-    cd plugins/woocommerce-blocks/
-    ```
-
-3. Start the environment:
-
-    ```sh
-    pnpm env:start
+    pnpm --filter=@woocommerce/block-library env:start
     ```
 
 ### Running the Tests
@@ -29,23 +23,23 @@ This document provides an overview of the WooCommerce Blocks end-to-end testing 
 1. Run all tests:
 
     ```sh
-    pnpm test:e2e
+    pnpm --filter=@woocommerce/block-library test:e2e
     ```
 
 2. Run a single test file:
 
     ```sh
-    pnpm test:e2e path/to/the/file.spec.ts
+    pnpm --filter=@woocommerce/block-library test:e2e path/to/the/file.spec.ts
     ```
 
 3. Run in UI mode:
 
     ```sh
-    pnpm test:e2e --ui
+    pnpm --filter=@woocommerce/block-library test:e2e --ui
     ```
 
 4. Run in debug mode:
 
-```sh
-pnpm test:e2e --debug
-```
+    ```sh
+    pnpm --filter=@woocommerce/block-library test:e2e --debug
+    ```

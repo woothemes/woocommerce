@@ -19,6 +19,9 @@
 		"woocommerce/product-filter-status",
 		"woocommerce/product-filter-active"
 	],
+	"usesContext": [
+		"filterData"
+	],
 	"attributes": {
 		"clearType": {
 			"type": "string",
@@ -27,6 +30,6 @@
 	},
 	"supports": {
 		"interactivity": true,
-		"inserter": false
+		"inserter": true
 	}
 }

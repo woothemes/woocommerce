@@ -43,6 +43,10 @@ interface CompleteSetupButtonProps {
 	 * The text of the button.
 	 */
 	buttonText?: string;
+	/**
+	 * ID of the plugin that is being installed.
+	 */
+	installingPlugin: string | null;
 }
 
 /**
@@ -57,6 +61,7 @@ export const CompleteSetupButton = ( {
 	settingsHref,
 	onboardingHref,
 	gatewayHasRecommendedPaymentMethods,
+	installingPlugin,
 	buttonText = __( 'Complete setup', 'woocommerce' ),
 }: CompleteSetupButtonProps ) => {
 	const [ isUpdating, setIsUpdating ] = useState( false );
@@ -99,7 +104,7 @@ export const CompleteSetupButton = ( {
 			key={ gatewayId }
 			variant={ 'primary' }
 			isBusy={ isUpdating }
-			disabled={ isUpdating }
+			disabled={ isUpdating || !! installingPlugin }
 			onClick={ completeSetup }
 		>
 			{ buttonText }
