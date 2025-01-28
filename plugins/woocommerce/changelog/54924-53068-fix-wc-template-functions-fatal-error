@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Avoid fatal error when calling `needs_payment`.
