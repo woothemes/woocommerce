@@ -587,11 +587,15 @@ class WC_REST_Orders_V2_Controller extends WC_REST_CRUD_Controller {
 	 */
 	protected function prepare_links( $object, $request ) {
 		$links = array(
-			'self'       => array(
+			'self'            => array(
 				'href' => rest_url( sprintf( '/%s/%s/%d', $this->namespace, $this->rest_base, $object->get_id() ) ),
 			),
-			'collection' => array(
+			'collection'      => array(
 				'href' => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
+			),
+			'email_templates' => array(
+				'href'       => rest_url( sprintf( '/%s/%s/%d/actions/email_templates', $this->namespace, $this->rest_base, $object->get_id() ) ),
+				'embeddable' => true,
 			),
 		);
 
