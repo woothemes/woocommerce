@@ -56,7 +56,7 @@ const FrontendBlock = ( {
 		isCollectable,
 	} = useShippingData();
 
-	// Note that display logic is also found in plugins/woocommerce-blocks/assets/js/blocks/checkout/inner-blocks/register-components.ts
+	// Note that display logic is also found in plugins/woocommerce/client/blocks/assets/js/blocks/checkout/inner-blocks/register-components.ts
 	// where the block is not registered if the conditions are not met.
 	if (
 		! needsShipping ||
