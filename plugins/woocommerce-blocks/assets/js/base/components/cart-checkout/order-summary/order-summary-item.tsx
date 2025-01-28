@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { sprintf, _n } from '@wordpress/i18n';
 import { Label } from '@woocommerce/blocks-components';
 import ProductPrice from '@woocommerce/base-components/product-price';
@@ -10,7 +10,10 @@ import {
 	getCurrencyFromPriceResponse,
 	formatPrice,
 } from '@woocommerce/price-format';
-import { applyCheckoutFilter, mustContain } from '@woocommerce/blocks-checkout';
+import {
+	applyCheckoutFilter,
+	productPriceValidation,
+} from '@woocommerce/blocks-checkout';
 import Dinero from 'dinero.js';
 import { getSetting } from '@woocommerce/settings';
 import { useMemo } from '@wordpress/element';
@@ -25,14 +28,15 @@ import ProductImage from '../product-image';
 import ProductLowStockBadge from '../product-low-stock-badge';
 import ProductMetadata from '../product-metadata';
 
-const productPriceValidation = ( value: string ): true | never =>
-	mustContain( value, '<price/>' );
-
 interface OrderSummaryProps {
 	cartItem: CartItem;
+	disableProductDescriptions: boolean;
 }
 
-const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
+const OrderSummaryItem = ( {
+	cartItem,
+	disableProductDescriptions,
+}: OrderSummaryProps ): JSX.Element => {
 	const {
 		images,
 		low_stock_remaining: lowStockRemaining,
@@ -122,9 +126,21 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 		arg,
 	} );
 
+	const productMetaProps = disableProductDescriptions
+		? {
+				itemData,
+				variation,
+		  }
+		: {
+				itemData,
+				variation,
+				shortDescription,
+				fullDescription,
+		  };
+
 	return (
 		<div
-			className={ classnames(
+			className={ clsx(
 				'wc-block-components-order-summary-item',
 				cartItemClassNameFilter
 			) }
@@ -155,6 +171,7 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 					disabled={ true }
 					name={ name }
 					permalink={ permalink }
+					disabledTagName="h3"
 				/>
 				<ProductPrice
 					currency={ priceCurrency }
@@ -174,12 +191,7 @@ const OrderSummaryItem = ( { cartItem }: OrderSummaryProps ): JSX.Element => {
 						/>
 					)
 				) }
-				<ProductMetadata
-					shortDescription={ shortDescription }
-					fullDescription={ fullDescription }
-					itemData={ itemData }
-					variation={ variation }
-				/>
+				<ProductMetadata { ...productMetaProps } />
 			</div>
 			<span className="screen-reader-text">
 				{ sprintf(

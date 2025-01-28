@@ -9,11 +9,36 @@ const glob = require( 'glob' );
 // path should be defined in the `customDir` property. The scripts below will
 // take care of looking for `index.js`, `frontend.js` and `*.scss` files in each
 // block directory.
+//
 // If a block is experimental, it should be marked with the `isExperimental`
 // property.
+// Update plugins/woocommerce-blocks/docs/internal-developers/blocks/feature-flags-and-experimental-interfaces.md
+// when you mark/unmark block experimental.
 const blocks = {
 	'active-filters': {},
-	'add-to-cart-form': {},
+	'add-to-cart-form': {
+		customDir: 'product-elements/add-to-cart-form',
+	},
+	'add-to-cart-with-options': {
+		isExperimental: true,
+	},
+	'add-to-cart-with-options-quantity-selector': {
+		customDir: 'add-to-cart-with-options/quantity-selector',
+		isExperimental: true,
+	},
+	'add-to-cart-with-options-variation-selector': {
+		customDir: 'add-to-cart-with-options/variation-selector',
+		isExperimental: true,
+	},
+	'add-to-cart-with-options-grouped-product-selector': {
+		customDir: 'add-to-cart-with-options/grouped-product-selector',
+		isExperimental: true,
+	},
+	'add-to-cart-with-options-grouped-product-selector-item': {
+		customDir:
+			'add-to-cart-with-options/grouped-product-selector/product-item-template',
+		isExperimental: true,
+	},
 	'all-products': {
 		customDir: 'products/all-products',
 	},
@@ -22,9 +47,12 @@ const blocks = {
 	},
 	'attribute-filter': {},
 	breadcrumbs: {},
-	cart: {},
+	'blockified-product-details': {
+		isExperimental: true,
+		customDir: 'product-details',
+	},
 	'catalog-sorting': {},
-	checkout: {},
+	'coming-soon': {},
 	'customer-account': {},
 	'featured-category': {
 		customDir: 'featured-items/featured-category',
@@ -39,10 +67,6 @@ const blocks = {
 		customDir: 'classic-template',
 	},
 	'classic-shortcode': {},
-	'mini-cart': {},
-	'mini-cart-contents': {
-		customDir: 'mini-cart/mini-cart-contents',
-	},
 	'store-notices': {},
 	'page-content-wrapper': {},
 	'price-filter': {},
@@ -88,27 +112,47 @@ const blocks = {
 	},
 	'single-product': {},
 	'stock-filter': {},
-	'product-filter': {
+	'product-filters': {
 		isExperimental: true,
 	},
-	'product-filter-stock-status': {
+	'product-filter-status': {
 		isExperimental: true,
-		customDir: 'product-filter/inner-blocks/stock-filter',
+		customDir: 'product-filters/inner-blocks/status-filter',
 	},
 	'product-filter-price': {
-		customDir: 'product-filter/inner-blocks/price-filter',
+		customDir: 'product-filters/inner-blocks/price-filter',
 		isExperimental: true,
 	},
 	'product-filter-attribute': {
-		customDir: 'product-filter/inner-blocks/attribute-filter',
+		customDir: 'product-filters/inner-blocks/attribute-filter',
 		isExperimental: true,
 	},
 	'product-filter-rating': {
-		customDir: 'product-filter/inner-blocks/rating-filter',
+		customDir: 'product-filters/inner-blocks/rating-filter',
 		isExperimental: true,
 	},
 	'product-filter-active': {
-		customDir: 'product-filter/inner-blocks/active-filters',
+		customDir: 'product-filters/inner-blocks/active-filters',
+		isExperimental: true,
+	},
+	'product-filter-removable-chips': {
+		customDir: 'product-filters/inner-blocks/removable-chips',
+		isExperimental: true,
+	},
+	'product-filter-clear-button': {
+		customDir: 'product-filters/inner-blocks/clear-button',
+		isExperimental: true,
+	},
+	'product-filter-checkbox-list': {
+		customDir: 'product-filters/inner-blocks/checkbox-list',
+		isExperimental: true,
+	},
+	'product-filter-chips': {
+		customDir: 'product-filters/inner-blocks/chips',
+		isExperimental: true,
+	},
+	'product-filter-price-slider': {
+		customDir: 'product-filters/inner-blocks/price-slider',
 		isExperimental: true,
 	},
 	'order-confirmation-summary': {
@@ -150,22 +194,47 @@ const blocks = {
 	'order-confirmation-additional-fields': {
 		customDir: 'order-confirmation/additional-fields',
 	},
+	'order-confirmation-create-account': {
+		customDir: 'order-confirmation/create-account',
+		isExperimental: true,
+	},
+};
+
+/**
+ * Blocks that are generic and will likely be pushed up to Gutenberg or a public block registry.
+ */
+const genericBlocks = {
+	'accordion-group': {
+		customDir: 'accordion/accordion-group',
+	},
+	'accordion-header': {
+		customDir: 'accordion/inner-blocks/accordion-header',
+	},
+	'accordion-item': {
+		customDir: 'accordion/inner-blocks/accordion-item',
+	},
+	'accordion-panel': {
+		customDir: 'accordion/inner-blocks/accordion-panel',
+	},
+};
+
+// Intentional separation of cart and checkout entry points to allow for better code splitting.
+const cartAndCheckoutBlocks = {
+	cart: {},
+	'cart-link': {},
+	checkout: {},
+	'mini-cart': {},
+	'mini-cart-contents': {
+		customDir: 'mini-cart/mini-cart-contents',
+	},
 };
 
 // Returns the entries for each block given a relative path (ie: `index.js`,
 // `**/*.scss`...).
 // It also filters out elements with undefined props and experimental blocks.
-const getBlockEntries = ( relativePath ) => {
-	const experimental =
-		! parseInt( process.env.WOOCOMMERCE_BLOCKS_PHASE, 10 ) < 3;
-
+const getBlockEntries = ( relativePath, blockEntries = blocks ) => {
 	return Object.fromEntries(
-		Object.entries( blocks )
-			.filter(
-				( [ , config ] ) =>
-					! config.isExperimental ||
-					config.isExperimental === experimental
-			)
+		Object.entries( blockEntries )
 			.map( ( [ blockCode, config ] ) => {
 				const filePaths = glob.sync(
 					`./assets/js/blocks/${ config.customDir || blockCode }/` +
@@ -195,9 +264,11 @@ const entries = {
 			'./assets/js/atomic/blocks/product-elements/product-reviews/index.tsx',
 		'product-details':
 			'./assets/js/atomic/blocks/product-elements/product-details/index.tsx',
-		'add-to-cart-form':
-			'./assets/js/atomic/blocks/product-elements/add-to-cart-form/index.tsx',
-		...getBlockEntries( '{index,block,frontend}.{t,j}s{,x}' ),
+		...getBlockEntries( '{index,block,frontend}.{t,j}s{,x}', {
+			...blocks,
+			...genericBlocks,
+			...cartAndCheckoutBlocks,
+		} ),
 
 		// Interactivity component styling
 		'wc-interactivity-checkbox-list':
@@ -217,8 +288,7 @@ const entries = {
 		wcBlocksSharedContext: './assets/js/shared/context/index.js',
 		wcBlocksSharedHocs: './assets/js/shared/hocs/index.js',
 		priceFormat: './packages/prices/index.js',
-		blocksCheckout: './packages/checkout/index.js',
-		blocksComponents: './packages/components/index.ts',
+		wcTypes: './assets/js/types/index.ts',
 
 		// interactivity components, exported as separate entries for now
 		'wc-interactivity-dropdown':
@@ -231,13 +301,18 @@ const entries = {
 		'wc-blocks': './assets/js/index.js',
 
 		// Blocks
-		...getBlockEntries( 'index.{t,j}s{,x}' ),
+		...getBlockEntries( 'index.{t,j}s{,x}', {
+			...blocks,
+			...genericBlocks,
+			...cartAndCheckoutBlocks,
+		} ),
 	},
 	frontend: {
 		reviews: './assets/js/blocks/reviews/frontend.ts',
-		...getBlockEntries( 'frontend.{t,j}s{,x}' ),
-		'mini-cart-component':
-			'./assets/js/blocks/mini-cart/component-frontend.tsx',
+		...getBlockEntries( 'frontend.{t,j}s{,x}', {
+			...blocks,
+			...genericBlocks,
+		} ),
 		'product-button-interactivity':
 			'./assets/js/atomic/blocks/product-elements/button/frontend.tsx',
 	},
@@ -261,6 +336,13 @@ const entries = {
 		'wc-blocks-classic-template-revert-button':
 			'./assets/js/templates/revert-button/index.tsx',
 	},
+	cartAndCheckoutFrontend: {
+		...getBlockEntries( 'frontend.{t,j}s{,x}', cartAndCheckoutBlocks ),
+		blocksCheckout: './packages/checkout/index.js',
+		blocksComponents: './packages/components/index.ts',
+		'mini-cart-component':
+			'./assets/js/blocks/mini-cart/component-frontend.tsx',
+	},
 };
 
 const getEntryConfig = ( type = 'main', exclude = [] ) => {
@@ -269,4 +351,5 @@ const getEntryConfig = ( type = 'main', exclude = [] ) => {
 
 module.exports = {
 	getEntryConfig,
+	genericBlocks,
 };

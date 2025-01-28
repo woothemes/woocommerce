@@ -27,11 +27,8 @@ import {
  */
 import Block from './block';
 import withProductSelector from '../shared/with-product-selector';
-import {
-	BLOCK_TITLE as label,
-	BLOCK_ICON as icon,
-	BLOCK_DESCRIPTION as description,
-} from './constants';
+import { BLOCK_ICON as icon } from './constants';
+import { title, description } from './block.json';
 import { BlockAttributes, ImageSizing } from './types';
 import { ImageSizeSettings } from './image-size-settings';
 
@@ -106,6 +103,7 @@ const Edit = ( {
 								'Sale Badge Alignment',
 								'woocommerce'
 							) }
+							isBlock
 							value={ saleBadgeAlign }
 							onChange={ ( value: SaleBadgeAlignProps ) =>
 								setAttributes( { saleBadgeAlign: value } )
@@ -125,42 +123,45 @@ const Edit = ( {
 							/>
 						</ToggleGroupControl>
 					) }
-					{ ! isBlockThemeEnabled && (
-						<ToggleGroupControl
-							label={ __( 'Image Sizing', 'woocommerce' ) }
-							help={ createInterpolateElement(
-								__(
-									'Product image cropping can be modified in the <a>Customizer</a>.',
-									'woocommerce'
-								),
-								{
-									a: (
-										// eslint-disable-next-line jsx-a11y/anchor-has-content
-										<a
-											href={ `${ getAdminLink(
-												'customize.php'
-											) }?autofocus[panel]=woocommerce&autofocus[section]=woocommerce_product_images` }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								}
-							) }
-							value={ imageSizing }
-							onChange={ ( value: ImageSizing ) =>
-								setAttributes( { imageSizing: value } )
-							}
-						>
-							<ToggleGroupControlOption
-								value={ ImageSizing.SINGLE }
-								label={ __( 'Full Size', 'woocommerce' ) }
-							/>
-							<ToggleGroupControlOption
-								value={ ImageSizing.THUMBNAIL }
-								label={ __( 'Cropped', 'woocommerce' ) }
-							/>
-						</ToggleGroupControl>
-					) }
+					<ToggleGroupControl
+						label={ __( 'Image Sizing', 'woocommerce' ) }
+						isBlock
+						help={
+							! isBlockThemeEnabled
+								? createInterpolateElement(
+										__(
+											'Product image cropping can be modified in the <a>Customizer</a>.',
+											'woocommerce'
+										),
+										{
+											a: (
+												// eslint-disable-next-line jsx-a11y/anchor-has-content
+												<a
+													href={ `${ getAdminLink(
+														'customize.php'
+													) }?autofocus[panel]=woocommerce&autofocus[section]=woocommerce_product_images` }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										}
+								  )
+								: null
+						}
+						value={ imageSizing }
+						onChange={ ( value: ImageSizing ) =>
+							setAttributes( { imageSizing: value } )
+						}
+					>
+						<ToggleGroupControlOption
+							value={ ImageSizing.SINGLE }
+							label={ __( 'Full Size', 'woocommerce' ) }
+						/>
+						<ToggleGroupControlOption
+							value={ ImageSizing.THUMBNAIL }
+							label={ __( 'Cropped', 'woocommerce' ) }
+						/>
+					</ToggleGroupControl>
 				</PanelBody>
 			</InspectorControls>
 			<Disabled>
@@ -170,4 +171,4 @@ const Edit = ( {
 	);
 };
 
-export default withProductSelector( { icon, label, description } )( Edit );
+export default withProductSelector( { icon, title, description } )( Edit );

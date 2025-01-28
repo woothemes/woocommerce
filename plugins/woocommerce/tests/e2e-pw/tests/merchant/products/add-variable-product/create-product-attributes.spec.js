@@ -1,5 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const { variableProducts: utils } = require( '../../../../utils' );
+const { tags } = require( '../../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
 const {
 	createVariableProduct,
 	showVariableProductTour,
@@ -23,10 +25,11 @@ const step_goToAttributesTab = async ( page ) => {
 	} );
 };
 
+//todo remove serial mode
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'Add product attributes', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+test.describe( 'Add product attributes', { tag: tags.GUTENBERG }, () => {
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeAll( async ( { browser } ) => {
 		productId = await createVariableProduct();
@@ -39,8 +42,9 @@ test.describe( 'Add product attributes', () => {
 	} );
 
 	test( 'can add custom product attributes', async ( { page } ) => {
-		const textbox_attributeName =
-			page.getByPlaceholder( 'f.e. size or color' );
+		const textbox_attributeName = page.getByPlaceholder(
+			'e.g. length or weight'
+		);
 		const textbox_attributeValues = page.getByPlaceholder(
 			'Enter options for customers to choose from'
 		);
@@ -53,7 +57,7 @@ test.describe( 'Add product attributes', () => {
 
 		await test.step( `Open "Edit product" page of product id ${ productId }`, async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId }&action=edit`
+				`wp-admin/post.php?post=${ productId }&action=edit`
 			);
 		} );
 
@@ -133,7 +137,10 @@ test.describe( 'Add product attributes', () => {
 						'options=woocommerce_task_list_reminder_bar_hidden'
 					)
 			);
-			await page.getByRole( 'button', { name: 'Update' } ).click();
+			await page
+				.locator( '#publishing-action' )
+				.getByRole( 'button', { name: 'Update' } )
+				.click();
 
 			const response = await finalRequestResolution;
 			expect( response.ok() ).toBeTruthy();

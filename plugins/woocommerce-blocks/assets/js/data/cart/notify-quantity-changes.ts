@@ -3,7 +3,11 @@
  */
 import { Cart, CartItem } from '@woocommerce/types';
 import { dispatch, select } from '@wordpress/data';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
+import { applyFilters } from '@wordpress/hooks';
+// eslint-disable-next-line @wordpress/no-unsafe-wp-apis, @woocommerce/dependency-group
+import { __unstableStripHTML as stripHTML } from '@wordpress/dom';
 
 /**
  * Internal dependencies
@@ -25,104 +29,8 @@ const isWithinQuantityLimits = ( cartItem: CartItem ) => {
 	);
 };
 
-const notifyIfQuantityLimitsChanged = ( oldCart: Cart, newCart: Cart ) => {
-	newCart.items.forEach( ( cartItem ) => {
-		const oldCartItem = oldCart.items.find( ( item ) => {
-			return item && item.key === cartItem.key;
-		} );
-
-		// If getCartData has not finished resolving, then this is the first load.
-		const isFirstLoad = oldCart.items.length === 0;
-
-		// Item has been removed, we don't need to do any more checks.
-		if ( ! oldCartItem && ! isFirstLoad ) {
-			return;
-		}
-
-		if ( isWithinQuantityLimits( cartItem ) ) {
-			return;
-		}
-
-		const quantityAboveMax =
-			cartItem.quantity > cartItem.quantity_limits.maximum;
-		const quantityBelowMin =
-			cartItem.quantity < cartItem.quantity_limits.minimum;
-		const quantityOutOfStep =
-			cartItem.quantity % cartItem.quantity_limits.multiple_of !== 0;
-
-		// If the quantity is still within the constraints, then we don't need to show any notice, this is because
-		// QuantitySelector will not automatically update the value.
-		if ( ! quantityAboveMax && ! quantityBelowMin && ! quantityOutOfStep ) {
-			return;
-		}
-
-		if ( quantityOutOfStep ) {
-			dispatch( 'core/notices' ).createInfoNotice(
-				sprintf(
-					/* translators: %1$s is the name of the item, %2$d is the quantity of the item. %3$d is a number that the quantity must be a multiple of. */
-					__(
-						'The quantity of "%1$s" was changed to %2$d. You must purchase this product in groups of %3$d.',
-						'woocommerce'
-					),
-					cartItem.name,
-					// We round down to the nearest step value here. We need to do it this way because at this point we
-					// don't know the next quantity. That only gets set once the HTML Input field applies its min/max
-					// constraints.
-					Math.floor(
-						cartItem.quantity / cartItem.quantity_limits.multiple_of
-					) * cartItem.quantity_limits.multiple_of,
-					cartItem.quantity_limits.multiple_of
-				),
-				{
-					context: 'wc/cart',
-					speak: true,
-					type: 'snackbar',
-					id: `${ cartItem.key }-quantity-update`,
-				}
-			);
-			return;
-		}
-
-		if ( quantityBelowMin ) {
-			dispatch( 'core/notices' ).createInfoNotice(
-				sprintf(
-					/* translators: %1$s is the name of the item, %2$d is the quantity of the item. */
-					__(
-						'The quantity of "%1$s" was increased to %2$d. This is the minimum required quantity.',
-						'woocommerce'
-					),
-					cartItem.name,
-					cartItem.quantity_limits.minimum
-				),
-				{
-					context: 'wc/cart',
-					speak: true,
-					type: 'snackbar',
-					id: `${ cartItem.key }-quantity-update`,
-				}
-			);
-			return;
-		}
-
-		// Quantity is above max, so has been reduced.
-		dispatch( 'core/notices' ).createInfoNotice(
-			sprintf(
-				/* translators: %1$s is the name of the item, %2$d is the quantity of the item. */
-				__(
-					'The quantity of "%1$s" was decreased to %2$d. This is the maximum allowed quantity.',
-					'woocommerce'
-				),
-				cartItem.name,
-				cartItem.quantity_limits.maximum
-			),
-			{
-				context: 'wc/cart',
-				speak: true,
-				type: 'snackbar',
-				id: `${ cartItem.key }-quantity-update`,
-			}
-		);
-	} );
+const stripAndDecode = ( text: string ) => {
+	return stripHTML( decodeEntities( text ) );
 };
 
 const notifyIfQuantityChanged = (
@@ -144,7 +52,12 @@ const notifyIfQuantityChanged = (
 		if ( cartItem.key === oldCartItem.key ) {
 			if (
 				cartItem.quantity !== oldCartItem.quantity &&
-				isWithinQuantityLimits( cartItem )
+				isWithinQuantityLimits( cartItem ) &&
+				applyFilters(
+					'woocommerce_show_cart_item_quantity_changed_notice',
+					true,
+					cartItem
+				)
 			) {
 				dispatch( 'core/notices' ).createInfoNotice(
 					sprintf(
@@ -153,7 +66,7 @@ const notifyIfQuantityChanged = (
 							'The quantity of "%1$s" was changed to %2$d.',
 							'woocommerce'
 						),
-						cartItem.name,
+						stripAndDecode( cartItem.name ),
 						cartItem.quantity
 					),
 					{
@@ -190,12 +103,19 @@ const notifyIfRemoved = (
 			return item && item.key === oldCartItem.key;
 		} );
 
-		if ( ! newCartItem ) {
+		if (
+			! newCartItem &&
+			applyFilters(
+				'woocommerce_show_cart_item_removed_notice',
+				true,
+				oldCartItem
+			)
+		) {
 			dispatch( 'core/notices' ).createInfoNotice(
 				sprintf(
 					/* translators: %s is the name of the item. */
 					__( '"%s" was removed from your cart.', 'woocommerce' ),
-					oldCartItem.name
+					stripAndDecode( oldCartItem.name )
 				),
 				{
 					context: 'wc/cart',
@@ -224,6 +144,5 @@ export const notifyQuantityChanges = ( {
 		return;
 	}
 	notifyIfRemoved( oldCart, newCart, cartItemsPendingDelete );
-	notifyIfQuantityLimitsChanged( oldCart, newCart );
 	notifyIfQuantityChanged( oldCart, newCart, cartItemsPendingQuantity );
 };

@@ -16,9 +16,9 @@ import {
 } from '@woocommerce/base-utils';
 import { useDispatch, useSelect, select as selectStore } from '@wordpress/data';
 import {
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 	PAYMENT_STORE_KEY,
-	VALIDATION_STORE_KEY,
+	validationStore,
 	CART_STORE_KEY,
 	processErrorResponse,
 } from '@woocommerce/block-data';
@@ -50,37 +50,39 @@ const CheckoutProcessor = () => {
 	const { onCheckoutValidation } = useCheckoutEventsContext();
 
 	const {
+		additionalFields,
+		customerId,
+		customerPassword,
+		extensionData,
 		hasError: checkoutHasError,
-		redirectUrl,
-		isProcessing: checkoutIsProcessing,
 		isBeforeProcessing: checkoutIsBeforeProcessing,
 		isComplete: checkoutIsComplete,
+		isProcessing: checkoutIsProcessing,
 		orderNotes,
+		redirectUrl,
 		shouldCreateAccount,
-		extensionData,
-		customerId,
-		additionalFields,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
+			additionalFields: store.getAdditionalFields(),
+			customerId: store.getCustomerId(),
+			customerPassword: store.getCustomerPassword(),
+			extensionData: store.getExtensionData(),
 			hasError: store.hasError(),
-			redirectUrl: store.getRedirectUrl(),
-			isProcessing: store.isProcessing(),
 			isBeforeProcessing: store.isBeforeProcessing(),
 			isComplete: store.isComplete(),
+			isProcessing: store.isProcessing(),
 			orderNotes: store.getOrderNotes(),
+			redirectUrl: store.getRedirectUrl(),
 			shouldCreateAccount: store.getShouldCreateAccount(),
-			extensionData: store.getExtensionData(),
-			customerId: store.getCustomerId(),
-			additionalFields: store.getAdditionalFields(),
 		};
 	} );
 
 	const { __internalSetHasError, __internalProcessCheckoutResponse } =
-		useDispatch( CHECKOUT_STORE_KEY );
+		useDispatch( checkoutStore );
 
 	const hasValidationErrors = useSelect(
-		( select ) => select( VALIDATION_STORE_KEY ).hasValidationErrors
+		( select ) => select( validationStore ).hasValidationErrors
 	);
 	const { shippingErrorStatus } = useShippingDataContext();
 
@@ -166,7 +168,7 @@ const CheckoutProcessor = () => {
 		if ( hasValidationErrors() ) {
 			// If there is a shipping rates validation error, return the error message to be displayed.
 			if (
-				selectStore( VALIDATION_STORE_KEY ).getValidationError(
+				selectStore( validationStore ).getValidationError(
 					'shipping-rates-error'
 				) !== undefined
 			) {
@@ -223,6 +225,9 @@ const CheckoutProcessor = () => {
 
 	// Redirect when checkout is complete and there is a redirect url.
 	useEffect( () => {
+		window.localStorage.removeItem(
+			'WOOCOMMERCE_CHECKOUT_IS_CUSTOMER_DATA_DIRTY'
+		);
 		if ( currentRedirectUrl.current ) {
 			window.location.href = currentRedirectUrl.current;
 		}
@@ -248,17 +253,18 @@ const CheckoutProcessor = () => {
 			: {};
 
 		const data = {
-			shipping_address: cartNeedsShipping
-				? emptyHiddenAddressFields( currentShippingAddress.current )
-				: undefined,
+			additional_fields: additionalFields,
 			billing_address: emptyHiddenAddressFields(
 				currentBillingAddress.current
 			),
-			additional_fields: additionalFields,
-			customer_note: orderNotes,
 			create_account: shouldCreateAccount,
-			...paymentData,
+			customer_note: orderNotes,
+			customer_password: customerPassword,
 			extensions: { ...extensionData },
+			shipping_address: cartNeedsShipping
+				? emptyHiddenAddressFields( currentShippingAddress.current )
+				: undefined,
+			...paymentData,
 		};
 
 		triggerFetch( {
@@ -327,6 +333,8 @@ const CheckoutProcessor = () => {
 		activePaymentMethod,
 		orderNotes,
 		shouldCreateAccount,
+		customerId,
+		customerPassword,
 		extensionData,
 		additionalFields,
 		cartNeedsShipping,

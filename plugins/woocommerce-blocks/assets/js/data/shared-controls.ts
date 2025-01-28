@@ -20,7 +20,7 @@ const invalidJsonError = {
 	message: __( 'The response is not a valid JSON response.', 'woocommerce' ),
 };
 
-const setNonceOnFetch = ( headers: Headers ): void => {
+const processHeadersOnFetch = ( headers: Headers ): void => {
 	if (
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
@@ -39,6 +39,26 @@ const setNonceOnFetch = ( headers: Headers ): void => {
 		// eslint-disable-next-line no-console
 		console.error(
 			'The monkey patched function on APIFetch, "setNonce", is not present, likely another plugin or some other code has removed this augmentation'
+		);
+	}
+	if (
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		triggerFetch.setCartHash &&
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		typeof triggerFetch?.setCartHash === 'function'
+	) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		triggerFetch.setCartHash( headers );
+	} else {
+		// eslint-disable-next-line no-console
+		console.error(
+			'The monkey patched function on APIFetch, "setCartHash", is not present, likely another plugin or some other code has removed this augmentation'
 		);
 	}
 };
@@ -105,6 +125,9 @@ export const apiFetchWithHeadersControl = ( options: APIFetchOptions ) =>
 		options,
 	} as const );
 
+// List of paths which should not be batched.
+const preventBatching = [ '/wc/store/v1/cart/select-shipping-rate' ];
+
 /**
  * The underlying function that actually does the fetch. This is used by both the generator (control) version of
  * apiFetchWithHeadersControl and the async function apiFetchWithHeaders.
@@ -112,28 +135,38 @@ export const apiFetchWithHeadersControl = ( options: APIFetchOptions ) =>
 const doApiFetchWithHeaders = ( options: APIFetchOptions ) =>
 	new Promise( ( resolve, reject ) => {
 		// GET Requests cannot be batched.
-		if ( ! options.method || options.method === 'GET' ) {
+		if (
+			! options.method ||
+			options.method === 'GET' ||
+			preventBatching.includes( options.path || '' )
+		) {
 			// Parse is disabled here to avoid returning just the body--we also need headers.
 			triggerFetch( {
 				...options,
 				parse: false,
 			} )
-				.then( ( fetchResponse ) => {
-					fetchResponse
-						.json()
-						.then( ( response ) => {
-							resolve( {
-								response,
-								headers: fetchResponse.headers,
+				.then( ( fetchResponse: unknown ) => {
+					if ( fetchResponse instanceof Response ) {
+						fetchResponse
+							.json()
+							.then( ( response: unknown ) => {
+								resolve( {
+									response,
+									headers: fetchResponse.headers,
+								} );
+								processHeadersOnFetch( fetchResponse.headers );
+							} )
+							.catch( () => {
+								reject( invalidJsonError );
 							} );
-							setNonceOnFetch( fetchResponse.headers );
-						} )
-						.catch( () => {
-							reject( invalidJsonError );
-						} );
+					} else {
+						reject( invalidJsonError );
+					}
 				} )
 				.catch( ( errorResponse ) => {
-					setNonceOnFetch( errorResponse.headers );
+					if ( errorResponse.name !== 'AbortError' ) {
+						processHeadersOnFetch( errorResponse.headers );
+					}
 					if ( typeof errorResponse.json === 'function' ) {
 						// Parse error response before rejecting it.
 						errorResponse
@@ -150,7 +183,7 @@ const doApiFetchWithHeaders = ( options: APIFetchOptions ) =>
 				} );
 		} else {
 			batchFetch( options )
-				.then( ( response: ApiResponse ) => {
+				.then( ( response: ApiResponse< unknown > ) => {
 					assertResponseIsValid( response );
 
 					if ( response.status >= 200 && response.status < 300 ) {
@@ -158,15 +191,15 @@ const doApiFetchWithHeaders = ( options: APIFetchOptions ) =>
 							response: response.body,
 							headers: response.headers,
 						} );
-						setNonceOnFetch( response.headers );
+						processHeadersOnFetch( response.headers );
 					}
 
 					// Status code indicates error.
 					throw response;
 				} )
-				.catch( ( errorResponse: ApiResponse ) => {
+				.catch( ( errorResponse: ApiResponse< unknown > ) => {
 					if ( errorResponse.headers ) {
-						setNonceOnFetch( errorResponse.headers );
+						processHeadersOnFetch( errorResponse.headers );
 					}
 					if ( errorResponse.body ) {
 						reject( errorResponse.body );
@@ -183,8 +216,10 @@ const doApiFetchWithHeaders = ( options: APIFetchOptions ) =>
  *
  * @param {APIFetchOptions} options The options for the API request.
  */
-export const apiFetchWithHeaders = ( options: APIFetchOptions ) => {
-	return doApiFetchWithHeaders( options );
+export const apiFetchWithHeaders = < T = unknown >(
+	options: APIFetchOptions
+): Promise< T > => {
+	return doApiFetchWithHeaders( options ) as Promise< T >;
 };
 
 /**

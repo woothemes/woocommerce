@@ -37,14 +37,16 @@ export function Edit( {
 		isParentResolving,
 	}: { parentName: string; isParentResolving: boolean } = useSelect(
 		( select ) => {
-			// @ts-expect-error There are no types for this.
 			const { getEditedEntityRecord, hasFinishedResolution } =
 				select( 'core' );
+
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const { name }: Product = getEditedEntityRecord(
 				'postType',
 				'product',
 				parentId
 			);
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const isResolutionFinished = ! hasFinishedResolution(
 				'getEditedEntityRecord',
 				[ 'postType', 'product', parentId ]
@@ -54,7 +56,8 @@ export function Edit( {
 				parentName: name || '',
 				isParentResolving: isResolutionFinished,
 			};
-		}
+		},
+		[ parentId ]
 	);
 
 	if (

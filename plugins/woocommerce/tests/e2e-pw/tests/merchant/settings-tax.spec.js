@@ -1,8 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe( 'WooCommerce Tax Settings > enable', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test( 'can enable tax calculation', async ( { page } ) => {
 		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=general' );
@@ -30,7 +31,7 @@ test.describe( 'WooCommerce Tax Settings > enable', () => {
 } );
 
 test.describe.serial( 'WooCommerce Tax Settings', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeEach( async ( { baseURL } ) => {
 		const api = new wcApi( {
@@ -56,9 +57,7 @@ test.describe.serial( 'WooCommerce Tax Settings', () => {
 	} );
 
 	test( 'can set tax options', async ( { page } ) => {
-		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=tax', {
-			waitUntil: 'networkidle',
-		} );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=tax', {} );
 
 		// Make sure we're on the tax tab
 		await expect( page.locator( 'a.nav-tab-active' ) ).toContainText(
@@ -117,24 +116,10 @@ test.describe.serial( 'WooCommerce Tax Settings', () => {
 	} );
 
 	test( 'can add tax classes', async ( { page } ) => {
-		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=tax', {
-			waitUntil: 'networkidle',
-		} );
+		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=tax', {} );
 
 		await expect( page.locator( 'a.nav-tab-active' ) ).toContainText(
 			'Tax'
-		);
-
-		// Clear out existing tax classes
-		await page.locator( '#woocommerce_tax_classes' ).fill( '' );
-		await page.locator( 'text=Save changes' ).click();
-
-		// Verify that the settings have been saved
-		await expect( page.locator( 'div.updated.inline' ) ).toContainText(
-			'Your settings have been saved.'
-		);
-		await expect( page.locator( '#woocommerce_tax_classes' ) ).toHaveValue(
-			''
 		);
 
 		// Add a "fancy" tax class
@@ -152,8 +137,7 @@ test.describe.serial( 'WooCommerce Tax Settings', () => {
 
 	test( 'can set rate settings', async ( { page } ) => {
 		await page.goto(
-			'wp-admin/admin.php?page=wc-settings&tab=tax&section=fancy',
-			{ waitUntil: 'networkidle' }
+			'wp-admin/admin.php?page=wc-settings&tab=tax&section=fancy'
 		);
 
 		// Make sure the tax tab is active, with the "fancy" subsection

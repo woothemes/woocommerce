@@ -49,6 +49,7 @@ export default function ( {
 				<PanelBody title={ __( 'Settings', 'woocommerce' ) }>
 					<ToggleGroupControl
 						label={ __( 'Price Range Selector', 'woocommerce' ) }
+						isBlock
 						value={ showInputFields ? 'editable' : 'text' }
 						onChange={ ( value: string ) =>
 							setAttributes( {
@@ -130,7 +131,7 @@ export default function ( {
 			<Button
 				className="wc-block-price-slider__read_more_button"
 				variant="tertiary"
-				href="https://woo.com/document/managing-products/"
+				href="https://woocommerce.com/document/managing-products/"
 				target="_blank"
 			>
 				{ __( 'Learn more', 'woocommerce' ) }

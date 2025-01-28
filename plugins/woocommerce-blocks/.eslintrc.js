@@ -114,6 +114,46 @@ const restrictedImports = [
 		message:
 			'This Lodash method is not recommended. Please use native functionality instead. If using `memoize`, please use `memize` instead.',
 	},
+	{
+		name: 'classnames',
+		message:
+			"Please use `clsx` instead. It's a lighter and faster drop-in replacement for `classnames`.",
+	},
+];
+
+const coreModules = [
+	'@woocommerce/block-data',
+	'@woocommerce/blocks-checkout',
+	'@woocommerce/blocks-components',
+	'@woocommerce/price-format',
+	'@woocommerce/settings',
+	'@woocommerce/shared-context',
+	'@woocommerce/shared-hocs',
+	'@woocommerce/tracks',
+	'@woocommerce/data',
+	'@woocommerce/customer-effort-score',
+	'@wordpress/a11y',
+	'@wordpress/api-fetch',
+	'@wordpress/block-editor',
+	'@wordpress/compose',
+	'@wordpress/data',
+	'@wordpress/core-data',
+	'@wordpress/editor',
+	'@wordpress/escape-html',
+	'@wordpress/hooks',
+	'@wordpress/keycodes',
+	'@wordpress/url',
+	'@woocommerce/blocks-test-utils',
+	'@woocommerce/e2e-utils',
+	'babel-jest',
+	'dotenv',
+	'jest-environment-puppeteer',
+	'lodash/kebabCase',
+	'lodash',
+	'prop-types',
+	'react',
+	'requireindex',
+	'react-transition-group',
 ];
 
 module.exports = {
@@ -146,39 +186,7 @@ module.exports = {
 		// List of modules that are externals in our webpack config.
 		// This helps the `import/no-extraneous-dependencies` and
 		//`import/no-unresolved` rules account for them.
-		'import/core-modules': [
-			'@woocommerce/block-data',
-			'@woocommerce/blocks-checkout',
-			'@woocommerce/blocks-components',
-			'@woocommerce/price-format',
-			'@woocommerce/settings',
-			'@woocommerce/shared-context',
-			'@woocommerce/shared-hocs',
-			'@woocommerce/data',
-			'@wordpress/a11y',
-			'@wordpress/api-fetch',
-			'@wordpress/block-editor',
-			'@wordpress/compose',
-			'@wordpress/data',
-			'@wordpress/core-data',
-			'@wordpress/editor',
-			'@wordpress/escape-html',
-			'@wordpress/hooks',
-			'@wordpress/keycodes',
-			'@wordpress/url',
-			'@woocommerce/blocks-test-utils',
-			'@woocommerce/e2e-utils',
-			'@woocommerce/e2e-mocks',
-			'babel-jest',
-			'dotenv',
-			'jest-environment-puppeteer',
-			'lodash/kebabCase',
-			'lodash',
-			'prop-types',
-			'react',
-			'requireindex',
-			'react-transition-group',
-		],
+		'import/core-modules': coreModules,
 		'import/resolver': {
 			node: {},
 			webpack: {},
@@ -296,6 +304,7 @@ module.exports = {
 					typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
 				},
 				'import/core-modules': [
+					...coreModules,
 					// We should lint these modules imports, but the types are way out of date.
 					// To support us not inadvertently introducing new import errors this lint exists, but to avoid
 					// having to fix hundreds of import errors for @wordpress packages we ignore them.

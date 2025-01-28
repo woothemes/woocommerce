@@ -1,16 +1,21 @@
-const { test, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+/**
+ * Internal dependencies
+ */
+import { test, expect, tags } from '../../fixtures/fixtures';
+import { getFakeCustomer, getFakeProduct } from '../../utils/data';
+import { ADMIN_STATE_PATH } from '../../playwright.config';
 
 // a representation of the menu structure for WC
 const wcPages = [
 	{
 		name: 'WooCommerce',
+		url: 'wp-admin/admin.php?page=wc-admin',
 		subpages: [
 			{
 				name: 'Home',
 				heading: 'Home',
 				element:
-					'.wooocommerce-inbox-card__header > .components-truncate',
+					'.woocommerce-inbox-card__header > .components-truncate',
 				text: 'Inbox',
 			},
 			{
@@ -22,24 +27,24 @@ const wcPages = [
 			{
 				name: 'Customers',
 				heading: 'Customers',
-				element: '#search-inline-input-0',
-				text: 'Move backward for selected items',
+				element: '.woocommerce-dropdown-button__labels',
+				text: 'All Customers',
 			},
 			{
 				name: 'Reports',
-				heading: 'Orders',
+				heading: 'Reports',
 				element: '.nav-tab-wrapper > .nav-tab-active',
 				text: 'Orders',
 			},
 			{
 				name: 'Settings',
-				heading: 'General',
+				heading: 'Settings',
 				element: '#store_address-description',
 				text: 'This is where your business is located. Tax rates and shipping rates will use this address.',
 			},
 			{
 				name: 'Status',
-				heading: 'System status',
+				heading: 'Status',
 				element: '.nav-tab-active',
 				text: 'System status',
 			},
@@ -47,6 +52,7 @@ const wcPages = [
 	},
 	{
 		name: 'Products',
+		url: 'wp-admin/edit.php?post_type=product',
 		subpages: [
 			{
 				name: 'All Products',
@@ -80,142 +86,182 @@ const wcPages = [
 			},
 		],
 	},
-	// analytics is handled through a separate test
 	{
-		name: 'Marketing',
+		name: 'Analytics',
+		url: 'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Foverview',
 		subpages: [
 			{
 				name: 'Overview',
 				heading: 'Overview',
-				element: '.woocommerce-marketing-card-header-description',
-				text: 'Start by adding a channel to your store',
+				element: '#woocommerce-layout__primary',
+				text: 'Performance',
+			},
+			{
+				name: 'Products',
+				heading: 'Products',
+				element: '#woocommerce-layout__primary',
+				text: 'Items sold',
+			},
+			{
+				name: 'Revenue',
+				heading: 'Revenue',
+				element: '#woocommerce-layout__primary',
+				text: 'Gross sales',
+			},
+			{
+				name: 'Orders',
+				heading: 'Orders',
+				element: '#woocommerce-layout__primary',
+				text: 'Orders',
+			},
+			{
+				name: 'Variations',
+				heading: 'Variations',
+				element: '#woocommerce-layout__primary',
+				text: 'Items sold',
+			},
+			{
+				name: 'Categories',
+				heading: 'Categories',
+				element: '#woocommerce-layout__primary',
+				text: 'Items sold',
 			},
 			{
 				name: 'Coupons',
 				heading: 'Coupons',
-				element: '.woocommerce-BlankState-cta.button-primary',
-				text: 'Create your first coupon',
+				element: '#woocommerce-layout__primary',
+				text: 'Discounted orders',
+			},
+			{
+				name: 'Taxes',
+				heading: 'Taxes',
+				element: '#woocommerce-layout__primary',
+				text: 'Total tax',
+			},
+			{
+				name: 'Downloads',
+				heading: 'Downloads',
+				element: '#woocommerce-layout__primary',
+				text: 'Downloads',
+			},
+			{
+				name: 'Stock',
+				heading: 'Stock',
+				element: '#woocommerce-layout__primary',
+				text: 'Stock',
+			},
+			{
+				name: 'Settings',
+				heading: 'Settings',
+				element: '#woocommerce-layout__primary',
+				text: 'Analytics settings',
+			},
+		],
+	},
+	{
+		name: 'Marketing',
+		url: 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing',
+		subpages: [
+			{
+				name: 'Overview',
+				heading: 'Overview',
+				element: '.woocommerce-marketing-channels-card',
+				text: 'Channels',
+			},
+			{
+				name: 'Coupons',
+				heading: 'Coupons',
+				element: '.page-title-action',
+				// WP6.6: "Add coupon", WP6.7: "Add new coupon"
+				text: /Add coupon|Add new coupon/,
 			},
 		],
 	},
 ];
 
-let productId, orderId;
-const productName = 'Simple Product Name';
-const productPrice = '15.99';
-
 for ( const currentPage of wcPages ) {
-	const randomNum = new Date().getTime().toString();
-	const customer = {
-		username: `customer${ randomNum }`,
-		password: 'password',
-		email: `customer${ randomNum }@woocommercecoree2etestsuite.com`,
-	};
-	test.describe( `WooCommerce Page Load > Load ${ currentPage.name } sub pages`, () => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+	test.describe(
+		`WooCommerce Page Load > Load ${ currentPage.name } sub pages`,
+		{ tag: [ tags.GUTENBERG, tags.SERVICES ] },
+		() => {
+			const product = getFakeProduct();
+			const customer = getFakeCustomer();
+			let orderId;
 
-		test.beforeAll( async ( { baseURL } ) => {
-			const response = await new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc-admin',
-			} ).post( 'onboarding/profile', {
-				skipped: true,
-			} );
+			test.use( { storageState: ADMIN_STATE_PATH } );
 
-			const httpStatus = response.status;
-			const { status, message } = response.data;
-
-			expect( httpStatus ).toEqual( 200 );
-			expect( status ).toEqual( 'success' );
-			expect( message ).toEqual(
-				'Onboarding profile data has been updated.'
-			);
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-			// create a simple product
-			await api
-				.post( 'products', {
-					name: productName,
-					type: 'simple',
-					regular_price: productPrice,
-				} )
-				.then( ( response ) => {
-					productId = response.data.id;
+			test.beforeAll( async ( { api, wcAdminApi } ) => {
+				// skip onboarding
+				const response = await wcAdminApi.post( 'onboarding/profile', {
+					skipped: true,
 				} );
-			// create an order
-			await api
-				.post( 'orders', {
-					line_items: [
-						{
-							product_id: productId,
-							quantity: 1,
-						},
-					],
-				} )
-				.then( ( response ) => {
-					orderId = response.data.id;
+				expect( response.status ).toEqual( 200 );
+
+				// create a simple product
+				await api.post( 'products', product ).then( ( r ) => {
+					product.id = r.data.id;
 				} );
-			// create customer
-			await api
-				.post( 'customers', customer )
-				.then( ( response ) => ( customer.id = response.data.id ) );
-		} );
 
-		test.afterAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-			await api.delete( `products/${ productId }`, {
-				force: true,
-			} );
-			await api.delete( `orders/${ orderId }`, { force: true } );
-			await api.delete( `customers/${ customer.id }`, { force: true } );
-		} );
+				// create an order
+				await api
+					.post( 'orders', {
+						line_items: [
+							{
+								product_id: product.id,
+								quantity: 1,
+							},
+						],
+					} )
+					.then( ( r ) => {
+						orderId = r.data.id;
+					} );
 
-		test.beforeEach( async ( { page } ) => {
-			if ( currentPage.name === 'WooCommerce' ) {
-				await page.goto( 'wp-admin/admin.php?page=wc-admin' );
-			} else if ( currentPage.name === 'Products' ) {
-				await page.goto( 'wp-admin/edit.php?post_type=product' );
-			} else if ( currentPage.name === 'Marketing' ) {
-				await page.goto(
-					'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing'
-				);
+				// create customer
+				await api
+					.post( 'customers', customer )
+					.then( ( r ) => ( customer.id = r.data.id ) );
+			} );
+
+			test.afterAll( async ( { api } ) => {
+				await api.delete( `orders/${ orderId }`, { force: true } );
+				await api.delete( `products/${ product.id }`, {
+					force: true,
+				} );
+				await api.delete( `customers/${ customer.id }`, {
+					force: true,
+				} );
+			} );
+
+			for ( let i = 0; i < currentPage.subpages.length; i++ ) {
+				test( `Can load ${ currentPage.subpages[ i ].name }`, async ( {
+					page,
+				} ) => {
+					await page.goto( currentPage.url );
+					await page
+						.locator(
+							`li.wp-menu-open > ul.wp-submenu > li a:has-text("${ currentPage.subpages[ i ].name }")`
+						)
+						.click();
+
+					await expect(
+						page
+							.getByRole( 'heading', {
+								name: currentPage.subpages[ i ].heading,
+							} )
+							.first()
+					).toBeVisible();
+
+					await expect(
+						page
+							.locator( currentPage.subpages[ i ].element )
+							.first()
+					).toBeVisible();
+
+					await expect(
+						page.locator( currentPage.subpages[ i ].element )
+					).toContainText( currentPage.subpages[ i ].text );
+				} );
 			}
-		} );
-
-		for ( let i = 0; i < currentPage.subpages.length; i++ ) {
-			test( `Can load ${ currentPage.subpages[ i ].name }`, async ( {
-				page,
-			} ) => {
-				await page
-					.locator(
-						`li.wp-menu-open > ul.wp-submenu > li:has-text("${ currentPage.subpages[ i ].name }")`,
-						{ waitForLoadState: 'networkidle' }
-					)
-					.click();
-
-				await expect(
-					page.locator( 'h1.components-text' )
-				).toContainText( currentPage.subpages[ i ].heading );
-
-				await expect(
-					page.locator( currentPage.subpages[ i ].element ).first()
-				).toBeVisible();
-
-				await expect(
-					page.locator( currentPage.subpages[ i ].element )
-				).toContainText( currentPage.subpages[ i ].text );
-			} );
 		}
-	} );
+	);
 }

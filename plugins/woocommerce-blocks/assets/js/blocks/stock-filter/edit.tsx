@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import { __, _x } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import BlockTitle from '@woocommerce/editor-components/block-title';
 import type { BlockEditProps } from '@wordpress/blocks';
@@ -41,7 +41,7 @@ const Edit = ( {
 	} = attributes;
 
 	const blockProps = useBlockProps( {
-		className: classnames( 'wc-block-stock-filter', className ),
+		className: clsx( 'wc-block-stock-filter', className ),
 	} );
 
 	const getInspectorControls = () => {
@@ -62,6 +62,7 @@ const Edit = ( {
 							'Allow selecting multiple options?',
 							'woocommerce'
 						) }
+						isBlock
 						value={ selectType || 'multiple' }
 						onChange={ ( value: string ) =>
 							setAttributes( {
@@ -72,15 +73,24 @@ const Edit = ( {
 					>
 						<ToggleGroupControlOption
 							value="multiple"
-							label={ __( 'Multiple', 'woocommerce' ) }
+							label={ _x(
+								'Multiple',
+								'Number of filters',
+								'woocommerce'
+							) }
 						/>
 						<ToggleGroupControlOption
 							value="single"
-							label={ __( 'Single', 'woocommerce' ) }
+							label={ _x(
+								'Single',
+								'Number of filters',
+								'woocommerce'
+							) }
 						/>
 					</ToggleGroupControl>
 					<ToggleGroupControl
 						label={ __( 'Display Style', 'woocommerce' ) }
+						isBlock
 						value={ displayStyle }
 						onChange={ ( value ) =>
 							setAttributes( {

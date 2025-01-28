@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { PlainText, useBlockProps } from '@wordpress/block-editor';
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 /**
  * Internal dependencies
@@ -23,12 +23,7 @@ export const Edit = ( {
 	const blockProps = useBlockProps();
 	return (
 		<div { ...blockProps }>
-			<span
-				className={ classnames(
-					className,
-					'wc-block-cart__totals-title'
-				) }
-			>
+			<h2 className={ clsx( className, 'wc-block-cart__totals-title' ) }>
 				<PlainText
 					className={ '' }
 					value={ content }
@@ -37,7 +32,7 @@ export const Edit = ( {
 					}
 					style={ { backgroundColor: 'transparent' } }
 				/>
-			</span>
+			</h2>
 		</div>
 	);
 };

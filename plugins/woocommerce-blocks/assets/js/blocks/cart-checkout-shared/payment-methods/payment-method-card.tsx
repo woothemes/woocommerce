@@ -5,7 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { useEditorContext } from '@woocommerce/base-context';
 import { CheckboxControl } from '@woocommerce/blocks-components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import {
+	checkoutStore as checkoutStoreDescriptor,
+	PAYMENT_STORE_KEY,
+} from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -33,7 +36,7 @@ const PaymentMethodCard = ( {
 	const { isEditor } = useEditorContext();
 	const { shouldSavePaymentMethod, customerId } = useSelect( ( select ) => {
 		const paymentMethodStore = select( PAYMENT_STORE_KEY );
-		const checkoutStore = select( CHECKOUT_STORE_KEY );
+		const checkoutStore = select( checkoutStoreDescriptor );
 		return {
 			shouldSavePaymentMethod:
 				paymentMethodStore.getShouldSavePaymentMethod(),

@@ -3,6 +3,7 @@ namespace Automattic\WooCommerce\StoreApi;
 
 use Automattic\WooCommerce\StoreApi\Utilities\RateLimits;
 use Automattic\WooCommerce\StoreApi\Utilities\JsonWebToken;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 /**
  * Authentication class.
@@ -16,6 +17,7 @@ class Authentication {
 			return;
 		}
 		add_filter( 'rest_authentication_errors', array( $this, 'check_authentication' ) );
+		add_filter( 'rest_authentication_errors', array( $this, 'opt_in_checkout_endpoint' ), 9, 1 );
 		add_action( 'set_logged_in_cookie', array( $this, 'set_logged_in_cookie' ) );
 		add_filter( 'rest_pre_serve_request', array( $this, 'send_cors_headers' ), 10, 3 );
 		add_filter( 'rest_allowed_cors_headers', array( $this, 'allowed_cors_headers' ) );
@@ -33,7 +35,6 @@ class Authentication {
 	public function allowed_cors_headers( $allowed_headers ) {
 		$allowed_headers[] = 'Cart-Token';
 		$allowed_headers[] = 'Nonce';
-		$allowed_headers[] = 'X-WC-Store-API-Nonce';
 		return $allowed_headers;
 	}
 
@@ -140,6 +141,34 @@ class Authentication {
 		$_COOKIE[ LOGGED_IN_COOKIE ] = $logged_in_cookie;
 	}
 
+	/**
+	 * Opt in to rate limiting for the checkout endpoint.
+	 *
+	 * @param \WP_Error|mixed $result Error from another authentication handler, null if we should handle it, or another value if not.
+	 * @return \WP_Error|null|bool
+	 */
+	public function opt_in_checkout_endpoint( $result ) {
+		if (
+			FeaturesUtil::feature_is_enabled( 'rate_limit_checkout' )
+			&& $this->is_request_to_store_api()
+			&& preg_match( '#/wc/store(?:/v\d+)?/checkout#', $GLOBALS['wp']->query_vars['rest_route'] )
+			&& isset( $_SERVER['REQUEST_METHOD'] )
+			&& 'POST' === $_SERVER['REQUEST_METHOD']
+		) {
+			add_filter(
+				'woocommerce_store_api_rate_limit_options',
+				function ( $options ) {
+					$options['enabled'] = true;
+					$options['limit']   = 3;
+					$options['seconds'] = 60;
+					return $options;
+				},
+				1,
+				1
+			);
+		}
+		return $result;
+	}
 	/**
 	 * Applies Rate Limiting to the request, and passes through any errors from other authentication methods used before this one.
 	 *

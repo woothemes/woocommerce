@@ -7,6 +7,7 @@ import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
 import { Cart } from '@woocommerce/type-defs/cart';
 import { createRoot } from '@wordpress/element';
 import NoticeBanner from '@woocommerce/base-components/notice-banner';
+import { decodeEntities } from '@wordpress/html-entities';
 
 interface Context {
 	isLoading: boolean;
@@ -104,22 +105,20 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 		},
 		get addToCartText(): string {
 			const context = getContext();
+			const inTheCartText = state.inTheCartText || '';
 			// We use the temporary number of items when there's no animation, or the
 			// second part of the animation hasn't started.
-			if (
+			const showTemporaryNumber =
 				context.animationStatus === AnimationStatus.IDLE ||
-				context.animationStatus === AnimationStatus.SLIDE_OUT
-			) {
-				return getButtonText(
-					context.addToCartText,
-					state.inTheCartText!,
-					context.temporaryNumberOfItems
-				);
-			}
+				context.animationStatus === AnimationStatus.SLIDE_OUT;
+			const numberOfItems = showTemporaryNumber
+				? context.temporaryNumberOfItems
+				: state.numberOfItemsInTheCart;
+
 			return getButtonText(
 				context.addToCartText,
-				state.inTheCartText!,
-				state.numberOfItemsInTheCart
+				inTheCartText,
+				numberOfItems
 			);
 		},
 		get displayViewCart(): boolean {
@@ -160,8 +159,10 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 					storeNoticeBlock ??
 					document.querySelector( storeNoticeClass );
 
+				const message = ( error as Error ).message;
+
 				if ( domNode ) {
-					injectNotice( domNode, ( error as Error ).message );
+					injectNotice( domNode, decodeEntities( message ) );
 				}
 
 				// We don't care about errors blocking execution, but will

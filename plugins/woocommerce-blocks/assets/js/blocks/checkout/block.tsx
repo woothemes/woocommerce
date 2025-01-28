@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { createInterpolateElement, useEffect } from '@wordpress/element';
 import {
 	useStoreCart,
@@ -16,10 +16,7 @@ import { StoreNoticesContainer } from '@woocommerce/blocks-components';
 import { SlotFillProvider } from '@woocommerce/blocks-checkout';
 import withScrollToTop from '@woocommerce/base-hocs/with-scroll-to-top';
 import { useDispatch, useSelect } from '@wordpress/data';
-import {
-	CHECKOUT_STORE_KEY,
-	VALIDATION_STORE_KEY,
-} from '@woocommerce/block-data';
+import { checkoutStore, validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -50,7 +47,7 @@ const Checkout = ( {
 	children: React.ReactChildren;
 } ): JSX.Element => {
 	const { hasOrder, customerId } = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			hasOrder: store.hasOrder(),
 			customerId: store.getCustomerId(),
@@ -58,13 +55,7 @@ const Checkout = ( {
 	} );
 	const { cartItems, cartIsLoading } = useStoreCart();
 
-	const {
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		showPhoneField,
-		requirePhoneField,
-	} = attributes;
+	const { showFormStepNumbers } = attributes;
 
 	if ( ! cartIsLoading && cartItems.length === 0 ) {
 		return <EmptyCart />;
@@ -87,17 +78,7 @@ const Checkout = ( {
 	}
 
 	return (
-		<CheckoutBlockContext.Provider
-			value={
-				{
-					showCompanyField,
-					requireCompanyField,
-					showApartmentField,
-					showPhoneField,
-					requirePhoneField,
-				} as Attributes
-			}
-		>
+		<CheckoutBlockContext.Provider value={ { showFormStepNumbers } }>
 			{ children }
 		</CheckoutBlockContext.Provider>
 	);
@@ -110,20 +91,21 @@ const ScrollOnError = ( {
 } ): null => {
 	const { hasError: checkoutHasError, isIdle: checkoutIsIdle } = useSelect(
 		( select ) => {
-			const store = select( CHECKOUT_STORE_KEY );
+			const store = select( checkoutStore );
 			return {
 				isIdle: store.isIdle(),
 				hasError: store.hasError(),
 			};
-		}
+		},
+		[]
 	);
 	const { hasValidationErrors } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
+		const store = select( validationStore );
 		return {
 			hasValidationErrors: store.hasValidationErrors(),
 		};
 	} );
-	const { showAllValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
+	const { showAllValidationErrors } = useDispatch( validationStore );
 
 	const hasErrorsToDisplay =
 		checkoutIsIdle && checkoutHasError && hasValidationErrors;
@@ -135,7 +117,8 @@ const ScrollOnError = ( {
 			// Scroll after a short timeout to allow a re-render. This will allow focusableSelector to match updated components.
 			scrollToTopTimeout = window.setTimeout( () => {
 				scrollToTop( {
-					focusableSelector: 'input:invalid, .has-error input',
+					focusableSelector:
+						'input:invalid, .has-error input, .has-error select',
 				} );
 			}, 50 );
 		}
@@ -186,7 +169,7 @@ const Block = ( {
 			<SlotFillProvider>
 				<CheckoutProvider>
 					<SidebarLayout
-						className={ classnames( 'wc-block-checkout', {
+						className={ clsx( 'wc-block-checkout', {
 							'has-dark-controls': attributes.hasDarkControls,
 						} ) }
 					>

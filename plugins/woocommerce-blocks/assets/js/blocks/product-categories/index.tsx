@@ -7,11 +7,11 @@ import { Icon, listView } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import './editor.scss';
 import metadata from './block.json';
-import './style.scss';
-import { Edit } from './edit';
+import Edit from './edit';
 import type { ProductCategoriesIndexProps } from './types';
+import './editor.scss';
+import './style.scss';
 
 registerBlockType( metadata, {
 	icon: {

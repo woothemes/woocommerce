@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import {
 	InnerBlocks,
 	useBlockProps,
@@ -14,16 +13,13 @@ import {
 	previewCart,
 	previewSavedPaymentMethods,
 } from '@woocommerce/resource-previews';
-import {
-	PanelBody,
-	ToggleControl,
-	CheckboxControl,
-} from '@wordpress/components';
 import { SlotFillProvider } from '@woocommerce/blocks-checkout';
 import type { TemplateArray } from '@wordpress/blocks';
 import { useEffect, useRef } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
-import { dispatch, select } from '@wordpress/data';
+import { dispatch, select as selectData, useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
+import { defaultFields as defaultFieldsSetting } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -36,7 +32,7 @@ import {
 	useBlockPropsWithLocking,
 } from '../cart-checkout-shared';
 import '../cart-checkout-shared/sidebar-notices';
-import { CheckoutBlockContext, CheckoutBlockControlsContext } from './context';
+import { CheckoutBlockContext } from './context';
 import type { Attributes } from './types';
 
 // This is adds a class to body to signal if the selected block is locked
@@ -58,18 +54,49 @@ export const Edit = ( {
 	setAttributes: ( attributes: Record< string, unknown > ) => undefined;
 } ): JSX.Element => {
 	const {
-		showCompanyField,
-		requireCompanyField,
-		showApartmentField,
-		showPhoneField,
-		requirePhoneField,
 		showOrderNotes,
 		showPolicyLinks,
 		showReturnToCart,
 		showRateAfterTaxName,
 		cartPageId,
 		isPreview = false,
+		showFormStepNumbers = false,
+		hasDarkControls = false,
 	} = attributes;
+
+	const defaultFields = useSelect( ( select ) => {
+		const settings = select(
+			coreStore as unknown as string
+		).getEditedEntityRecord( 'root', 'site' ) as Record< string, string >;
+
+		const fieldsWithDefaults = {
+			phone: 'optional',
+			company: 'hidden',
+			address_2: 'optional',
+		} as const;
+
+		return {
+			...defaultFieldsSetting,
+			...Object.fromEntries(
+				Object.entries( fieldsWithDefaults ).map(
+					( [ field, defaultValue ] ) => {
+						const value =
+							settings[
+								`woocommerce_checkout_${ field }_field`
+							] || defaultValue;
+						return [
+							field,
+							{
+								...defaultFieldsSetting[ field ],
+								required: value === 'required',
+								hidden: value === 'hidden',
+							},
+						];
+					}
+				)
+			),
+		};
+	} );
 
 	// This focuses on the block when a certain query param is found. This is used on the link from the task list.
 	const focus = useRef( getQueryArg( window.location.href, 'focus' ) );
@@ -77,7 +104,7 @@ export const Edit = ( {
 	useEffect( () => {
 		if (
 			focus.current === 'checkout' &&
-			! select( 'core/block-editor' ).hasSelectedBlock()
+			! selectData( 'core/block-editor' ).hasSelectedBlock()
 		) {
 			dispatch( 'core/block-editor' ).selectBlock( clientId );
 			dispatch( 'core/interface' ).enableComplementaryArea(
@@ -88,63 +115,10 @@ export const Edit = ( {
 	}, [ clientId ] );
 
 	const defaultTemplate = [
-		[ 'woocommerce/checkout-fields-block', {}, [] ],
 		[ 'woocommerce/checkout-totals-block', {}, [] ],
+		[ 'woocommerce/checkout-fields-block', {}, [] ],
 	] as TemplateArray;
 
-	const toggleAttribute = ( key: keyof Attributes ): void => {
-		const newAttributes = {} as Partial< Attributes >;
-		newAttributes[ key ] = ! ( attributes[ key ] as boolean );
-		setAttributes( newAttributes );
-	};
-
-	const addressFieldControls = (): JSX.Element => (
-		<InspectorControls>
-			<PanelBody title={ __( 'Address Fields', 'woocommerce' ) }>
-				<p className="wc-block-checkout__controls-text">
-					{ __(
-						'Show or hide fields in the checkout address forms.',
-						'woocommerce'
-					) }
-				</p>
-				<ToggleControl
-					label={ __( 'Company', 'woocommerce' ) }
-					checked={ showCompanyField }
-					onChange={ () => toggleAttribute( 'showCompanyField' ) }
-				/>
-				{ showCompanyField && (
-					<CheckboxControl
-						label={ __( 'Require company name?', 'woocommerce' ) }
-						checked={ requireCompanyField }
-						onChange={ () =>
-							toggleAttribute( 'requireCompanyField' )
-						}
-						className="components-base-control--nested"
-					/>
-				) }
-				<ToggleControl
-					label={ __( 'Apartment, suite, etc.', 'woocommerce' ) }
-					checked={ showApartmentField }
-					onChange={ () => toggleAttribute( 'showApartmentField' ) }
-				/>
-				<ToggleControl
-					label={ __( 'Phone', 'woocommerce' ) }
-					checked={ showPhoneField }
-					onChange={ () => toggleAttribute( 'showPhoneField' ) }
-				/>
-				{ showPhoneField && (
-					<CheckboxControl
-						label={ __( 'Require phone number?', 'woocommerce' ) }
-						checked={ requirePhoneField }
-						onChange={ () =>
-							toggleAttribute( 'requirePhoneField' )
-						}
-						className="components-base-control--nested"
-					/>
-				) }
-			</PanelBody>
-		</InspectorControls>
-	);
 	const blockProps = useBlockPropsWithLocking();
 	return (
 		<div { ...blockProps }>
@@ -155,40 +129,37 @@ export const Edit = ( {
 				/>
 			</InspectorControls>
 			<EditorProvider
-				isPreview={ isPreview }
-				previewData={ { previewCart, previewSavedPaymentMethods } }
+				isPreview={ !! isPreview }
+				previewData={ {
+					previewCart,
+					previewSavedPaymentMethods,
+					defaultFields,
+				} }
 			>
 				<SlotFillProvider>
 					<CheckoutProvider>
 						<SidebarLayout
-							className={ classnames( 'wc-block-checkout', {
-								'has-dark-controls': attributes.hasDarkControls,
+							className={ clsx( 'wc-block-checkout', {
+								'has-dark-controls': hasDarkControls,
 							} ) }
 						>
-							<CheckoutBlockControlsContext.Provider
-								value={ { addressFieldControls } }
+							<CheckoutBlockContext.Provider
+								value={ {
+									showOrderNotes,
+									showPolicyLinks,
+									showReturnToCart,
+									cartPageId,
+									showRateAfterTaxName,
+									showFormStepNumbers,
+									defaultFields,
+								} }
 							>
-								<CheckoutBlockContext.Provider
-									value={ {
-										showCompanyField,
-										requireCompanyField,
-										showApartmentField,
-										showPhoneField,
-										requirePhoneField,
-										showOrderNotes,
-										showPolicyLinks,
-										showReturnToCart,
-										cartPageId,
-										showRateAfterTaxName,
-									} }
-								>
-									<InnerBlocks
-										allowedBlocks={ ALLOWED_BLOCKS }
-										template={ defaultTemplate }
-										templateLock="insert"
-									/>
-								</CheckoutBlockContext.Provider>
-							</CheckoutBlockControlsContext.Provider>
+								<InnerBlocks
+									allowedBlocks={ ALLOWED_BLOCKS }
+									template={ defaultTemplate }
+									templateLock="insert"
+								/>
+							</CheckoutBlockContext.Provider>
 						</SidebarLayout>
 					</CheckoutProvider>
 				</SlotFillProvider>

@@ -1,0 +1,98 @@
+.woocommerce-incentive-modal {
+	max-width: 840px;
+
+	& > .components-modal__content {
+		padding: 0;
+		margin-top: 0;
+	}
+
+	&__media {
+		@media screen and ( max-width: 1024px ) {
+			width: 100%;
+		}
+
+		background-color: $studio-woocommerce-purple-0;
+	}
+
+	&__card {
+		box-shadow: none;
+	}
+
+	&__content {
+		display: flex;
+		align-items: center;
+
+		@media screen and ( max-width: 1024px ) {
+			flex-direction: column;
+		}
+	}
+
+	&__body {
+		flex: 1;
+
+		& > h2 {
+			font-weight: 400;
+			font-size: 24px;
+			line-height: 32px;
+
+			@media screen and ( max-width: 1024px ) {
+				font-size: 20px;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				font-size: 15px;
+				line-height: 20px;
+			}
+		}
+		& > p {
+			font-size: 16px;
+			line-height: 24px;
+
+			@media screen and ( max-width: 1024px ) {
+				font-size: 15px;
+			}
+
+			@media screen and ( max-width: 782px ) {
+				font-size: 13px;
+				line-height: 20px;
+			}
+		}
+
+		& > p.woocommerce-incentive-modal__terms {
+			font-size: 12px;
+			margin-bottom: 0;
+		}
+
+		& > .woocommerce-incentive-model__actions {
+			margin-top: 32px;
+
+			@media screen and ( max-width: 1024px ) {
+				text-align: right;
+			}
+		}
+	}
+
+	&__content img {
+		width: 280px;
+		padding: 76px 40px;
+
+		@media screen and ( max-width: 1024px ) {
+			max-height: 220px;
+			padding: 0;
+		}
+
+		@media screen and ( max-width: 782px ) {
+			max-height: 220px;
+			padding: 0;
+		}
+	}
+
+	@media screen and ( max-width: 1024px ) {
+		margin: auto;
+		max-width: 500px;
+	}
+
+	@media screen and ( max-width: 782px ) {
+		margin: auto $gap;
+	}
+}

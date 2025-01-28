@@ -1,12 +1,15 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
-const productName = 'Cart product test';
+const productName = `Cart product test ${ Date.now() }`;
 const productPrice = '13.99';
 const twoProductPrice = +productPrice * 2;
 const fourProductPrice = +productPrice * 4;
 
-test.describe( 'Cart page', () => {
+test.describe( 'Cart page', { tag: [ tags.PAYMENTS, tags.SERVICES ] }, () => {
 	let productId, product2Id, product3Id;
 
 	test.beforeAll( async ( { baseURL } ) => {
@@ -70,146 +73,151 @@ test.describe( 'Cart page', () => {
 		} );
 	} );
 
-	test( 'should display no item in the cart', async ( { page } ) => {
-		await page.goto( '/cart/' );
-		await expect(
-			page.getByText( 'Your cart is currently empty.' )
-		).toBeVisible();
-	} );
-
-	test( 'should add the product to the cart from the shop page', async ( {
-		page,
-	} ) => {
-		await page.goto( '/shop/?orderby=date' );
-		await page
-			.locator( `a[data-product_id='${ productId }'][href*=add-to-cart]` )
-			.click();
-		await page.waitForLoadState( 'networkidle' );
-
-		await page.goto( '/cart/' );
-		await expect( page.locator( 'td.product-name' ) ).toContainText(
-			productName
+	async function goToShopPageAndAddProductToCart( page, prodName ) {
+		await page.goto( 'shop/?orderby=date' );
+		const responsePromise = page.waitForResponse(
+			'**/wp-json/wc/store/v1/batch?**'
 		);
-	} );
+		await page
+			.getByLabel( `Add to cart: “${ prodName }”`, { exact: true } )
+			.click();
+		await responsePromise;
+	}
 
-	test( 'should increase item quantity when "Add to cart" of the same product is clicked', async ( {
-		page,
-	} ) => {
-		let qty = 2;
-		while ( qty-- ) {
-			// (load the shop in case redirection enabled)
-			await page.goto( '/shop/?orderby=date' );
-			await page
-				.locator(
-					`a[data-product_id='${ productId }'][href*=add-to-cart]`
-				)
-				.click();
-			await page.waitForLoadState( 'networkidle' );
+	test(
+		'should display no item in the cart',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await page.goto( 'cart/' );
+			await expect(
+				page.getByText( 'Your cart is currently empty.' )
+			).toBeVisible();
 		}
+	);
 
-		await page.goto( '/cart/' );
-		await expect( page.locator( 'input.qty' ) ).toHaveValue( '2' );
-	} );
+	test(
+		'should add the product to the cart from the shop page',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await goToShopPageAndAddProductToCart( page, productName );
 
-	test( 'should update quantity when updated via quantity input', async ( {
-		page,
-	} ) => {
-		await page.goto( '/shop/?orderby=date' );
-		await page
-			.locator( `a[data-product_id='${ productId }'][href*=add-to-cart]` )
-			.click();
-		await page.waitForLoadState( 'networkidle' );
+			await page.goto( 'cart/' );
+			await expect( page.locator( 'td.product-name' ) ).toContainText(
+				productName
+			);
+		}
+	);
 
-		await page.goto( '/cart/' );
-		await page.locator( 'input.qty' ).fill( '2' );
-		await page.locator( 'text=Update cart' ).click();
+	test(
+		'should increase item quantity when "Add to cart" of the same product is clicked',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			let qty = 2;
+			while ( qty-- ) {
+				await goToShopPageAndAddProductToCart( page, productName );
+			}
 
-		await expect( page.locator( '.order-total .amount' ) ).toContainText(
-			`$${ twoProductPrice }`
-		);
-	} );
+			await page.goto( 'cart/' );
+			await expect( page.locator( 'input.qty' ) ).toHaveValue( '2' );
+		}
+	);
 
-	test( 'should remove the item from the cart when remove is clicked', async ( {
-		page,
-	} ) => {
-		await page.goto( '/shop/?orderby=date' );
-		await page
-			.locator( `a[data-product_id='${ productId }'][href*=add-to-cart]` )
-			.click();
-		await page.waitForLoadState( 'networkidle' );
-		await page.goto( '/cart/' );
+	test(
+		'should update quantity when updated via quantity input',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await goToShopPageAndAddProductToCart( page, productName );
 
-		// make sure that the product is in the cart
-		await expect( page.locator( '.order-total .amount' ) ).toContainText(
-			`$${ productPrice }`
-		);
+			await page.goto( 'cart/' );
+			await page.locator( 'input.qty' ).fill( '2' );
+			await page.locator( 'text=Update cart' ).click();
 
-		await page.locator( 'a.remove' ).click();
+			await expect(
+				page.locator( '.order-total .amount' )
+			).toContainText( `$${ twoProductPrice }` );
+		}
+	);
 
-		await expect( page.locator( '.woocommerce-info' ) ).toContainText(
-			'Your cart is currently empty.'
-		);
-	} );
+	test(
+		'should remove the item from the cart when remove is clicked',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await goToShopPageAndAddProductToCart( page, productName );
+			await page.goto( 'cart/' );
 
-	test( 'should update subtotal in cart totals when adding product to the cart', async ( {
-		page,
-	} ) => {
-		await page.goto( '/shop/?orderby=date' );
-		await page
-			.locator( `a[data-product_id='${ productId }'][href*=add-to-cart]` )
-			.click();
-		await page.waitForLoadState( 'networkidle' );
+			// make sure that the product is in the cart
+			await expect(
+				page.locator( '.order-total .amount' )
+			).toContainText( `$${ productPrice }` );
 
-		await page.goto( '/cart/' );
-		await expect( page.locator( '.cart-subtotal .amount' ) ).toContainText(
-			`$${ productPrice }`
-		);
+			await page.locator( 'a.remove' ).click();
 
-		await page.locator( 'input.qty' ).fill( '2' );
-		await page.locator( 'text=Update cart' ).click();
+			await expect(
+				page.getByText( `“${ productName }” removed` )
+			).toBeVisible();
+			await expect(
+				page.getByText( 'Your cart is currently empty' )
+			).toBeVisible();
+		}
+	);
 
-		await expect( page.locator( '.order-total .amount' ) ).toContainText(
-			`$${ twoProductPrice }`
-		);
-	} );
+	test(
+		'should update subtotal in cart totals when adding product to the cart',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await goToShopPageAndAddProductToCart( page, productName );
 
-	test( 'should go to the checkout page when "Proceed to Checkout" is clicked', async ( {
-		page,
-	} ) => {
-		await page.goto( '/shop/?orderby=date' );
-		await page
-			.locator( `a[data-product_id='${ productId }'][href*=add-to-cart]` )
-			.click();
-		await page.waitForLoadState( 'networkidle' );
+			await page.goto( 'cart/' );
+			await expect(
+				page.locator( '.cart-subtotal .amount' )
+			).toContainText( `$${ productPrice }` );
 
-		await page.goto( '/cart/' );
+			await page.locator( 'input.qty' ).fill( '2' );
+			await page.locator( 'text=Update cart' ).click();
 
-		await page.locator( '.checkout-button' ).click();
+			await expect(
+				page.locator( '.order-total .amount' )
+			).toContainText( `$${ twoProductPrice }` );
+		}
+	);
 
-		await expect( page.locator( '#order_review' ) ).toBeVisible();
-	} );
+	test(
+		'should go to the checkout page when "Proceed to Checkout" is clicked',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await goToShopPageAndAddProductToCart( page, productName );
 
+			await page.goto( 'cart/' );
+
+			await page.locator( '.checkout-button' ).click();
+
+			await expect( page.locator( '#order_review' ) ).toBeVisible();
+		}
+	);
+
+	//todo audit follow-up: revisit this test and check parts of it make more sens in a cross-sell products test.
+	// It's not clear what this test does and the name is not very descriptive.
 	test( 'can manage cross-sell products and maximum item quantity', async ( {
 		page,
 	} ) => {
 		// add same product to cart twice time
 		for ( let i = 1; i < 3; i++ ) {
-			await page.goto( `/shop/?add-to-cart=${ productId }` );
-			await page.waitForLoadState( 'networkidle' );
+			await page.goto( `shop/?add-to-cart=${ productId }` );
 			await expect(
-				page.locator( '.woocommerce-message' )
-			).toContainText(
-				`“${ productName }” has been added to your cart.`
-			);
+				page.getByText(
+					`“${ productName }” has been added to your cart.`
+				)
+			).toBeVisible();
 		}
 
 		// add the same product the third time
-		await page.goto( `/shop/?add-to-cart=${ productId }` );
-		await page.waitForLoadState( 'networkidle' );
-		await expect( page.locator( '.woocommerce-error' ) ).toContainText(
-			'You cannot add that amount to the cart — we have 2 in stock and you already have 2 in your cart.'
-		);
-		await page.goto( '/cart/' );
+		await page.goto( `shop/?add-to-cart=${ productId }` );
+		await expect(
+			page.getByText(
+				'You cannot add that amount to the cart — we have 2 in stock and you already have 2 in your cart.'
+			)
+		).toBeVisible();
+		await page.goto( 'cart/' );
 
 		// attempt to increase quantity over quantity limit
 		await page.getByLabel( 'Product quantity' ).fill( '3' );
@@ -222,17 +230,22 @@ test.describe( 'Cart page', () => {
 		await expect( page.locator( '.cross-sells' ) ).toContainText(
 			'You may be interested in…'
 		);
+
 		await page
 			.getByLabel( `Add to cart: “${ productName } cross-sell 1”` )
 			.click();
+		await expect(
+			page.getByLabel( `Remove ${ productName } cross-sell 1 from cart` )
+		).toBeVisible();
 		await page
 			.getByLabel( `Add to cart: “${ productName } cross-sell 2”` )
 			.click();
-		await page.waitForLoadState( 'networkidle' );
+		await expect(
+			page.getByLabel( `Remove ${ productName } cross-sell 2 from cart` )
+		).toBeVisible();
 
 		// reload page and confirm added products
-		await page.reload();
-		await page.waitForLoadState( 'networkidle' );
+		await page.reload( { waitUntil: 'domcontentloaded' } );
 		await expect( page.locator( '.cross-sells' ) ).toBeHidden();
 		await expect( page.locator( '.order-total .amount' ) ).toContainText(
 			`$${ fourProductPrice }`
@@ -243,16 +256,14 @@ test.describe( 'Cart page', () => {
 			.getByLabel( `Remove ${ productName } cross-sell 1 from cart` )
 			.click();
 		await expect(
-			page.locator( '.woocommerce-message' )
-		).toContainText( `“${ productName } cross-sell 1” removed.` );
+			page.getByText( `“${ productName } cross-sell 1” removed.` )
+		).toBeVisible();
 		await page
 			.getByLabel( `Remove ${ productName } cross-sell 2 from cart` )
 			.click();
 		await expect(
-			page
-				.locator( '.woocommerce-message' )
-				.first()
-		).toContainText( `“${ productName } cross-sell 2” removed.` );
+			page.getByText( `“${ productName } cross-sell 2” removed.` )
+		).toBeVisible();
 
 		// check if you see now cross-sell products
 		await page.reload();

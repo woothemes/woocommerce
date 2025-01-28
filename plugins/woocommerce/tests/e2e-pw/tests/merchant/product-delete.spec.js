@@ -1,53 +1,41 @@
-const { test: baseTest, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
-baseTest.describe( 'Products > Delete Product', () => {
-	baseTest.use( { storageState: process.env.ADMINSTATE } );
+const test = baseTest.extend( {
+	storageState: ADMIN_STATE_PATH,
+	product: async ( { api }, use ) => {
+		let product = {
+			id: 0,
+			name: `Product ${ Date.now() }`,
+			type: 'simple',
+			regular_price: '12.99',
+		};
 
-	const test = baseTest.extend( {
-		api: async ( { baseURL }, use ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-				axiosConfig: {
-					// allow 404s, so we can check if the product was deleted without try/catch
-					validateStatus( status ) {
-						return (
-							( status >= 200 && status < 300 ) || status === 404
-						);
-					},
-				},
+		await api.post( 'products', product ).then( ( response ) => {
+			product = response.data;
+		} );
+
+		await use( product );
+
+		// permanently delete the product if it still exists
+		const r = await api.get( `products/${ product.id }` );
+		if ( r.status !== 404 ) {
+			await api.delete( `products/${ product.id }`, {
+				force: true,
 			} );
+		}
+	},
+	page: async ( { page, wcAdminApi }, use ) => {
+		// Disable the task list reminder bar, it can interfere with the quick actions
+		await wcAdminApi.post( 'options', {
+			woocommerce_task_list_reminder_bar_hidden: 'yes',
+		} );
 
-			await use( api );
-		},
+		await use( page );
+	},
+} );
 
-		product: async ( { api }, use ) => {
-			let product = {
-				id: 0,
-				name: `Product ${ Date.now() }`,
-				type: 'simple',
-				regular_price: '12.99',
-			};
-
-			await api.post( 'products', product ).then( ( response ) => {
-				product = response.data;
-			} );
-
-			await use( product );
-
-			// permanently delete the product if it still exists
-			const r = await api.get( `products/${ product.id }` );
-			if ( r.status !== 404 ) {
-				await api.delete( `products/${ product.id }`, {
-					force: true,
-				} );
-			}
-		},
-	} );
-
+test.describe( 'Products > Delete Product', () => {
 	test( 'can delete a product from edit view', async ( {
 		page,
 		product,
@@ -91,7 +79,9 @@ baseTest.describe( 'Products > Delete Product', () => {
 		product,
 	} ) => {
 		await test.step( 'Navigate to products list page', async () => {
-			await page.goto( `wp-admin/edit.php?post_type=product` );
+			await page.goto(
+				`wp-admin/edit.php?post_type=product&s=${ product.name }`
+			);
 		} );
 
 		await test.step( 'Move product to trash', async () => {

@@ -1,10 +1,12 @@
 .wc-block-checkout__sidebar {
 	.wc-block-components-product-name {
-		display: block;
 		color: inherit;
+		display: block;
 		flex-grow: 1;
-		// Required by IE11.
-		flex-basis: 0;
+		font-family: inherit;
+		font-weight: inherit;
+		line-height: inherit;
+		margin: 0;
 	}
 	.wc-block-components-totals-footer-item {
 		margin: 0;
@@ -18,5 +20,15 @@
 	.wc-block-checkout__sidebar {
 		margin-bottom: $gap-large;
 		order: 0;
+	}
+}
+
+.is-large {
+	.wc-block-checkout__sidebar {
+		align-self: flex-start;
+		top: $gap-large;
+		&.is-sticky {
+			position: sticky;
+		}
 	}
 }

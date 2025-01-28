@@ -24,6 +24,8 @@
 		"typeRoots": [ "./node_modules/@types" ],
 		"types": [ "jest", "jquery" ],
 		"paths": {
+			"@wordpress/notices": ["./node_modules/@wordpress/notices/build-types"],
+			"@wordpress/data": ["./node_modules/@wordpress/data/build-types"],
 			"@woocommerce/atomic-blocks": [ "assets/js/base/atomic/blocks" ],
 			"@woocommerce/atomic-blocks/*": [
 				"assets/js/base/atomic/blocks/*"
@@ -68,9 +70,6 @@
 			"@woocommerce/storybook-controls": [ "storybook/custom-controls" ],
 			"@woocommerce/utils": [ "assets/js/utils" ],
 			"@woocommerce/e2e-utils": [ "tests/e2e/utils" ],
-			"@woocommerce/e2e-types": [ "tests/e2e/types" ],
-			"@woocommerce/e2e-playwright-utils": [ "tests/e2e/playwright-utils" ],
-			"@woocommerce/e2e-mocks/*": [ "tests/e2e/mocks/*" ],
 			"@woocommerce/templates/*": [ "assets/js/templates/*" ]
 		}
 	}

@@ -1,5 +1,10 @@
 <?php
+declare( strict_types = 1 );
 
+namespace Automattic\WooCommerce\Tests\Internal\DataStores\Orders;
+
+use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Internal\BatchProcessing\BatchProcessingController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
@@ -7,11 +12,14 @@ use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
 use Automattic\WooCommerce\RestApi\UnitTests\HPOSToggleTrait;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use ReflectionClass;
+use WC_Data_Store;
+use WC_Order;
 
 /**
  * Tests for DataSynchronizer class.
  */
-class DataSynchronizerTests extends HposTestCase {
+class DataSynchronizerTests extends \HposTestCase {
 	use ArraySubsetAsserts;
 	use HPOSToggleTrait;
 
@@ -141,7 +149,7 @@ class DataSynchronizerTests extends HposTestCase {
 
 		$post_order = OrderHelper::create_order();
 		$this->assertInstanceOf(
-			WP_Post::class,
+			\WP_Post::class,
 			get_post( $post_order->get_id() ),
 			'The order was initially created as a post.'
 		);
@@ -192,10 +200,10 @@ class DataSynchronizerTests extends HposTestCase {
 		// In a separate operation, the status will be updated to an actual non-draft order status. This should also be
 		// observed by the DataSynchronizer and a further update made to the COT table.
 		$order = wc_get_order( $order_id );
-		$order->set_status( 'pending' );
+		$order->set_status( OrderStatus::PENDING );
 		$order->save();
 		$this->assertEquals(
-			'wc-pending',
+			OrderInternalStatus::PENDING,
 			$wpdb->get_var( "SELECT status FROM $orders_table WHERE id = $order_id" ), //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			'When the order status is updated, the change should be observed by the DataSynhronizer and a matching update will take place in the COT table.'
 		);
@@ -206,13 +214,24 @@ class DataSynchronizerTests extends HposTestCase {
 	 * change should propagate across to the other table.
 	 */
 	public function test_order_deletions_propagate_with_sync_enabled(): void {
-		// Sync enabled and COT authoritative.
+		// Sync enabled.
 		update_option( $this->sut::ORDERS_DATA_SYNC_ENABLED_OPTION, 'yes' );
-		update_option( CustomOrdersTableController::CUSTOM_ORDERS_TABLE_USAGE_ENABLED_OPTION, 'yes' );
 
+		// COT authoritative.
+		update_option( CustomOrdersTableController::CUSTOM_ORDERS_TABLE_USAGE_ENABLED_OPTION, 'yes' );
+		$order = OrderHelper::create_order();
+
+		// Deleting the backup post while COT is authoritative shouldn't delete the COT version.
+		wp_delete_post( $order->get_id(), true );
+		$this->assertNotFalse( wc_get_order( $order->get_id() ) );
+
+		// Deleting the backup post while posts is authoritative should delete everything.
+		update_option( CustomOrdersTableController::CUSTOM_ORDERS_TABLE_USAGE_ENABLED_OPTION, 'no' );
 		$order = OrderHelper::create_order();
 		wp_delete_post( $order->get_id(), true );
+		$this->assertFalse( wc_get_order( $order->get_id() ) );
 
+		update_option( CustomOrdersTableController::CUSTOM_ORDERS_TABLE_USAGE_ENABLED_OPTION, 'yes' );
 		$this->assertFalse(
 			wc_get_order( $order->get_id() ),
 			'After the order post record was deleted, the order was also deleted from COT.'
@@ -506,16 +525,16 @@ class DataSynchronizerTests extends HposTestCase {
 		OrderHelper::toggle_cot_feature_and_usage( true );
 
 		$order1 = new \WC_Order();
-		$order1->set_status( 'auto-draft' );
+		$order1->set_status( OrderStatus::AUTO_DRAFT );
 		$order1->set_date_created( strtotime( '-10 days' ) );
 		$order1->save();
 
 		$order2 = new \WC_Order();
-		$order2->set_status( 'auto-draft' );
+		$order2->set_status( OrderStatus::AUTO_DRAFT );
 		$order2->save();
 
 		$order3 = new \WC_Order();
-		$order3->set_status( 'processing' );
+		$order3->set_status( OrderStatus::PROCESSING );
 		$order3->save();
 
 		// Run WP's auto-draft delete.
@@ -551,7 +570,7 @@ class DataSynchronizerTests extends HposTestCase {
 
 		// Trashed orders should be deleted by the collection mechanism.
 		$order->get_data_store()->delete( $order );
-		$this->assertEquals( $order->get_status(), 'trash' );
+		$this->assertEquals( $order->get_status(), OrderStatus::TRASH );
 		$order->save();
 
 		// Run scheduled deletion.
@@ -653,7 +672,7 @@ class DataSynchronizerTests extends HposTestCase {
 		);
 		$sync_setting = array_values( $sync_setting )[0];
 		$this->assertEquals( $sync_setting['value'], 'no' );
-		$this->assertTrue( str_contains( $sync_setting['desc_tip'], "There's 1 order pending sync" ) );
+		$this->assertTrue( str_contains( $sync_setting['desc_tip'], $auth_table_change_allowed_with_sync_pending ? "There's 1 order pending sync" : "There's currently 1 order out of sync" ) );
 		$this->assertTrue(
 			str_contains(
 				$sync_setting['desc_tip'],

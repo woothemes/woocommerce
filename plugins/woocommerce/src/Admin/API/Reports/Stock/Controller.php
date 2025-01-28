@@ -11,6 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\Admin\API\Reports\GenericController;
 use Automattic\WooCommerce\Admin\API\Reports\ExportableInterface;
+use Automattic\WooCommerce\Enums\ProductType;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -276,9 +277,9 @@ class Controller extends GenericController implements ExportableInterface {
 	}
 
 	/**
-	 * Prepare a report object for serialization.
+	 * Prepare a report data item for serialization.
 	 *
-	 * @param  WC_Product      $product  Report data.
+	 * @param  WC_Product      $product Report data item as returned from Data Store.
 	 * @param  WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
@@ -320,7 +321,7 @@ class Controller extends GenericController implements ExportableInterface {
 	 * @return array
 	 */
 	protected function prepare_links( $product ) {
-		if ( $product->is_type( 'variation' ) ) {
+		if ( $product->is_type( ProductType::VARIATION ) ) {
 			$links = array(
 				'product' => array(
 					'href' => rest_url( sprintf( '/%s/products/%d/variations/%d', $this->namespace, $product->get_parent_id(), $product->get_id() ) ),
@@ -443,14 +444,16 @@ class Controller extends GenericController implements ExportableInterface {
 		);
 		$params['order']['default']   = 'asc';
 		$params['orderby']['default'] = 'stock_status';
-		$params['orderby']['enum']    = array(
-			'stock_status',
-			'stock_quantity',
-			'date',
-			'id',
-			'include',
-			'title',
-			'sku',
+		$params['orderby']['enum']    = $this->apply_custom_orderby_filters(
+			array(
+				'stock_status',
+				'stock_quantity',
+				'date',
+				'id',
+				'include',
+				'title',
+				'sku',
+			)
 		);
 		$params['parent']             = array(
 			'description'       => __( 'Limit result set to those of particular parent IDs.', 'woocommerce' ),

@@ -9,10 +9,10 @@ import {
 	useImperativeHandle,
 	useRef,
 } from '@wordpress/element';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { isObject } from '@woocommerce/types';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { usePrevious } from '@woocommerce/base-hooks';
 import { useInstanceId } from '@wordpress/compose';
 
@@ -26,6 +26,7 @@ import { getValidityMessageForInput } from '../../checkout/utils';
 import { ValidatedTextInputProps } from './types';
 
 export type ValidatedTextInputHandle = {
+	focus?: () => void;
 	revalidate: () => void;
 };
 
@@ -49,6 +50,8 @@ const ValidatedTextInput = forwardRef<
 			errorMessage: passedErrorMessage = '',
 			value = '',
 			customValidation = () => true,
+			customValidityMessage,
+			feedback = null,
 			customFormatter = ( newValue: string ) => newValue,
 			label,
 			validateOnMount = true,
@@ -79,7 +82,7 @@ const ValidatedTextInput = forwardRef<
 			setValidationErrors,
 			hideValidationError,
 			clearValidationError,
-		} = useDispatch( VALIDATION_STORE_KEY );
+		} = useDispatch( validationStore );
 
 		// Ref for validation callback.
 		const customValidationRef = useRef( customValidation );
@@ -91,7 +94,7 @@ const ValidatedTextInput = forwardRef<
 
 		const { validationError, validationErrorId } = useSelect(
 			( select ) => {
-				const store = select( VALIDATION_STORE_KEY );
+				const store = select( validationStore );
 				return {
 					validationError: store.getValidationError( errorIdString ),
 					validationErrorId:
@@ -122,14 +125,22 @@ const ValidatedTextInput = forwardRef<
 
 				setValidationErrors( {
 					[ errorIdString ]: {
-						message: label
-							? getValidityMessageForInput( label, inputObject )
-							: inputObject.validationMessage,
+						message: getValidityMessageForInput(
+							label,
+							inputObject,
+							customValidityMessage
+						),
 						hidden: errorsHidden,
 					},
 				} );
 			},
-			[ clearValidationError, errorIdString, setValidationErrors, label ]
+			[
+				clearValidationError,
+				errorIdString,
+				setValidationErrors,
+				label,
+				customValidityMessage,
+			]
 		);
 
 		// Allows parent to trigger revalidation.
@@ -137,6 +148,9 @@ const ValidatedTextInput = forwardRef<
 			forwardedRef,
 			function () {
 				return {
+					focus() {
+						inputRef.current?.focus();
+					},
 					revalidate() {
 						validateInput( ! value );
 					},
@@ -218,26 +232,32 @@ const ValidatedTextInput = forwardRef<
 		}
 
 		const hasError = validationError?.message && ! validationError?.hidden;
-		const describedBy =
-			showError && hasError && validationErrorId
-				? validationErrorId
-				: ariaDescribedBy;
 
 		return (
 			<TextInput
-				className={ classnames( className, {
+				className={ clsx( className, {
 					'has-error': hasError,
 				} ) }
 				aria-invalid={ hasError === true }
 				id={ textInputId }
+				aria-errormessage={
+					// we're using the internal `aria-errormessage` attribute, calculated from the data store.
+					// If a consumer wants to overwrite the attribute, they can pass a prop.
+					showError && hasError && validationErrorId
+						? validationErrorId
+						: undefined
+				}
 				type={ type }
 				feedback={
-					showError ? (
+					showError && hasError ? (
 						<ValidationInputError
 							errorMessage={ passedErrorMessage }
 							propertyName={ errorIdString }
+							elementId={ errorIdString }
 						/>
-					) : null
+					) : (
+						feedback
+					)
 				}
 				ref={ inputRef }
 				onChange={ ( newValue ) => {
@@ -255,7 +275,7 @@ const ValidatedTextInput = forwardRef<
 					}
 				} }
 				onBlur={ () => validateInput( false ) }
-				ariaDescribedBy={ describedBy }
+				ariaDescribedBy={ ariaDescribedBy }
 				value={ value }
 				title="" // This prevents the same error being shown on hover.
 				label={ label }

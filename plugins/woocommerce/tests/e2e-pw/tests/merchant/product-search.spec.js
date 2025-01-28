@@ -1,4 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 let productId;
@@ -8,7 +9,7 @@ const productName = `Unique thing that we sell ${ new Date()
 const productPrice = '9.99';
 
 test.describe( 'Products > Search and View a product', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeAll( async ( { baseURL } ) => {
 		const api = new wcApi( {
@@ -46,9 +47,9 @@ test.describe( 'Products > Search and View a product', () => {
 
 		await page.goto( 'wp-admin/edit.php?post_type=product' );
 
+		await expect( page.locator( '#post-search-input' ) ).toBeVisible();
 		await page.locator( '#post-search-input' ).fill( searchString );
 		await page.locator( '#search-submit' ).click();
-		await page.waitForLoadState( 'networkidle' );
 
 		await expect( page.locator( '.row-title' ) ).toContainText(
 			productName

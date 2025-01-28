@@ -1,6 +1,9 @@
 <?php
+declare( strict_types = 1 );
+
 namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\StoreApi\Utilities\Pagination;
 use Automattic\WooCommerce\StoreApi\Utilities\ProductQuery;
 
@@ -28,6 +31,15 @@ class Products extends AbstractRoute {
 	 * @return string
 	 */
 	public function get_path() {
+		return self::get_path_regex();
+	}
+
+	/**
+	 * Get the path of this rest route.
+	 *
+	 * @return string
+	 */
+	public static function get_path_regex() {
 		return '/products';
 	}
 
@@ -253,7 +265,7 @@ class Products extends AbstractRoute {
 		$params['type'] = array(
 			'description'       => __( 'Limit result set to products assigned a specific type.', 'woocommerce' ),
 			'type'              => 'string',
-			'enum'              => array_merge( array_keys( wc_get_product_types() ), [ 'variation' ] ),
+			'enum'              => array_merge( array_keys( wc_get_product_types() ), [ ProductType::VARIATION ] ),
 			'sanitize_callback' => 'sanitize_key',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
@@ -290,6 +302,10 @@ class Products extends AbstractRoute {
 
 		// If the $_REQUEST contains a taxonomy query, add it to the params and sanitize it.
 		foreach ( $_REQUEST as $param => $value ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( ! is_string( $param ) ) {
+				continue;
+			}
+
 			if ( str_starts_with( $param, '_unstable_tax_' ) && ! str_ends_with( $param, '_operator' ) ) {
 				$params[ $param ] = array(
 					'description'       => __( 'Limit result set to products assigned a specific category ID.', 'woocommerce' ),

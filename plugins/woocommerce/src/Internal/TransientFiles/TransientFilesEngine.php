@@ -7,7 +7,6 @@ use \Exception;
 use \InvalidArgumentException;
 use Automattic\WooCommerce\Internal\RegisterHooksInterface;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
-use Automattic\WooCommerce\Internal\Traits\AccessiblePrivateMethods;
 use Automattic\WooCommerce\Utilities\TimeUtil;
 
 /**
@@ -35,8 +34,6 @@ use Automattic\WooCommerce\Utilities\TimeUtil;
  */
 class TransientFilesEngine implements RegisterHooksInterface {
 
-	use AccessiblePrivateMethods;
-
 	private const CLEANUP_ACTION_NAME  = 'woocommerce_expired_transient_files_cleanup';
 	private const CLEANUP_ACTION_GROUP = 'wc_batch_processes';
 
@@ -45,18 +42,18 @@ class TransientFilesEngine implements RegisterHooksInterface {
 	 *
 	 * @var LegacyProxy
 	 */
-	private LegacyProxy $legacy_proxy;
+	private $legacy_proxy;
 
 	/**
 	 * Register hooks.
 	 */
 	public function register() {
-		self::add_action( self::CLEANUP_ACTION_NAME, array( $this, 'handle_expired_files_cleanup_action' ) );
-		self::add_filter( 'woocommerce_debug_tools', array( $this, 'add_debug_tools_entries' ), 999, 1 );
+		add_action( self::CLEANUP_ACTION_NAME, array( $this, 'handle_expired_files_cleanup_action' ) );
+		add_filter( 'woocommerce_debug_tools', array( $this, 'add_debug_tools_entries' ), 999, 1 );
 
-		self::add_action( 'init', array( $this, 'handle_init' ), 0 );
-		self::add_filter( 'query_vars', array( $this, 'handle_query_vars' ), 0 );
-		self::add_action( 'parse_request', array( $this, 'handle_parse_request' ), 0 );
+		add_action( 'init', array( $this, 'add_endpoint' ), 0 );
+		add_filter( 'query_vars', array( $this, 'handle_query_vars' ), 0 );
+		add_action( 'parse_request', array( $this, 'handle_parse_request' ), 0 );
 	}
 
 	/**
@@ -109,6 +106,14 @@ class TransientFilesEngine implements RegisterHooksInterface {
 				if ( ! $this->legacy_proxy->call_function( 'wp_mkdir_p', $transient_files_directory ) ) {
 					throw new Exception( "Can't create directory: $transient_files_directory" );
 				}
+
+				// Create infrastructure to prevent listing the contents of the transient files directory.
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+				\WP_Filesystem();
+				$wp_filesystem = $this->legacy_proxy->get_global( 'wp_filesystem' );
+				$wp_filesystem->put_contents( $transient_files_directory . '/.htaccess', 'deny from all' );
+				$wp_filesystem->put_contents( $transient_files_directory . '/index.html', '' );
+
 				$realpathed_transient_files_directory = $this->legacy_proxy->call_function( 'realpath', $transient_files_directory );
 			} else {
 				throw new Exception( "The base transient files directory doesn't exist: $transient_files_directory" );
@@ -153,7 +158,8 @@ class TransientFilesEngine implements RegisterHooksInterface {
 		}
 		$filepath = $transient_files_directory . '/' . $filename;
 
-		WP_Filesystem();
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		\WP_Filesystem();
 		$wp_filesystem = $this->legacy_proxy->get_global( 'wp_filesystem' );
 		if ( false === $wp_filesystem->put_contents( $filepath, $file_contents ) ) {
 			throw new Exception( "Can't create file: $filepath" );
@@ -175,6 +181,23 @@ class TransientFilesEngine implements RegisterHooksInterface {
 	 * @return string|null The full physical path of the file, or null if the files doesn't exist.
 	 */
 	public function get_transient_file_path( string $filename ): ?string {
+		$expiration_date = self::get_expiration_date( $filename );
+		if ( is_null( $expiration_date ) ) {
+			return null;
+		}
+
+		$file_path = $this->get_transient_files_directory() . '/' . $expiration_date . '/' . substr( $filename, 6 );
+
+		return is_file( $file_path ) ? $file_path : null;
+	}
+
+	/**
+	 * Get the expiration date of a transient file based on its file name. The actual existence of the file is NOT checked.
+	 *
+	 * @param string $filename The name of the transient file to get the expiration date for.
+	 * @return string|null Expiration date formatted as Y-m-d, null if the file name isn't encoding a proper date.
+	 */
+	public static function get_expiration_date( string $filename ) : ?string {
 		if ( strlen( $filename ) < 7 || ! ctype_xdigit( $filename ) ) {
 			return null;
 		}
@@ -185,13 +208,18 @@ class TransientFilesEngine implements RegisterHooksInterface {
 			hexdec( substr( $filename, 3, 1 ) ),
 			hexdec( substr( $filename, 4, 2 ) )
 		);
-		if ( ! TimeUtil::is_valid_date( $expiration_date, 'Y-m-d' ) ) {
-			return null;
-		}
 
-		$file_path = $this->get_transient_files_directory() . '/' . $expiration_date . '/' . substr( $filename, 6 );
+		return TimeUtil::is_valid_date( $expiration_date, 'Y-m-d' ) ? $expiration_date : null;
+	}
 
-		return is_file( $file_path ) ? $file_path : null;
+	/**
+	 * Get the public URL of a transient file. The file name is NOT checked for validity or actual existence.
+	 *
+	 * @param string $filename The name of the transient file to get the public URL for.
+	 * @return string The public URL of the file.
+	 */
+	public function get_public_url( string $filename ) {
+		return $this->legacy_proxy->call_function( 'get_site_url', null, '/wc/file/transient/' . $filename );
 	}
 
 	/**
@@ -316,8 +344,10 @@ class TransientFilesEngine implements RegisterHooksInterface {
 	 *
 	 * NOTE: If the default interval is changed to something different from DAY_IN_SECONDS, please adjust the
 	 * "every 24h" text in add_debug_tools_entries too.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_expired_files_cleanup_action(): void {
+	public function handle_expired_files_cleanup_action(): void {
 		$new_interval = null;
 
 		try {
@@ -349,8 +379,10 @@ class TransientFilesEngine implements RegisterHooksInterface {
 	 *
 	 * @param array $tools_array Original debug tools array.
 	 * @return array Updated debug tools array
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function add_debug_tools_entries( array $tools_array ): array {
+	public function add_debug_tools_entries( array $tools_array ): array {
 		$cleanup_is_scheduled = $this->expired_files_cleanup_is_scheduled();
 
 		$tools_array['schedule_expired_transient_files_cleanup'] = array(
@@ -393,8 +425,10 @@ class TransientFilesEngine implements RegisterHooksInterface {
 
 	/**
 	 * Handle the "init" action, add rewrite rules for the "wc/file" endpoint.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_init() {
+	public static function add_endpoint() {
 		add_rewrite_rule( '^wc/file/transient/?$', 'index.php?wc-transient-file-name=', 'top' );
 		add_rewrite_rule( '^wc/file/transient/(.+)$', 'index.php?wc-transient-file-name=$matches[1]', 'top' );
 		add_rewrite_endpoint( 'wc/file/transient', EP_ALL );
@@ -405,8 +439,10 @@ class TransientFilesEngine implements RegisterHooksInterface {
 	 *
 	 * @param array $vars The original query variables.
 	 * @return array The updated query variables.
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_query_vars( $vars ) {
+	public function handle_query_vars( $vars ) {
 		$vars[] = 'wc-transient-file-name';
 		return $vars;
 	}
@@ -421,8 +457,10 @@ class TransientFilesEngine implements RegisterHooksInterface {
 	 * if it exists, is public and has not expired; or will return a "Not found" status otherwise.
 	 *
 	 * The file will be served with a content type header of "text/html".
+	 *
+	 * @internal For exclusive usage of WooCommerce core, backwards compatibility not guaranteed.
 	 */
-	private function handle_parse_request() {
+	public function handle_parse_request() {
 		global $wp;
 
 		// phpcs:ignore WordPress.Security

@@ -632,7 +632,7 @@ class ReviewsListTable extends WP_List_Table {
 	/**
 	 * Gets the name of the default primary column.
 	 *
-	 * @return string Name of the primary colum.
+	 * @return string Name of the primary column.
 	 */
 	protected function get_primary_column_name() : string {
 		return 'comment';
@@ -957,12 +957,9 @@ class ReviewsListTable extends WP_List_Table {
 			echo $in_reply_to . '<br><br>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
-		printf(
-			'%1$s%2$s%3$s',
-			'<div class="comment-text">',
-			get_comment_text( $item->comment_ID ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			'</div>'
-		);
+		echo '<div class="comment-text">';
+		comment_text( $item->comment_ID );
+		echo '</div>';
 
 		if ( $this->current_user_can_edit_review ) {
 			?>

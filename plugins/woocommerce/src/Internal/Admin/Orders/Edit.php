@@ -10,6 +10,7 @@ use Automattic\WooCommerce\Internal\Admin\Orders\MetaBoxes\CustomMetaBox;
 use Automattic\WooCommerce\Internal\Admin\Orders\MetaBoxes\OrderAttribution;
 use Automattic\WooCommerce\Internal\Admin\Orders\MetaBoxes\TaxonomiesMetaBox;
 use Automattic\WooCommerce\Internal\Features\FeaturesController;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 use WC_Order;
 
 /**
@@ -159,6 +160,11 @@ class Edit {
 		 *
 		 * Fires after all built-in meta boxes have been added. Custom metaboxes may be enqueued here.
 		 *
+		 * Note that the documentation for this hook (and for the corresponding 'add_meta_boxes_<SCREEN_ID>' hook)
+		 * suggest that a post type will be supplied for the first parameter, and and an instance of WP_Post will be
+		 * supplied as the second parameter. We are not doing that here, however WordPress itself also deviates from
+		 * this in respect of comments and (though now less relevant) links.
+		 *
 		 * @since 3.8.0.
 		 */
 		do_action( 'add_meta_boxes', $this->screen_id, $this->order );
@@ -169,7 +175,7 @@ class Edit {
 		 *
 		 * @since 7.4.0
 		 *
-		 * @oaram WC_Order $order The order being edited.
+		 * @param WC_Order $order The order being edited.
 		 */
 		do_action( 'add_meta_boxes_' . $this->screen_id, $this->order );
 
@@ -250,6 +256,15 @@ class Edit {
 			'high'
 		);
 
+		// Add customer history meta box if analytics is enabled.
+		if ( 'yes' !== get_option( 'woocommerce_analytics_enabled' ) ) {
+			return;
+		}
+
+		if ( ! OrderUtil::is_order_edit_screen() ) {
+			return;
+		}
+
 		/**
 		 * Customer history meta box.
 		 *
@@ -260,7 +275,7 @@ class Edit {
 		add_meta_box(
 			'woocommerce-customer-history',
 			__( 'Customer history', 'woocommerce' ),
-			function( $post_or_order ) use ( $customer_history_meta_box ) {
+			function ( $post_or_order ) use ( $customer_history_meta_box ) {
 				$order = $post_or_order instanceof WC_Order ? $post_or_order : wc_get_order( $post_or_order );
 				if ( $order instanceof WC_Order ) {
 					$customer_history_meta_box->output( $order );
@@ -464,7 +479,12 @@ class Edit {
 		wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
 		?>
 		<input type="hidden" id="hiddenaction" name="action" value="<?php echo esc_attr( $form_action ); ?>"/>
-		<input type="hidden" id="original_order_status" name="original_order_status" value="<?php echo esc_attr( $this->order->get_status() ); ?>"/>
+
+		<?php
+		$order_status = $this->order->get_status( 'edit' );
+		?>
+		<input type="hidden" id="original_order_status" name="original_order_status" value="<?php echo esc_attr( $order_status ); ?>"/>
+		<input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo esc_attr( wc_is_order_status( 'wc-' . $order_status ) ? 'wc-' . $order_status : $order_status ); ?>"/>
 		<input type="hidden" id="referredby" name="referredby" value="<?php echo $referer ? esc_url( $referer ) : ''; ?>"/>
 		<input type="hidden" id="post_ID" name="post_ID" value="<?php echo esc_attr( $this->order->get_id() ); ?>"/>
 		<div id="poststuff">

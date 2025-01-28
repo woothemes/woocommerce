@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { __, sprintf } from '@wordpress/i18n';
+import type { RatingValues } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ const Rating = ( {
 	rating,
 	ratedProductsCount,
 }: RatingProps ): JSX.Element => {
-	const ratingClassName = classNames(
+	const ratingClassName = clsx(
 		'wc-block-components-product-rating',
 		className
 	);
@@ -58,7 +59,6 @@ const Rating = ( {
 	);
 };
 
-export type RatingValues = 0 | 1 | 2 | 3 | 4 | 5;
 interface RatingProps {
 	className?: string;
 	rating: RatingValues;

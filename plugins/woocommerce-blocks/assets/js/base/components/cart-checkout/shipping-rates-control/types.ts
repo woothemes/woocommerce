@@ -27,6 +27,9 @@ export interface PackagesProps {
 
 	// Function to render a shipping rate
 	renderOption: PackageRateRenderOption;
+
+	// The context that this component is rendered in (Cart/Checkout)
+	context?: 'woocommerce/cart' | 'woocommerce/checkout' | '';
 }
 
 export interface ShippingRatesControlProps {
@@ -46,7 +49,7 @@ export interface ShippingRatesControlProps {
 	isLoadingRates: boolean;
 
 	// Rendered when there are no packages
-	noResultsMessage: ReactElement;
+	noResultsMessage?: ReactElement;
 
 	// Function to render a shipping rate
 	renderOption?: PackageRateRenderOption | undefined;

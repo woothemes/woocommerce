@@ -1,63 +1,52 @@
-const { test, expect, request } = require( '@playwright/test' );
-const { admin } = require( '../../test-data/data' );
-const { goToPageEditor } = require( '../../utils/editor' );
+/**
+ * External dependencies
+ */
+import {
+	closeChoosePatternModal,
+	getCanvas,
+	goToPageEditor,
+	publishPage,
+} from '@woocommerce/e2e-utils-playwright';
 
-const pageTitle = `Page-${ new Date().getTime().toString() }`;
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
 
-test.describe( 'Can create a new page', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+const { test: baseTest, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 
-	test.afterAll( async ( { baseURL } ) => {
-		const base64auth = Buffer.from(
-			`${ admin.username }:${ admin.password }`
-		).toString( 'base64' );
-		const wpApi = await request.newContext( {
-			baseURL: `${ baseURL }/wp-json/wp/v2/`,
-			extraHTTPHeaders: {
-				Authorization: `Basic ${ base64auth }`,
-			},
-		} );
-
-		let response = await wpApi.get( `pages` );
-		const allPages = await response.json();
-
-		await allPages.forEach( async ( page ) => {
-			if ( page.title.rendered === pageTitle ) {
-				response = await wpApi.delete( `pages/${ page.id }`, {
-					data: {
-						force: true,
-					},
-				} );
-			}
-		} );
-	} );
-
-	test( 'can create new page', async ( { page } ) => {
-		await goToPageEditor( { page } );
-
-		await page
-			.getByRole( 'textbox', { name: 'Add Title' } )
-			.fill( pageTitle );
-
-		await page.getByRole( 'button', { name: 'Add default block' } ).click();
-
-		await page
-			.getByRole( 'document', {
-				name: 'Empty block; start writing or type forward slash to choose a block',
-			} )
-			.fill( 'Test Page' );
-
-		await page
-			.getByRole( 'button', { name: 'Publish', exact: true } )
-			.click();
-
-		await page
-			.getByRole( 'region', { name: 'Editor publish' } )
-			.getByRole( 'button', { name: 'Publish', exact: true } )
-			.click();
-
-		await expect(
-			page.getByText( `${ pageTitle } is now live.` )
-		).toBeVisible();
-	} );
+const test = baseTest.extend( {
+	storageState: ADMIN_STATE_PATH,
 } );
+
+test.describe(
+	'Can create a new page',
+	{ tag: [ tags.GUTENBERG, tags.WP_CORE ] },
+	() => {
+		// eslint-disable-next-line playwright/expect-expect
+		test( 'can create new page', async ( { page, testPage } ) => {
+			await goToPageEditor( { page } );
+			await closeChoosePatternModal( { page } );
+			await fillPageTitle( page, testPage.title );
+
+			const canvas = await getCanvas( page );
+
+			// TODO (Gutenberg 19.9): Remove this click() step.
+			// Current stable version of Gutenberg (19.7) doesn't show the "Empty block" element right away, you need to click on the "Add default block" element first before it appears.
+			// Upcoming Gutenberg nightly (version 19.9) no longer shows the "Add default block" element, but rather displays the "Empty block" right away.
+			// There's no need for this click() step anymore when GB 19.9 comes out.
+			await canvas
+				.getByLabel( /(Add default block|Empty block)/ )
+				.click();
+
+			await canvas
+				.getByRole( 'document', {
+					name: 'Empty block; start writing or type forward slash to choose a block',
+				} )
+				.fill( 'Test Page' );
+
+			await publishPage( page, testPage.title );
+		} );
+	}
+);

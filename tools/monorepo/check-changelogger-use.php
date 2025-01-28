@@ -134,7 +134,6 @@ foreach ( $composer_projects as $project_path ) {
 
 // Support centralizing the changelogs for multiple components and validating them together.
 $project_component_map = array(
-	'plugins/woocommerce-admin'  => 'plugins/woocommerce',
 	'plugins/woocommerce-blocks' => 'plugins/woocommerce',
 );
 
@@ -193,6 +192,11 @@ while ( ( $line = fgets( $pipes[1] ) ) ) {
 		}
 		continue;
 	}
+	// Ignore dot-files: those are development related, and it makes no sense to create a changelog entry for them.
+	if ( '.' === basename( $line )[0] ) {
+		debug( 'Ignoring changes dot-file %s.', $line );
+		continue;
+	}
 
 	debug( 'PR touches file %s, marking %s as touched.', $line, $project_match );
 	if ( ! isset( $touched_projects[ $project_match ] ) ) {
@@ -216,10 +220,10 @@ foreach ( $touched_projects as $slug => $files ) {
 		} elseif ( getenv( 'CI' ) ) {
 			printf( "---\n" ); // Bracket message containing newlines for better visibility in GH's logs.
 			printf(
-				"::error::Project %s is being changed, but no change file in %s is touched!\n\nUse `pnpm --filter=./%s changelog add` to add a change file.\n",
+				"::error::Project %s is being changed, but no change file in %s is touched!\n\nUse `pnpm --filter='%s' changelog add` to add a change file.\n",
 				$slug,
 				"$slug/{$changelogger_projects[ $slug ]['changes-dir']}/",
-				$slug
+				json_decode( file_get_contents( sprintf( './%s/package.json', $slug ) ), true )['name'] ?? ( './' . $slug )
 			);
 			printf( "---\n" );
 			$exit = 1;

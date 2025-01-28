@@ -14,11 +14,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import {
-	moveInnerBlocksToPosition,
-	getInnerBlocksLockAttributes,
-	getClassNameByNextPreviousButtonsPosition,
-} from './utils';
+import { moveInnerBlocksToPosition } from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
 import type { ProductGalleryAttributes } from './types';
 
@@ -36,10 +32,7 @@ const TEMPLATE: InnerBlockTemplate[] = [
 			},
 		},
 		[
-			[
-				'woocommerce/product-gallery-thumbnails',
-				getInnerBlocksLockAttributes( 'lock' ),
-			],
+			[ 'woocommerce/product-gallery-thumbnails' ],
 			[
 				'core/group',
 				{
@@ -55,12 +48,11 @@ const TEMPLATE: InnerBlockTemplate[] = [
 					metadata: {
 						name: 'Large Image and Navigation',
 					},
-					...getInnerBlocksLockAttributes( 'lock' ),
 				},
 				[
 					[
 						'woocommerce/product-gallery-large-image',
-						getInnerBlocksLockAttributes( 'lock' ),
+						{},
 						[
 							[
 								'woocommerce/product-sale-badge',
@@ -76,7 +68,6 @@ const TEMPLATE: InnerBlockTemplate[] = [
 											},
 										},
 									},
-									lock: { move: true },
 								},
 							],
 							[
@@ -86,15 +77,11 @@ const TEMPLATE: InnerBlockTemplate[] = [
 										type: 'flex',
 										verticalAlignment: 'bottom',
 									},
-									lock: { move: true, remove: true },
 								},
 							],
 						],
 					],
-					[
-						'woocommerce/product-gallery-pager',
-						{ lock: { move: true, remove: true } },
-					],
+					[ 'woocommerce/product-gallery-pager' ],
 				],
 			],
 		],
@@ -116,19 +103,15 @@ export const Edit = ( {
 	attributes,
 	setAttributes,
 }: BlockEditProps< ProductGalleryAttributes > ) => {
-	const blockProps = useBlockProps( {
-		className: getClassNameByNextPreviousButtonsPosition(
-			attributes.nextPreviousButtonsPosition
-		),
-	} );
+	const blockProps = useBlockProps();
 
-	const { currentTemplateId, templateType } = useSelect(
-		( select ) => ( {
-			currentTemplateId: select( 'core/edit-site' ).getEditedPostId(),
-			templateType: select( 'core/edit-site' ).getEditedPostType(),
-		} ),
-		[]
-	);
+	const { currentTemplateId, templateType } = useSelect( ( select ) => {
+		const store = select( 'core/edit-site' );
+		return {
+			currentTemplateId: store ? store.getEditedPostId() : '',
+			templateType: store ? store.getEditedPostType() : '',
+		};
+	}, [] );
 
 	useEffect( () => {
 		const mode = getMode( currentTemplateId, templateType );
@@ -156,12 +139,9 @@ export const Edit = ( {
 					setAttributes={ setAttributes }
 					context={ {
 						productGalleryClientId: clientId,
-						pagerDisplayMode: attributes.pagerDisplayMode,
 						thumbnailsPosition: attributes.thumbnailsPosition,
 						thumbnailsNumberOfThumbnails:
 							attributes.thumbnailsNumberOfThumbnails,
-						nextPreviousButtonsPosition:
-							attributes.nextPreviousButtonsPosition,
 					} }
 				/>
 			</InspectorControls>

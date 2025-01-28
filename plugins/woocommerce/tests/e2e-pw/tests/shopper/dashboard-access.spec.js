@@ -1,7 +1,11 @@
+/**
+ * Internal dependencies
+ */
 const { test, expect } = require( '@playwright/test' );
+const { CUSTOMER_STATE_PATH } = require( '../../playwright.config' );
 
 test.describe( 'Customer-role users are blocked from accessing the WP Dashboard.', () => {
-	test.use( { storageState: process.env.CUSTOMERSTATE } );
+	test.use( { storageState: CUSTOMER_STATE_PATH } );
 
 	const dashboardScreens = {
 		'WP Admin home': 'wp-admin',

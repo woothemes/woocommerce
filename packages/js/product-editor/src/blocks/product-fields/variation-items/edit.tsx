@@ -5,6 +5,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import {
 	EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME,
 	PartialProductVariation,
+	ProductVariation,
 	Product,
 	useUserPreferences,
 } from '@woocommerce/data';
@@ -22,21 +23,19 @@ import { useEntityId, useEntityProp } from '@wordpress/core-data';
  */
 import { VariationsTable } from '../../../components/variations-table';
 import { useValidation } from '../../../contexts/validation-context';
+import useProductEntityProp from '../../../hooks/use-product-entity-prop';
 import { VariationOptionsBlockAttributes } from './types';
 import { VariableProductTour } from './variable-product-tour';
 import { TRACKS_SOURCE } from '../../../constants';
 import { handlePrompt } from '../../../utils/handle-prompt';
 import { ProductEditorBlockEditProps } from '../../../types';
+import { EmptyState } from '../../../components/empty-state';
 
 export function Edit( {
 	attributes,
-	context,
-}: ProductEditorBlockEditProps< VariationOptionsBlockAttributes > & {
-	context: {
-		isInSelectedTab?: boolean;
-	};
-} ) {
-	const noticeDimissed = useRef( false );
+	context: { isInSelectedTab },
+}: ProductEditorBlockEditProps< VariationOptionsBlockAttributes > ) {
+	const noticeDismissed = useRef( false );
 	const { invalidateResolution } = useDispatch(
 		EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
 	);
@@ -46,6 +45,22 @@ export function Edit( {
 		'postType',
 		'product',
 		'status'
+	);
+	const [ productHasOptions ] = useEntityProp< string >(
+		'postType',
+		'product',
+		'has_options'
+	);
+	const [ productAttributes ] =
+		useProductEntityProp< Product[ 'attributes' ] >( 'attributes' );
+
+	const hasVariationOptions = useMemo(
+		function hasAttributesUsedForVariations() {
+			return productAttributes?.some(
+				( productAttribute ) => productAttribute.variation
+			);
+		},
+		[ productAttributes ]
 	);
 
 	const totalCountWithoutPriceRequestParams = useMemo(
@@ -65,13 +80,15 @@ export function Edit( {
 			);
 
 			return {
-				totalCountWithoutPrice:
-					getProductVariationsTotalCount< number >(
-						totalCountWithoutPriceRequestParams
-					),
+				totalCountWithoutPrice: productHasOptions
+					? // @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+					  getProductVariationsTotalCount(
+							totalCountWithoutPriceRequestParams
+					  )
+					: 0,
 			};
 		},
-		[ totalCountWithoutPriceRequestParams ]
+		[ productHasOptions, totalCountWithoutPriceRequestParams ]
 	);
 
 	const {
@@ -92,7 +109,7 @@ export function Edit( {
 			 */
 			if (
 				totalCountWithoutPrice > 0 &&
-				! noticeDimissed.current &&
+				! noticeDismissed.current &&
 				productStatus !== 'publish' &&
 				// New status.
 				newData?.status === 'publish'
@@ -105,10 +122,12 @@ export function Edit( {
 						},
 					} );
 				}
-				return __(
-					'Set variation prices before adding this product.',
-					'woocommerce'
-				);
+				return {
+					message: __(
+						'Set variation prices before adding this product.',
+						'woocommerce'
+					),
+				};
 			}
 		},
 		[ totalCountWithoutPrice ]
@@ -122,7 +141,7 @@ export function Edit( {
 		} );
 		const productVariationsListPromise = resolveSelect(
 			EXPERIMENTAL_PRODUCT_VARIATIONS_STORE_NAME
-		).getProductVariations< PartialProductVariation[] >( {
+		).getProductVariations( {
 			product_id: productId,
 			order: 'asc',
 			orderby: 'menu_order',
@@ -135,14 +154,16 @@ export function Edit( {
 				recordEvent( 'product_variations_set_prices_update', {
 					source: TRACKS_SOURCE,
 				} );
-				productVariationsListPromise.then( ( variations ) => {
-					handleUpdateAll(
-						variations.map( ( { id } ) => ( {
-							id,
-							regular_price: value,
-						} ) )
-					);
-				} );
+				productVariationsListPromise.then(
+					( variations: ProductVariation[] ) => {
+						handleUpdateAll(
+							variations.map( ( { id } ) => ( {
+								id,
+								regular_price: value,
+							} ) )
+						);
+					}
+				);
 			},
 		} );
 	}
@@ -162,13 +183,26 @@ export function Edit( {
 			  )
 			: '';
 
+	if ( ! hasVariationOptions ) {
+		return (
+			<EmptyState
+				names={ [
+					__( 'Variation', 'woocommerce' ),
+					__( 'Colors', 'woocommerce' ),
+					__( 'Sizes', 'woocommerce' ),
+				] }
+			/>
+		);
+	}
+
 	return (
 		<div { ...blockProps }>
 			<VariationsTable
+				isVisible={ isInSelectedTab }
 				ref={ variationTableRef as React.Ref< HTMLDivElement > }
 				noticeText={ noticeText }
 				onNoticeDismiss={ () => {
-					noticeDimissed.current = true;
+					noticeDismissed.current = true;
 					updateUserPreferences( {
 						variable_items_without_price_notice_dismissed: {
 							...( itemsWithoutPriceNoticeDismissed || {} ),
@@ -201,7 +235,7 @@ export function Edit( {
 					}
 				} }
 			/>
-			{ context.isInSelectedTab && <VariableProductTour /> }
+			{ isInSelectedTab && <VariableProductTour /> }
 		</div>
 	);
 }

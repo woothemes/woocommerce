@@ -39,7 +39,7 @@ type ActionArgs = {
 type TaskItemProps = {
 	title: string;
 	completed: boolean;
-	onClick: React.MouseEventHandler< HTMLElement >;
+	onClick?: React.MouseEventHandler< HTMLElement >;
 	onCollapse?: () => void;
 	onDelete?: () => void;
 	onDismiss?: () => void;
@@ -87,6 +87,7 @@ const OptionalTaskTooltip: React.FC< {
 const OptionalExpansionWrapper: React.FC< {
 	expandable: boolean;
 	expanded: boolean;
+	children: JSX.Element;
 } > = ( { children, expandable, expanded } ) => {
 	if ( ! expandable ) {
 		return expanded ? <>{ children }</> : null;

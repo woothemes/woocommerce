@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { BlockAttributes, BlockInstance } from '@wordpress/blocks';
+import { BlockAttributes } from '@wordpress/blocks';
 import { select, dispatch } from '@wordpress/data';
 import { findBlock } from '@woocommerce/utils';
 
@@ -9,8 +9,6 @@ import { findBlock } from '@woocommerce/utils';
  * Internal dependencies
  */
 import { ThumbnailsPosition } from './inner-blocks/product-gallery-thumbnails/constants';
-import { getNextPreviousImagesWithClassName } from './inner-blocks/product-gallery-large-image-next-previous/utils';
-import { NextPreviousButtonSettingValues } from './inner-blocks/product-gallery-large-image-next-previous/types';
 
 /**
  * Generates layout attributes based on the position of thumbnails.
@@ -31,25 +29,6 @@ export const getGroupLayoutAttributes = (
 		default:
 			// Row
 			return { type: 'flex', flexWrap: 'nowrap' };
-	}
-};
-
-/**
- * Returns inner block lock attributes based on provided action.
- *
- * @param {string} action - The action to take on the inner blocks ('lock' or 'unlock').
- * @return {{lock: {move?: boolean, remove?: boolean}}} - An object representing lock attributes for inner blocks.
- */
-export const getInnerBlocksLockAttributes = (
-	action: string
-): { lock: { move?: boolean; remove?: boolean } } => {
-	switch ( action ) {
-		case 'lock':
-			return { lock: { move: true, remove: true } };
-		case 'unlock':
-			return { lock: {} };
-		default:
-			return { lock: {} };
 	}
 };
 
@@ -79,28 +58,6 @@ export const updateBlockAttributes = (
 	}
 };
 
-const controlBlocksLockAttribute = ( {
-	blocks,
-	lockBlocks,
-}: {
-	blocks: BlockInstance[];
-	lockBlocks: boolean;
-} ) => {
-	for ( const block of blocks ) {
-		if ( lockBlocks ) {
-			updateBlockAttributes(
-				getInnerBlocksLockAttributes( 'lock' ),
-				block
-			);
-		} else {
-			updateBlockAttributes(
-				getInnerBlocksLockAttributes( 'unlock' ),
-				block
-			);
-		}
-	}
-};
-
 /**
  * Sets the layout of group block based on the thumbnails' position.
  *
@@ -113,7 +70,10 @@ const setGroupBlockLayoutByThumbnailsPosition = (
 ): void => {
 	const block = select( 'core/block-editor' ).getBlock( clientId );
 	block?.innerBlocks.forEach( ( innerBlock ) => {
-		if ( innerBlock.name === 'core/group' ) {
+		if (
+			innerBlock.name === 'core/group' &&
+			innerBlock.attributes.metadata.name === 'Gallery Area'
+		) {
 			updateBlockAttributes(
 				{
 					layout: getGroupLayoutAttributes( thumbnailsPosition ),
@@ -136,10 +96,10 @@ export const moveInnerBlocksToPosition = (
 ): void => {
 	const { getBlock, getBlockRootClientId, getBlockIndex } =
 		select( 'core/block-editor' );
-	const { moveBlockToPosition } = dispatch( 'core/block-editor' );
 	const productGalleryBlock = getBlock( clientId );
 
-	if ( productGalleryBlock ) {
+	if ( productGalleryBlock?.name === 'woocommerce/product-gallery' ) {
+		const { moveBlockToPosition } = dispatch( 'core/block-editor' );
 		const previousLayout = productGalleryBlock.innerBlocks.length
 			? productGalleryBlock.innerBlocks[ 0 ].attributes.layout
 			: null;
@@ -175,11 +135,6 @@ export const moveInnerBlocksToPosition = (
 			largeImageParentBlockIndex !== -1 &&
 			thumbnailsBlockIndex !== -1
 		) {
-			controlBlocksLockAttribute( {
-				blocks: [ thumbnailsBlock, largeImageParentBlock ],
-				lockBlocks: false,
-			} );
-
 			const { thumbnailsPosition } = attributes;
 			setGroupBlockLayoutByThumbnailsPosition(
 				thumbnailsPosition,
@@ -218,20 +173,6 @@ export const moveInnerBlocksToPosition = (
 					largeImageParentBlockIndex
 				);
 			}
-
-			controlBlocksLockAttribute( {
-				blocks: [ thumbnailsBlock, largeImageParentBlock ],
-				lockBlocks: true,
-			} );
 		}
 	}
-};
-
-export const getClassNameByNextPreviousButtonsPosition = (
-	nextPreviousButtonsPosition: NextPreviousButtonSettingValues
-) => {
-	return `wc-block-product-gallery--has-next-previous-buttons-${
-		getNextPreviousImagesWithClassName( nextPreviousButtonsPosition )
-			?.classname
-	}`;
 };

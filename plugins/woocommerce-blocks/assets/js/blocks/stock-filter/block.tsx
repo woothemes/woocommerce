@@ -33,7 +33,7 @@ import {
 	PREFIX_QUERY_ARG_FILTER_TYPE,
 	normalizeQueryParams,
 } from '@woocommerce/utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 /**
  * Internal dependencies
@@ -42,7 +42,7 @@ import { previewOptions } from './preview';
 import './style.scss';
 import { formatSlug, getActiveFilters, generateUniqueId } from './utils';
 import { Attributes, DisplayOption, Current } from './types';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
 
 export const QUERY_PARAM_KEY = PREFIX_QUERY_ARG_FILTER_TYPE + 'stock_status';
 
@@ -60,7 +60,7 @@ const StockStatusFilterBlock = ( {
 	attributes: Attributes;
 	isEditor?: boolean;
 } ) => {
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 
 	const filteringForPhpTemplate = getSettingWithCoercion(
 		'isRenderingPhpTemplate',
@@ -103,7 +103,7 @@ const StockStatusFilterBlock = ( {
 	const [ productStockStatusQuery, setProductStockStatusQuery ] =
 		useQueryStateByKey( 'stock_status', initialFilters );
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryStock: true,
 			queryState,
@@ -438,7 +438,7 @@ const StockStatusFilterBlock = ( {
 		<>
 			{ ! isEditor && blockAttributes.heading && filterHeading }
 			<div
-				className={ classnames(
+				className={ clsx(
 					'wc-block-stock-filter',
 					`style-${ blockAttributes.displayStyle }`,
 					{
@@ -450,7 +450,7 @@ const StockStatusFilterBlock = ( {
 					<>
 						<FormTokenField
 							key={ remountKey }
-							className={ classnames( {
+							className={ clsx( {
 								'single-selection': ! allowsMultipleOptions,
 								'is-loading': isLoading,
 							} ) }
@@ -528,6 +528,10 @@ const StockStatusFilterBlock = ( {
 							isLoading={ isLoading }
 							disabled={ isLoading || isDisabled }
 							onClick={ () => onSubmit( checked ) }
+							screenReaderLabel={ __(
+								'Apply stock filter',
+								'woocommerce'
+							) }
 						/>
 					) }
 				</div>

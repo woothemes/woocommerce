@@ -6,6 +6,8 @@
  * @package WooCommerce\Classes
  */
 
+use Automattic\WooCommerce\Enums\OrderInternalStatus;
+
 defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'WC_Privacy_Background_Process', false ) ) {
@@ -31,7 +33,7 @@ class WC_Privacy extends WC_Abstract_Privacy {
 		parent::__construct();
 
 		// Initialize data exporters and erasers.
-		add_action( 'plugins_loaded', array( $this, 'register_erasers_exporters' ) );
+		add_action( 'init', array( $this, 'register_erasers_exporters' ) );
 
 		// Cleanup orders daily - this is a callback on a daily cron event.
 		add_action( 'woocommerce_cleanup_personal_data', array( $this, 'queue_cleanup_personal_data' ) );
@@ -186,7 +188,7 @@ class WC_Privacy extends WC_Abstract_Privacy {
 				array(
 					'date_created' => '<' . strtotime( '-' . $option['number'] . ' ' . $option['unit'] ),
 					'limit'        => $limit, // Batches of 20.
-					'status'       => 'wc-pending',
+					'status'       => OrderInternalStatus::PENDING,
 					'type'         => 'shop_order',
 				)
 			)
@@ -213,7 +215,7 @@ class WC_Privacy extends WC_Abstract_Privacy {
 				array(
 					'date_created' => '<' . strtotime( '-' . $option['number'] . ' ' . $option['unit'] ),
 					'limit'        => $limit, // Batches of 20.
-					'status'       => 'wc-failed',
+					'status'       => OrderInternalStatus::FAILED,
 					'type'         => 'shop_order',
 				)
 			)
@@ -240,7 +242,7 @@ class WC_Privacy extends WC_Abstract_Privacy {
 				array(
 					'date_created' => '<' . strtotime( '-' . $option['number'] . ' ' . $option['unit'] ),
 					'limit'        => $limit, // Batches of 20.
-					'status'       => 'wc-cancelled',
+					'status'       => OrderInternalStatus::CANCELLED,
 					'type'         => 'shop_order',
 				)
 			)
@@ -288,7 +290,7 @@ class WC_Privacy extends WC_Abstract_Privacy {
 				array(
 					'date_created' => '<' . strtotime( '-' . $option['number'] . ' ' . $option['unit'] ),
 					'limit'        => $limit, // Batches of 20.
-					'status'       => 'wc-completed',
+					'status'       => OrderInternalStatus::COMPLETED,
 					'anonymized'   => false,
 					'type'         => 'shop_order',
 				)

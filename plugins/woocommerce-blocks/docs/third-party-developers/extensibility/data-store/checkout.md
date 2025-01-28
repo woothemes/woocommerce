@@ -1,5 +1,7 @@
 # Checkout Store (`wc/store/checkout`) <!-- omit in toc -->
 
+<!-- markdownlint-disable MD024 -->
+
 > 💡 What's the difference between the Cart Store and the Checkout Store?
 >
 > The **Cart Store (`wc/store/cart`)** manages and retrieves data about the shopping cart, including items, customer data, and interactions like coupons.
@@ -37,10 +39,16 @@ The Checkout Store provides a collection of selectors to access and manage data 
 
 ## Usage
 
-To utilize this store you will import the `CHECKOUT_STORE_KEY` in any module referencing it. Assuming `@woocommerce/block-data` is registered as an external pointing to `wc.wcBlocksData` you can import the key via:
+To utilize this store you will import the `checkoutStore` `StoreDescriptor` in any module referencing it. Assuming `@woocommerce/block-data` is registered as an external pointing to `wc.wcBlocksData` you can import the `StoreDescriptor` via:
 
 ```js
-const { CHECKOUT_STORE_KEY } = window.wc.wcBlocksData;
+const { checkoutStore } = '@woocommerce/block-data'
+```
+
+If it is not you can import it via:
+
+```js
+const { checkoutStore } = window.wc.wcBlocksData
 ```
 
 ## Selectors
@@ -56,7 +64,7 @@ Returns the WordPress user ID of the customer whose order is currently processed
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const customerId = store.getCustomerId();
 ```
 
@@ -71,7 +79,7 @@ Returns the WooCommerce order ID of the order that is currently being processed 
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const orderId = store.getOrderId();
 ```
 
@@ -86,7 +94,7 @@ Returns the order notes.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const orderNotes = store.getOrderNotes();
 ```
 
@@ -101,7 +109,7 @@ Returns the URL to redirect to after checkout is complete.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const redirectUrl = store.getRedirectUrl();
 ```
 
@@ -124,7 +132,7 @@ Returns the extra data registered by extensions.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const extensionData = store.getExtensionData();
 ```
 
@@ -139,7 +147,7 @@ Returns the current status of the checkout process.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const checkoutStatus = store.getCheckoutStatus();
 ```
 
@@ -154,7 +162,7 @@ Returns true if the shopper has opted to create an account with their order.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const shouldCreateAccount = store.getShouldCreateAccount();
 ```
 
@@ -169,8 +177,38 @@ Returns true if the shopper has opted to use their shipping address as their bil
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const useShippingAsBilling = store.getUseShippingAsBilling();
+```
+
+### getEditingBillingAddress
+
+Returns true if the billing address is being edited.
+
+#### _Returns_ <!-- omit in toc -->
+
+-   `boolean`: True if the billing address is being edited.
+
+#### _Example_ <!-- omit in toc -->
+
+```js
+const store = select( checkoutStore );
+const editingBillingAddress = store.getEditingBillingAddress();
+```
+
+### getEditingShippingAddress
+
+Returns true if the shipping address is being edited.
+
+#### _Returns_ <!-- omit in toc -->
+
+-   `boolean`: True if the shipping address is being edited.
+
+#### _Example_ <!-- omit in toc -->
+
+```js
+const store = select( checkoutStore );
+const editingShippingAddress = store.getEditingShippingAddress();
 ```
 
 ### hasError
@@ -184,7 +222,7 @@ Returns true if an error occurred, and false otherwise.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const hasError = store.hasError();
 ```
 
@@ -199,7 +237,7 @@ Returns true if a draft order had been created, and false otherwise.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const hasOrder = store.hasOrder();
 ```
 
@@ -214,7 +252,7 @@ When the checkout status is `IDLE` this flag is true. Checkout will be this stat
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const isIdle = store.isIdle();
 ```
 
@@ -229,7 +267,7 @@ When the checkout status is `BEFORE_PROCESSING` this flag is true. Checkout will
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const isBeforeProcessing = store.isBeforeProcessing();
 ```
 
@@ -244,13 +282,13 @@ When the checkout status is `PROCESSING` this flag is true. Checkout will be thi
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const isProcessing = store.isProcessing();
 ```
 
 ### isAfterProcessing
 
-When the checkout status is `AFTER_PROCESSING` this flag is true. Checkout will have this status after the the block receives the response from the server side processing request.
+When the checkout status is `AFTER_PROCESSING` this flag is true. Checkout will have this status after the block receives the response from the server side processing request.
 
 #### _Returns_ <!-- omit in toc -->
 
@@ -259,7 +297,7 @@ When the checkout status is `AFTER_PROCESSING` this flag is true. Checkout will 
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const isAfterProcessing = store.isAfterProcessing();
 ```
 
@@ -274,7 +312,7 @@ When the checkout status is `COMPLETE` this flag is true. Checkout will have thi
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const isComplete = store.isComplete();
 ```
 
@@ -289,10 +327,9 @@ This is true when the total is being re-calculated for the order. There are nume
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const isCalculating = store.isCalculating();
 ```
-
 
 ### prefersCollection
 
@@ -305,7 +342,7 @@ Returns true if the customer prefers to collect their order, and false otherwise
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( CHECKOUT_STORE_KEY );
+const store = select( checkoutStore );
 const prefersCollection = store.prefersCollection();
 ```
 
@@ -322,16 +359,46 @@ Sets the `prefersCollection` flag to true or false.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = dispatch( CHECKOUT_STORE_KEY );
+const store = dispatch( checkoutStore );
 store.setPrefersCollection( true );
+```
+
+### setEditingBillingAddress
+
+Set the billing address to editing state or collapsed state. Note that if the address has invalid fields, it will not be set to collapsed state.
+
+#### _Parameters_ <!-- omit in toc -->
+
+-   _isEditing_ `boolean`: True to set the billing address to editing state, false to set it to collapsed state.
+
+#### _Example_ <!-- omit in toc -->
+
+```js
+const store = dispatch( checkoutStore );
+store.setEditingBillingAddress( true );
+```
+
+### setEditingShippingAddress
+
+Set the shipping address to editing state or collapsed state. Note that if the address has invalid fields, it will not be set to collapsed state.
+
+#### _Parameters_ <!-- omit in toc -->
+
+-   _isEditing_ `boolean`: True to set the shipping address to editing state, false to set it to collapsed state.
+
+#### _Example_ <!-- omit in toc -->
+
+```js
+const store = dispatch( checkoutStore );
+store.setEditingShippingAddress( true );
 ```
 
 <!-- FEEDBACK -->
 
 ---
 
-[We're hiring!](https://woo.com/careers/) Come work with us!
+[We're hiring!](https://woocommerce.com/careers/) Come work with us!
 
-🐞 Found a mistake, or have a suggestion? [Leave feedback about this document here.](https://github.com/woocommerce/woocommerce-blocks/issues/new?assignees=&labels=type%3A+documentation&template=--doc-feedback.md&title=Feedback%20on%20./docs/third-party-developers/extensibility/data-store/checkout.md)
+🐞 Found a mistake, or have a suggestion? [Leave feedback about this document here.](https://github.com/woocommerce/woocommerce/issues/new?assignees=&labels=type%3A+documentation&template=suggestion-for-documentation-improvement-correction.md&title=Feedback%20on%20./docs/third-party-developers/extensibility/data-store/checkout.md)
 
 <!-- /FEEDBACK -->

@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Icon, warning } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { Button, Placeholder, Spinner } from '@wordpress/components';
 
 /**
@@ -13,6 +13,10 @@ import ErrorMessage from './error-message';
 import './editor.scss';
 
 export interface ErrorObject {
+	/**
+	 * Error code for more specific identification of the error.
+	 */
+	code?: string;
 	/**
 	 * Human-readable error message to display.
 	 */
@@ -52,7 +56,7 @@ const ErrorPlaceholder = ( {
 	<Placeholder
 		icon={ <Icon icon={ warning } /> }
 		label={ __( 'Sorry, an error occurred', 'woocommerce' ) }
-		className={ classNames( 'wc-block-api-error', className ) }
+		className={ clsx( 'wc-block-api-error', className ) }
 	>
 		<ErrorMessage error={ error } />
 		{ onRetry && (

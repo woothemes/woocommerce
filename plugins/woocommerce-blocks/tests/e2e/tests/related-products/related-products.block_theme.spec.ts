@@ -1,13 +1,9 @@
 /**
  * External dependencies
  */
-import { BlockData } from '@woocommerce/e2e-types';
-import { test, expect } from '@woocommerce/e2e-playwright-utils';
+import { test, expect, BlockData } from '@woocommerce/e2e-utils';
 
-/**
- * Internal dependencies
- */
-
+// Block is soft-depreacted meaning that it's hidden from the inserter.
 const blockData: BlockData = {
 	name: 'Related Products',
 	slug: 'woocommerce/related-products',
@@ -20,48 +16,55 @@ const blockData: BlockData = {
 
 test.describe( `${ blockData.name } Block`, () => {
 	test( "can't be added in the Post Editor", async ( { admin, editor } ) => {
-		await admin.createNewPost( { legacyCanvas: true } );
-
-		editor.insertBlock( { name: blockData.slug } ).catch( ( e ) => {
-			expect( e.message ).toContain( 'is not registered' );
-		} );
+		await admin.createNewPost();
+		await expect(
+			editor.insertBlock( { name: blockData.slug } )
+		).rejects.toThrow(
+			new RegExp( `Block type '${ blockData.slug }' is not registered.` )
+		);
 	} );
 
-	test( "can't be added in the Post Editor - Product Catalog Template", async ( {
+	test( "can't be added in the Product Catalog Template", async ( {
 		admin,
 		editor,
-		editorUtils,
 	} ) => {
 		await admin.visitSiteEditor( {
 			postId: `woocommerce/woocommerce//archive-product`,
 			postType: 'wp_template',
+			canvas: 'edit',
 		} );
-		await editorUtils.enterEditMode();
 
-		await editor.insertBlock( { name: blockData.slug } );
+		await editor.setContent( '' );
 
-		editor.insertBlock( { name: blockData.slug } ).catch( ( e ) => {
-			expect( e.message ).toContain( 'is not registered' );
-		} );
+		try {
+			await editor.insertBlock( { name: blockData.slug } );
+		} catch ( _error ) {
+			// noop
+		}
+
+		await expect(
+			await editor.getBlockByName( blockData.slug )
+		).toBeHidden();
 	} );
 
-	test( 'can be added in the Post Editor - Single Product Template', async ( {
+	test( "can't be added in the Single Product Template", async ( {
 		admin,
 		editor,
-		editorUtils,
 	} ) => {
 		await admin.visitSiteEditor( {
 			postId: `woocommerce/woocommerce//single-product`,
 			postType: 'wp_template',
+			canvas: 'edit',
 		} );
-		await editorUtils.enterEditMode();
-
 		await editor.setContent( '' );
 
-		await editor.insertBlock( { name: blockData.slug } );
+		// Inserting Related Products by name
+		// (but it's a Product Collection variation).
+		await editor.insertBlockUsingGlobalInserter( blockData.name );
 
+		// Verifying by slug - it's expected it's NOT woocommerce/related-products.
 		await expect(
-			await editorUtils.getBlockByName( blockData.slug )
-		).toBeVisible();
+			await editor.getBlockByName( blockData.slug )
+		).toBeHidden();
 	} );
 } );

@@ -2,27 +2,30 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState, useEffect } from '@wordpress/element';
 import { CheckboxControl } from '@woocommerce/blocks-components';
 import { useCheckoutSubmit } from '@woocommerce/base-context/hooks';
 import { withInstanceId } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
  */
 import { termsConsentDefaultText, termsCheckboxDefaultText } from './constants';
+import { CheckoutOrderSummarySlot } from '../checkout-order-summary-block/slotfills';
 
 const FrontendBlock = ( {
 	text,
 	checkbox,
 	instanceId,
 	className,
+	showSeparator,
 }: {
 	text: string;
 	checkbox: boolean;
+	showSeparator: string | boolean;
 	instanceId: string;
 	className?: string;
 } ): JSX.Element => {
@@ -32,10 +35,10 @@ const FrontendBlock = ( {
 
 	const validationErrorId = 'terms-and-conditions-' + instanceId;
 	const { setValidationErrors, clearValidationError } =
-		useDispatch( VALIDATION_STORE_KEY );
+		useDispatch( validationStore );
 
 	const error = useSelect( ( select ) => {
-		return select( VALIDATION_STORE_KEY ).getValidationError(
+		return select( validationStore ).getValidationError(
 			validationErrorId
 		);
 	} );
@@ -71,39 +74,49 @@ const FrontendBlock = ( {
 	] );
 
 	return (
-		<div
-			className={ classnames(
-				'wc-block-checkout__terms',
-				{
-					'wc-block-checkout__terms--disabled': isDisabled,
-				},
-				className
-			) }
-		>
-			{ checkbox ? (
-				<>
-					<CheckboxControl
-						id="terms-and-conditions"
-						checked={ checked }
-						onChange={ () => setChecked( ( value ) => ! value ) }
-						hasError={ hasError }
-						disabled={ isDisabled }
-					>
-						<span
-							dangerouslySetInnerHTML={ {
-								__html: text || termsCheckboxDefaultText,
-							} }
-						/>
-					</CheckboxControl>
-				</>
-			) : (
-				<span
-					dangerouslySetInnerHTML={ {
-						__html: text || termsConsentDefaultText,
-					} }
-				/>
-			) }
-		</div>
+		<>
+			<CheckoutOrderSummarySlot />
+			<div
+				className={ clsx(
+					'wc-block-checkout__terms',
+					{
+						'wc-block-checkout__terms--disabled': isDisabled,
+						'wc-block-checkout__terms--with-separator':
+							showSeparator !== 'false' &&
+							showSeparator !== false,
+					},
+					className
+				) }
+			>
+				{ checkbox ? (
+					<>
+						<CheckboxControl
+							id="terms-and-conditions"
+							checked={ checked }
+							onChange={ () =>
+								setChecked( ( value ) => ! value )
+							}
+							hasError={ hasError }
+							disabled={ isDisabled }
+						>
+							<span
+								className="wc-block-components-checkbox__label"
+								dangerouslySetInnerHTML={ {
+									__html: text || termsCheckboxDefaultText,
+								} }
+							/>
+						</CheckboxControl>
+					</>
+				) : (
+					<span
+						className="wc-block-components-checkbox__label"
+						dangerouslySetInnerHTML={ {
+							__html: text || termsConsentDefaultText,
+						} }
+					/>
+				) }
+			</div>
+		</>
 	);
 };
 

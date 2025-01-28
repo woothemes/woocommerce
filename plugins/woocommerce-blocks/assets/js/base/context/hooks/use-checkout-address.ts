@@ -3,20 +3,21 @@
  */
 import {
 	defaultFields,
-	AddressFields,
+	FormFields,
 	ShippingAddress,
 	BillingAddress,
 	getSetting,
 } from '@woocommerce/settings';
 import { useCallback } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
  */
 import { useCustomerData } from './use-customer-data';
 import { useShippingData } from './shipping/use-shipping-data';
+import { useEditorContext } from '../providers/editor-context';
 
 interface CheckoutAddress {
 	shippingAddress: ShippingAddress;
@@ -25,8 +26,12 @@ interface CheckoutAddress {
 	setBillingAddress: ( data: Partial< BillingAddress > ) => void;
 	setEmail: ( value: string ) => void;
 	useShippingAsBilling: boolean;
+	editingBillingAddress: boolean;
+	editingShippingAddress: boolean;
 	setUseShippingAsBilling: ( useShippingAsBilling: boolean ) => void;
-	defaultFields: AddressFields;
+	setEditingBillingAddress: ( isEditing: boolean ) => void;
+	setEditingShippingAddress: ( isEditing: boolean ) => void;
+	defaultFields: FormFields;
 	showShippingFields: boolean;
 	showBillingFields: boolean;
 	forcedBillingAddress: boolean;
@@ -39,16 +44,26 @@ interface CheckoutAddress {
  * Custom hook for exposing address related functionality for the checkout address form.
  */
 export const useCheckoutAddress = (): CheckoutAddress => {
+	const { isEditor, getPreviewData } = useEditorContext();
 	const { needsShipping } = useShippingData();
-	const { useShippingAsBilling, prefersCollection } = useSelect(
-		( select ) => ( {
-			useShippingAsBilling:
-				select( CHECKOUT_STORE_KEY ).getUseShippingAsBilling(),
-			prefersCollection: select( CHECKOUT_STORE_KEY ).prefersCollection(),
-		} )
-	);
-	const { __internalSetUseShippingAsBilling } =
-		useDispatch( CHECKOUT_STORE_KEY );
+	const {
+		useShippingAsBilling,
+		prefersCollection,
+		editingBillingAddress,
+		editingShippingAddress,
+	} = useSelect( ( select ) => ( {
+		useShippingAsBilling: select( checkoutStore ).getUseShippingAsBilling(),
+		prefersCollection: select( checkoutStore ).prefersCollection(),
+		editingBillingAddress:
+			select( checkoutStore ).getEditingBillingAddress(),
+		editingShippingAddress:
+			select( checkoutStore ).getEditingShippingAddress(),
+	} ) );
+	const {
+		__internalSetUseShippingAsBilling,
+		setEditingBillingAddress,
+		setEditingShippingAddress,
+	} = useDispatch( checkoutStore );
 	const {
 		billingAddress,
 		setBillingAddress,
@@ -74,9 +89,15 @@ export const useCheckoutAddress = (): CheckoutAddress => {
 		setShippingAddress,
 		setBillingAddress,
 		setEmail,
-		defaultFields,
+		defaultFields: isEditor
+			? ( getPreviewData( 'defaultFields', defaultFields ) as FormFields )
+			: defaultFields,
 		useShippingAsBilling,
 		setUseShippingAsBilling: __internalSetUseShippingAsBilling,
+		editingBillingAddress,
+		editingShippingAddress,
+		setEditingBillingAddress,
+		setEditingShippingAddress,
 		needsShipping,
 		showShippingFields:
 			! forcedBillingAddress && needsShipping && ! prefersCollection,

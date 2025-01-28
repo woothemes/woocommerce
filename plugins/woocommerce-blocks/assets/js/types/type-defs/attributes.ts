@@ -13,11 +13,16 @@ export interface AttributeObject {
 	id: number;
 	label: string;
 	name: string;
-	order: 'menu_order' | 'name' | 'name_num' | 'id';
+	orderby: 'menu_order' | 'name' | 'name_num' | 'id';
 	parent: number;
 	taxonomy: string;
 	type: string;
 }
+
+export type AttributeObjectForDisplay = Omit<
+	AttributeObject,
+	'has_archives' | 'count' | 'parent' | 'type'
+>;
 
 export interface AttributeQuery {
 	attribute: string;

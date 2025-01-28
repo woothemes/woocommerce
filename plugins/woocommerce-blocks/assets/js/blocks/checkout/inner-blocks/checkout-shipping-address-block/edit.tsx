@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useBlockProps } from '@wordpress/block-editor';
 import { useCheckoutAddress } from '@woocommerce/base-context/hooks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
@@ -14,11 +14,8 @@ import {
 	AdditionalFields,
 	AdditionalFieldsContent,
 } from '../../form-step';
-import {
-	useCheckoutBlockContext,
-	useCheckoutBlockControlsContext,
-} from '../../context';
 import Block from './block';
+import { AddressFieldControls } from '../../address-field-controls';
 
 export const Edit = ( {
 	attributes,
@@ -32,15 +29,6 @@ export const Edit = ( {
 	};
 	setAttributes: ( attributes: Record< string, unknown > ) => void;
 } ): JSX.Element | null => {
-	const {
-		showCompanyField,
-		showApartmentField,
-		requireCompanyField,
-		showPhoneField,
-		requirePhoneField,
-	} = useCheckoutBlockContext();
-	const { addressFieldControls: Controls } =
-		useCheckoutBlockControlsContext();
 	const { showShippingFields } = useCheckoutAddress();
 
 	if ( ! showShippingFields ) {
@@ -48,24 +36,20 @@ export const Edit = ( {
 	}
 
 	return (
-		<FormStepBlock
-			setAttributes={ setAttributes }
-			attributes={ attributes }
-			className={ classnames(
-				'wc-block-checkout__shipping-fields',
-				attributes?.className
-			) }
-		>
-			<Controls />
-			<Block
-				showCompanyField={ showCompanyField }
-				showApartmentField={ showApartmentField }
-				requireCompanyField={ requireCompanyField }
-				showPhoneField={ showPhoneField }
-				requirePhoneField={ requirePhoneField }
-			/>
-			<AdditionalFields block={ innerBlockAreas.SHIPPING_ADDRESS } />
-		</FormStepBlock>
+		<>
+			<AddressFieldControls />
+			<FormStepBlock
+				setAttributes={ setAttributes }
+				attributes={ attributes }
+				className={ clsx(
+					'wc-block-checkout__shipping-fields',
+					attributes?.className
+				) }
+			>
+				<Block />
+				<AdditionalFields block={ innerBlockAreas.SHIPPING_ADDRESS } />
+			</FormStepBlock>
+		</>
 	);
 };
 

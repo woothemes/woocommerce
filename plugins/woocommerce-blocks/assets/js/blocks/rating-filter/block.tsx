@@ -4,9 +4,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { speak } from '@wordpress/a11y';
 import { Icon, chevronDown } from '@wordpress/icons';
-import Rating, {
-	RatingValues,
-} from '@woocommerce/base-components/product-rating';
+import Rating from '@woocommerce/base-components/product-rating';
 import { usePrevious, useShallowEqual } from '@woocommerce/base-hooks';
 import {
 	useQueryStateByKey,
@@ -23,7 +21,7 @@ import FilterResetButton from '@woocommerce/base-components/filter-reset-button'
 import FormTokenField from '@woocommerce/base-components/form-token-field';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { changeUrl, normalizeQueryParams } from '@woocommerce/utils';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import type { ReactElement } from 'react';
 
 /**
@@ -33,7 +31,8 @@ import { previewOptions } from './preview';
 import './style.scss';
 import { Attributes } from './types';
 import { formatSlug, getActiveFilters, generateUniqueId } from './utils';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
+import type { RatingValues } from '../product-collection/types';
 
 export const QUERY_PARAM_KEY = 'rating_filter';
 
@@ -64,7 +63,7 @@ const RatingFilterBlock = ( {
 	isEditor: boolean;
 	noRatingsNotice?: ReactElement | null;
 } ) => {
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 
 	const filteringForPhpTemplate = getSettingWithCoercion(
 		'isRenderingPhpTemplate',
@@ -76,7 +75,7 @@ const RatingFilterBlock = ( {
 
 	const [ queryState ] = useQueryStateByContext();
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryRating: true,
 			queryState,
@@ -322,7 +321,7 @@ const RatingFilterBlock = ( {
 		<>
 			{ displayNoProductRatingsNotice && noRatingsNotice }
 			<div
-				className={ classnames(
+				className={ clsx(
 					'wc-block-rating-filter',
 					`style-${ blockAttributes.displayStyle }`,
 					{
@@ -334,7 +333,7 @@ const RatingFilterBlock = ( {
 					<>
 						<FormTokenField
 							key={ remountKey }
-							className={ classnames( {
+							className={ clsx( {
 								'single-selection': ! multiple,
 								'is-loading': isLoading,
 							} ) }
@@ -486,6 +485,10 @@ const RatingFilterBlock = ( {
 							isLoading={ isLoading }
 							disabled={ isLoading || isDisabled }
 							onClick={ () => onSubmit( checked ) }
+							screenReaderLabel={ __(
+								'Apply rating filter',
+								'woocommerce'
+							) }
 						/>
 					) }
 				</div>

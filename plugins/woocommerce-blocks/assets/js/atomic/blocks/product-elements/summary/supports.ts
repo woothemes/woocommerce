@@ -1,16 +1,25 @@
-/**
- * External dependencies
- */
-import { isFeaturePluginBuild } from '@woocommerce/block-settings';
-
 export const supports = {
-	...( isFeaturePluginBuild() && {
-		color: {
-			background: false,
-		},
-		typography: {
+	color: {
+		text: true,
+		background: true,
+		link: true,
+	},
+	spacing: {
+		margin: true,
+		padding: true,
+	},
+	typography: {
+		fontSize: true,
+		lineHeight: true,
+		__experimentalFontFamily: true,
+		__experimentalFontWeight: true,
+		__experimentalFontStyle: true,
+		__experimentalTextTransform: true,
+		__experimentalTextDecoration: true,
+		__experimentalLetterSpacing: true,
+		__experimentalDefaultControls: {
 			fontSize: true,
 		},
-		__experimentalSelector: '.wc-block-components-product-summary',
-	} ),
+	},
+	__experimentalSelector: '.wc-block-components-product-summary',
 };

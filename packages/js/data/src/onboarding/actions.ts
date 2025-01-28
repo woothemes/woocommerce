@@ -2,13 +2,15 @@
  * External dependencies
  */
 import { apiFetch } from '@wordpress/data-controls';
-import { controls } from '@wordpress/data';
+import { controls, dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import TYPES from './action-types';
 import { WC_ADMIN_NAMESPACE } from '../constants';
+import { STORE_NAME } from './constants';
+
 import { DeprecatedTasks } from './deprecated-tasks';
 import { STORE_NAME as OPTIONS_STORE_NAME } from '../options/constants';
 import {
@@ -19,6 +21,8 @@ import {
 	OnboardingProductTypes,
 	InstallAndActivatePluginsAsyncResponse,
 	GetJetpackAuthUrlResponse,
+	CoreProfilerStep,
+	CoreProfilerCompletedSteps,
 } from './types';
 import { Plugin, PluginNames } from '../plugins/types';
 
@@ -283,6 +287,15 @@ export function getProductTypesError( error: unknown ) {
 	};
 }
 
+export function setProfileProgress(
+	profileProgress: Partial< CoreProfilerCompletedSteps >
+) {
+	return {
+		type: TYPES.SET_PROFILE_PROGRESS,
+		profileProgress,
+	};
+}
+
 export function* keepCompletedTaskList( taskListId: string ) {
 	const updateOptionsParams = {
 		woocommerce_task_list_keep_completed: 'yes',
@@ -324,6 +337,49 @@ export function* updateProfileItems( items: ProfileItems ) {
 		yield setError( 'updateProfileItems', error );
 		yield setIsRequesting( 'updateProfileItems', false );
 		throw error;
+	} finally {
+		yield dispatch( OPTIONS_STORE_NAME ).invalidateResolution(
+			'getOption',
+			[ 'woocommerce_onboarding_profile' ]
+		);
+		yield dispatch( STORE_NAME ).invalidateResolution( 'getProfileItems' );
+	}
+}
+
+export function* updateCoreProfilerStep( step: CoreProfilerStep ) {
+	yield setIsRequesting( 'updateCoreProfilerStep', true );
+	yield setError( 'updateCoreProfilerStep', null );
+
+	try {
+		const results: {
+			results: CoreProfilerStep;
+			status: string;
+		} = yield apiFetch( {
+			path: `${ WC_ADMIN_NAMESPACE }/onboarding/profile/progress/core-profiler/complete`,
+			method: 'POST',
+			data: { step },
+		} );
+
+		if ( results && results.status === 'success' ) {
+			yield setIsRequesting( 'updateCoreProfilerStep', false );
+			return results;
+		}
+
+		throw new Error();
+	} catch ( error ) {
+		yield setError( 'updateCoreProfilerStep', error );
+		yield setIsRequesting( 'updateCoreProfilerStep', false );
+		throw error;
+	} finally {
+		yield dispatch( STORE_NAME ).invalidateResolution(
+			'getProfileProgress'
+		);
+		yield dispatch( STORE_NAME ).invalidateResolution(
+			'getCoreProfilerCompletedSteps'
+		);
+		yield dispatch( STORE_NAME ).invalidateResolution(
+			'getMostRecentCoreProfilerStep'
+		);
 	}
 }
 
@@ -502,6 +558,41 @@ export function setJetpackAuthUrl(
 	};
 }
 
+export function coreProfilerCompletedError( error: unknown ) {
+	return {
+		type: TYPES.CORE_PROFILER_COMPLETED_ERROR,
+		error,
+	};
+}
+
+export function coreProfilerCompletedRequest() {
+	return {
+		type: TYPES.CORE_PROFILER_COMPLETED_REQUEST,
+	};
+}
+
+export function coreProfilerCompletedSuccess() {
+	return {
+		type: TYPES.CORE_PROFILER_COMPLETED_SUCCESS,
+	};
+}
+
+export function* coreProfilerCompleted() {
+	yield coreProfilerCompletedRequest();
+
+	try {
+		yield apiFetch( {
+			path: `${ WC_ADMIN_NAMESPACE }/launch-your-store/initialize-coming-soon`,
+			method: 'POST',
+		} );
+	} catch ( error ) {
+		yield coreProfilerCompletedError( error );
+		throw error;
+	} finally {
+		yield coreProfilerCompletedSuccess();
+	}
+}
+
 export type Action = ReturnType<
 	| typeof getFreeExtensionsError
 	| typeof getFreeExtensionsSuccess
@@ -539,4 +630,8 @@ export type Action = ReturnType<
 	| typeof getProductTypesError
 	| typeof getProductTypesSuccess
 	| typeof setJetpackAuthUrl
+	| typeof coreProfilerCompletedRequest
+	| typeof coreProfilerCompletedSuccess
+	| typeof coreProfilerCompletedError
+	| typeof setProfileProgress
 >;

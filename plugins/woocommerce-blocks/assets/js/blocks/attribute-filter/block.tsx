@@ -24,6 +24,7 @@ import {
 	isBoolean,
 	isString,
 	objectHasProp,
+	isObject,
 } from '@woocommerce/types';
 import { Icon, chevronDown } from '@wordpress/icons';
 import {
@@ -33,7 +34,7 @@ import {
 } from '@woocommerce/utils';
 import FormTokenField from '@woocommerce/base-components/form-token-field';
 import FilterTitlePlaceholder from '@woocommerce/base-components/filter-placeholder';
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 /**
  * Internal dependencies
@@ -53,7 +54,7 @@ import {
 } from './utils';
 import { BlockAttributes, DisplayOption, GetNotice } from './types';
 import CheckboxFilter from './checkbox-filter';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
 
 /**
  * Component displaying an attribute filter.
@@ -130,16 +131,22 @@ const AttributeFilterBlock = ( {
 			resourceName: 'products/attributes/terms',
 			resourceValues: [ attributeObject?.id || 0 ],
 			shouldSelect: blockAttributes.attributeId > 0,
-			query: { orderby: 'menu_order' },
+			query: { orderby: attributeObject?.orderby || 'menu_order' },
 		} );
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const backendQueryState = getSettingWithCoercion(
+		'queryState',
+		{},
+		isObject
+	);
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryAttribute: {
 				taxonomy: attributeObject?.taxonomy || '',
 				queryType: blockAttributes.queryType,
 			},
 			queryState: {
+				...backendQueryState,
 				...queryState,
 			},
 			isEditor,
@@ -461,7 +468,7 @@ const AttributeFilterBlock = ( {
 		filteringForPhpTemplate,
 	] );
 
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 
 	if ( ! hasFilterableProducts ) {
 		setWrapperVisibility( false );
@@ -533,7 +540,7 @@ const AttributeFilterBlock = ( {
 		<>
 			{ ! isEditor && blockAttributes.heading && filterHeading }
 			<div
-				className={ classnames(
+				className={ clsx(
 					'wc-block-attribute-filter',
 					`style-${ blockAttributes.displayStyle }`
 				) }
@@ -542,7 +549,8 @@ const AttributeFilterBlock = ( {
 					<>
 						<FormTokenField
 							key={ remountKey }
-							className={ classnames( {
+							label={ attributeObject.label }
+							className={ clsx( {
 								'single-selection': ! multiple,
 								'is-loading': isLoading,
 							} ) }
@@ -663,6 +671,11 @@ const AttributeFilterBlock = ( {
 						isLoading={ isLoading }
 						disabled={ getIsApplyButtonDisabled() }
 						onClick={ () => onSubmit( checked ) }
+						screenReaderLabel={ sprintf(
+							/* translators: %s is the attribute label */
+							__( 'Apply attribute filter: %s', 'woocommerce' ),
+							attributeObject.label
+						) }
 					/>
 				) }
 			</div>

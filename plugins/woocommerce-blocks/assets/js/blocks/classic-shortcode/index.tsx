@@ -164,7 +164,7 @@ const ConvertTemplate = ( { blockifyConfig, clientId, attributes } ) => {
 			</Button>
 			<Button
 				variant="secondary"
-				href="https://woo.com/document/cart-checkout-blocks-status/"
+				href="https://woocommerce.com/document/woocommerce-store-editing/customizing-cart-and-checkout/"
 				target="_blank"
 				tabIndex={ 0 }
 			>
@@ -202,7 +202,7 @@ const Edit = ( { clientId, attributes }: BlockEditProps< Attributes > ) => {
 			a: (
 				// Suppress the warning as this <a> will be interpolated into the string with content.
 				// eslint-disable-next-line jsx-a11y/anchor-has-content
-				<ExternalLink href="https://woo.com/document/cart-checkout-blocks-status/" />
+				<ExternalLink href="https://woocommerce.com/document/woocommerce-store-editing/customizing-cart-and-checkout/" />
 			),
 		}
 	);
@@ -219,17 +219,13 @@ const Edit = ( { clientId, attributes }: BlockEditProps< Attributes > ) => {
 				</div>
 				<div className="wp-block-woocommerce-classic-shortcode__placeholder-copy">
 					<div className="wp-block-woocommerce-classic-shortcode__placeholder-copy__icon-container">
-						<span className="woo-icon">
+						<span className="woo-icon-wrapper">
 							<Icon icon={ woo } />{ ' ' }
 							{ __( 'WooCommerce', 'woocommerce' ) }
 						</span>
 						<span>{ placeholderTitle }</span>
 					</div>
-					<p
-						dangerouslySetInnerHTML={ {
-							__html: placeholderDescription,
-						} }
-					/>
+					<p>{ placeholderDescription }</p>
 					<p>{ learnMoreContent }</p>
 					{ canConvert && blockifyConfig && (
 						<ConvertTemplate
@@ -288,6 +284,7 @@ const settings = {
 			isDefault: true,
 		},
 	],
+	apiVersion: 3,
 };
 
 registerBlockType( metadata, settings );

@@ -19,6 +19,8 @@ const wcDepMap = {
 	'@woocommerce/blocks-checkout': [ 'wc', 'blocksCheckout' ],
 	'@woocommerce/blocks-components': [ 'wc', 'blocksComponents' ],
 	'@woocommerce/interactivity': [ 'wc', '__experimentalInteractivity' ],
+	'@woocommerce/types': [ 'wc', 'wcTypes' ],
+	'@woocommerce/customer-effort-score': [ 'wc', 'customerEffortScore' ],
 };
 
 const wcHandleMap = {
@@ -32,6 +34,8 @@ const wcHandleMap = {
 	'@woocommerce/blocks-checkout': 'wc-blocks-checkout',
 	'@woocommerce/blocks-components': 'wc-blocks-components',
 	'@woocommerce/interactivity': 'wc-interactivity',
+	'@woocommerce/types': 'wc-types',
+	'@woocommerce/customer-effort-score': 'wc-customer-effort-score',
 };
 
 const getAlias = ( options = {} ) => {
@@ -97,6 +101,8 @@ const getAlias = ( options = {} ) => {
 			__dirname,
 			`../assets/js/templates/`
 		),
+		'react/jsx-dev-runtime': require.resolve( 'react/jsx-dev-runtime' ),
+		'react/jsx-runtime': require.resolve( 'react/jsx-runtime' ),
 	};
 };
 

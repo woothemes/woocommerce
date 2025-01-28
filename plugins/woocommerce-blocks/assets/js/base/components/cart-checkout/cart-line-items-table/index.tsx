@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
 import { CartResponseItem } from '@woocommerce/types';
 import { createRef, useEffect, useRef } from '@wordpress/element';
@@ -72,10 +72,13 @@ const CartLineItemsTable = ( {
 
 	return (
 		<table
-			className={ classnames( 'wc-block-cart-items', className ) }
+			className={ clsx( 'wc-block-cart-items', className ) }
 			ref={ tableRef }
 			tabIndex={ -1 }
 		>
+			<caption className="screen-reader-text">
+				<h2>{ __( 'Products in cart', 'woocommerce' ) }</h2>
+			</caption>
 			<thead>
 				<tr className="wc-block-cart-items__header">
 					<th className="wc-block-cart-items__header-image">

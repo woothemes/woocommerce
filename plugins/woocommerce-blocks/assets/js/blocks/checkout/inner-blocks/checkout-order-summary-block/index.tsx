@@ -10,6 +10,8 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import { Edit, Save } from './edit';
 import attributes from './attributes';
+import deprecated from './deprecated';
+import './style.scss';
 
 registerBlockType( 'woocommerce/checkout-order-summary-block', {
 	icon: {
@@ -23,4 +25,5 @@ registerBlockType( 'woocommerce/checkout-order-summary-block', {
 	attributes,
 	edit: Edit,
 	save: Save,
+	deprecated,
 } );

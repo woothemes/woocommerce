@@ -37,7 +37,7 @@ const getBlockifiedTemplate = ( inheritedAttributes: InheritedAttributes ) =>
 			'core/columns',
 			{
 				...inheritedAttributes,
-				className: 'woocommerce-order-confirmation-address-wrapper',
+				className: 'wc-block-order-confirmation-address-wrapper',
 			},
 			[
 				createBlock( 'core/column', inheritedAttributes, [
@@ -118,7 +118,7 @@ const getSkeleton = () => {
 					</li>
 					<li className="woocommerce-order-overview__email email">
 						{ __( 'Email', 'woocommerce' ) }:{ ' ' }
-						<strong>shopper@woo.com</strong>
+						<strong>shopper@woocommerce.com</strong>
 					</li>
 					<li className="woocommerce-order-overview__total total">
 						{ __( 'Total', 'woocommerce' ) }:{ ' ' }

@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-import { useState, useCallback, useEffect } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { Form } from '@woocommerce/base-components/cart-checkout';
 import { useCheckoutAddress, useStoreEvents } from '@woocommerce/base-context';
-import type {
-	AddressFormValues,
-	FormFieldsConfig,
-} from '@woocommerce/settings';
+import type { AddressFormValues } from '@woocommerce/settings';
 import { useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 
 /**
@@ -18,25 +15,20 @@ import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 import AddressWrapper from '../../address-wrapper';
 import AddressCard from '../../address-card';
 
-const CustomerAddress = ( {
-	addressFieldsConfig,
-	defaultEditing = false,
-}: {
-	addressFieldsConfig: FormFieldsConfig;
-	defaultEditing?: boolean;
-} ) => {
+const CustomerAddress = () => {
 	const {
 		billingAddress,
 		setShippingAddress,
 		setBillingAddress,
 		useBillingAsShipping,
+		editingBillingAddress: editing,
+		setEditingBillingAddress: setEditing,
 	} = useCheckoutAddress();
 	const { dispatchCheckoutEvent } = useStoreEvents();
-	const [ editing, setEditing ] = useState( defaultEditing );
 
 	// Forces editing state if store has errors.
 	const { hasValidationErrors, invalidProps } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
+		const store = select( validationStore );
 		return {
 			hasValidationErrors: store.hasValidationErrors(),
 			invalidProps: Object.keys( billingAddress )
@@ -55,7 +47,7 @@ const CustomerAddress = ( {
 		if ( invalidProps.length > 0 && editing === false ) {
 			setEditing( true );
 		}
-	}, [ editing, hasValidationErrors, invalidProps.length ] );
+	}, [ editing, hasValidationErrors, invalidProps.length, setEditing ] );
 
 	const onChangeAddress = useCallback(
 		( values: AddressFormValues ) => {
@@ -82,10 +74,10 @@ const CustomerAddress = ( {
 				onEdit={ () => {
 					setEditing( true );
 				} }
-				fieldConfig={ addressFieldsConfig }
+				isExpanded={ editing }
 			/>
 		),
-		[ billingAddress, addressFieldsConfig ]
+		[ billingAddress, editing, setEditing ]
 	);
 
 	const renderAddressFormComponent = useCallback(
@@ -97,11 +89,11 @@ const CustomerAddress = ( {
 					onChange={ onChangeAddress }
 					values={ billingAddress }
 					fields={ ADDRESS_FORM_KEYS }
-					fieldConfig={ addressFieldsConfig }
+					isEditing={ editing }
 				/>
 			</>
 		),
-		[ addressFieldsConfig, billingAddress, onChangeAddress ]
+		[ billingAddress, onChangeAddress, editing ]
 	);
 
 	return (

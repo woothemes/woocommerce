@@ -5,15 +5,13 @@ import preloadScript from '@woocommerce/base-utils/preload-script';
 import lazyLoadScript from '@woocommerce/base-utils/lazy-load-script';
 import getNavigationType from '@woocommerce/base-utils/get-navigation-type';
 import { translateJQueryEventToNative } from '@woocommerce/base-utils/legacy-events';
+import { select, subscribe } from '@wordpress/data';
+import { CART_STORE_KEY } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
  */
-import {
-	getMiniCartTotalsFromLocalStorage,
-	getMiniCartTotalsFromServer,
-	updateTotals,
-} from './utils/data';
+import { updateTotals } from './utils/data';
 import setStyles from './utils/set-styles';
 
 interface dependencyData {
@@ -24,11 +22,23 @@ interface dependencyData {
 	translations?: string;
 }
 
-updateTotals( getMiniCartTotalsFromLocalStorage() );
-getMiniCartTotalsFromServer().then( updateTotals );
 setStyles();
 
+declare global {
+	interface Window {
+		wcBlocksMiniCartFrontendDependencies: Record< string, dependencyData >;
+	}
+}
+
 window.addEventListener( 'load', () => {
+	// Update the totals immediately on load.
+	updateTotals( select( CART_STORE_KEY ).getCartData() );
+
+	// Triggers JS event whenever the cart store is updated.
+	subscribe( () => {
+		updateTotals( select( CART_STORE_KEY ).getCartData() );
+	}, CART_STORE_KEY );
+
 	const miniCartBlocks = document.querySelectorAll( '.wc-block-mini-cart' );
 	let wasLoadScriptsCalled = false;
 
@@ -36,10 +46,7 @@ window.addEventListener( 'load', () => {
 		return;
 	}
 
-	const dependencies = window.wcBlocksMiniCartFrontendDependencies as Record<
-		string,
-		dependencyData
-	>;
+	const dependencies = window.wcBlocksMiniCartFrontendDependencies;
 
 	// Preload scripts
 	for ( const dependencyHandle in dependencies ) {
@@ -158,8 +165,19 @@ window.addEventListener( 'load', () => {
 			loadContents();
 		};
 
-		miniCartButton.addEventListener( 'mouseover', loadScripts );
-		miniCartButton.addEventListener( 'focus', loadScripts );
+		// Load the scripts if a device is touch-enabled. We don't get the mouseover or focus events on touch devices,
+		// so the event listeners below won't work.
+		if (
+			'ontouchstart' in window ||
+			navigator.maxTouchPoints > 0 ||
+			window.matchMedia( '(pointer:coarse)' ).matches
+		) {
+			loadScripts();
+		} else {
+			miniCartButton.addEventListener( 'mouseover', loadScripts );
+			miniCartButton.addEventListener( 'focus', loadScripts );
+		}
+
 		miniCartButton.addEventListener( 'click', openDrawer );
 
 		const funcOnAddToCart =

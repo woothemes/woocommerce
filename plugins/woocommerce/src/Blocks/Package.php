@@ -15,7 +15,7 @@ use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
  * In the context of this plugin, it handles init and is called from the main
  * plugin file (woocommerce-gutenberg-products-block.php).
  *
- * In the context of WooCommere core, it handles init and is called from
+ * In the context of WooCommerce core, it handles init and is called from
  * WooCommerce's package loader. The main plugin file is _not_ loaded.
  *
  * @since 2.5.0
@@ -66,29 +66,12 @@ class Package {
 	 * Returns an instance of the FeatureGating class.
 	 *
 	 * @return FeatureGating
+	 * @deprecated since 9.6, use wp_get_environment_type() instead.
 	 */
 	public static function feature() {
-		return self::get_package()->feature();
+		wc_deprecated_function( 'Package::feature', '9.6', 'wp_get_environment_type' );
+		return new FeatureGating();
 	}
-
-	/**
-	 * Checks if we're executing the code in an experimental build mode.
-	 *
-	 * @return boolean
-	 */
-	public static function is_experimental_build() {
-		return self::get_package()->is_experimental_build();
-	}
-
-	/**
-	 * Checks if we're executing the code in a feature plugin or experimental build mode.
-	 *
-	 * @return boolean
-	 */
-	public static function is_feature_plugin_build() {
-		return self::get_package()->is_feature_plugin_build();
-	}
-
 
 	/**
 	 * Loads the dependency injection container for woocommerce blocks.
@@ -112,8 +95,7 @@ class Package {
 					$version = '11.8.0-dev';
 					return new NewPackage(
 						$version,
-						dirname( __DIR__, 2 ),
-						new FeatureGating()
+						dirname( __DIR__, 2 )
 					);
 				}
 			);

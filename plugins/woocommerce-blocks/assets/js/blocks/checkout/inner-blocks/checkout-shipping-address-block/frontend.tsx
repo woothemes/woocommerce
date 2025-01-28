@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { withFilteredAttributes } from '@woocommerce/shared-hocs';
 import { FormStep } from '@woocommerce/blocks-components';
 import { useCheckoutAddress } from '@woocommerce/base-context/hooks';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 /**
  * Internal dependencies
  */
@@ -17,27 +17,19 @@ import { useCheckoutBlockContext } from '../../context';
 const FrontendBlock = ( {
 	title,
 	description,
-	showStepNumber,
 	children,
 	className,
 }: {
 	title: string;
 	description: string;
-	showStepNumber: boolean;
 	children: JSX.Element;
 	className?: string;
 } ) => {
 	const checkoutIsProcessing = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).isProcessing()
+		select( checkoutStore ).isProcessing()
 	);
 	const { showShippingFields } = useCheckoutAddress();
-	const {
-		requireCompanyField,
-		requirePhoneField,
-		showApartmentField,
-		showCompanyField,
-		showPhoneField,
-	} = useCheckoutBlockContext();
+	const { showFormStepNumbers } = useCheckoutBlockContext();
 
 	if ( ! showShippingFields ) {
 		return null;
@@ -47,21 +39,15 @@ const FrontendBlock = ( {
 		<FormStep
 			id="shipping-fields"
 			disabled={ checkoutIsProcessing }
-			className={ classnames(
+			className={ clsx(
 				'wc-block-checkout__shipping-fields',
 				className
 			) }
 			title={ title }
 			description={ description }
-			showStepNumber={ showStepNumber }
+			showStepNumber={ showFormStepNumbers }
 		>
-			<Block
-				requireCompanyField={ requireCompanyField }
-				requirePhoneField={ requirePhoneField }
-				showApartmentField={ showApartmentField }
-				showCompanyField={ showCompanyField }
-				showPhoneField={ showPhoneField }
-			/>
+			<Block />
 			{ children }
 		</FormStep>
 	);

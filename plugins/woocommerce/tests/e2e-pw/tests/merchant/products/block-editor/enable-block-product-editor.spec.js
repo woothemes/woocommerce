@@ -1,4 +1,4 @@
-const { test, expect } = require( '@playwright/test' );
+const { test } = require( '@playwright/test' );
 const {
 	clickAddNewMenuItem,
 	expectBlockProductEditor,
@@ -6,6 +6,8 @@ const {
 	isBlockProductEditorEnabled,
 	toggleBlockProductEditor,
 } = require( '../../../../utils/simple-products' );
+const { tags } = require( '../../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
 
 const ALL_PRODUCTS_URL = 'wp-admin/edit.php?post_type=product';
 const NEW_EDITOR_ADD_PRODUCT_URL =
@@ -26,9 +28,9 @@ async function disableNewEditorIfEnabled( browser ) {
 
 test.describe.configure( { mode: 'serial' } );
 
-test.describe( 'Enable block product editor', () => {
+test.describe( 'Enable block product editor', { tag: tags.GUTENBERG }, () => {
 	test.describe( 'Enabled', () => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeEach( async ( { browser } ) => {
 			await disableNewEditorIfEnabled( browser );

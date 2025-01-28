@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import Button from '@woocommerce/base-components/button';
 import { CHECKOUT_URL } from '@woocommerce/block-settings';
 import { usePositionRelativeToViewport } from '@woocommerce/base-hooks';
 import { getSetting } from '@woocommerce/settings';
 import { useSelect } from '@wordpress/data';
-import { CART_STORE_KEY, CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, checkoutStore } from '@woocommerce/block-data';
 import { applyCheckoutFilter } from '@woocommerce/blocks-checkout';
 import { isErrorResponse } from '@woocommerce/base-context';
 import { useCartEventsContext } from '@woocommerce/base-context/providers';
@@ -32,7 +32,7 @@ const Block = ( {
 } ): JSX.Element => {
 	const link = getSetting< string >( 'page-' + checkoutPageId, false );
 	const isCalculating = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).isCalculating()
+		select( checkoutStore ).isCalculating()
 	);
 
 	const [ positionReferenceElement, positionRelativeToViewport ] =
@@ -103,22 +103,21 @@ const Block = ( {
 		[]
 	);
 
+	const displayStickyContainer = positionRelativeToViewport === 'below';
+
+	const submitContainerClass = clsx( 'wc-block-cart__submit-container', {
+		'wc-block-cart__submit-container--sticky': displayStickyContainer,
+	} );
+
 	return (
-		<div className={ classnames( 'wc-block-cart__submit', className ) }>
+		<div className={ clsx( 'wc-block-cart__submit', className ) }>
 			{ positionReferenceElement }
-			{ /* The non-sticky container must always be visible because it gives height to its parent, which is required to calculate when it becomes visible in the viewport. */ }
-			<div className="wc-block-cart__submit-container">
+			<div
+				className={ submitContainerClass }
+				style={ displayStickyContainer ? { backgroundColor } : {} }
+			>
 				{ submitContainerContents }
 			</div>
-			{ /* If the positionReferenceElement is below the viewport, display the sticky container. */ }
-			{ positionRelativeToViewport === 'below' && (
-				<div
-					className="wc-block-cart__submit-container wc-block-cart__submit-container--sticky"
-					style={ { backgroundColor } }
-				>
-					{ submitContainerContents }
-				</div>
-			) }
 		</div>
 	);
 };

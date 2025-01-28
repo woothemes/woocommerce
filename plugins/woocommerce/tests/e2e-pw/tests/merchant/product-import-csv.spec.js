@@ -1,6 +1,8 @@
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const path = require( 'path' );
+const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const filePath = path.resolve( 'tests/e2e-pw/test-data/sample_products.csv' );
 const filePathOverride = path.resolve(
 	'tests/e2e-pw/test-data/sample_products_override.csv'
@@ -89,11 +91,11 @@ const productCategories = [
 ];
 const productAttributes = [ 'Color', 'Size' ];
 
-const errorMessage =
-	'Invalid file type. The importer supports CSV and TXT file formats.';
+const errorMessage = 'File is empty. Please upload something more substantial.';
 
+//todo remove serial mode
 test.describe.serial( 'Import Products from a CSV file', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeAll( async ( { baseURL } ) => {
 		const api = new wcApi( {
@@ -162,108 +164,122 @@ test.describe.serial( 'Import Products from a CSV file', () => {
 		} );
 	} );
 
-	test( 'should show error message if you go without providing CSV file', async ( {
-		page,
-	} ) => {
-		await page.goto(
-			'wp-admin/edit.php?post_type=product&page=product_importer'
-		);
+	test(
+		'should show error message if you go without providing CSV file',
+		{ tag: [ tags.NOT_E2E, tags.NON_CRITICAL ] },
+		async ( { page } ) => {
+			await page.goto(
+				'wp-admin/edit.php?post_type=product&page=product_importer'
+			);
 
-		// verify the error message if you go without providing CSV file
-		await page.locator( 'button[value="Continue"]' ).click();
-		await expect( page.locator( 'div.error.inline' ) ).toContainText(
-			errorMessage
-		);
-	} );
+			// verify the error message if you go without providing CSV file
+			await page.locator( 'button[value="Continue"]' ).click();
+			await expect( page.locator( 'div.error.inline' ) ).toContainText(
+				errorMessage
+			);
+		}
+	);
 
-	test( 'can upload the CSV file and import products', async ( { page } ) => {
-		await page.goto(
-			'wp-admin/edit.php?post_type=product&page=product_importer'
-		);
+	test(
+		'can upload the CSV file and import products',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await page.goto(
+				'wp-admin/edit.php?post_type=product&page=product_importer'
+			);
 
-		// Select the CSV file and upload it
-		const [ fileChooser ] = await Promise.all( [
-			page.waitForEvent( 'filechooser' ),
-			page.locator( '#upload' ).click(),
-		] );
-		await fileChooser.setFiles( filePath );
-		await page.locator( 'button[value="Continue"]' ).click();
+			// Select the CSV file and upload it
+			const [ fileChooser ] = await Promise.all( [
+				page.waitForEvent( 'filechooser' ),
+				page.locator( '#upload' ).click(),
+			] );
+			await fileChooser.setFiles( filePath );
+			await page.locator( 'button[value="Continue"]' ).click();
 
-		// Click on run the importer
-		await page.locator( 'button[value="Run the importer"]' ).click();
+			// Click on run the importer
+			await page.locator( 'button[value="Run the importer"]' ).click();
 
-		// Confirm that the import is done
-		await expect(
-			page.locator( '.woocommerce-importer-done' )
-		).toContainText( 'Import complete!', { timeout: 120000 } );
+			// Confirm that the import is done
+			await expect(
+				page.locator( '.woocommerce-importer-done' )
+			).toContainText( 'Import complete!', { timeout: 120000 } );
 
-		// View the products
-		await page.locator( 'text=View products' ).click();
+			// View the products
+			await page.locator( 'text=View products' ).click();
 
-		// Search for "import" to narrow the results to just the products we imported
-		await page.locator( '#post-search-input' ).fill( 'Imported' );
-		await page.locator( '#search-submit' ).click();
+			// Search for "import" to narrow the results to just the products we imported
+			await page.locator( '#post-search-input' ).fill( 'Imported' );
+			await page.locator( '#search-submit' ).click();
 
-		// Compare imported products to what's expected
-		await expect( page.locator( 'a.row-title' ) ).toHaveCount(
-			productNames.length
-		);
-		const productTitles = await page
-			.locator( 'a.row-title' )
-			.allTextContents();
+			// Compare imported products to what's expected
+			await expect( page.locator( 'a.row-title' ) ).toHaveCount(
+				productNames.length
+			);
+			const productTitles = await page
+				.locator( 'a.row-title' )
+				.allTextContents();
 
-		expect( productTitles.sort() ).toEqual( productNames.sort() );
-	} );
+			expect( productTitles.sort() ).toEqual( productNames.sort() );
+		}
+	);
 
-	test( 'can override the existing products via CSV import', async ( {
-		page,
-	} ) => {
-		await page.goto(
-			'wp-admin/edit.php?post_type=product&page=product_importer'
-		);
+	test(
+		'can override the existing products via CSV import',
+		{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
+		async ( { page } ) => {
+			await page.goto(
+				'wp-admin/edit.php?post_type=product&page=product_importer'
+			);
 
-		// Put the CSV Override products file, set checkbox and proceed further
-		const [ fileChooser ] = await Promise.all( [
-			page.waitForEvent( 'filechooser' ),
-			page.locator( '#upload' ).click(),
-		] );
-		await fileChooser.setFiles( filePathOverride );
-		await page.locator( '#woocommerce-importer-update-existing' ).click();
-		await page.locator( 'button[value="Continue"]' ).click();
+			// Put the CSV Override products file, set checkbox and proceed further
+			const [ fileChooser ] = await Promise.all( [
+				page.waitForEvent( 'filechooser' ),
+				page.locator( '#upload' ).click(),
+			] );
+			await fileChooser.setFiles( filePathOverride );
+			await page
+				.locator( '#woocommerce-importer-update-existing' )
+				.click();
+			await page.locator( 'button[value="Continue"]' ).click();
 
-		// Click on run the importer
-		await page.locator( 'button[value="Run the importer"]' ).click();
+			// Click on run the importer
+			await page.locator( 'button[value="Run the importer"]' ).click();
 
-		// Confirm that the import is done
-		await expect(
-			page.locator( '.woocommerce-importer-done' )
-		).toContainText( 'Import complete!', { timeout: 120000 } ); // import can take a while
+			// Confirm that the import is done
+			await expect(
+				page.locator( '.woocommerce-importer-done' )
+			).toContainText( 'Import complete!', { timeout: 120000 } ); // import can take a while
 
-		// View the products
-		await page.locator( 'text=View products' ).click();
+			// View the products
+			await page.locator( 'text=View products' ).click();
 
-		// Search for "import" to narrow the results to just the products we imported
-		await page.locator( '#post-search-input' ).fill( 'Imported' );
-		await page.locator( '#search-submit' ).click();
+			// Search for "import" to narrow the results to just the products we imported
+			await page.locator( '#post-search-input' ).fill( 'Imported' );
+			await page.locator( '#search-submit' ).click();
 
-		// Compare imported products to what's expected
-		await expect( page.locator( 'a.row-title' ) ).toHaveCount(
-			productNamesOverride.length
-		);
-		const productTitles = await page
-			.locator( 'a.row-title' )
-			.allInnerTexts();
+			// Compare imported products to what's expected
+			await expect( page.locator( 'a.row-title' ) ).toHaveCount(
+				productNamesOverride.length
+			);
+			const productTitles = await page
+				.locator( 'a.row-title' )
+				.allInnerTexts();
 
-		expect( productTitles.sort() ).toEqual( productNamesOverride.sort() );
+			expect( productTitles.sort() ).toEqual(
+				productNamesOverride.sort()
+			);
 
-		// Compare product prices to what's expected
-		await expect( page.locator( '.amount' ) ).toHaveCount(
-			productPricesOverride.length
-		);
-		const productPrices = await page.locator( '.amount' ).allInnerTexts();
+			// Compare product prices to what's expected
+			await expect( page.locator( '.amount' ) ).toHaveCount(
+				productPricesOverride.length
+			);
+			const productPrices = await page
+				.locator( '.amount' )
+				.allInnerTexts();
 
-		expect( productPrices.sort() ).toStrictEqual(
-			productPricesOverride.sort()
-		);
-	} );
+			expect( productPrices.sort() ).toStrictEqual(
+				productPricesOverride.sort()
+			);
+		}
+	);
 } );

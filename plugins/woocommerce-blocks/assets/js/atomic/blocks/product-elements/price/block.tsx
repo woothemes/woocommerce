@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import ProductPrice from '@woocommerce/base-components/product-price';
 import { getCurrencyFromPriceResponse } from '@woocommerce/price-format';
 import {
@@ -42,8 +42,15 @@ export const Block = ( props: Props ): JSX.Element | null => {
 
 	const isDescendentOfAllProductsBlock =
 		parentName === 'woocommerce/all-products';
+	const isDescendentOfAddToCartGroupedProductSelectorBlock =
+		parentName ===
+		'woocommerce/add-to-cart-with-options-grouped-product-selector-item';
 
-	const wrapperClassName = classnames(
+	const showPricePreview =
+		isDescendentOfSingleProductTemplate &&
+		! isDescendentOfAddToCartGroupedProductSelectorBlock;
+
+	const wrapperClassName = clsx(
 		'wc-block-components-product-price',
 		className,
 		styleProps.className,
@@ -67,13 +74,13 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	}
 
 	const prices: PriceProps = product.prices;
-	const currency = isDescendentOfSingleProductTemplate
+	const currency = showPricePreview
 		? getCurrencyFromPriceResponse()
 		: getCurrencyFromPriceResponse( prices );
 
 	const pricePreview = '5000';
 	const isOnSale = prices.price !== prices.regular_price;
-	const priceClassName = classnames( {
+	const priceClassName = clsx( {
 		[ `${ parentClassName }__product-price__value` ]: parentClassName,
 		[ `${ parentClassName }__product-price__value--on-sale` ]: isOnSale,
 	} );
@@ -87,21 +94,15 @@ export const Block = ( props: Props ): JSX.Element | null => {
 			priceStyle={ styleProps.style }
 			priceClassName={ priceClassName }
 			currency={ currency }
-			price={
-				isDescendentOfSingleProductTemplate
-					? pricePreview
-					: prices.price
-			}
+			price={ showPricePreview ? pricePreview : prices.price }
 			// Range price props
 			minPrice={ prices?.price_range?.min_amount }
 			maxPrice={ prices?.price_range?.max_amount }
 			// This is the regular or original price when the `price` value is a sale price.
 			regularPrice={
-				isDescendentOfSingleProductTemplate
-					? pricePreview
-					: prices.regular_price
+				showPricePreview ? pricePreview : prices.regular_price
 			}
-			regularPriceClassName={ classnames( {
+			regularPriceClassName={ clsx( {
 				[ `${ parentClassName }__product-price__regular` ]:
 					parentClassName,
 			} ) }
@@ -118,7 +119,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 };
 
 export default ( props: Props ) => {
-	// It is necessary because this block has to support serveral contexts:
+	// It is necessary because this block has to support several contexts:
 	// - Inside `All Products Block` -> `withProductDataContext` HOC
 	// - Inside `Products Block` -> Gutenberg Context
 	// - Inside `Single Product Template` -> Gutenberg Context

@@ -3,29 +3,23 @@
  */
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { Disabled, PanelBody } from '@wordpress/components';
-import type { BlockEditProps } from '@wordpress/blocks';
 import { WC_BLOCKS_IMAGE_URL } from '@woocommerce/block-settings';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 /**
  * Internal dependencies
  */
 import './editor.scss';
 import { ProductGalleryThumbnailsBlockSettings } from './block-settings';
-import type {
-	ProductGalleryThumbnailsBlockAttributes,
-	ProductGalleryContext,
-} from '../../types';
-import { ThumbnailsPosition } from './constants';
+import type { ProductGalleryContext } from '../../types';
 
-interface EditProps
-	extends BlockEditProps< ProductGalleryThumbnailsBlockAttributes > {
+interface EditProps {
 	context: ProductGalleryContext;
 }
 
-export const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
+export const Edit = ( { context }: EditProps ) => {
 	const blockProps = useBlockProps( {
-		className: classNames(
+		className: clsx(
 			'wc-block-product-gallery-thumbnails',
 			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ context.thumbnailsNumberOfThumbnails }`,
 			`wc-block-product-gallery-thumbnails--position-${ context.thumbnailsPosition }`
@@ -33,7 +27,7 @@ export const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
 	} );
 
 	const Placeholder = () => {
-		return context.thumbnailsPosition !== ThumbnailsPosition.OFF ? (
+		return (
 			<div className="wc-block-editor-product-gallery-thumbnails">
 				{ [
 					...Array( context.thumbnailsNumberOfThumbnails ).keys(),
@@ -51,7 +45,7 @@ export const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
 					);
 				} ) }
 			</div>
-		) : null;
+		);
 	};
 
 	return (
@@ -60,8 +54,6 @@ export const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
 				<InspectorControls>
 					<PanelBody>
 						<ProductGalleryThumbnailsBlockSettings
-							attributes={ attributes }
-							setAttributes={ setAttributes }
 							context={ context }
 						/>
 					</PanelBody>

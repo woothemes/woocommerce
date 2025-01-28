@@ -9,7 +9,6 @@ const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const ProgressBarPlugin = require( 'progress-bar-webpack-plugin' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const WebpackRTLPlugin = require( './webpack-rtl-plugin' );
-const TerserPlugin = require( 'terser-webpack-plugin' );
 const CreateFileWebpack = require( 'create-file-webpack' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
@@ -18,7 +17,7 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 /**
  * Internal dependencies
  */
-const { getEntryConfig } = require( './webpack-entries' );
+const { getEntryConfig, genericBlocks } = require( './webpack-entries' );
 const {
 	ASSET_CHECK,
 	NODE_ENV,
@@ -28,6 +27,8 @@ const {
 	getProgressBarPluginConfig,
 	getCacheGroups,
 } = require( './webpack-helpers' );
+const AddSplitChunkDependencies = require( './add-split-chunk-dependencies' );
+const { sharedOptimizationConfig } = require( './webpack-shared-config' );
 
 const isProduction = NODE_ENV === 'production';
 
@@ -42,7 +43,7 @@ const getSharedPlugins = ( {
 	[
 		CHECK_CIRCULAR_DEPS === 'true' && checkCircularDeps !== false
 			? new CircularDependencyPlugin( {
-					exclude: /node_modules/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
 					cwd: process.cwd(),
 					failOnError: 'warn',
 			  } )
@@ -87,13 +88,15 @@ const getCoreConfig = ( options = {} ) => {
 			path: path.resolve( __dirname, '../build/' ),
 			library: [ 'wc', '[name]' ],
 			libraryTarget: 'this',
-			uniqueName: 'webpackWcBlocksJsonp',
+			uniqueName: 'webpackWcBlocksCoreJsonp',
 		},
 		module: {
 			rules: [
 				{
 					test: /\.(t|j)sx?$/,
-					exclude: /node_modules/,
+					exclude: [
+						/[\/\\](node_modules|build|docs|bin|storybook|tests|test)[\/\\]/,
+					],
 					use: {
 						loader: 'babel-loader',
 						options: {
@@ -102,6 +105,11 @@ const getCoreConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							],
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
 						},
 					},
 				},
@@ -114,7 +122,9 @@ const getCoreConfig = ( options = {} ) => {
 			],
 		},
 		plugins: [
-			...getSharedPlugins( { bundleAnalyzerReportTitle: 'Core' } ),
+			...getSharedPlugins( {
+				bundleAnalyzerReportTitle: 'Core',
+			} ),
 			new ProgressBarPlugin( getProgressBarPluginConfig( 'Core' ) ),
 			new CreateFileWebpack( {
 				path: './',
@@ -122,38 +132,18 @@ const getCoreConfig = ( options = {} ) => {
 				fileName: 'blocks.ini',
 				// content of the file
 				content: `
-woocommerce_blocks_phase = ${ process.env.WOOCOMMERCE_BLOCKS_PHASE || 3 }
 woocommerce_blocks_env = ${ NODE_ENV }
 `.trim(),
 			} ),
 		],
 		optimization: {
-			// Only concatenate modules in production, when not analyzing bundles.
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		resolve: {
 			...resolve,
@@ -168,9 +158,8 @@ woocommerce_blocks_env = ${ NODE_ENV }
  * @param {Object} options Build options.
  */
 const getMainConfig = ( options = {} ) => {
-	let { fileSuffix } = options;
 	const { alias, resolvePlugins = [] } = options;
-	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
+
 	const resolve = alias
 		? {
 				alias,
@@ -191,17 +180,17 @@ const getMainConfig = ( options = {} ) => {
 			// i18n system relies on the hash of the filename, so changing that frequently would result in broken
 			// translations which we must avoid.
 			// @see https://github.com/Automattic/jetpack/pull/20926
-			chunkFilename: `[name]${ fileSuffix }.js?ver=[contenthash]`,
-			filename: `[name]${ fileSuffix }.js`,
+			chunkFilename: `[name].js?ver=[contenthash]`,
+			filename: `[name].js`,
 			library: [ 'wc', 'blocks', '[name]' ],
 			libraryTarget: 'this',
-			uniqueName: 'webpackWcBlocksJsonp',
+			uniqueName: 'webpackWcBlocksMainJsonp',
 		},
 		module: {
 			rules: [
 				{
 					test: /\.(j|t)sx?$/,
-					exclude: /node_modules/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
 					use: {
 						loader: 'babel-loader',
 						options: {
@@ -215,7 +204,11 @@ const getMainConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: true,
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
 						},
 					},
 				},
@@ -228,8 +221,7 @@ const getMainConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				minSize: 200000,
 				automaticNameDelimiter: '--',
@@ -243,26 +235,11 @@ const getMainConfig = ( options = {} ) => {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
-			...getSharedPlugins( { bundleAnalyzerReportTitle: 'Main' } ),
+			...getSharedPlugins( {
+				bundleAnalyzerReportTitle: 'Main',
+			} ),
 			new ProgressBarPlugin( getProgressBarPluginConfig( 'Main' ) ),
 			new CopyWebpackPlugin( {
 				patterns: [
@@ -281,7 +258,10 @@ const getMainConfig = ( options = {} ) => {
 								.split( '/' )
 								.at( 1 );
 
-							if ( metadata.parent )
+							if (
+								metadata.parent &&
+								! genericBlocks[ blockName ]
+							)
 								return `./inner-blocks/${ blockName }/block.json`;
 							return `./${ blockName }/block.json`;
 						},
@@ -302,9 +282,7 @@ const getMainConfig = ( options = {} ) => {
  * @param {Object} options Build options.
  */
 const getFrontConfig = ( options = {} ) => {
-	let { fileSuffix } = options;
 	const { alias, resolvePlugins = [] } = options;
-	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
 	const resolve = alias
 		? {
 				alias,
@@ -325,15 +303,18 @@ const getFrontConfig = ( options = {} ) => {
 			// i18n system relies on the hash of the filename, so changing that frequently would result in broken
 			// translations which we must avoid.
 			// @see https://github.com/Automattic/jetpack/pull/20926
-			chunkFilename: `[name]-frontend${ fileSuffix }.js?ver=[contenthash]`,
-			filename: `[name]-frontend${ fileSuffix }.js`,
-			uniqueName: 'webpackWcBlocksJsonp',
+			chunkFilename: `[name]-frontend.js?ver=[contenthash]`,
+			filename: () => {
+				return '[name]-frontend.js';
+			},
+			uniqueName: 'webpackWcBlocksFrontendJsonp',
+			library: [ 'wc', '[name]' ],
 		},
 		module: {
 			rules: [
 				{
 					test: /\.(j|t)sx?$/,
-					exclude: /node_modules/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
 					use: {
 						loader: 'babel-loader',
 						options: {
@@ -359,7 +340,11 @@ const getFrontConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: true,
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
 						},
 					},
 				},
@@ -372,49 +357,32 @@ const getFrontConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				minSize: 200000,
 				automaticNameDelimiter: '--',
 				cacheGroups: {
-					...getCacheGroups(),
-					'base-components': {
-						test: /\/assets\/js\/base\/components\//,
-						name( module, chunks, cacheGroupKey ) {
-							const moduleFileName = module
-								.identifier()
-								.split( '/' )
-								.reduceRight( ( item ) => item );
-							const allChunksNames = chunks
-								.map( ( item ) => item.name )
-								.join( '~' );
-							return `${ cacheGroupKey }-${ allChunksNames }-${ moduleFileName }`;
+					vendor: {
+						test: /[\\/]node_modules[\\/]/,
+						// Note that filenames are suffixed with `frontend` so the generated file is `wc-blocks-frontend-vendors-frontend`.
+						name: 'wc-blocks-frontend-vendors',
+						chunks: ( chunk ) => {
+							return (
+								chunk.name !== 'product-button-interactivity'
+							);
 						},
+						enforce: true,
 					},
+					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
-			...getSharedPlugins( { bundleAnalyzerReportTitle: 'Frontend' } ),
+			...getSharedPlugins( {
+				bundleAnalyzerReportTitle: 'Frontend',
+			} ),
 			new ProgressBarPlugin( getProgressBarPluginConfig( 'Frontend' ) ),
+			new AddSplitChunkDependencies(),
 		],
 		resolve: {
 			...resolve,
@@ -450,7 +418,7 @@ const getPaymentsConfig = ( options = {} ) => {
 			rules: [
 				{
 					test: /\.(j|t)sx?$/,
-					exclude: /node_modules/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
 					use: {
 						loader: 'babel-loader',
 						options: {
@@ -476,7 +444,11 @@ const getPaymentsConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: true,
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
 						},
 					},
 				},
@@ -489,31 +461,13 @@ const getPaymentsConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -550,14 +504,14 @@ const getExtensionsConfig = ( options = {} ) => {
 		output: {
 			devtoolNamespace: 'wc',
 			path: path.resolve( __dirname, '../build/' ),
-			filename: `[name].js`,
+			filename: '[name].js',
 			uniqueName: 'webpackWcBlocksExtensionsMethodExtensionJsonp',
 		},
 		module: {
 			rules: [
 				{
 					test: /\.(j|t)sx?$/,
-					exclude: /node_modules/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
 					use: {
 						loader: 'babel-loader',
 						options: {
@@ -583,7 +537,11 @@ const getExtensionsConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: true,
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
 						},
 					},
 				},
@@ -596,31 +554,13 @@ const getExtensionsConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -664,9 +604,9 @@ const getSiteEditorConfig = ( options = {} ) => {
 			rules: [
 				{
 					test: /\.(j|t)sx?$/,
-					exclude: /node_modules/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
 					use: {
-						loader: 'babel-loader?cacheDirectory',
+						loader: 'babel-loader',
 						options: {
 							presets: [
 								[
@@ -689,6 +629,11 @@ const getSiteEditorConfig = ( options = {} ) => {
 									: false,
 								'@babel/plugin-proposal-optional-chaining',
 							].filter( Boolean ),
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
 						},
 					},
 				},
@@ -701,31 +646,13 @@ const getSiteEditorConfig = ( options = {} ) => {
 			],
 		},
 		optimization: {
-			concatenateModules:
-				isProduction && ! process.env.WP_BUNDLE_ANALYZER,
+			...sharedOptimizationConfig,
 			splitChunks: {
 				automaticNameDelimiter: '--',
 				cacheGroups: {
 					...getCacheGroups(),
 				},
 			},
-			minimizer: [
-				new TerserPlugin( {
-					parallel: true,
-					terserOptions: {
-						output: {
-							comments: /translators:/i,
-						},
-						compress: {
-							passes: 2,
-						},
-						mangle: {
-							reserved: [ '__', '_n', '_nx', '_x' ],
-						},
-					},
-					extractComments: false,
-				} ),
-			],
 		},
 		plugins: [
 			...getSharedPlugins( {
@@ -748,9 +675,8 @@ const getSiteEditorConfig = ( options = {} ) => {
  * @param {Object} options Build options.
  */
 const getStylingConfig = ( options = {} ) => {
-	let { fileSuffix } = options;
 	const { alias, resolvePlugins = [] } = options;
-	fileSuffix = fileSuffix ? `-${ fileSuffix }` : '';
+
 	const resolve = alias
 		? {
 				alias,
@@ -764,10 +690,10 @@ const getStylingConfig = ( options = {} ) => {
 		output: {
 			devtoolNamespace: 'wc',
 			path: path.resolve( __dirname, '../build/' ),
-			filename: `[name]-style${ fileSuffix }.js`,
+			filename: '[name]-style.js',
 			library: [ 'wc', 'blocks', '[name]' ],
 			libraryTarget: 'this',
-			uniqueName: 'webpackWcBlocksJsonp',
+			uniqueName: 'webpackWcBlocksStylingJsonp',
 		},
 		optimization: {
 			splitChunks: {
@@ -822,8 +748,9 @@ const getStylingConfig = ( options = {} ) => {
 			rules: [
 				{
 					test: /\.(j|t)sx?$/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
 					use: {
-						loader: 'babel-loader?cacheDirectory',
+						loader: 'babel-loader',
 						options: {
 							presets: [ '@wordpress/babel-preset-default' ],
 							plugins: [
@@ -835,6 +762,11 @@ const getStylingConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
 						},
 					},
 				},
@@ -891,13 +823,13 @@ const getStylingConfig = ( options = {} ) => {
 			...getSharedPlugins( { bundleAnalyzerReportTitle: 'Styles' } ),
 			new ProgressBarPlugin( getProgressBarPluginConfig( 'Styles' ) ),
 			new MiniCssExtractPlugin( {
-				filename: `[name]${ fileSuffix }.css`,
+				filename: '[name].css',
 			} ),
 			new WebpackRTLPlugin( {
 				filenameSuffix: '-rtl.css',
 			} ),
 			// Remove JS files generated by MiniCssExtractPlugin.
-			new RemoveFilesPlugin( `./build/*style${ fileSuffix }.js` ),
+			new RemoveFilesPlugin( './build/*style.js' ),
 		],
 		resolve: {
 			...resolve,
@@ -937,13 +869,11 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 			rules: [
 				{
 					test: /\.(j|t)sx?$/,
-					exclude: /node_modules/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
 					use: [
 						{
 							loader: require.resolve( 'babel-loader' ),
 							options: {
-								cacheDirectory:
-									process.env.BABEL_CACHE_DIRECTORY || true,
 								babelrc: false,
 								configFile: false,
 								presets: [
@@ -961,11 +891,143 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 									'@babel/plugin-proposal-optional-chaining',
 									'@babel/plugin-proposal-class-properties',
 								],
+								cacheDirectory: path.resolve(
+									__dirname,
+									'../../../node_modules/.cache/babel-loader'
+								),
+								cacheCompression: false,
 							},
 						},
 					],
 				},
 			],
+		},
+	};
+};
+
+const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
+	const { alias, resolvePlugins = [] } = options;
+
+	const resolve = alias
+		? {
+				alias,
+				plugins: resolvePlugins,
+		  }
+		: {
+				plugins: resolvePlugins,
+		  };
+	return {
+		entry: getEntryConfig(
+			'cartAndCheckoutFrontend',
+			options.exclude || []
+		),
+		output: {
+			devtoolNamespace: 'wc',
+			path: path.resolve( __dirname, '../build/' ),
+			// This is a cache busting mechanism which ensures that the script is loaded via the browser with a ?ver=hash
+			// string. The hash is based on the built file contents.
+			// @see https://github.com/webpack/webpack/issues/2329
+			// Using the ?ver string is needed here so the filename does not change between builds. The WordPress
+			// i18n system relies on the hash of the filename, so changing that frequently would result in broken
+			// translations which we must avoid.
+			// @see https://github.com/Automattic/jetpack/pull/20926
+			chunkFilename: '[name]-frontend.js?ver=[contenthash]',
+			filename: ( pathData ) => {
+				// blocksCheckout and blocksComponents were moved from core bundle,
+				// retain their filenames to avoid breaking translations.
+				if (
+					pathData.chunk.name === 'blocksCheckout' ||
+					pathData.chunk.name === 'blocksComponents'
+				) {
+					return `${ paramCase( pathData.chunk.name ) }.js`;
+				}
+
+				return `[name]-frontend.js`;
+			},
+			uniqueName: 'webpackWcBlocksCartCheckoutFrontendJsonp',
+			library: [ 'wc', '[name]' ],
+		},
+		module: {
+			rules: [
+				{
+					test: /\.(j|t)sx?$/,
+					exclude: [ /[\/\\](node_modules|build|docs|vendor)[\/\\]/ ],
+					use: {
+						loader: 'babel-loader',
+						options: {
+							presets: [
+								[
+									'@wordpress/babel-preset-default',
+									{
+										modules: false,
+										targets: {
+											browsers: [
+												'extends @wordpress/browserslist-config',
+											],
+										},
+									},
+								],
+							],
+							plugins: [
+								isProduction
+									? require.resolve(
+											'babel-plugin-transform-react-remove-prop-types'
+									  )
+									: false,
+								'@babel/plugin-proposal-optional-chaining',
+								'@babel/plugin-proposal-class-properties',
+							].filter( Boolean ),
+							cacheDirectory: path.resolve(
+								__dirname,
+								'../../../node_modules/.cache/babel-loader'
+							),
+							cacheCompression: false,
+						},
+					},
+				},
+				{
+					test: /\.s[c|a]ss$/,
+					use: {
+						loader: 'ignore-loader',
+					},
+				},
+			],
+		},
+		optimization: {
+			...sharedOptimizationConfig,
+			splitChunks: {
+				minSize: 200000,
+				automaticNameDelimiter: '--',
+				cacheGroups: {
+					commons: {
+						test: /[\\/]node_modules[\\/]/,
+						name: 'wc-cart-checkout-vendors',
+						chunks: 'all',
+						enforce: true,
+					},
+					base: {
+						// A refined include blocks and settings that are shared between cart and checkout that produces the smallest possible bundle.
+						test: /assets[\\/]js[\\/](settings|previews|base|data|utils|blocks[\\/]cart-checkout-shared|icons)|packages[\\/](checkout|components)|atomic[\\/]utils/,
+						name: 'wc-cart-checkout-base',
+						chunks: 'all',
+						enforce: true,
+					},
+					...getCacheGroups(),
+				},
+			},
+		},
+		plugins: [
+			...getSharedPlugins( {
+				bundleAnalyzerReportTitle: 'Cart & Checkout Frontend',
+			} ),
+			new ProgressBarPlugin(
+				getProgressBarPluginConfig( 'Cart & Checkout Frontend' )
+			),
+			new AddSplitChunkDependencies(),
+		],
+		resolve: {
+			...resolve,
+			extensions: [ '.js', '.ts', '.tsx' ],
 		},
 	};
 };
@@ -979,4 +1041,5 @@ module.exports = {
 	getSiteEditorConfig,
 	getStylingConfig,
 	getInteractivityAPIConfig,
+	getCartAndCheckoutFrontendConfig,
 };

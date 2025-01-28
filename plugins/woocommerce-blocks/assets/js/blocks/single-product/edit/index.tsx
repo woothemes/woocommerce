@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
-import { Placeholder, Button, PanelBody } from '@wordpress/components';
 import { withProduct } from '@woocommerce/block-hocs';
 import BlockErrorBoundary from '@woocommerce/base-components/block-error-boundary';
 import EditProductLink from '@woocommerce/editor-components/edit-product-link';
@@ -12,9 +11,21 @@ import { ProductResponseItem } from '@woocommerce/types';
 import ErrorPlaceholder, {
 	ErrorObject,
 } from '@woocommerce/editor-components/error-placeholder';
-
 import { PRODUCTS_STORE_NAME, Product } from '@woocommerce/data';
 import { useSelect } from '@wordpress/data';
+import { Icon, info } from '@wordpress/icons';
+import {
+	Placeholder,
+	// @ts-expect-error Using experimental features
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalHStack as HStack,
+	// @ts-expect-error Using experimental features
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalText as Text,
+	Button,
+	PanelBody,
+} from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
@@ -53,6 +64,11 @@ const Editor = ( {
 	const [ isEditing, setIsEditing ] = useState( ! productId );
 	const blockProps = useBlockProps();
 
+	const block = useSelect(
+		( select ) => select( 'core/blocks' ).getBlockType( metadata.name ),
+		[]
+	);
+
 	const productPreview = useSelect( ( select ) => {
 		if ( ! isPreview ) {
 			return null;
@@ -62,11 +78,17 @@ const Editor = ( {
 		} );
 	} );
 
+	const isInvalidProductId =
+		typeof error === 'object' &&
+		error?.code === 'woocommerce_rest_product_invalid_id';
+
 	useEffect( () => {
 		const productPreviewId = productPreview
 			? productPreview[ 0 ]?.id
 			: null;
-		if ( ! productPreviewId ) {
+
+		// If the product is set, do not override it with the preview.
+		if ( ! productPreviewId || productId ) {
 			return;
 		}
 
@@ -75,9 +97,15 @@ const Editor = ( {
 			productId: productPreviewId,
 		} );
 		setIsEditing( false );
-	}, [ attributes, productPreview, setAttributes ] );
+	}, [ attributes, productId, productPreview, setAttributes ] );
 
-	if ( error ) {
+	useEffect( () => {
+		if ( isInvalidProductId && ! isEditing ) {
+			setIsEditing( true );
+		}
+	}, [ isInvalidProductId ] );
+
+	if ( error && ! isInvalidProductId ) {
 		return (
 			<ErrorPlaceholder
 				className="wc-block-editor-single-product-error"
@@ -87,6 +115,27 @@ const Editor = ( {
 			/>
 		);
 	}
+
+	const infoTitle = isInvalidProductId ? (
+		<>
+			<Icon
+				icon={ info }
+				className="wc-block-editor-single-product__info-icon"
+			/>
+			<Text>
+				{ __(
+					'Previously selected product is no longer available.',
+					'woocommerce'
+				) }
+			</Text>
+		</>
+	) : (
+		<Text>{ block.description }</Text>
+	);
+
+	const onChange = isInvalidProductId
+		? () => setIsEditing( false )
+		: undefined;
 
 	return (
 		<div { ...blockProps }>
@@ -102,23 +151,26 @@ const Editor = ( {
 				{ isEditing ? (
 					<Placeholder
 						icon={ BLOCK_ICON }
-						label={ metadata.title }
+						label={ block.title }
 						className="wc-block-editor-single-product"
 					>
-						{ metadata.description }
+						<HStack alignment="center"> { infoTitle } </HStack>
 						<div className="wc-block-editor-single-product__selection">
 							<SharedProductControl
 								attributes={ attributes }
 								setAttributes={ setAttributes }
+								onChange={ onChange }
 							/>
-							<Button
-								variant="secondary"
-								onClick={ () => {
-									setIsEditing( false );
-								} }
-							>
-								{ __( 'Done', 'woocommerce' ) }
-							</Button>
+							{ ! isInvalidProductId && (
+								<Button
+									variant="secondary"
+									onClick={ () => {
+										setIsEditing( false );
+									} }
+								>
+									{ __( 'Done', 'woocommerce' ) }
+								</Button>
+							) }
 						</div>
 					</Placeholder>
 				) : (

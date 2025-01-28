@@ -4,7 +4,7 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -12,16 +12,20 @@ import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
 import { TotalsCoupon } from '..';
 
 describe( 'TotalsCoupon', () => {
-	it( "Shows a validation error when one is in the wc/store/validation data store and doesn't show one when there isn't", () => {
+	it( "Shows a validation error when one is in the wc/store/validation data store and doesn't show one when there isn't", async () => {
+		const user = userEvent.setup();
 		const { rerender } = render( <TotalsCoupon instanceId={ 'coupon' } /> );
+
 		const openCouponFormButton = screen.getByText( 'Add a coupon' );
 		expect( openCouponFormButton ).toBeInTheDocument();
-		userEvent.click( openCouponFormButton );
+		await act( async () => {
+			await user.click( openCouponFormButton );
+		} );
 		expect(
 			screen.queryByText( 'Invalid coupon code' )
 		).not.toBeInTheDocument();
 
-		const { setValidationErrors } = dispatch( VALIDATION_STORE_KEY );
+		const { setValidationErrors } = dispatch( validationStore );
 		act( () => {
 			setValidationErrors( {
 				coupon: {
@@ -31,6 +35,9 @@ describe( 'TotalsCoupon', () => {
 			} );
 		} );
 		rerender( <TotalsCoupon instanceId={ 'coupon' } /> );
+
+		// TODO: Fix a recent deprecation of showSpinner prop of Button called in this component.
+		expect( console ).toHaveWarned();
 		expect( screen.getByText( 'Invalid coupon code' ) ).toBeInTheDocument();
 	} );
 } );

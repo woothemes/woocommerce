@@ -2,7 +2,12 @@
  * External dependencies
  */
 import type { Page, Response } from '@playwright/test';
-import type { FrontendUtils } from '@woocommerce/e2e-utils';
+import type {
+	Admin,
+	Editor,
+	FrontendUtils,
+	RequestUtils,
+} from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
@@ -12,17 +17,20 @@ import { CheckoutPage } from '../checkout/checkout.page';
 
 type TemplateCustomizationTest = {
 	visitPage: ( props: {
+		admin: Admin;
+		editor: Editor;
 		frontendUtils: FrontendUtils;
+		requestUtils: RequestUtils;
 		page: Page;
 	} ) => Promise< void | Response | null >;
 	templateName: string;
 	templatePath: string;
-	templateType: string;
+	templateType: 'wp_template' | 'wp_template_part';
 	fallbackTemplate?: {
 		templateName: string;
 		templatePath: string;
 	};
-	canBeOverridenByThemes: boolean;
+	canBeOverriddenByThemes: boolean;
 };
 
 export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
@@ -32,7 +40,7 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 		templateName: 'Product Catalog',
 		templatePath: 'archive-product',
 		templateType: 'wp_template',
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { page } ) =>
@@ -40,7 +48,7 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 		templateName: 'Product Search Results',
 		templatePath: 'product-search-results',
 		templateType: 'wp_template',
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { page } ) => await page.goto( '/color/blue' ),
@@ -51,7 +59,7 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 			templateName: 'Product Catalog',
 			templatePath: 'archive-product',
 		},
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { page } ) =>
@@ -63,7 +71,7 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 			templateName: 'Product Catalog',
 			templatePath: 'archive-product',
 		},
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { page } ) =>
@@ -75,18 +83,17 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 			templateName: 'Product Catalog',
 			templatePath: 'archive-product',
 		},
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { page } ) => await page.goto( '/product/hoodie' ),
 		templateName: 'Single Product',
 		templatePath: 'single-product',
 		templateType: 'wp_template',
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { frontendUtils } ) => {
-			await frontendUtils.emptyCart();
 			await frontendUtils.goToShop();
 			await frontendUtils.addToCart();
 			const block = await frontendUtils.getBlockByName(
@@ -97,7 +104,32 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 		templateName: 'Mini-Cart',
 		templatePath: 'mini-cart',
 		templateType: 'wp_template_part',
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
+	},
+	{
+		visitPage: async ( { admin, editor, requestUtils, page } ) => {
+			// We will be able to simplify this logic once the blockified
+			// Add to Cart with Options block is the default.
+			await requestUtils.setFeatureFlag( 'experimental-blocks', true );
+			await requestUtils.setFeatureFlag( 'blockified-add-to-cart', true );
+			await admin.visitSiteEditor( {
+				postId: 'woocommerce/woocommerce//single-product',
+				postType: 'wp_template',
+				canvas: 'edit',
+			} );
+			await editor.insertBlock( {
+				name: 'woocommerce/add-to-cart-with-options',
+			} );
+			await editor.saveSiteEditorEntities( {
+				isOnlyCurrentEntityDirty: true,
+			} );
+
+			await page.goto( '/product/wordpress-pennant/' );
+		},
+		templateName: 'External Product Add to Cart with Options',
+		templatePath: 'external-product-add-to-cart-with-options',
+		templateType: 'wp_template_part',
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { frontendUtils } ) =>
@@ -105,11 +137,10 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 		templateName: 'Page: Cart',
 		templatePath: 'page-cart',
 		templateType: 'wp_template',
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { frontendUtils } ) => {
-			await frontendUtils.emptyCart();
 			await frontendUtils.goToShop();
 			await frontendUtils.addToCart();
 			await frontendUtils.goToCheckout();
@@ -117,11 +148,10 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 		templateName: 'Page: Checkout',
 		templatePath: 'page-checkout',
 		templateType: 'wp_template',
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 	{
 		visitPage: async ( { frontendUtils } ) => {
-			await frontendUtils.emptyCart();
 			await frontendUtils.goToShop();
 			await frontendUtils.addToCart();
 			await frontendUtils.goToCheckout();
@@ -133,7 +163,7 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 		// automatically override the checkout header. That's because the
 		// Page: Checkout template still points to the default `checkout-header`
 		// from WooCommerce.
-		canBeOverridenByThemes: false,
+		canBeOverriddenByThemes: false,
 	},
 	{
 		visitPage: async ( { frontendUtils, page } ) => {
@@ -147,7 +177,7 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 		templateName: 'Order Confirmation',
 		templatePath: 'order-confirmation',
 		templateType: 'wp_template',
-		canBeOverridenByThemes: true,
+		canBeOverriddenByThemes: true,
 	},
 ];
 

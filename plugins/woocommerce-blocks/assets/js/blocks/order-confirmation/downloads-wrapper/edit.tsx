@@ -3,7 +3,7 @@
  */
 import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
 import { getSetting } from '@woocommerce/settings';
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ const Edit = ( {
 	return (
 		<div
 			{ ...blockProps }
-			className={ classnames( blockProps.className, {
+			className={ clsx( blockProps.className, {
 				'store-has-downloads': hasDownloadableProducts,
 			} ) }
 		>
@@ -37,7 +37,7 @@ const Edit = ( {
 					[
 						'core/heading',
 						{
-							level: 3,
+							level: 2,
 							style: { typography: { fontSize: '24px' } },
 							content: attributes.heading || '',
 							onChangeContent: ( value: string ) =>

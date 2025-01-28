@@ -8,11 +8,10 @@ namespace Automattic\WooCommerce\Internal\Admin;
 defined( 'ABSPATH' ) || exit;
 
 use Automattic\WooCommerce\Admin\Features\Features;
-use Automattic\WooCommerce\Admin\RemoteInboxNotifications\DataSourcePoller;
+use Automattic\WooCommerce\Admin\RemoteInboxNotifications\RemoteInboxNotificationsDataSourcePoller;
 use Automattic\WooCommerce\Admin\RemoteInboxNotifications\RemoteInboxNotificationsEngine;
 use Automattic\WooCommerce\Internal\Admin\Notes\AddFirstProduct;
 use Automattic\WooCommerce\Internal\Admin\Notes\ChoosingTheme;
-use Automattic\WooCommerce\Internal\Admin\Notes\CouponPageMoved;
 use Automattic\WooCommerce\Internal\Admin\Notes\CustomizeStoreWithBlocks;
 use Automattic\WooCommerce\Internal\Admin\Notes\CustomizingProductCatalog;
 use Automattic\WooCommerce\Internal\Admin\Notes\EditProductsOnTheMove;
@@ -102,7 +101,6 @@ class Events {
 	 * @var array
 	 */
 	private static $other_note_classes = array(
-		CouponPageMoved::class,
 		InstallJPAndWCSPlugins::class,
 		OrderMilestones::class,
 		SellingOnlineCourses::class,
@@ -146,7 +144,7 @@ class Events {
 		$this->possibly_refresh_data_source_pollers();
 
 		if ( $this->is_remote_inbox_notifications_enabled() ) {
-			DataSourcePoller::get_instance()->read_specs_from_data_sources();
+			RemoteInboxNotificationsDataSourcePoller::get_instance()->read_specs_from_data_sources();
 			RemoteInboxNotificationsEngine::run();
 		}
 

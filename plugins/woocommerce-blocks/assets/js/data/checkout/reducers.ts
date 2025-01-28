@@ -1,12 +1,18 @@
 /**
+ * External dependencies
+ */
+import type { Reducer } from 'redux';
+
+/**
  * Internal dependencies
  */
 import { ACTION_TYPES as types } from './action-types';
 import { STATUS } from './constants';
-import { defaultState } from './default-state';
-import { CheckoutAction } from './actions';
+import { CheckoutState, defaultState } from './default-state';
 
-const reducer = ( state = defaultState, action: CheckoutAction ) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore-next-line
+const reducer: Reducer< CheckoutState > = ( state = defaultState, action ) => {
 	let newState = state;
 	switch ( action.type ) {
 		case types.SET_IDLE:
@@ -98,6 +104,15 @@ const reducer = ( state = defaultState, action: CheckoutAction ) => {
 			}
 			break;
 
+		case types.SET_CUSTOMER_PASSWORD:
+			if ( typeof action.customerPassword !== 'undefined' ) {
+				newState = {
+					...state,
+					customerPassword: action.customerPassword,
+				};
+			}
+			break;
+
 		case types.SET_ADDITIONAL_FIELDS:
 			if ( action.additionalFields !== undefined ) {
 				newState = {
@@ -119,6 +134,20 @@ const reducer = ( state = defaultState, action: CheckoutAction ) => {
 					useShippingAsBilling: action.useShippingAsBilling,
 				};
 			}
+			break;
+
+		case types.SET_EDITING_BILLING_ADDRESS:
+			newState = {
+				...state,
+				editingBillingAddress: action.isEditing,
+			};
+			break;
+
+		case types.SET_EDITING_SHIPPING_ADDRESS:
+			newState = {
+				...state,
+				editingShippingAddress: action.isEditing,
+			};
 			break;
 
 		case types.SET_SHOULD_CREATE_ACCOUNT:

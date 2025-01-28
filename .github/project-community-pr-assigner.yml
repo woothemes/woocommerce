@@ -1,7 +1,16 @@
 # See https://github.com/shufo/auto-assign-reviewer-by-files/blob/main/README.md for configuration format
 
-".github/*":
-  - team: vortex
+"*":
+  - team: flux
+
+".github/**/*":
+  - team: flux
+
+"bin/*":
+  - team: flux
+
+"docs/**/*":
+  - team: developer-advocacy
 
 "packages/js/api/**/*":
   - team: solaris
@@ -22,64 +31,97 @@
   - team: solaris
 
 "packages/js/components/**/*":
-  - team: mothra
+  - team: woo-fse
   - team: ghidorah
 
 "packages/js/csv-export/**/*":
-  - team: mothra
+  - team: woo-fse
 
 "packages/js/currency/**/*":
-  - team: mothra
+  - team: fractal
 
 "packages/js/customer-effort-score/**/*":
-  - team: mothra
+  - team: woo-fse
+  - team: ghidorah
 
 "packages/js/data/**/*":
-  - team: mothra
+  - team: woo-fse
   - team: ghidorah
 
 "packages/js/date/**/*":
-  - team: mothra
+  - team: woo-fse
 
 "packages/js/dependency-extraction-webpack-plugin/**/*":
-  - team: mothra
+  - team: flux
 
 "packages/js/eslint-plugin/**/*":
-  - team: mothra
+  - team: flux
 
 "packages/js/experimental/**/*":
-  - team: mothra
+  - team: woo-fse
 
 "packages/js/explat/**/*":
-  - team: mothra
+  - team: woo-fse
   - team: ghidorah
 
 "packages/js/navigation/**/*":
-  - team: mothra
+  - team: woo-fse
 
 "packages/js/number/**/*":
-  - team: mothra
+  - team: woo-fse
 
 "packages/js/onboarding/**/*":
   - team: ghidorah
 
+"packages/js/product-editor/**/*":
+  - team: woo-fse
+
 "packages/js/tracks/**/*":
-  - team: mothra
+  - team: woo-fse
+  - team: ghidorah
 
 "plugins/woocommerce/**/*":
   - team: proton
 
+"plugins/woocommerce/templates/**/*":
+  - team: rubik
+  - team: woo-fse
+
+"plugins/woocommerce/templates/emails/**/*":
+  - team: proton
+
 "plugins/woocommerce/src/Admin/**/*":
-  - team: mothra
+  - team: woo-fse
   - team: ghidorah
+
+"plugins/woocommerce/src/Blocks/**/*":
+  - team: rubik
+  - team: woo-fse
 
 "plugins/woocommerce/src/Internal/Admin/**/*":
-  - team: mothra
-  - team: ghidorah
-  
-"plugins/woocommerce-admin/**/*":
-  - team: mothra
+  - team: woo-fse
   - team: ghidorah
 
+"plugins/woocommerce/src/StoreApi/**/*":
+  - team: rubik
+  - team: woo-fse
+
+"plugins/woocommerce/client/admin/**/*":
+  - team: woo-fse
+  - team: ghidorah
+
+"plugins/woocommerce-blocks/**/*":
+  - team: rubik
+  - team: woo-fse
+
 "plugins/woocommerce-beta-tester/**/*":
-  - team: vortex
+  - team: ghidorah
+
+"tools/**/*":
+  - team: flux
+
+'**/composer.json':
+  - team: flux
+
+'**/package.json':
+  - team: flux

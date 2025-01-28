@@ -210,7 +210,7 @@ class WC_Email extends WC_Settings_API {
 	 *
 	 * @var array
 	 */
-	protected $placeholders = array();
+	public $placeholders = array();
 
 	/**
 	 * Strings to find in subjects/headings.
@@ -245,6 +245,7 @@ class WC_Email extends WC_Settings_API {
 				'{site_title}'   => $this->get_blogname(),
 				'{site_address}' => wp_parse_url( home_url(), PHP_URL_HOST ),
 				'{site_url}'     => wp_parse_url( home_url(), PHP_URL_HOST ),
+				'{store_email}'  => $this->get_from_address(),
 			),
 			$this->placeholders
 		);
@@ -416,7 +417,7 @@ class WC_Email extends WC_Settings_API {
 		 * @param object|bool $object             The object (ie, product or order) this email relates to, if any.
 		 * @param WC_Email    $email              WC_Email instance managing the email.
 		 */
-		return apply_filters( 'woocommerce_email_additional_content_' . $this->id, $this->format_string( $this->get_option( 'additional_content', $this->get_default_additional_content() ) ), $this->object, $this );
+		return apply_filters( 'woocommerce_email_additional_content_' . $this->id, $this->format_string( $this->get_option_or_transient( 'additional_content' ) ), $this->object, $this );
 	}
 
 	/**
@@ -425,7 +426,16 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_subject() {
-		return apply_filters( 'woocommerce_email_subject_' . $this->id, $this->format_string( $this->get_option( 'subject', $this->get_default_subject() ) ), $this->object, $this );
+		/**
+		 * Provides an opportunity to inspect and modify subject for the email.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string      $subject Subject of the email.
+		 * @param object|bool $object  The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email    $email   WC_Email instance managing the email.
+		 */
+		return apply_filters( 'woocommerce_email_subject_' . $this->id, $this->format_string( $this->get_option_or_transient( 'subject', $this->get_default_subject() ) ), $this->object, $this );
 	}
 
 	/**
@@ -434,7 +444,16 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_heading() {
-		return apply_filters( 'woocommerce_email_heading_' . $this->id, $this->format_string( $this->get_option( 'heading', $this->get_default_heading() ) ), $this->object, $this );
+		/**
+		 * Provides an opportunity to inspect and modify heading for the email.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string      $heading Heading to be added to the email.
+		 * @param object|bool $object  The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email    $email   WC_Email instance managing the email.
+		 */
+		return apply_filters( 'woocommerce_email_heading_' . $this->id, $this->format_string( $this->get_option_or_transient( 'heading', $this->get_default_heading() ) ), $this->object, $this );
 	}
 
 	/**
@@ -602,9 +621,23 @@ class WC_Email extends WC_Settings_API {
 	 */
 	public function style_inline( $content ) {
 		if ( in_array( $this->get_content_type(), array( 'text/html', 'multipart/alternative' ), true ) ) {
+			$css  = '';
+			$css .= $this->get_must_use_css_styles();
+			$css .= "\n";
+
 			ob_start();
 			wc_get_template( 'emails/email-styles.php' );
-			$css = apply_filters( 'woocommerce_email_styles', ob_get_clean(), $this );
+			$css .= ob_get_clean();
+
+			/**
+			 * Provides an opportunity to filter the CSS styles included in e-mails.
+			 *
+			 * @since 2.3.0
+			 *
+			 * @param string    $css   CSS code.
+			 * @param \WC_Email $email E-mail instance.
+			 */
+			$css = apply_filters( 'woocommerce_email_styles', $css, $this );
 
 			$css_inliner_class = CssInliner::class;
 
@@ -630,6 +663,29 @@ class WC_Email extends WC_Settings_API {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Returns CSS styles that should be included with all HTML e-mails, regardless of theme specific customizations.
+	 *
+	 * @since 9.1.0
+	 *
+	 * @return string
+	 */
+	protected function get_must_use_css_styles(): string {
+		$css = <<<'EOF'
+
+		/*
+		* Temporary measure until e-mail clients more properly support the correct styles.
+		* See https://github.com/woocommerce/woocommerce/pull/47738.
+		*/
+		.screen-reader-text {
+			display: none;
+		}
+
+		EOF;
+
+		return $css;
 	}
 
 	/**
@@ -681,6 +737,16 @@ class WC_Email extends WC_Settings_API {
 	public function get_from_address( $from_email = '' ) {
 		$from_email = apply_filters( 'woocommerce_email_from_address', get_option( 'woocommerce_email_from_address' ), $this, $from_email );
 		return sanitize_email( $from_email );
+	}
+
+	/**
+	 * Set the object for the outgoing email.
+	 *
+	 * @param object $object Object this email is for, e.g. customer, or product.
+	 * @return void
+	 */
+	public function set_object( $object ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.objectFound
+		$this->object = $object;
 	}
 
 	/**
@@ -1151,5 +1217,32 @@ class WC_Email extends WC_Settings_API {
 		if ( $phpmailer instanceof PHPMailer\PHPMailer\PHPMailer ) {
 			$phpmailer->AltBody = ''; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		}
+	}
+
+	/**
+	 * Get an option or transient for email preview.
+	 *
+	 * @param string $key Option key.
+	 * @param mixed  $empty_value Value to use when option is empty.
+	 */
+	private function get_option_or_transient( string $key, $empty_value = null ) {
+		$option = $this->get_option( $key, $empty_value );
+
+		/**
+		 * This filter is documented in templates/emails/email-styles.php
+		 *
+		 * @since 9.6.0
+		 * @param bool $is_email_preview Whether the email is being previewed.
+		 */
+		$is_email_preview = apply_filters( 'woocommerce_is_email_preview', false );
+		if ( $is_email_preview ) {
+			$email_id  = $this->id;
+			$transient = get_transient( "woocommerce_{$email_id}_{$key}" );
+			if ( false !== $transient ) {
+				$option = $transient ? $transient : $empty_value;
+			}
+		}
+
+		return $option;
 	}
 }

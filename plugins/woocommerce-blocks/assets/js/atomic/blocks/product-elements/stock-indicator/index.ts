@@ -20,20 +20,14 @@ import {
 
 const blockConfig: BlockConfiguration = {
 	...sharedConfig,
-	apiVersion: 2,
 	title,
 	description,
 	icon: { src: icon },
 	attributes,
 	supports,
 	edit,
+	save: () => null,
 	usesContext: [ 'query', 'queryId', 'postId' ],
-	ancestor: [
-		'woocommerce/all-products',
-		'woocommerce/single-product',
-		'core/post-template',
-		'woocommerce/product-template',
-	],
 };
 
 registerBlockType( 'woocommerce/product-stock-indicator', {

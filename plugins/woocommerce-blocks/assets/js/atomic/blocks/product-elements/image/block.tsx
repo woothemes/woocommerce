@@ -3,7 +3,7 @@
  */
 import { Fragment } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { PLACEHOLDER_IMG_SRC } from '@woocommerce/settings';
 import {
 	useInnerBlockLayoutContext,
@@ -13,6 +13,7 @@ import { useStyleProps } from '@woocommerce/base-hooks';
 import { withProductDataContext } from '@woocommerce/shared-hocs';
 import { useStoreEvents } from '@woocommerce/base-context/hooks';
 import type { HTMLAttributes } from 'react';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
@@ -26,7 +27,7 @@ const ImagePlaceholder = ( props ): JSX.Element => {
 		<img
 			{ ...props }
 			src={ PLACEHOLDER_IMG_SRC }
-			alt=""
+			alt={ props.alt }
 			width={ undefined }
 			height={ undefined }
 		/>
@@ -87,7 +88,12 @@ const Image = ( {
 					{ ...imageProps }
 				/>
 			) }
-			{ ! image && <ImagePlaceholder style={ imageStyles } /> }
+			{ ! image && (
+				<ImagePlaceholder
+					style={ imageStyles }
+					alt={ imageProps.alt }
+				/>
+			) }
 		</>
 	);
 };
@@ -115,7 +121,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 	if ( ! product.id ) {
 		return (
 			<div
-				className={ classnames(
+				className={ clsx(
 					className,
 					'wc-block-components-product-image',
 					{
@@ -153,7 +159,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 
 	return (
 		<div
-			className={ classnames(
+			className={ clsx(
 				className,
 				'wc-block-components-product-image',
 				{
@@ -171,7 +177,7 @@ export const Block = ( props: Props ): JSX.Element | null => {
 					/>
 				) }
 				<Image
-					fallbackAlt={ product.name }
+					fallbackAlt={ decodeEntities( product.name ) }
 					image={ image }
 					loaded={ ! isLoading }
 					showFullSize={ imageSizing !== ImageSizing.THUMBNAIL }

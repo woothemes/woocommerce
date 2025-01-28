@@ -1,33 +1,30 @@
 /**
  * External dependencies
  */
-import { registerBlockType } from '@wordpress/blocks';
+import { registerProductBlockType } from '@woocommerce/atomic-utils';
+import { currencyDollar, Icon } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import sharedConfig from '../shared/config';
 import edit from './edit';
-import attributes from './attributes';
 import { supports } from './supports';
-import {
-	BLOCK_TITLE as title,
-	BLOCK_ICON as icon,
-	BLOCK_DESCRIPTION as description,
-} from './constants';
-
-const { ancestor, ...configuration } = sharedConfig;
+import metadata from './block.json';
 
 const blockConfig = {
-	...configuration,
-	apiVersion: 2,
-	title,
-	description,
-	usesContext: [ 'query', 'queryId', 'postId' ],
-	icon: { src: icon },
-	attributes,
+	...metadata,
+	...sharedConfig,
 	supports,
+	icon: (
+		<Icon
+			icon={ currencyDollar }
+			className="wc-block-editor-components-block-icon"
+		/>
+	),
 	edit,
 };
 
-registerBlockType( 'woocommerce/product-price', blockConfig );
+registerProductBlockType( blockConfig, {
+	isAvailableOnPostEditor: true,
+} );

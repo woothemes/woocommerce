@@ -12,8 +12,12 @@ import {
 	PanelBody,
 	ToggleControl,
 	Placeholder,
+
+	// @ts-expect-error - no types.
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToggleGroupControl as ToggleGroupControl,
+
+	// @ts-expect-error - no types.
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
@@ -72,6 +76,7 @@ const ProductCategoriesBlock = ( {
 				>
 					<ToggleGroupControl
 						label={ __( 'Display style', 'woocommerce' ) }
+						isBlock
 						value={ isDropdown ? 'dropdown' : 'list' }
 						onChange={ ( value: string ) =>
 							setAttributes( {

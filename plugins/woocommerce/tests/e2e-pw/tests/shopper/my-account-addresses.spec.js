@@ -1,6 +1,8 @@
+/**
+ * Internal dependencies
+ */
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
 const randomNum = new Date().getTime().toString();
 const customer = {
 	username: `customer${ randomNum }`,
@@ -40,16 +42,18 @@ test.describe( 'Customer can manage addresses in My Account > Addresses page', (
 		await page.locator( 'text=Log in' ).click();
 
 		// verify that the page exists and that there are no added addresses
-		await expect( page.locator( 'h1.entry-title' ) ).toContainText(
-			'Addresses'
-		);
+		await expect(
+			page.getByRole( 'heading', { name: 'Addresses' } )
+		).toBeVisible();
 		await expect(
 			page.locator( '.woocommerce-Address' ).first()
 		).toContainText( 'You have not set up this type of address yet.' );
 
 		// go to add billing address
 		await page.goto( 'my-account/edit-address/billing' );
-		await expect( page.locator( 'h3' ) ).toContainText( 'Billing address' );
+		await expect(
+			page.getByRole( 'heading', { name: 'Billing address' } )
+		).toBeVisible();
 		await page.locator( '#billing_first_name' ).fill( 'John' );
 		await page.locator( '#billing_last_name' ).fill( 'Doe Billing' );
 		await page
@@ -63,9 +67,9 @@ test.describe( 'Customer can manage addresses in My Account > Addresses page', (
 		await page.locator( 'text=Save address' ).click();
 
 		// verify billing address has been applied
-		await expect( page.locator( '.woocommerce-message' ) ).toContainText(
-			'Address changed successfully.'
-		);
+		await expect(
+			page.getByText( 'Address changed successfully.' )
+		).toBeVisible();
 		await expect(
 			page.locator( `:text("John Doe Billing")` )
 		).toBeVisible();
@@ -85,18 +89,18 @@ test.describe( 'Customer can manage addresses in My Account > Addresses page', (
 		await page.locator( 'text=Log in' ).click();
 
 		// verify that the page exists and that there are no added addresses
-		await expect( page.locator( 'h1.entry-title' ) ).toContainText(
-			'Addresses'
-		);
+		await expect(
+			page.getByRole( 'heading', { name: 'Addresses' } )
+		).toBeVisible();
 		await expect(
 			page.locator( '.woocommerce-Address' ).nth( 1 )
 		).toContainText( 'You have not set up this type of address yet.' );
 
 		// go to add shipping address
 		await page.goto( 'my-account/edit-address/shipping' );
-		await expect( page.locator( 'h3' ) ).toContainText(
-			'Shipping address'
-		);
+		await expect(
+			page.getByRole( 'heading', { name: 'Shipping address' } )
+		).toBeVisible();
 		await page.locator( '#shipping_first_name' ).fill( 'John' );
 		await page.locator( '#shipping_last_name' ).fill( 'Doe Shipping' );
 		await page
@@ -109,9 +113,9 @@ test.describe( 'Customer can manage addresses in My Account > Addresses page', (
 		await page.locator( 'text=Save address' ).click();
 
 		// verify shipping address has been applied
-		await expect( page.locator( '.woocommerce-message' ) ).toContainText(
-			'Address changed successfully.'
-		);
+		await expect(
+			page.getByText( 'Address changed successfully.' )
+		).toBeVisible();
 		await expect(
 			page.locator( `:text("John Doe Shipping")` )
 		).toBeVisible();

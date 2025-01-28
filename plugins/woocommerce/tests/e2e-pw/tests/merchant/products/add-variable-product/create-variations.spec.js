@@ -1,5 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../../../fixtures/fixtures' );
 const { variableProducts: utils } = require( '../../../../utils' );
+const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
 const {
 	createVariableProduct,
 	showVariableProductTour,
@@ -13,8 +15,8 @@ let expectedGeneratedVariations,
 	productId_generateVariations,
 	variationsToManuallyCreate;
 
-test.describe( 'Add variations', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+test.describe( 'Add variations', { tag: tags.GUTENBERG }, () => {
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeAll( async ( { browser } ) => {
 		productId_generateVariations = await createVariableProduct(
@@ -42,7 +44,7 @@ test.describe( 'Add variations', () => {
 	} ) => {
 		await test.step( `Open "Edit product" page of product id ${ productId_generateVariations }`, async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId_generateVariations }&action=edit`
+				`wp-admin/post.php?post=${ productId_generateVariations }&action=edit`
 			);
 		} );
 
@@ -69,7 +71,9 @@ test.describe( 'Add variations', () => {
 			await test.step( `Expect the variation "${ variation.join(
 				', '
 			) }" to be generated.`, async () => {
-				let variationRow = page.locator( '.woocommerce_variation h3' );
+				let variationRow = page.getByRole( 'heading', {
+					name: /#\d+/,
+				} );
 
 				for ( const attributeValue of variation ) {
 					variationRow = variationRow.filter( {
@@ -87,7 +91,7 @@ test.describe( 'Add variations', () => {
 	test( 'can manually add a variation', async ( { page } ) => {
 		await test.step( `Open "Edit product" page of product id ${ productId_addManually }`, async () => {
 			await page.goto(
-				`/wp-admin/post.php?post=${ productId_addManually }&action=edit`
+				`wp-admin/post.php?post=${ productId_addManually }&action=edit`
 			);
 		} );
 
@@ -112,7 +116,7 @@ test.describe( 'Add variations', () => {
 		} );
 
 		await test.step( `Manually add ${ variationsToManuallyCreate.length } variations`, async () => {
-			const variationRows = page.locator( '.woocommerce_variation h3' );
+			const variationRows = page.getByRole( 'heading', { name: /#\d+/ } );
 			let variationRowsCount = await variationRows.count();
 			const originalVariationRowsCount = variationRowsCount;
 

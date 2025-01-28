@@ -1,5 +1,5 @@
-const { test: baseTest, expect } = require( '@playwright/test' );
-const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
+const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 async function addImageFromLibrary( page, imageName, actionButtonName ) {
 	await page.getByRole( 'tab', { name: 'Media Library' } ).click();
@@ -12,78 +12,67 @@ async function addImageFromLibrary( page, imageName, actionButtonName ) {
 	return dataId;
 }
 
-baseTest.describe( 'Products > Product Images', () => {
-	baseTest.use( { storageState: process.env.ADMINSTATE } );
+const test = baseTest.extend( {
+	storageState: ADMIN_STATE_PATH,
+	product: async ( { api }, use ) => {
+		let product = {
+			id: 0,
+			name: `Product ${ Date.now() }`,
+			type: 'simple',
+			regular_price: '12.99',
+			sale_price: '11.59',
+		};
 
-	const test = baseTest.extend( {
-		api: async ( { baseURL }, use ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
+		await api.post( 'products', product ).then( ( response ) => {
+			product = response.data;
+		} );
+
+		await use( product );
+
+		// Cleanup
+		await api.delete( `products/${ product.id }`, { force: true } );
+	},
+	productWithImage: async ( { api, product }, use ) => {
+		let productWithImage;
+		await api
+			.put( `products/${ product.id }`, {
+				images: [
+					{
+						src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg',
+					},
+				],
+			} )
+			.then( ( response ) => {
+				productWithImage = response.data;
 			} );
 
-			await use( api );
-		},
-		product: async ( { api }, use ) => {
-			let product = {
-				id: 0,
-				name: `Product ${ Date.now() }`,
-				type: 'simple',
-				regular_price: '12.99',
-				sale_price: '11.59',
-			};
-
-			await api.post( 'products', product ).then( ( response ) => {
-				product = response.data;
+		await use( productWithImage );
+	},
+	productWithGallery: async ( { api, product }, use ) => {
+		let productWithGallery;
+		await api
+			.put( `products/${ product.id }`, {
+				images: [
+					{
+						src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg',
+					},
+					{
+						src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg',
+					},
+					{
+						src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_3_front.jpg',
+					},
+				],
+			} )
+			.then( ( response ) => {
+				productWithGallery = response.data;
 			} );
 
-			await use( product );
+		await use( productWithGallery );
+	},
+} );
 
-			// Cleanup
-			await api.delete( `products/${ product.id }`, { force: true } );
-		},
-		productWithImage: async ( { api, product }, use ) => {
-			let productWithImage;
-			await api
-				.put( `products/${ product.id }`, {
-					images: [
-						{
-							src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg',
-						},
-					],
-				} )
-				.then( ( response ) => {
-					productWithImage = response.data;
-				} );
-
-			await use( productWithImage );
-		},
-		productWithGallery: async ( { api, product }, use ) => {
-			let productWithGallery;
-			await api
-				.put( `products/${ product.id }`, {
-					images: [
-						{
-							src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg',
-						},
-						{
-							src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg',
-						},
-						{
-							src: 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_3_front.jpg',
-						},
-					],
-				} )
-				.then( ( response ) => {
-					productWithGallery = response.data;
-				} );
-
-			await use( productWithGallery );
-		},
-	} );
-
+test.describe( 'Products > Product Images', () => {
 	test( 'can set product image', async ( { page, product } ) => {
 		await test.step( 'Navigate to product edit page', async () => {
 			await page.goto(
@@ -104,7 +93,10 @@ baseTest.describe( 'Products > Product Images', () => {
 				page.locator( '#set-post-thumbnail img[src*="image-01"]' )
 			).toBeVisible();
 
-			await page.getByRole( 'button', { name: 'Update' } ).click();
+			await page
+				.locator( '#publishing-action' )
+				.getByRole( 'button', { name: 'Update' } )
+				.click();
 		} );
 
 		await test.step( 'Verify product image was set', async () => {
@@ -113,7 +105,9 @@ baseTest.describe( 'Products > Product Images', () => {
 
 			// Verify image in store frontend
 			await page.goto( product.permalink );
-			await expect( page.getByTitle( `image-01` ) ).toBeVisible();
+			await expect(
+				page.locator( `img.wp-post-image[src*="image-01"]` )
+			).toBeVisible();
 		} );
 	} );
 
@@ -138,7 +132,10 @@ baseTest.describe( 'Products > Product Images', () => {
 				page.locator( '#set-post-thumbnail img[src*="image-02"]' )
 			).toBeVisible();
 
-			await page.getByRole( 'button', { name: 'Update' } ).click();
+			await page
+				.locator( '#publishing-action' )
+				.getByRole( 'button', { name: 'Update' } )
+				.click();
 		} );
 
 		await test.step( 'Verify product image was set', async () => {
@@ -147,7 +144,9 @@ baseTest.describe( 'Products > Product Images', () => {
 
 			// Verify image in store frontend
 			await page.goto( productWithImage.permalink );
-			await expect( page.getByTitle( `image-02` ) ).toBeVisible();
+			await expect(
+				page.locator( `img.wp-post-image[src*="image-02"]` )
+			).toBeVisible();
 		} );
 	} );
 
@@ -169,7 +168,10 @@ baseTest.describe( 'Products > Product Images', () => {
 				page.getByRole( 'link', { name: 'Set product image' } )
 			).toBeVisible();
 
-			await page.getByRole( 'button', { name: 'Update' } ).click();
+			await page
+				.locator( '#publishing-action' )
+				.getByRole( 'button', { name: 'Update' } )
+				.click();
 		} );
 
 		await test.step( 'Verify product image was removed', async () => {
@@ -204,7 +206,9 @@ baseTest.describe( 'Products > Product Images', () => {
 
 			for ( const image of images ) {
 				await page
-					.getByRole( 'link', { name: 'Add product gallery images' } )
+					.getByRole( 'link', {
+						name: 'Add product gallery images',
+					} )
 					.click();
 				const dataId = await addImageFromLibrary(
 					page,
@@ -226,7 +230,10 @@ baseTest.describe( 'Products > Product Images', () => {
 				initialImagesCount = currentImagesCount;
 			}
 
-			await page.getByRole( 'button', { name: 'Update' } ).click();
+			await page
+				.locator( '#publishing-action' )
+				.getByRole( 'button', { name: 'Update' } )
+				.click();
 		} );
 
 		await test.step( 'Verify product gallery', async () => {
@@ -234,7 +241,7 @@ baseTest.describe( 'Products > Product Images', () => {
 			await page.goto( productWithImage.permalink );
 			await expect(
 				page
-					.locator( `#product-${ productWithImage.id } ol img` )
+					.locator( `.woocommerce-product-gallery ol img` )
 					.nth( images.length ),
 				'all gallery images should be visible'
 			).toBeVisible(); // +1 for the featured image
@@ -257,6 +264,12 @@ baseTest.describe( 'Products > Product Images', () => {
 			const imageSelector = '#product_images_container img';
 			imagesCount = await page.locator( imageSelector ).count();
 
+			await page
+				.getByRole( 'link', {
+					name: 'Add product gallery images',
+				} )
+				.scrollIntoViewIfNeeded();
+
 			await page.locator( imageSelector ).first().hover();
 			await page.getByRole( 'link', { name: ' Delete' } ).click();
 
@@ -265,13 +278,16 @@ baseTest.describe( 'Products > Product Images', () => {
 				'number of images should decrease'
 			).toEqual( imagesCount - 1 );
 
-			await page.getByRole( 'button', { name: 'Update' } ).click();
+			await page
+				.locator( '#publishing-action' )
+				.getByRole( 'button', { name: 'Update' } )
+				.click();
 		} );
 
 		await test.step( 'Verify product gallery', async () => {
 			// Verify gallery in store frontend
 			await page.goto( productWithGallery.permalink );
-			const selector = `#product-${ productWithGallery.id } ol img`;
+			const selector = `.woocommerce-product-gallery ol img`;
 			await expect(
 				page.locator( selector ).nth( imagesCount - 1 ),
 				'gallery images should be visible'
