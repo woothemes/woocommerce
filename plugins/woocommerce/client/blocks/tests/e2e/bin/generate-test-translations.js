@@ -8,7 +8,7 @@ const { translations } = require( '../test-data/data/data.ts' );
 const { getTestTranslation } = require( '../utils/get-test-translation.js' );
 
 ensureDirSync(
-	path.join( __dirname, '../../../../woocommerce/i18n/languages' )
+	path.join( __dirname, '../../../../../i18n/languages' )
 );
 
 const builtJsFiles = glob.sync(
@@ -87,7 +87,7 @@ builtJsFiles.forEach( ( filePath ) => {
 	writeJsonSync(
 		`${ path.dirname(
 			__filename
-		) }/../../../../woocommerce/i18n/languages/woocommerce-${ locale }-${ md5Path }.json`,
+		) }/../../../../../i18n/languages/woocommerce-${ locale }-${ md5Path }.json`,
 		data
 	);
 } );

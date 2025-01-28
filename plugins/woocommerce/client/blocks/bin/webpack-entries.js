@@ -12,7 +12,7 @@ const glob = require( 'glob' );
 //
 // If a block is experimental, it should be marked with the `isExperimental`
 // property.
-// Update plugins/woocommerce-blocks/docs/internal-developers/blocks/feature-flags-and-experimental-interfaces.md
+// Update plugins/woocommerce/client/blocks/docs/internal-developers/blocks/feature-flags-and-experimental-interfaces.md
 // when you mark/unmark block experimental.
 const blocks = {
 	'active-filters': {},
