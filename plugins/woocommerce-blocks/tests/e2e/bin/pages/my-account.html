@@ -1,1 +1,0 @@
-<!-- wp:shortcode -->[woocommerce_my_account]<!-- /wp:shortcode -->

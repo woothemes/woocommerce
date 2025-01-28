@@ -1,7 +1,0 @@
-{
-	"extends": "../../../../tsconfig.base.json",
-	"compilerOptions": {
-		"types": [ "gtag.js" ]
-	},
-	"include": [ ".", "../../type-defs", "../../mapped-types.ts" ]
-}
