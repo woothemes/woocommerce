@@ -7,7 +7,7 @@ const {
 	toggleBlockProductEditor,
 } = require( '../../../utils/simple-products' );
 const { tags } = require( '../../../fixtures/fixtures' );
-const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
+const { ADMIN_STATE_PATH } = require( '../../../playwright.config' );
 
 const ALL_PRODUCTS_URL = 'wp-admin/edit.php?post_type=product';
 const NEW_EDITOR_ADD_PRODUCT_URL =

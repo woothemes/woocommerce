@@ -1,5 +1,6 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 const { faker } = require( '@faker-js/faker' );
+const { CUSTOMER_STATE_PATH } = require( '../../playwright.config' );
 
 const test = baseTest.extend( {
 	storageState: process.env.ADMINSTATE,
@@ -336,7 +337,7 @@ test.describe( 'Product Reviews', () => {
 	} );
 
 	test.describe( 'Shopper adds reviews', () => {
-		test.use( { storageState: process.env.CUSTOMERSTATE.toString() } );
+		test.use( { storageState: CUSTOMER_STATE_PATH } );
 
 		test( 'shopper can post a review', async ( { page, products } ) => {
 			const product = products[ 0 ];

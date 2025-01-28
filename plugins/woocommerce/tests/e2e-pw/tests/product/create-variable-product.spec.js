@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const { variableProducts: utils, api } = require( '../../utils' );
 const { tags } = require( '../../fixtures/fixtures' );
-const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const { showVariableProductTour } = utils;
 const productPageURL = 'wp-admin/post-new.php?post_type=product';
 const variableProductName = 'Variable Product with Three Variations';
