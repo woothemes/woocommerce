@@ -8,6 +8,7 @@ use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallPluginSteps;
 use Automattic\WooCommerce\Blueprint\Exporters\ExportInstallThemeSteps;
 use Automattic\WooCommerce\Blueprint\ExportSchema;
 use Automattic\WooCommerce\Blueprint\ImportSchema;
+use Automattic\WooCommerce\Blueprint\ImportStep;
 use Automattic\WooCommerce\Blueprint\JsonResultFormatter;
 use Automattic\WooCommerce\Blueprint\StepProcessorResult;
 use Automattic\WooCommerce\Blueprint\ZipExportedSchema;
@@ -128,6 +129,26 @@ class RestApi {
 						),
 					),
 				),
+			)
+		);
+
+		register_rest_route(
+			$this->namespace,
+			'/blueprint/import-step',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'import_step' ),
+					'permission_callback' => array( $this, 'check_permission' ),
+					'args'                => array(
+						'step_definition' => array(
+							'description' => __( 'The step definition to import', 'woocommerce' ),
+							'type'        => 'object',
+							'required'    => true,
+						),
+					),
+				),
+				'schema' => array( $this, 'get_import_step_response_schema' ),
 			)
 		);
 	}
@@ -512,6 +533,23 @@ class RestApi {
 		return $settings;
 	}
 
+	/**
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return array
+	 */
+	public function import_step( \WP_REST_Request $request ) {
+		// Make sure we're dealing with object.
+		$step_definition = json_decode( json_encode( $request->get_param( 'step_definition' ) ) );
+		$step_importer   = new ImportStep( $step_definition );
+		$result          = $step_importer->import();
+
+		return array(
+			'success'  => $result->is_success(),
+			'messages' => $result->get_messages(),
+		);
+	}
+
 
 
 	/**
@@ -583,6 +621,41 @@ class RestApi {
 					),
 				),
 			),
+		);
+		return $schema;
+	}
+
+	/**
+	 * Get the schema for the import-step endpoint.
+	 *
+	 * @return array
+	 */
+	public function get_import_step_response_schema() {
+		$schema = array(
+			'$schema'    => 'http://json-schema.org/draft-04/schema#',
+			'title'      => 'import-step',
+			'type'       => 'object',
+			'properties' => array(
+				'success'  => array(
+					'type' => 'boolean',
+				),
+				'messages' => array(
+					'type'  => 'array',
+					'items' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'message' => array(
+								'type' => 'string',
+							),
+							'type'    => array(
+								'type' => 'string',
+							),
+						),
+						'required'   => array( 'message', 'type' ),
+					),
+				),
+			),
+			'required'   => array( 'success', 'messages' ),
 		);
 		return $schema;
 	}
