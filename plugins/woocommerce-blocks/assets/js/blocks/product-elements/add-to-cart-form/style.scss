@@ -8,7 +8,6 @@
 		font-size: var(--wp--preset--font-size--small);
 		padding: 0.9rem 1.1rem;
 	}
-
 }
 
 /*
@@ -18,22 +17,19 @@
 	width: unset;
 	.variations_button,
 	form.cart {
-		--whole-width-in-grid: span 9999; // A large number to span the whole width of the grid.
 		&::before {
-			content: " ";
-			grid-column: var(--whole-width-in-grid);
+			grid-column: 1 / 4;
 		}
-
+		grid-template-columns: 118px 1fr 1fr;
 		display: grid;
 
 		> * {
 			// Hack to ensure input + button stat on the same row, together.
-			grid-column: var(--whole-width-in-grid);
+			grid-column: 1 / 4;
 		}
 
 		> .quantity,
 		> .single_add_to_cart_button {
-			grid-column: span 1;
 			justify-self: start;
 		}
 
@@ -59,7 +55,6 @@
 		}
 	}
 }
-
 
 // Stepper CSS
 div.wc-block-add-to-cart-form.wc-block-add-to-cart-form--stepper {
