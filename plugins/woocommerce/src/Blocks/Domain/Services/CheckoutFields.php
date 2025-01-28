@@ -89,19 +89,6 @@ class CheckoutFields {
 	private $schema;
 
 	/**
-	 * Magic getter for the schema.
-	 *
-	 * @param string $name The name of the property to get.
-	 * @return mixed The value of the property.
-	 */
-	public function __get( $name ) {
-		if ( 'schema' === $name ) {
-			return $this->schema;
-		}
-		return null;
-	}
-
-	/**
 	 * Sets up core fields.
 	 *
 	 * @param AssetDataRegistry    $asset_data_registry Instance of the asset data registry.
