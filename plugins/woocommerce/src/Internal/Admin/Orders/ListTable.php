@@ -4,6 +4,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Orders;
 
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
+use Automattic\WooCommerce\Caches\OrderAggregateCache;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use WC_Order;
 use WP_List_Table;
@@ -50,6 +51,13 @@ class ListTable extends WP_List_Table {
 	private $page_controller;
 
 	/**
+	 * The order aggregate cache.
+	 *
+	 * @var OrderAggregateCache
+	 */
+	private $order_aggregate_cache;
+
+	/**
 	 * Tracks whether we're currently inside the trash.
 	 *
 	 * @var boolean
@@ -82,10 +90,12 @@ class ListTable extends WP_List_Table {
 	 * Init method, invoked by DI container.
 	 *
 	 * @internal This method is not intended to be used directly (except for testing).
-	 * @param PageController $page_controller Page controller instance for this request.
+	 * @param PageController      $page_controller Page controller instance for this request.
+	 * @param OrderAggregateCache $order_aggregate_cache Order aggregate cache.
 	 */
-	final public function init( PageController $page_controller ) {
-		$this->page_controller = $page_controller;
+	final public function init( PageController $page_controller, OrderAggregateCache $order_aggregate_cache ) {
+		$this->page_controller       = $page_controller;
+		$this->order_aggregate_cache = $order_aggregate_cache;
 	}
 
 	/**
@@ -595,28 +605,7 @@ class ListTable extends WP_List_Table {
 	 * @return int
 	 */
 	private function count_orders_by_status( $status ): int {
-		global $wpdb;
-
-		// Compute all counts and cache if necessary.
-		if ( is_null( $this->status_count_cache ) ) {
-			$orders_table = OrdersTableDataStore::get_orders_table_name();
-
-			$res = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT status, COUNT(*) AS cnt FROM {$orders_table} WHERE type = %s GROUP BY status", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					$this->order_type
-				),
-				ARRAY_A
-			);
-
-			$this->status_count_cache =
-				$res
-				? array_combine( array_column( $res, 'status' ), array_map( 'absint', array_column( $res, 'cnt' ) ) )
-				: array();
-		}
-
-		$status = (array) $status;
-		$count  = array_sum( array_intersect_key( $this->status_count_cache, array_flip( $status ) ) );
+		$count = $this->order_aggregate_cache->get_count( $status );
 
 		/**
 		 * Allows 3rd parties to modify the count of orders by status.
@@ -628,7 +617,7 @@ class ListTable extends WP_List_Table {
 		return apply_filters(
 			'woocommerce_' . $this->order_type . '_list_table_order_count',
 			$count,
-			$status
+			(array) $status
 		);
 	}
 
