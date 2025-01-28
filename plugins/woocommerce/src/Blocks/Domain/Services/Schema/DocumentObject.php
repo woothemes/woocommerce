@@ -118,7 +118,7 @@ class DocumentObject {
 		$this->schema_controller = StoreApi::container()->get( SchemaController::class );
 		$this->cart              = $this->cart_controller->get_cart_for_response();
 		$this->customer          = ! empty( wc()->customer ) ? wc()->customer : new WC_Customer();
-		$this->request_data      = (array) $request_data;
+		$this->request_data      = $request_data;
 	}
 
 	/**
