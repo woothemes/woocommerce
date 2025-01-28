@@ -62,24 +62,11 @@ jobs:
       test-jobs: ${{ steps.project-jobs.outputs.test-jobs }}
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
-      # Shallow copy of the branch is fast, but needs a bit of creativity about depth calculation and finding out proper base sha. 
-      - name: Setup - calculate checkout depth
-        id: checkout_depth
-        shell: bash
-        run: |
-          value=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
-          echo "value=$value" >> $GITHUB_OUTPUT
-      - name: Setup - checkout
-        uses: 'actions/checkout@v4'
+      - uses: 'actions/checkout@v4'
+        name: 'Checkout'
         with:
-          fetch-depth: ${{ steps.checkout_depth.outputs.value }}
-          ref: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.ref ) || '' }}
-      - name: Setup - calculate base sha
-        id: checkout_base_sha
-        shell: bash
-        run: |
-          value=$(git rev-list --no-merges -n ${{ steps.checkout_depth.outputs.value }} HEAD | tail -1)
-          echo "value=$value" >> $GITHUB_OUTPUT
+          # We tried to speed checkout up with shallow copies, but supporting PRs from forks forces us to follow this approach.
+          fetch-depth: ${{ ( ( github.base_ref && '0' ) || '1' ) }}
       # Now let's get to generating the build matrix itself.
       - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
@@ -93,7 +80,7 @@ jobs:
             // - Pushes: run CI jobs aiming pushes without filtering based on the content changes
 
             let baseRef   = '';
-            const baseSha = ${{ toJson( github.event_name == 'pull_request' && steps.checkout_base_sha.outputs.value ) }};
+            const baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
             if ( baseSha ) {
               // Use-case: trigger is pull request
               baseRef = `--base-ref ${ baseSha }`;
@@ -136,17 +123,11 @@ jobs:
       matrix:
         include: ${{ fromJSON( needs.project-jobs.outputs.lint-jobs ) }}
     steps:
-      - name: 'Calculate checkout depth'
-        id: checkout_depth
-        shell: bash
-        run: |
-          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
-          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
-
       - uses: 'actions/checkout@v4'
+        name: 'Checkout'
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
+          # We tried to speed checkout up with shallow copies, but `git merge-base ...` used on different levels of tooling forces us to follow this approach.
+          fetch-depth: ${{ ( ( matrix.projectName == '@woocommerce/plugin-woocommerce' && '0' ) || '1' ) }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
         id: 'setup-monorepo'

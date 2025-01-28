@@ -1,6 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../../../fixtures/fixtures' );
 const { variableProducts: utils } = require( '../../../../utils' );
+const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
 const {
 	createVariableProduct,
 	showVariableProductTour,
@@ -15,7 +16,7 @@ let expectedGeneratedVariations,
 	variationsToManuallyCreate;
 
 test.describe( 'Add variations', { tag: tags.GUTENBERG }, () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.beforeAll( async ( { browser } ) => {
 		productId_generateVariations = await createVariableProduct(
