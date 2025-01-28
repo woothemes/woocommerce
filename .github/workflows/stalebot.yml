@@ -54,17 +54,39 @@ jobs:
                   ascending: true
                   operations-per-run: 120
             - name: Remove stale PR approvals (over 30 days old)
-              uses: actions/stale@v9.0.0
+              uses: actions/github-script@v7
               with:
-                  repo-token: ${{ secrets.GITHUB_TOKEN }}
-                  only-pr-labels: '*'
-                  days-before-stale: -1
-                  days-before-close: -1
-                  days-before-pr-stale: 30
-                  days-before-pr-close: -1
-                  stale-pr-message: 'This PR approval has been removed due to being stale (30+ days old). Please request a new review.'
-                  operations-per-run: 120
-                  ascending: true
+                  script: |
+                      const thirtyDaysAgo = new Date();
+                      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+                      const prs = await github.paginate(github.rest.pulls.list, {
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        state: 'open',
+                        per_page: 100
+                      });
+
+                      for (const pr of prs) {
+                        const reviews = await github.paginate(github.rest.pulls.listReviews, {
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          pull_number: pr.number
+                        });
+                        
+                        for (const review of reviews) {
+                          if (review.state === 'APPROVED' && new Date(review.submitted_at) < thirtyDaysAgo) {
+                            console.log(`Dismissing stale approval on PR #${pr.number} from ${review.user.login}`);
+                            await github.rest.pulls.dismissReview({
+                              owner: context.repo.owner,
+                              repo: context.repo.repo,
+                              pull_number: pr.number,
+                              review_id: review.id,
+                              message: 'This approval has been dismissed due to being stale (30+ days old). Please request a new review.'
+                            });
+                          }
+                        }
+                      }
 
     remove-draft-approvals:
         runs-on: ubuntu-20.04
@@ -73,14 +95,26 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.action == 'converted_to_draft'
         steps:
             - name: Remove approvals from draft PR
-              uses: actions/stale@v9.0.0
+              uses: actions/github-script@v7
               with:
-                  repo-token: ${{ secrets.GITHUB_TOKEN }}
-                  only-pr-labels: '*'
-                  days-before-stale: -1
-                  days-before-close: -1
-                  days-before-pr-stale: 0
-                  days-before-pr-close: -1
-                  operations-per-run: 120
-                  stale-pr-message: 'This PR approval has been removed due to it being moved back to draft status after being approved. Please request a new review.'
-                  ascending: true
+                  script: |
+                      const pr = context.payload.pull_request;
+
+                      const reviews = await github.paginate(github.rest.pulls.listReviews, {
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: pr.number
+                      });
+
+                      for (const review of reviews) {
+                        if (review.state === 'APPROVED') {
+                          console.log(`Dismissing approval on draft PR #${pr.number} from ${review.user.login}`);
+                          await github.rest.pulls.dismissReview({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            pull_number: pr.number,
+                            review_id: review.id,
+                            message: 'This approval has been dismissed due to the PR being moved to draft status. Please request a new review when ready.'
+                          });
+                        }
+                      }
