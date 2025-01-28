@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import prepareFormFields from '@woocommerce/base-components/cart-checkout/form/prepare-form-fields';
 import { isEmail } from '@wordpress/url';
 import {
 	isString,
@@ -14,7 +13,6 @@ import {
 	BillingAddress,
 	CoreAddress,
 	KeyedFormField,
-	defaultFields,
 } from '@woocommerce/settings';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
@@ -95,13 +93,9 @@ const isValidAddressKey = (
 export const emptyHiddenAddressFields = <
 	T extends CartResponseBillingAddress | CartResponseShippingAddress
 >(
-	address: T
+	address: T,
+	addressForm: KeyedFormField[]
 ): T => {
-	const addressForm = prepareFormFields(
-		ADDRESS_FORM_KEYS,
-		defaultFields,
-		address.country
-	);
 	const newAddress = Object.assign( {}, address ) as T;
 
 	addressForm.forEach( ( { key = '', hidden = false } ) => {
@@ -122,13 +116,9 @@ export const emptyHiddenAddressFields = <
 export const emptyAddressFields = <
 	T extends CartResponseBillingAddress | CartResponseShippingAddress
 >(
-	address: T
+	address: T,
+	addressForm: KeyedFormField[]
 ): T => {
-	const addressForm = prepareFormFields(
-		ADDRESS_FORM_KEYS,
-		defaultFields,
-		address.country
-	);
 	const newAddress = Object.assign( {}, address ) as T;
 
 	addressForm.forEach( ( { key = '' } ) => {
@@ -195,16 +185,12 @@ export const formatShippingAddress = (
  */
 export const isAddressComplete = (
 	address: ShippingAddress | BillingAddress,
+	addressForm: KeyedFormField[],
 	keysToCheck: ( keyof CoreAddress )[] = []
 ): boolean => {
 	if ( ! address.country ) {
 		return false;
 	}
-	const addressForm = prepareFormFields(
-		ADDRESS_FORM_KEYS,
-		defaultFields,
-		address.country
-	);
 
 	// Filter the address form so only fields from the keysToCheck arg remain, if that arg is empty, then default to the
 	// full address form.

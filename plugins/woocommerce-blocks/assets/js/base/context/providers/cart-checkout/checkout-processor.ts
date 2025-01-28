@@ -33,6 +33,8 @@ import {
 	assertResponseIsValid,
 } from '@woocommerce/types';
 
+import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
+import { useFormFields } from '@woocommerce/base-components/cart-checkout/form/prepare-form-fields';
 /**
  * Internal dependencies
  */
@@ -119,7 +121,8 @@ const CheckoutProcessor = () => {
 	const currentShippingAddress = useRef( shippingAddress );
 	const currentRedirectUrl = useRef( redirectUrl );
 	const [ isProcessingOrder, setIsProcessingOrder ] = useState( false );
-
+	const billingFields = useFormFields( ADDRESS_FORM_KEYS, 'billing' );
+	const shippingFields = useFormFields( ADDRESS_FORM_KEYS, 'shipping' );
 	const paymentMethodId = useMemo( () => {
 		const merged = {
 			...expressPaymentMethods,
@@ -255,14 +258,18 @@ const CheckoutProcessor = () => {
 		const data = {
 			additional_fields: additionalFields,
 			billing_address: emptyHiddenAddressFields(
-				currentBillingAddress.current
+				currentBillingAddress.current,
+				billingFields
 			),
 			create_account: shouldCreateAccount,
 			customer_note: orderNotes,
 			customer_password: customerPassword,
 			extensions: { ...extensionData },
 			shipping_address: cartNeedsShipping
-				? emptyHiddenAddressFields( currentShippingAddress.current )
+				? emptyHiddenAddressFields(
+						currentShippingAddress.current,
+						shippingFields
+				  )
 				: undefined,
 			...paymentData,
 		};

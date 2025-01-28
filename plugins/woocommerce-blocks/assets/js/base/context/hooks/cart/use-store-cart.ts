@@ -32,7 +32,8 @@ import type {
 	CartResponseCoupons,
 } from '@woocommerce/types';
 import { emptyHiddenAddressFields } from '@woocommerce/base-utils';
-
+import { useFormFields } from '@woocommerce/base-components/cart-checkout/form/prepare-form-fields';
+import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 /**
  * Internal dependencies
  */
@@ -148,7 +149,8 @@ export const useStoreCart = (
 	const currentResults = useRef();
 	const billingAddressRef = useRef( defaultBillingAddress );
 	const shippingAddressRef = useRef( defaultShippingAddress );
-
+	const billingFields = useFormFields( ADDRESS_FORM_KEYS, 'billing' );
+	const shippingFields = useFormFields( ADDRESS_FORM_KEYS, 'shipping' );
 	// This will keep track of jQuery and DOM events that invalidate the store resolution.
 	useStoreCartEventListeners();
 
@@ -219,11 +221,13 @@ export const useStoreCart = (
 
 			// Update refs to keep the hook stable.
 			const billingAddress = emptyHiddenAddressFields(
-				decodeValues( cartData.billingAddress )
+				decodeValues( cartData.billingAddress ),
+				billingFields
 			);
 			const shippingAddress = cartData.needsShipping
 				? emptyHiddenAddressFields(
-						decodeValues( cartData.shippingAddress )
+						decodeValues( cartData.shippingAddress ),
+						shippingFields
 				  )
 				: billingAddress;
 
@@ -264,7 +268,7 @@ export const useStoreCart = (
 				receiveCartContents,
 			};
 		},
-		[ shouldSelect, isEditor ]
+		[ shouldSelect, isEditor, billingFields, shippingFields ]
 	);
 
 	if (
