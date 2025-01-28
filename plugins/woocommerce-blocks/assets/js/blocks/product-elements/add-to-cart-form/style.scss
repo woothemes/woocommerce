@@ -20,17 +20,18 @@
 		&::before {
 			grid-column: 1 / 4;
 		}
-		grid-template-columns: 118px 1fr 1fr;
+		grid-template-columns: min-content auto auto;
+		grid-auto-flow: column;
 		display: grid;
 
-		> * {
+		> *:not(.quantity) {
 			// Hack to ensure input + button stat on the same row, together.
 			grid-column: 1 / 4;
 		}
 
-		> .quantity,
 		> .single_add_to_cart_button {
 			justify-self: start;
+			grid-column: 2 / 3;
 		}
 
 		> .quantity:not(.wc-block-components-quantity-selector) .qty {
@@ -65,6 +66,8 @@ div.wc-block-add-to-cart-form.wc-block-add-to-cart-form--stepper {
 			background-color: #fff;
 			margin-right: 0.5em;
 			margin-bottom: 0;
+			grid-row: 1;
+			grid-column: 1;
 		}
 	}
 
