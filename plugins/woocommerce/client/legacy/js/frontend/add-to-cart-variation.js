@@ -304,7 +304,11 @@
 		$template_html = $template_html.replace( '/*<![CDATA[*/', '' );
 		$template_html = $template_html.replace( '/*]]>*/', '' );
 
-		form.$singleVariation.html( $template_html );
+		// Add a delay before updating the live region to ensure screen readers pick up the content changes.
+		setTimeout( function() {
+			form.$singleVariation.html( $template_html );
+		}, 500);
+
 		form.$form.find( 'input[name="variation_id"], input.variation_id' ).val( variation.variation_id ).trigger( 'change' );
 
 		// Hide or show qty input
