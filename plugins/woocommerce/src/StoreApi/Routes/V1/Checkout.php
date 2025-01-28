@@ -106,11 +106,6 @@ class Checkout extends AbstractCartRoute {
 							'description' => __( 'Customer password for new accounts, if applicable.', 'woocommerce' ),
 							'type'        => 'string',
 						],
-						'process_payment'   => [
-							'description' => __( 'Process payment.', 'woocommerce' ),
-							'type'        => 'boolean',
-							'default'     => true,
-						],
 					],
 					$this->schema->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE )
 				),
@@ -383,12 +378,10 @@ class Checkout extends AbstractCartRoute {
 		 */
 		$payment_result = new PaymentResult();
 
-		if ( $request['process_payment'] ) {
-			if ( $this->order->needs_payment() ) {
-				$this->process_payment( $request, $payment_result );
-			} else {
-				$this->process_without_payment( $request, $payment_result );
-			}
+		if ( $this->order->needs_payment() ) {
+			$this->process_payment( $request, $payment_result );
+		} else {
+			$this->process_without_payment( $request, $payment_result );
 		}
 
 		return $this->prepare_item_for_response(
