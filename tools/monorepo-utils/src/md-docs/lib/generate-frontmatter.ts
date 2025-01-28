@@ -52,3 +52,8 @@ export const generatePostFrontMatter = (
 			return obj;
 		}, {} );
 };
+
+export const hasContent = ( fileContents: string ) => {
+	const frontMatter = matter( fileContents );
+	return frontMatter.content.trim().length > 0;
+};
