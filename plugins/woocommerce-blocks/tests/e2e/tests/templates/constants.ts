@@ -2,7 +2,12 @@
  * External dependencies
  */
 import type { Page, Response } from '@playwright/test';
-import type { FrontendUtils } from '@woocommerce/e2e-utils';
+import type {
+	Admin,
+	Editor,
+	FrontendUtils,
+	RequestUtils,
+} from '@woocommerce/e2e-utils';
 
 /**
  * Internal dependencies
@@ -12,7 +17,10 @@ import { CheckoutPage } from '../checkout/checkout.page';
 
 type TemplateCustomizationTest = {
 	visitPage: ( props: {
+		admin: Admin;
+		editor: Editor;
 		frontendUtils: FrontendUtils;
+		requestUtils: RequestUtils;
 		page: Page;
 	} ) => Promise< void | Response | null >;
 	templateName: string;
@@ -95,6 +103,31 @@ export const CUSTOMIZABLE_WC_TEMPLATES: TemplateCustomizationTest[] = [
 		},
 		templateName: 'Mini-Cart',
 		templatePath: 'mini-cart',
+		templateType: 'wp_template_part',
+		canBeOverriddenByThemes: true,
+	},
+	{
+		visitPage: async ( { admin, editor, requestUtils, page } ) => {
+			// We will be able to simplify this logic once the blockified
+			// Add to Cart with Options block is the default.
+			await requestUtils.setFeatureFlag( 'experimental-blocks', true );
+			await requestUtils.setFeatureFlag( 'blockified-add-to-cart', true );
+			await admin.visitSiteEditor( {
+				postId: 'woocommerce/woocommerce//single-product',
+				postType: 'wp_template',
+				canvas: 'edit',
+			} );
+			await editor.insertBlock( {
+				name: 'woocommerce/add-to-cart-with-options',
+			} );
+			await editor.saveSiteEditorEntities( {
+				isOnlyCurrentEntityDirty: true,
+			} );
+
+			await page.goto( '/product/wordpress-pennant/' );
+		},
+		templateName: 'External Product Add to Cart with Options',
+		templatePath: 'external-product-add-to-cart-with-options',
 		templateType: 'wp_template_part',
 		canBeOverriddenByThemes: true,
 	},
