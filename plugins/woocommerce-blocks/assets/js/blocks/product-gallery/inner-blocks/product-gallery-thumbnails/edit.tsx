@@ -17,13 +17,12 @@ export const Edit = ( {
 	attributes,
 	setAttributes,
 }: BlockEditProps< ProductGalleryThumbnailsBlockAttributes > ) => {
-	const blockProps = useBlockProps();
-
-	const className = clsx(
-		'wc-block-product-gallery-thumbnails',
-		`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.numberOfThumbnails }`,
-		`wc-block-product-gallery-thumbnails--position-${ attributes.thumbnailsPosition }`
-	);
+	const blockProps = useBlockProps( {
+		className: clsx(
+			'wc-block-product-gallery-thumbnails',
+			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.numberOfThumbnails }`
+		),
+	} );
 
 	return (
 		<div { ...blockProps }>
@@ -35,23 +34,22 @@ export const Edit = ( {
 					/>
 				</PanelBody>
 			</InspectorControls>
-			<div className={ className }>
-				{ [ ...Array( attributes.numberOfThumbnails ).keys() ].map(
-					( index ) => {
-						return (
-							<div
-								className="wc-block-product-gallery-thumbnails__thumbnail"
-								key={ index }
-							>
-								<img
-									src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
-									alt=""
-								/>
-							</div>
-						);
-					}
-				) }
-			</div>
+			{ [ ...Array( attributes.numberOfThumbnails ).keys() ].map(
+				( index ) => {
+					return (
+						<div
+							className="wc-block-product-gallery-thumbnails__thumbnail"
+							key={ index }
+						>
+							<img
+								className="wc-block-product-gallery-thumbnails__image"
+								src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
+								alt=""
+							/>
+						</div>
+					);
+				}
+			) }
 		</div>
 	);
 };

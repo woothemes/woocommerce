@@ -1,14 +1,8 @@
 $gallery: ".wc-block-product-gallery";
 $large-image: "#{$gallery}-large-image";
-$thumbnails: "#{$gallery}-thumbnails";
 $next-previous: "#{$large-image}-next-previous";
 $next-previous-left-off: "#{$next-previous}-left--off";
 $next-previous-right-off: "#{$next-previous}-right--off";
-
-$outside-image-offset: 30px;
-$outside-image-max-width: calc(100% - (2 * $outside-image-offset));
-$thumbnails-gap: 15px;
-$default-number-of-thumbnails: 3;
 $dialog-header-height: 29px;
 $dialog-header-padding-top: calc(30px / 2);
 $dialog-padding: 16px;
@@ -243,72 +237,22 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	}
 }
 
-// Automattically react to the Group container settings.
-.is-nowrap .wc-block-product-gallery-thumbnails,
-.is-horizontal.is-nowrap .wc-block-product-gallery-thumbnails {
+$thumbnails-gap: 15px;
+$thumbnails-border-width: 1px;
+
+.wc-block-product-gallery-thumbnails {
 	display: flex;
-	flex-direction: column;
-
-	@for $i from 3 through 8 {
-		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
-			// Calculate the total width occupied by the gaps between thumbnails.
-			$gap-width: $thumbnails-gap * ($i - 1);
-
-			// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-			$border-width: $i * 1px * 2;
-
-			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-		}
-	}
-}
-
-// .is-vertical .wc-block-product-gallery-thumbnails--thumbnails,
-// .is-horizontal .wc-block-product-gallery-thumbnails--thumbnails {
-// 	display: flex;
-// 	flex-direction: row;
-
-// 	@for $i from 3 through 8 {
-// 		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
-// 			// Calculate the total width occupied by the gaps between thumbnails.
-// 			$gap-width: $thumbnails-gap * ($i - 1);
-
-// 			// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-// 			$border-width: $i * 1px * 2;
-
-// 			$thumbnail-width: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-
-// 			flex: 0 0 $thumbnail-width;
-// 		}
-// 	}
-// }
-
-// Thumbnails
-#{$thumbnails} {
-	display: flex;
+	gap: $thumbnails-gap;
 
 	img {
 		cursor: pointer;
-		height: auto;
-		width: auto;
 		max-width: 100%;
-	}
-
-	#{$gallery} {
-		flex-direction: column;
-		gap: 15px 0;
-
-		// Calculate the total width occupied by the gaps between thumbnails.
-		$gap-width: $thumbnails-gap * ($default-number-of-thumbnails - 1);
-
-		// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-		$border-width: #{$default-number-of-thumbnails * 1px * 2};
-
-		// Calculate the width of each thumbnail by accounting for the gap, border, and additional space.
-		flex-basis: calc((100% - #{$gap-width} - #{$border-width} - 4px) / #{$default-number-of-thumbnails});
+		aspect-ratio: 1 / 1;
+		object-fit: contain;
 	}
 
 	.wc-block-product-gallery-thumbnails__thumbnail {
-		border: 1px solid rgba($color: #000, $alpha: 0.1);
+		border: $thumbnails-border-width solid rgba($color: #000, $alpha: 0.1);
 		height: auto;
 		width: auto;
 		display: flex;
@@ -318,11 +262,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		position: relative;
 		flex-basis: 0;
 		flex-grow: 1;
-
-		img {
-			aspect-ratio: 1 / 1;
-			object-fit: contain;
-		}
 
 		&::before {
 			content: "";
@@ -394,3 +333,34 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		}
 	}
 }
+
+// Automattically react to the Group container settings.
+.is-nowrap .wc-block-product-gallery-thumbnails,
+.is-horizontal.is-nowrap .wc-block-product-gallery-thumbnails {
+	flex-direction: column;
+
+	@for $i from 3 through 8 {
+		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
+			$gap-width: $thumbnails-gap * ($i - 1);
+			$border-width: $i * 1px * 2;
+
+			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
+		}
+	}
+}
+
+.is-vertical .wc-block-product-gallery-thumbnails,
+.is-horizontal .wc-block-product-gallery-thumbnails {
+	flex-direction: row;
+
+	@for $i from 3 through 8 {
+		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
+			$gap-width: $thumbnails-gap * ($i - 1);
+			$border-width: $i * 1px * 2;
+
+			flex: 0 0 calc((100% - #{$gap-width} - #{$border-width}) / $i);
+		}
+	}
+}
+
+
