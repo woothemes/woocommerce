@@ -18,7 +18,7 @@
 		"build:project": "pnpm --if-present '/^build:project:.*$/'",
 		"build:project:copy-assets:legacy": "rsync -avhW --checksum --delete --quiet client/legacy/build/css/ assets/css && rsync -avhW --checksum --delete --quiet client/legacy/build/js/ assets/js",
 		"build:project:copy-assets:admin": "rsync -avhW --checksum --delete --quiet client/admin/build/ assets/client/admin",
-		"build:project:copy-assets:blocks": "rsync -avhW --checksum --delete --quiet client/blocks/build/ assets/client/blocks",
+		"build:project:copy-assets:blocks": "rsync -avhW --checksum --delete --quiet client/blocks/build/ assets/client/blocks && rsync -avhW --checksum --quiet client/blocks/blocks.ini blocks.ini",
 		"build:project:actualize-translation-domains": "wireit",
 		"changelog": "XDEBUG_MODE=off composer install --quiet && composer exec -- changelogger",
 		"env:destroy": "pnpm wp-env destroy",
