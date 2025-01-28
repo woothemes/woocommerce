@@ -85,6 +85,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			'autoload'    => false,
 			'desc_tip'    => true,
 		);
+		$logo_image_width           = null;
 		$header_alignment           = null;
 		$font_family                = null;
 
@@ -136,6 +137,13 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				'default'     => '',
 				'autoload'    => false,
 				'desc_tip'    => true,
+			);
+			$logo_image_width           = array(
+				'title'    => __( 'Logo width (px)', 'woocommerce' ),
+				'id'       => 'woocommerce_email_header_image_width',
+				'desc_tip' => '',
+				'default'  => 120,
+				'type'     => 'number',
 			);
 			$header_alignment           = array(
 				'title'    => __( 'Header alignment', 'woocommerce' ),
@@ -332,6 +340,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				),
 
 				$logo_image,
+
+				$logo_image_width,
 
 				$header_alignment,
 
@@ -741,8 +751,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 */
 	public function email_font_family( $value ) {
 		$option_value = $value['value'];
-		// This is a temporary fix to prevent using custom fonts without fallback
-		$custom_fonts = null; // $this->get_custom_fonts();
+		// This is a temporary fix to prevent using custom fonts without fallback.
+		$custom_fonts = null;
 
 		?>
 		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
