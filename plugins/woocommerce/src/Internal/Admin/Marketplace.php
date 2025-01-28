@@ -133,6 +133,7 @@ class Marketplace {
 			admin_url( 'admin.php' )
 		);
 
+		wc_admin_record_tracks_event( 'marketplace_plugin_install_woo_clicked' );
 		wp_safe_redirect( $woo_url );
 		exit;
 	}

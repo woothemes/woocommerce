@@ -222,7 +222,7 @@ const ProductCollectionInspectorControls = (
 				</ToolsPanel>
 			) : null }
 			<CesFeedbackButton
-				blockName={ metadata.title }
+				blockName={ `${ metadata.title } block` }
 				wrapper={ PanelBody }
 			/>
 		</InspectorControls>

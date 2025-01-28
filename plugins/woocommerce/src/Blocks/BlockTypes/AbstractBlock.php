@@ -112,6 +112,18 @@ abstract class AbstractBlock {
 	}
 
 	/**
+	 * Are we currently on the admin block editor screen?
+	 */
+	protected function is_block_editor() {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+		$screen = get_current_screen();
+
+		return $screen && $screen->is_block_editor();
+	}
+
+	/**
 	 * Initialize this block type.
 	 *
 	 * - Hook into WP lifecycle.

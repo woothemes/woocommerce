@@ -109,10 +109,6 @@ body:has(.woocommerce-coming-soon-banner) {
 .woocommerce-coming-soon-minimal-left-image {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
-	.wp-block-site-title {
-		font-family: Inter, sans-serif;
-	}
-
 	&__content {
 		.wp-block-columns-is-layout-flex {
 			justify-content: center;
@@ -123,7 +119,6 @@ body:has(.woocommerce-coming-soon-banner) {
 // Modern black template styles
 .woocommerce-coming-soon-modern-black {
 	--wp--preset--color--contrast: #fff;
-	font-family: Inter, sans-serif;
 }
 
 // Split right image template styles

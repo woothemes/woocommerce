@@ -141,7 +141,7 @@ test.describe( `${ blockData.name }`, () => {
 		} );
 	} );
 
-	test( 'Renders correct image when selecting a product variation in the Add to Cart With Options block', async ( {
+	test( 'Renders correct image when selecting a product variation in the Add to Cart with Options block', async ( {
 		page,
 		editor,
 		pageObject,

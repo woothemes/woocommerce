@@ -9,15 +9,12 @@
  */
 
 use Automattic\WooCommerce\Blocks\AIContent\PatternsHelper;
+use Automattic\WooCommerce\Blocks\Templates\ComingSoonTemplate;
 
-$current_theme     = wp_get_theme()->get_stylesheet();
-$inter_font_family = 'inter';
-$cardo_font_family = 'cardo';
-
-if ( 'twentytwentyfour' === $current_theme ) {
-	$inter_font_family = 'body';
-	$cardo_font_family = 'heading';
-}
+$fonts                 = ComingSoonTemplate::get_font_families();
+$heading_font_family   = $fonts['heading'];
+$body_font_family      = $fonts['body'];
+$paragraph_font_family = isset( $fonts['paragraph'] ) ? $fonts['paragraph'] : null;
 
 $default_image = PatternsHelper::get_image_url( $images, 0, 'assets/images/pattern-placeholders/green-glass-jars-on-stairs.jpg' );
 
@@ -41,7 +38,7 @@ $store_description = ! empty( $site_tagline )
 				<div class="wp-block-group"><!-- wp:site-logo {"width":60} /-->
 
 					<!-- wp:group {"style":{"spacing":{"blockGap":"0px"}}} -->
-					<div class="wp-block-group"><!-- wp:site-title {"level":0,"style":{"typography":{"fontSize":"20px","letterSpacing":"0px"},"color":{"text":"#000000"},"elements":{"link":{"color":{"text":"#000000"}}}},"fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} /--></div>
+					<div class="wp-block-group"><!-- wp:site-title {"level":0,"style":{"typography":{"fontSize":"20px","letterSpacing":"0px"},"color":{"text":"#000000"},"elements":{"link":{"color":{"text":"#000000"}}}},"fontFamily":"<?php echo esc_html( $body_font_family ); ?>"} /--></div>
 					<!-- /wp:group --></div>
 				<!-- /wp:group -->
 
@@ -65,14 +62,16 @@ $store_description = ! empty( $site_tagline )
 
 					<!-- wp:column {"verticalAlignment":"stretch","width":"453px","className":"woocommerce-coming-soon-minimal-left-image__content-text","style":{"spacing":{"blockGap":"0","padding":{"right":"0","left":"0","bottom":"0","top":"53px"}}},"layout":{"type":"default"}} -->
 					<div class="wp-block-column is-vertically-aligned-stretch woocommerce-coming-soon-minimal-left-image__content-text" style="padding-top:53px;padding-right:0;padding-bottom:0;padding-left:0;flex-basis:453px"><!-- wp:group {"style":{"dimensions":{"minHeight":"100%"},"spacing":{"blockGap":"0"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch","flexWrap":"nowrap","verticalAlignment":"space-between"}} -->
-						<div class="wp-block-group" style="min-height:100%"><!-- wp:heading {"level":1,"className":"is-style-default","style":{"elements":{"link":{"color":{"text":"#000"}}},"color":{"text":"#000"},"typography":{"fontSize":"38px","lineHeight":"1.19"},"spacing":{"margin":{"bottom":"var:preset|spacing|30"}}},"fontFamily":"heading"} -->
-						<h1 class="wp-block-heading is-style-default has-text-color has-link-color has-heading-font-family" style="color:#000;margin-bottom:var(--wp--preset--spacing--30);font-size:38px;line-height:1.19"><?php echo esc_html__( 'Something big is brewing! Our store is in the works – Launching shortly!', 'woocommerce' ); ?></h1>
+						<div class="wp-block-group" style="min-height:100%"><!-- wp:heading {"level":1,"className":"is-style-default","style":{"elements":{"link":{"color":{"text":"#000"}}},"color":{"text":"#000"},"typography":{"fontSize":"38px","lineHeight":"1.19"},"spacing":{"margin":{"bottom":"var:preset|spacing|30"}}},"fontFamily":"<?php echo esc_html( $heading_font_family ); ?>"} -->
+						<h1 class="wp-block-heading is-style-default has-text-color has-link-color has-<?php echo esc_html( $heading_font_family ); ?>-font-family" style="color:#000;margin-bottom:var(--wp--preset--spacing--30);font-size:38px;line-height:1.19"><?php echo esc_html__( 'Something big is brewing! Our store is in the works – Launching shortly!', 'woocommerce' ); ?></h1>
 						<!-- /wp:heading -->
 
 <!-- wp:group {"layout":{"type":"constrained","justifyContent":"left","contentSize":"338px"}} -->
-							<div class="wp-block-group"><!-- wp:paragraph {"style":{"color":{"text":"#000"},"elements":{"link":{"color":{"text":"#000"}}},"typography":{"lineHeight":"1.6","letterSpacing":"0px"}}} -->
-								<p class="has-text-color has-link-color" style="color:#000;letter-spacing:0px;line-height:1.6"><?php echo esc_html( $store_description ); ?></p>
-							<!-- /wp:paragraph --></div>
+							<div class="wp-block-group">
+								<!-- wp:paragraph {"style":{"color":{"text":"#000"},"elements":{"link":{"color":{"text":"#000"}}},"typography":{"lineHeight":"1.6","letterSpacing":"0px"}},"fontFamily":"<?php echo esc_html( $paragraph_font_family ?? '' ); ?>"} -->
+								<p class="has-text-color has-link-color has-<?php echo esc_html( $paragraph_font_family ?? '' ); ?>-font-family" style="color:#000;letter-spacing:0px;line-height:1.6"><?php echo esc_html( $store_description ); ?></p>
+								<!-- /wp:paragraph -->
+							</div>
 							<!-- /wp:group --></div>
 						<!-- /wp:group --></div>
 					<!-- /wp:column -->

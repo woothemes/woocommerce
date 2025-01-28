@@ -72,10 +72,12 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	}, [ nonce, setIsLoading, settingsIds, setCounter ] );
 
 	return (
-		<iframe
-			src={ `${ src }&hash=${ counter }` }
-			title={ __( 'Email preview frame', 'woocommerce' ) }
-			onLoad={ () => setIsLoading( false ) }
-		/>
+		<div>
+			<iframe
+				src={ `${ src }&hash=${ counter }` }
+				title={ __( 'Email preview frame', 'woocommerce' ) }
+				onLoad={ () => setIsLoading( false ) }
+			/>
+		</div>
 	);
 };

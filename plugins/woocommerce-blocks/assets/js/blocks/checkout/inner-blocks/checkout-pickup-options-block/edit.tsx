@@ -8,6 +8,7 @@ import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { useSelect } from '@wordpress/data';
 import { checkoutStore as checkoutStoreDescriptor } from '@woocommerce/block-data';
 import { LOCAL_PICKUP_ENABLED } from '@woocommerce/block-settings';
+import { Disabled } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -52,7 +53,9 @@ export const Edit = ( {
 				className
 			) }
 		>
-			<Block />
+			<Disabled>
+				<Block />
+			</Disabled>
 			<AdditionalFields block={ innerBlockAreas.PICKUP_LOCATION } />
 		</FormStepBlock>
 	);
