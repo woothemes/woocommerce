@@ -2,10 +2,6 @@
  * External dependencies
  */
 import { defineConfig, devices } from '@playwright/test';
-/**
- * Internal dependencies
- */
-import { tags } from './fixtures/fixtures';
 
 require( 'dotenv' ).config( { path: __dirname + '/.env' } );
 
@@ -130,7 +126,7 @@ export default defineConfig( {
 			dependencies: [ 'site setup' ],
 		},
 		{
-			name: 'ui',
+			name: 'e2e',
 			testIgnore: '**/api-tests/**',
 			dependencies: [ 'site setup' ],
 		},
@@ -138,10 +134,6 @@ export default defineConfig( {
 			name: 'api',
 			testMatch: '**/api-tests/**',
 			dependencies: [ 'site setup' ],
-		},
-		{
-			name: 'e2e-hpos-disabled',
-			grep: new RegExp( tags.HPOS ),
 		},
 	],
 } );
