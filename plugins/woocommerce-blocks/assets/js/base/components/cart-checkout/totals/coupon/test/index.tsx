@@ -4,7 +4,7 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ describe( 'TotalsCoupon', () => {
 			screen.queryByText( 'Invalid coupon code' )
 		).not.toBeInTheDocument();
 
-		const { setValidationErrors } = dispatch( VALIDATION_STORE_KEY );
+		const { setValidationErrors } = dispatch( validationStore );
 		act( () => {
 			setValidationErrors( {
 				coupon: {

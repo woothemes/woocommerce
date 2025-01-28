@@ -163,7 +163,10 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			$children['visible'] = get_posts( apply_filters( 'woocommerce_variable_children_args', $visible_only_args, $product, true ) );
 			$children['version'] = $transient_version;
 
-			set_transient( $children_transient_name, $children, DAY_IN_SECONDS * 30 );
+			// Validate the children data before storing it in the transient.
+			if ( $this->validate_children_data( $children, $transient_version ) ) {
+				set_transient( $children_transient_name, $children, DAY_IN_SECONDS * 30 );
+			}
 		}
 
 		$children['all']     = wp_parse_id_list( (array) $children['all'] );
@@ -388,7 +391,10 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					$transient_cached_prices_array[ $price_hash ][ $key ] = $values;
 				}
 
-				set_transient( $transient_name, wp_json_encode( $transient_cached_prices_array ), DAY_IN_SECONDS * 30 );
+				// Validate the prices data before storing it in the transient.
+				if ( $this->validate_prices_data( $transient_cached_prices_array, $transient_version ) ) {
+					set_transient( $transient_name, wp_json_encode( $transient_cached_prices_array ), DAY_IN_SECONDS * 30 );
+				}
 			}
 
 			/**

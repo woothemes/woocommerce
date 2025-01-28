@@ -54,20 +54,31 @@
 	}
 }
 
-.inside-popover {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	grid-template-rows: repeat(3, 1fr);
-	gap: $gap-smaller;
-	padding: 0px;
-}
+.woocommerce-woopayments-payment-methods-logos-popover {
+	.components-popover__content {
+		background: $white;
+		border: 1px solid $gray-100;
+		border-radius: 3px;
+		max-width: 255px;
+		padding: $gap-smaller;
+		box-shadow: none;
+		margin-bottom: $gap-smaller;
 
-.components-popover__content {
-	background: $white;
-	border: 1px solid $gray-100;
-	border-radius: 3px;
-	max-width: 246px;
-	padding: $gap-smaller;
-	box-shadow: none;
-	margin-bottom: $gap-smaller;
+		a {
+			outline: none;
+			text-decoration: none;
+
+			&:focus {
+				box-shadow: none;
+			}
+		}
+	}
+
+	.woocommerce-woopayments-payment-methods-logos {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: repeat(3, 1fr);
+		gap: $gap-smaller;
+		padding: 0px;
+	}
 }
