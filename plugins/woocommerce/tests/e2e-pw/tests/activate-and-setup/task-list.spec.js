@@ -1,6 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
-const { exec } = require( 'child_process' );
 
 test.describe( 'WC Home Task List >', () => {
 	test.use( { storageState: process.env.ADMINSTATE } );
@@ -39,12 +38,23 @@ test.describe( 'WC Home Task List >', () => {
 					page.getByText( 'Store management' )
 				).toBeVisible();
 			} );
-
-			await test.step( 'Re-enable task list', async () => {
-				await page.goto(
-					'wp-admin/admin.php?page=wc-admin&reset_task_list=1'
-				);
-			} );
 		}
 	);
+
+	test.afterAll( async ( { browser } ) => {
+		await test.step( 'Re-enable task list', async () => {
+			const context = await browser.newContext();
+			const page = await context.newPage();
+
+			await page.goto(
+				'wp-admin/admin.php?page=wc-admin&reset_task_list=1'
+			);
+			await expect(
+				page.getByText( 'Customize your store' )
+			).toBeVisible();
+
+			await page.close();
+			await context.close();
+		} );
+	} );
 } );
