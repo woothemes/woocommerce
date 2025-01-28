@@ -154,7 +154,7 @@ export const updateDraftOrder = ( data: CheckoutPutData ) => {
 		const { receiveCart } = registry.dispatch( CART_STORE_KEY );
 		try {
 			const response = await apiFetchWithHeaders( {
-				path: '/wc/store/v1/checkout?calc_totals=true',
+				path: '/wc/store/v1/checkout?__experimental_calc_totals=true',
 				method: 'PUT',
 				data,
 				signal: CheckoutPutAbortController.signal,
