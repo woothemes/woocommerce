@@ -2097,6 +2097,8 @@ test.describe( 'Settings API tests: CRUD', () => {
 	);
 
 	test.describe( 'List all Email New Order settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email new order settings', async ( {
 			request,
 		} ) => {
@@ -2196,10 +2198,46 @@ test.describe( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
 		} );
 	} );
 
 	test.describe( 'List all Email Failed Order settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test(
 			'can retrieve all email failed order settings',
 			{ tag: tags.SKIP_ON_PRESSABLE },
@@ -2302,11 +2340,47 @@ test.describe( 'Settings API tests: CRUD', () => {
 						} ),
 					] )
 				);
+				expect( responseJSON ).toEqual(
+					expect.arrayContaining( [
+						expect.objectContaining( {
+							id: 'cc',
+							label: 'Cc(s)',
+							description: expect.stringContaining(
+								'Enter Cc recipients (comma separated) for this email.'
+							),
+							type: 'text',
+							default: '',
+							tip: expect.stringContaining(
+								'Enter Cc recipients (comma separated) for this email.'
+							),
+							value: expect.any( String ),
+						} ),
+					] )
+				);
+				expect( responseJSON ).toEqual(
+					expect.arrayContaining( [
+						expect.objectContaining( {
+							id: 'bcc',
+							label: 'Bcc(s)',
+							description: expect.stringContaining(
+								'Enter Bcc recipients (comma separated) for this email.'
+							),
+							type: 'text',
+							default: '',
+							tip: expect.stringContaining(
+								'Enter Bcc recipients (comma separated) for this email.'
+							),
+							value: expect.any( String ),
+						} ),
+					] )
+				);
 			}
 		);
 	} );
 
 	test.describe( 'List all Email Customer On Hold Order settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email customer on hold order settings', async ( {
 			request,
 		} ) => {
@@ -2390,10 +2464,46 @@ test.describe( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
 		} );
 	} );
 
 	test.describe( 'List all Email Customer Processing Order settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email customer processing order settings', async ( {
 			request,
 		} ) => {
@@ -2476,10 +2586,46 @@ test.describe( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
 		} );
 	} );
 
 	test.describe( 'List all Email Customer Completed Order settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email customer completed order settings', async ( {
 			request,
 		} ) => {
@@ -2562,10 +2708,46 @@ test.describe( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
 		} );
 	} );
 
 	test.describe( 'List all Email Customer Refunded Order settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email customer refunded order settings', async ( {
 			request,
 		} ) => {
@@ -2678,10 +2860,46 @@ test.describe( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
 		} );
 	} );
 
 	test.describe( 'List all Email Customer Invoice settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email customer invoice settings', async ( {
 			request,
 		} ) => {
@@ -2767,10 +2985,46 @@ test.describe( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
 		} );
 	} );
 
 	test.describe( 'List all Email Customer Note settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email customer note settings', async ( {
 			request,
 		} ) => {
@@ -2853,10 +3107,46 @@ test.describe( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
 		} );
 	} );
 
 	test.describe( 'List all Email Customer Reset Password settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email customer reset password settings', async ( {
 			request,
 		} ) => {
@@ -2939,10 +3229,46 @@ test.describe( 'Settings API tests: CRUD', () => {
 					} ),
 				] )
 			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
 		} );
 	} );
 
 	test.describe( 'List all Email Customer New Account settings', () => {
+		test.beforeAll( enableEmailImprovementsFeature );
+		test.afterAll( disableEmailImprovementsFeature );
 		test( 'can retrieve all email customer new account settings', async ( {
 			request,
 		} ) => {
@@ -3022,6 +3348,40 @@ test.describe( 'Settings API tests: CRUD', () => {
 						},
 						tip: 'Choose which format of email to send.',
 						value: 'html',
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'cc',
+						label: 'Cc(s)',
+						description: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Cc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
+					} ),
+				] )
+			);
+			expect( responseJSON ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						id: 'bcc',
+						label: 'Bcc(s)',
+						description: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						type: 'text',
+						default: '',
+						tip: expect.stringContaining(
+							'Enter Bcc recipients (comma separated) for this email.'
+						),
+						value: expect.any( String ),
 					} ),
 				] )
 			);
