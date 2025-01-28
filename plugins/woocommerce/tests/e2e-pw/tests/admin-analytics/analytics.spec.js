@@ -1,12 +1,13 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 // TODO (E2E Audit): Not E2E. This test could be combined with the tests from admin-analytics/analytics-overview.spec.js to be more efficient.
 test.describe(
 	'Analytics pages',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.NOT_E2E ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		for ( const aPages of [
 			'Overview',
