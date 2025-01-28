@@ -463,6 +463,15 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_recipient() {
+		/**
+		 * Filter the recipient for the email.
+		 *
+		 * @since 2.0.0
+		 * @since 3.7.0 Added $email parameter.
+		 * @param string   $recipient Recipient.
+		 * @param object   $object    The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email $email     WC_Email instance managing the email.
+		 */
 		$recipient  = apply_filters( 'woocommerce_email_recipient_' . $this->id, $this->recipient, $this->object, $this );
 		$recipients = array_map( 'trim', explode( ',', $recipient ) );
 		$recipients = array_filter( $recipients, 'is_email' );
