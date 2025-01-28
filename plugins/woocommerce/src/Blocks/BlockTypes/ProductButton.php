@@ -195,7 +195,7 @@ class ProductButton extends AbstractBlock {
 		';
 
 		$button_directives = '
-			data-wc-on--click="actions.addToCart"
+			data-wc-on--click="actions.addCartItem"
 			data-wc-class--loading="context.isLoading"
 		';
 
