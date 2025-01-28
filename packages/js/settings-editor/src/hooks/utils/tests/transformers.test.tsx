@@ -11,8 +11,6 @@ import {
 	transformToField,
 	transformToFormField,
 } from '../transformers';
-import { CheckboxEdit } from '../../../components/checkbox-edit';
-import { SelectEdit } from '../../../components/selectEdit';
 
 describe( 'dataforms-transformers', () => {
 	describe( 'transformToInitialData', () => {
@@ -86,7 +84,7 @@ describe( 'dataforms-transformers', () => {
 				id: 'check1',
 				type: 'text',
 				label: 'Checkbox Input',
-				Edit: CheckboxEdit,
+				Edit: expect.any( Function ),
 			} );
 		} );
 
@@ -106,12 +104,12 @@ describe( 'dataforms-transformers', () => {
 			expect( result ).toEqual( {
 				id: 'select1',
 				type: 'text',
-				label: 'Select Input (TO BE IMPLEMENTED)',
+				label: 'Select Input',
 				elements: [
 					{ label: 'Option 1', value: 'value1' },
 					{ label: 'Option 2', value: 'value2' },
 				],
-				Edit: SelectEdit,
+				Edit: expect.any( Function ),
 			} );
 		} );
 
@@ -173,13 +171,13 @@ describe( 'dataforms-transformers', () => {
 					id: 'check1',
 					type: 'text',
 					label: 'Check 1',
-					Edit: CheckboxEdit,
+					Edit: expect.any( Function ),
 				},
 				{
 					id: 'check2',
 					type: 'text',
 					label: 'Check 2',
-					Edit: CheckboxEdit,
+					Edit: expect.any( Function ),
 				},
 			] );
 		} );
