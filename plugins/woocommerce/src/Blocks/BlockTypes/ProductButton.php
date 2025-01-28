@@ -208,7 +208,7 @@ class ProductButton extends AbstractBlock {
 			data-wc-class--wc-block-slide-out="state.slideOutAnimation"
 			data-wc-on--animationend="actions.handleAnimationEnd"
 			data-wc-watch="callbacks.startAnimation"
-			data-wc-layout-init="callbacks.syncTemporaryNumberOfItemsOnLoad"
+			data-wc-layout-init="callbacks.syncTempQuantityOnLoad"
 		';
 
 		$wrapper_attributes = get_block_wrapper_attributes(
