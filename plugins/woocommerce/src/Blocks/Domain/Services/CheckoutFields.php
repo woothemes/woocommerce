@@ -884,7 +884,6 @@ class CheckoutFields {
 				ARRAY_FILTER_USE_KEY
 			);
 		}
-
 		return [];
 	}
 
