@@ -21,43 +21,56 @@ export const useLaunchYourStore = (
 		storePagesOnly,
 		privateLink,
 		shareKey,
-	} = useSelect( ( select ) => {
-		if ( ! enabled ) {
+	} = useSelect(
+		( select ) => {
+			if ( ! enabled ) {
+				return {
+					isLoading: false,
+					comingSoon: null,
+					storePagesOnly: null,
+					privateLink: null,
+					shareKey: null,
+					launchYourStoreEnabled: null,
+				};
+			}
+
+			const { hasFinishedResolution, getOption } =
+				select( OPTIONS_STORE_NAME );
+
+			const allOptionResolutionsFinished =
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				! hasFinishedResolution( 'getOption', [
+					'woocommerce_coming_soon',
+				] ) &&
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				! hasFinishedResolution( 'getOption', [
+					'woocommerce_store_pages_only',
+				] ) &&
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				! hasFinishedResolution( 'getOption', [
+					'woocommerce_private_link',
+				] ) &&
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				! hasFinishedResolution( 'getOption', [
+					'woocommerce_share_key',
+				] );
+
 			return {
-				isLoading: false,
-				comingSoon: null,
-				storePagesOnly: null,
-				privateLink: null,
-				shareKey: null,
-				launchYourStoreEnabled: null,
+				isLoading: allOptionResolutionsFinished,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				comingSoon: getOption( 'woocommerce_coming_soon' ),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				storePagesOnly: getOption( 'woocommerce_store_pages_only' ),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				privateLink: getOption( 'woocommerce_private_link' ),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				shareKey: getOption( 'woocommerce_share_key' ),
+				launchYourStoreEnabled:
+					window.wcAdminFeatures[ 'launch-your-store' ],
 			};
-		}
-
-		const { hasFinishedResolution, getOption } =
-			select( OPTIONS_STORE_NAME );
-
-		const allOptionResolutionsFinished =
-			! hasFinishedResolution( 'getOption', [
-				'woocommerce_coming_soon',
-			] ) &&
-			! hasFinishedResolution( 'getOption', [
-				'woocommerce_store_pages_only',
-			] ) &&
-			! hasFinishedResolution( 'getOption', [
-				'woocommerce_private_link',
-			] ) &&
-			! hasFinishedResolution( 'getOption', [ 'woocommerce_share_key' ] );
-
-		return {
-			isLoading: allOptionResolutionsFinished,
-			comingSoon: getOption( 'woocommerce_coming_soon' ),
-			storePagesOnly: getOption( 'woocommerce_store_pages_only' ),
-			privateLink: getOption( 'woocommerce_private_link' ),
-			shareKey: getOption( 'woocommerce_share_key' ),
-			launchYourStoreEnabled:
-				window.wcAdminFeatures[ 'launch-your-store' ],
-		};
-	} );
+		},
+		[ enabled ]
+	);
 
 	return {
 		isLoading,

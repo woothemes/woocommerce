@@ -33,7 +33,7 @@ import { ManualConfiguration } from './manual-configuration';
 import { Partners } from './components/partners';
 import { WooCommerceTax } from './woocommerce-tax';
 
-const TaskCard: React.FC = ( { children } ) => {
+const TaskCard = ( { children }: { children: React.ReactNode } ) => {
 	return (
 		<Card className="woocommerce-task-card">
 			<CardBody>{ children }</CardBody>
@@ -58,13 +58,17 @@ export const Tax: React.FC< TaxProps > = ( { onComplete, query, task } ) => {
 			const { getSettings, hasFinishedResolution } =
 				select( SETTINGS_STORE_NAME );
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				generalSettings: getSettings( 'general' ).general,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isResolving: ! hasFinishedResolution( 'getSettings', [
 					'general',
 				] ),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				taxSettings: getSettings( 'tax' ).tax || {},
 			};
-		}
+		},
+		[]
 	);
 
 	const onManual = useCallback( async () => {
@@ -261,7 +265,7 @@ registerPlugin( 'wc-admin-onboarding-task-tax', {
 	scope: 'woocommerce-tasks',
 	render: () => (
 		<WooOnboardingTask id="tax">
-			{ ( { onComplete, query, task }: TaxProps ) => (
+			{ ( { onComplete, query, task } ) => (
 				<Tax onComplete={ onComplete } query={ query } task={ task } />
 			) }
 		</WooOnboardingTask>

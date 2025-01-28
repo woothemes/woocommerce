@@ -193,7 +193,7 @@ export type DateTimePickerControlProps = {
 	onBlur?: () => void;
 	label?: string;
 	placeholder?: string;
-	help?: string | null;
+	help?: React.ReactNode;
 	onChangeDebounceWait?: number;
 	popoverProps?: Record< string, boolean | string >;
 } & Omit< React.ComponentProps< typeof InputControl >, 'onChange' | 'onDrag' >;

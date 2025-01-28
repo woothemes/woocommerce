@@ -14,7 +14,6 @@ import {
 	useUserPreferences,
 	getVisibleTasks,
 	TaskListType,
-	WCDataSelector,
 } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 import { List, useSlot } from '@woocommerce/experimental';
@@ -57,12 +56,13 @@ export const SetupTaskList: React.FC< TaskListProps > = ( {
 	cesHeader = true,
 } ) => {
 	const listEventPrefix = eventName ? eventName + '_' : eventPrefix;
-	const { profileItems } = useSelect( ( select: WCDataSelector ) => {
+	const { profileItems } = useSelect( ( select ) => {
 		const { getProfileItems } = select( ONBOARDING_STORE_NAME );
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			profileItems: getProfileItems(),
 		};
-	} );
+	}, [] );
 	const {
 		hideTaskList,
 		visitedTask,

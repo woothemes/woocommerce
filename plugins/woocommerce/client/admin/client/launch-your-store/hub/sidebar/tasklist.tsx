@@ -67,7 +67,7 @@ export const getLysTasklist = async () => {
 	 * 2. either not completed or recently actioned
 	 */
 	const visibleTasks = tasklist[ 0 ].tasks.filter(
-		( task ) =>
+		( task: TaskType ) =>
 			filteredTasks.includes( task.id ) &&
 			( ! task.isComplete || recentlyActionedTasks.includes( task.id ) )
 	);
@@ -76,7 +76,7 @@ export const getLysTasklist = async () => {
 		...tasklist[ 0 ],
 		tasks: visibleTasks,
 		recentlyActionedTasks,
-		fullLysTaskList: tasklist[ 0 ].tasks.filter( ( task ) =>
+		fullLysTaskList: tasklist[ 0 ].tasks.filter( ( task: TaskType ) =>
 			filteredTasks.includes( task.id )
 		),
 	};

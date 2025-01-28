@@ -34,6 +34,7 @@ export const SiteHub = forwardRef<
 	{
 		isTransparent: boolean;
 		className: string;
+		variants?: Record< string, Record< string, string | number > >;
 	}
 >( ( { isTransparent, ...restProps }, ref ) => {
 	const { siteTitle } = useSelect( ( select ) => {

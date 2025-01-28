@@ -60,11 +60,11 @@ type Props = {
 	/**
 	 * Function to add regex expression to the filter the results, passed the search query.
 	 */
-	getSearchExpression?: ( query: string ) => string;
+	getSearchExpression?: ( query: string ) => string | RegExp | null;
 	/**
 	 * Help text to be appended beneath the input.
 	 */
-	help?: string | JSX.Element;
+	help?: React.ReactNode;
 	/**
 	 * Render tags inside input, otherwise render below input.
 	 */

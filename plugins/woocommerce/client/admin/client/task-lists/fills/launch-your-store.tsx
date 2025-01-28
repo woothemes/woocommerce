@@ -7,16 +7,7 @@ import { WooOnboardingTaskListItem } from '@woocommerce/onboarding';
 const LaunchYourStoreTaskItem = () => {
 	return (
 		<WooOnboardingTaskListItem id="launch-your-store">
-			{ ( {
-				defaultTaskItem: DefaultTaskItem,
-				isComplete,
-			}: {
-				defaultTaskItem: ( props: {
-					isClickable: boolean;
-				} ) => JSX.Element;
-				onClick: () => void;
-				isComplete: boolean;
-			} ) => {
+			{ ( { defaultTaskItem: DefaultTaskItem, isComplete } ) => {
 				return <DefaultTaskItem isClickable={ ! isComplete } />;
 			} }
 		</WooOnboardingTaskListItem>
