@@ -438,7 +438,7 @@ class CheckoutFields {
 	 * @param array $id         The field ID.
 	 * @param array $attributes The attributes supplied during field registration.
 	 *
-	 * @return array The processed attributes.
+	 * @return array The processed attributes. Changing to trigger CI.
 	 */
 	private function register_field_attributes( $id, $attributes ) {
 		// We check if attributes are valid. This is done to prevent too much nesting and also to allow field registration
