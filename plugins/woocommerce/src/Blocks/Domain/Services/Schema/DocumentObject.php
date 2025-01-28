@@ -21,59 +21,6 @@ use Automattic\WooCommerce\StoreApi\Utilities\CartController;
  */
 class DocumentObject {
 	/**
-	 * The document schema.
-	 *
-	 * @var array
-	 */
-	protected $default_document_schema = [
-		'cart'     => [
-			'coupons'            => [],
-			'shipping_rates'     => [],
-			'items'              => [],
-			'items_count'        => 0,
-			'items_weight'       => 0,
-			'needs_shipping'     => false,
-			'prefers_collection' => false,
-			'totals'             => [
-				'total_price' => 0,
-				'total_tax'   => 0,
-			],
-			'extensions'         => [],
-		],
-		'customer' => [
-			'id'               => 0,
-			'shipping_address' => [
-				'first_name' => '',
-				'last_name'  => '',
-				'company'    => '',
-				'address_1'  => '',
-				'address_2'  => '',
-				'city'       => '',
-				'state'      => '',
-				'postcode'   => '',
-				'country'    => '',
-			],
-			'billing_address'  => [
-				'first_name' => '',
-				'last_name'  => '',
-				'company'    => '',
-				'address_1'  => '',
-				'address_2'  => '',
-				'city'       => '',
-				'state'      => '',
-				'postcode'   => '',
-				'country'    => '',
-			],
-		],
-		'checkout' => [
-			'create_account'    => false,
-			'customer_note'     => '',
-			'payment_method'    => '',
-			'additional_fields' => [],
-		],
-	];
-
-	/**
 	 * The cart object.
 	 *
 	 * @var WC_Cart|null
@@ -171,7 +118,15 @@ class DocumentObject {
 	 * @return array The order data.
 	 */
 	protected function get_checkout_data() {
-		return $this->request_data['checkout'] ?? [];
+		return wp_parse_args(
+			$this->request_data['checkout'] ?? [],
+			[
+				'create_account'    => false,
+				'customer_note'     => '',
+				'payment_method'    => '',
+				'additional_fields' => [],
+			]
+		);
 	}
 
 	/**
@@ -180,14 +135,17 @@ class DocumentObject {
 	 * @return array The customer data.
 	 */
 	protected function get_customer_data() {
-		return wp_parse_args(
-			$this->request_data['customer'] ?? [],
-			[
-				'id'               => $this->customer->get_id(),
-				'shipping_address' => $this->schema_controller->get( ShippingAddressSchema::IDENTIFIER )->get_item_response( $this->customer ),
-				'billing_address'  => $this->schema_controller->get( BillingAddressSchema::IDENTIFIER )->get_item_response( $this->customer ),
-			]
-		);
+		return [
+			'id'               => $this->request_data['customer']['id'] ?? $this->customer->get_id(),
+			'shipping_address' => wp_parse_args(
+				$this->request_data['customer']['shipping_address'] ?? [],
+				$this->schema_controller->get( ShippingAddressSchema::IDENTIFIER )->get_item_response( $this->customer )
+			),
+			'billing_address'  => wp_parse_args(
+				$this->request_data['customer']['billing_address'] ?? [],
+				$this->schema_controller->get( BillingAddressSchema::IDENTIFIER )->get_item_response( $this->customer )
+			),
+		];
 	}
 
 	/**
@@ -198,13 +156,10 @@ class DocumentObject {
 	 * @return array The data for the document object.
 	 */
 	public function get_data() {
-		return wp_parse_args(
-			[
-				'cart'     => $this->get_cart_data(),
-				'customer' => $this->get_customer_data(),
-				'checkout' => $this->get_checkout_data(),
-			],
-			$this->default_document_schema
-		);
+		return [
+			'cart'     => $this->get_cart_data(),
+			'customer' => $this->get_customer_data(),
+			'checkout' => $this->get_checkout_data(),
+		];
 	}
 }
