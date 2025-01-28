@@ -160,7 +160,9 @@ class Transformer {
 		// If IDs match, add the group and close it.
 		if ( $ids_match || $ids_match_undefined ) {
 			// Compose the group setting.
-			$title_setting          = array_shift( $this->current_group );
+			$title_setting       = array_shift( $this->current_group );
+			$title_setting['id'] = $title_setting['id'] ?? wp_unique_prefixed_id( 'setting_group' );
+
 			$transformed_settings[] = array_merge(
 				$title_setting,
 				array(
@@ -183,10 +185,12 @@ class Transformer {
 	 * @param array $transformed_settings Transformed settings array.
 	 */
 	private function flush_current_group( array &$transformed_settings ): void {
-		if ( is_array( $this->current_group ) ) {
-			$transformed_settings = array_merge( $transformed_settings, $this->current_group );
-			$this->current_group  = null;
+		if ( is_array( $this->current_group ) && ! empty( $this->current_group ) ) {
+			$this->current_group[0]['id'] = $this->current_group[0]['id'] ?? wp_unique_prefixed_id( 'setting_title' );
+			$transformed_settings         = array_merge( $transformed_settings, $this->current_group );
 		}
+
+		$this->current_group = null;
 	}
 
 	/**
@@ -244,6 +248,7 @@ class Transformer {
 		$first_setting                  = $this->current_checkbox_group[0];
 
 		$checkbox_group_setting = array(
+			'id'       => wp_unique_prefixed_id( 'setting_checkboxgroup' ),
 			'type'     => 'checkboxgroup',
 			'title'    => $first_setting['title'] ?? '',
 			'settings' => $this->current_checkbox_group,
@@ -291,6 +296,8 @@ class Transformer {
 	 * @param array $transformed_settings Transformed settings array.
 	 */
 	private function add_setting( array $setting, array &$transformed_settings ): void {
+		$setting['id'] = $setting['id'] ?? wp_unique_prefixed_id( 'setting_field' );
+
 		if ( is_array( $this->current_group ) ) {
 			$this->current_group[] = $setting;
 			return;

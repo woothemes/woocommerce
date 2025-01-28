@@ -1,7 +1,8 @@
 const { test, expect } = require( '@playwright/test' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 test.describe( 'WooCommerce Products > Downloadable Product Settings', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test( 'can update settings', async ( { page } ) => {
 		await page.goto(

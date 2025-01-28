@@ -1,7 +1,3 @@
-const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle } = require( '../../utils/editor' );
-const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
-
 /**
  * External dependencies
  */
@@ -12,6 +8,15 @@ import {
 	insertBlock,
 	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
 // some WooCommerce Patterns to use
 const wooPatterns = [
@@ -26,7 +31,7 @@ const wooPatterns = [
 ];
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Woocommerce Patterns',
 } );
 

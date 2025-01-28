@@ -596,10 +596,10 @@ class Settings_V2 extends WC_REST_Unit_Test_Case {
 			array(
 				'id'          => 'subject',
 				'label'       => 'Subject',
-				'description' => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+				'description' => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 				'type'        => 'text',
 				'default'     => '',
-				'tip'         => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+				'tip'         => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 				'value'       => '',
 			),
 			$setting
@@ -619,10 +619,10 @@ class Settings_V2 extends WC_REST_Unit_Test_Case {
 			array(
 				'id'          => 'subject',
 				'label'       => 'Subject',
-				'description' => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+				'description' => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 				'type'        => 'text',
 				'default'     => '',
-				'tip'         => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
+				'tip'         => 'Available placeholders: <code>{site_title}</code>, <code>{site_address}</code>, <code>{site_url}</code>, <code>{store_email}</code>, <code>{order_date}</code>, <code>{order_number}</code>',
 				'value'       => 'This is my subject',
 			),
 			$setting

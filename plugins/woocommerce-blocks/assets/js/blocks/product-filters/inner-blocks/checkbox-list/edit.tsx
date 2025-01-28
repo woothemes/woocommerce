@@ -3,7 +3,7 @@
  */
 import clsx from 'clsx';
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/components';
+import { Icon, Disabled } from '@wordpress/components';
 import { checkMark } from '@woocommerce/icons';
 import { useMemo } from '@wordpress/element';
 import {
@@ -81,45 +81,49 @@ const CheckboxListEdit = ( props: EditProps ): JSX.Element => {
 	return (
 		<>
 			<div { ...blockProps }>
-				<ul className="wc-block-product-filter-checkbox-list__list">
-					{ isLoading && loadingState }
-					{ ! isLoading &&
-						( isLongList
-							? items.slice( 0, threshold )
-							: items
-						).map( ( item, index ) => (
-							<li
-								key={ index }
-								className="wc-block-product-filter-checkbox-list__item"
-							>
-								<label
-									htmlFor={ `interactive-checkbox-${ index }` }
-									className=" wc-block-product-filter-checkbox-list__label"
+				<Disabled>
+					<ul className="wc-block-product-filter-checkbox-list__list">
+						{ isLoading && loadingState }
+						{ ! isLoading &&
+							( isLongList
+								? items.slice( 0, threshold )
+								: items
+							).map( ( item, index ) => (
+								<li
+									key={ index }
+									className="wc-block-product-filter-checkbox-list__item"
 								>
-									<span className="wc-block-product-filter-checkbox-list__input-wrapper">
-										<input
-											name={ `interactive-checkbox-${ index }` }
-											type="checkbox"
-											className="wc-block-product-filter-checkbox-list__input"
-											defaultChecked={ !! item.selected }
-										/>
-										<Icon
-											className="wc-block-product-filter-checkbox-list__mark"
-											icon={ checkMark }
-										/>
-									</span>
-									<span className="wc-block-product-filter-checkbox-list__text">
-										{ item.label }
-									</span>
-								</label>
-							</li>
-						) ) }
-				</ul>
-				{ ! isLoading && isLongList && (
-					<button className="wc-block-product-filter-checkbox-list__show-more">
-						{ __( 'Show more…', 'woocommerce' ) }
-					</button>
-				) }
+									<label
+										htmlFor={ `interactive-checkbox-${ index }` }
+										className=" wc-block-product-filter-checkbox-list__label"
+									>
+										<span className="wc-block-product-filter-checkbox-list__input-wrapper">
+											<input
+												name={ `interactive-checkbox-${ index }` }
+												type="checkbox"
+												className="wc-block-product-filter-checkbox-list__input"
+												defaultChecked={
+													!! item.selected
+												}
+											/>
+											<Icon
+												className="wc-block-product-filter-checkbox-list__mark"
+												icon={ checkMark }
+											/>
+										</span>
+										<span className="wc-block-product-filter-checkbox-list__text">
+											{ item.label }
+										</span>
+									</label>
+								</li>
+							) ) }
+					</ul>
+					{ ! isLoading && isLongList && (
+						<button className="wc-block-product-filter-checkbox-list__show-more">
+							{ __( 'Show more…', 'woocommerce' ) }
+						</button>
+					) }
+				</Disabled>
 			</div>
 			<InspectorControls group="color">
 				{ colorGradientSettings.hasColorsOrGradients && (
