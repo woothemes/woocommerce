@@ -13,32 +13,7 @@ import {
  */
 import { SavedPaymentMethod } from './types';
 import { STATUS as PAYMENT_STATUS } from './constants';
-
-function getDefaultPaymentMethod() {
-	const defaultPaymentMethod = getSetting< SavedPaymentMethod | string >(
-		'defaultPaymentMethod',
-		''
-	);
-
-	if ( ! defaultPaymentMethod ) {
-		return '';
-	}
-
-	// defaultPaymentMethod is a string if a regular payment method is set.
-	if ( typeof defaultPaymentMethod === 'string' ) {
-		return defaultPaymentMethod;
-	}
-
-	// defaultPaymentMethod is a SavedPaymentMethod object if a saved payment method is returned.
-	if (
-		defaultPaymentMethod?.method?.gateway &&
-		defaultPaymentMethod?.tokenId
-	) {
-		return defaultPaymentMethod.method.gateway;
-	}
-
-	return '';
-}
+import { checkoutData } from '../checkout/constants';
 
 /**
  * Set the default payment method data. This can be in two places,
@@ -105,7 +80,7 @@ export interface PaymentState {
 
 export const defaultPaymentState: PaymentState = {
 	status: PAYMENT_STATUS.IDLE,
-	activePaymentMethod: getDefaultPaymentMethod(),
+	activePaymentMethod: checkoutData?.payment_method ?? '',
 	availablePaymentMethods: {},
 	availableExpressPaymentMethods: {},
 	savedPaymentMethods: getSetting<

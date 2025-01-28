@@ -429,6 +429,7 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'hasDarkEditorStyleSupport', current_theme_supports( 'dark-editor-style' ) );
 		$this->asset_data_registry->register_page_id( isset( $attributes['cartPageId'] ) ? $attributes['cartPageId'] : 0 );
 		$this->asset_data_registry->add( 'isBlockTheme', wc_current_theme_is_fse_theme() );
+		$this->asset_data_registry->add( 'isCheckoutBlock', true );
 
 		$pickup_location_settings = LocalPickupUtils::get_local_pickup_settings();
 		$local_pickup_method_ids  = LocalPickupUtils::get_local_pickup_method_ids();
