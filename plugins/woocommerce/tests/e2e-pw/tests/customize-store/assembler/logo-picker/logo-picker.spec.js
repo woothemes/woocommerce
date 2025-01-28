@@ -5,6 +5,7 @@ const { activateTheme, DEFAULT_THEME } = require( '../../../../utils/themes' );
 const { CustomizeStorePage } = require( '../../customize-store.page' );
 const { setOption } = require( '../../../../utils/options' );
 const { tags } = require( '../../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../../playwright.config' );
 
 const test = base.extend( {
 	assemblerPageObject: async ( { page }, use ) => {
@@ -28,7 +29,7 @@ test.describe(
 	'Assembler -> Logo Picker',
 	{ tag: [ tags.GUTENBERG, tags.NOT_E2E ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			try {
