@@ -19,7 +19,6 @@ import {
 	ActionCreatorsOf,
 	ConfigOf,
 	CurriedSelectorsOf,
-	DispatchReturn,
 } from '@wordpress/data/build-types/types';
 
 /**
