@@ -312,6 +312,7 @@ function wc_product_canonical_redirect(): void {
 	// What category slug did we expect? Normally this maps back to the first assigned product_cat
 	// term. However, this is filterable so we use the relevant helper function to figure this out.
 	$expected_category_slug = wc_product_post_type_link( '%product_cat%', get_post( get_the_ID() ) );
+	$expected_category_slug = urldecode( $expected_category_slug );
 
 	if ( $specified_category_slug === $expected_category_slug ) {
 		return;
