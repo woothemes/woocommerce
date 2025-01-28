@@ -37,17 +37,22 @@ export const useJetpackPluginState = () => {
 		canUserInstallPlugins,
 		jetpackInstallState,
 		jetpackConnectionData,
-	} = useSelect( ( select ) => {
-		const { getPluginInstallState, getJetpackConnectionData } =
-			select( PLUGINS_STORE_NAME );
-		const installState = getPluginInstallState( 'jetpack' );
+	} = useSelect(
+		( select ) => {
+			const { getPluginInstallState, getJetpackConnectionData } =
+				select( PLUGINS_STORE_NAME );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const installState = getPluginInstallState( 'jetpack' );
 
-		return {
-			jetpackConnectionData: getJetpackConnectionData(),
-			jetpackInstallState: installState,
-			canUserInstallPlugins: currentUserCan( 'install_plugins' ),
-		};
-	} );
+			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+				jetpackConnectionData: getJetpackConnectionData(),
+				jetpackInstallState: installState,
+				canUserInstallPlugins: currentUserCan( 'install_plugins' ),
+			};
+		},
+		[ currentUserCan ]
+	);
 
 	const { installJetpackAndConnect } = useDispatch( PLUGINS_STORE_NAME );
 

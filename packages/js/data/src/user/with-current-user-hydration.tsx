@@ -17,7 +17,10 @@ import { WCUser } from './types';
  * @param {Object} currentUser Current user object in the same format as the WP REST API returns.
  */
 export const withCurrentUserHydration = ( currentUser: WCUser ) =>
-	createHigherOrderComponent< Record< string, unknown > >(
+	createHigherOrderComponent<
+		React.ComponentType< Record< string, unknown > >,
+		React.ComponentType< Record< string, unknown > >
+	>(
 		( OriginalComponent ) => ( props ) => {
 			// Use currentUser to hydrate calls to @wordpress/core-data's getCurrentUser().
 
