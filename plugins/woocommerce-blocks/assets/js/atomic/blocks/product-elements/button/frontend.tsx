@@ -71,20 +71,17 @@ const { state } = ( store as typeof StoreType )< Store >(
 				const { animationStatus } = getContext();
 				return animationStatus === AnimationStatus.SLIDE_OUT;
 			},
-			get hasCartLoaded(): boolean {
-				return !! wooState.cart;
-			},
 			get addToCartText(): string {
 				const { animationStatus, tempQuantity, addToCartText } =
 					getContext();
 
-				// We use the temporary quantity when there's no animation, or when
-				// the second part of the animation hasn't started yet.
+				// We use the temporary quantity when there's no animation, or
+				// when the second part of the animation hasn't started yet.
 				const showTemporaryNumber =
 					animationStatus === AnimationStatus.IDLE ||
 					animationStatus === AnimationStatus.SLIDE_OUT;
 				const quantity = showTemporaryNumber
-					? tempQuantity
+					? tempQuantity || 0
 					: state.quantity;
 
 				if ( quantity === 0 ) return addToCartText;
@@ -94,11 +91,8 @@ const { state } = ( store as typeof StoreType )< Store >(
 				);
 			},
 			get displayViewCart(): boolean {
-				const { displayViewCart, tempQuantity } = getContext();
+				const { displayViewCart } = getContext();
 				if ( ! displayViewCart ) return false;
-				if ( ! state.hasCartLoaded ) {
-					return tempQuantity > 0;
-				}
 				return state.quantity > 0;
 			},
 		},
@@ -112,10 +106,13 @@ const { state } = ( store as typeof StoreType )< Store >(
 					'../../../../base/stores/cart-items'
 				) ) as WooStore;
 
+				// Question: should this action throw so we can capture the error here?
 				actions.addCartItem( {
 					id: productId,
 					quantity: state.quantity + quantityToAdd,
 				} );
+
+				context.displayViewCart = true;
 			},
 			*refreshCartItems() {
 				// Todo: move the CartItems store part to its own module.
@@ -132,7 +129,7 @@ const { state } = ( store as typeof StoreType )< Store >(
 					context.animationStatus = AnimationStatus.SLIDE_IN;
 				} else if ( event.animationName === 'slideIn' ) {
 					// When the second part of the animation ends, we update the
-					// temporary number of items to sync it with the cart and reset the
+					// temporary quantity to sync it with the cart and reset the
 					// animation status so it can be triggered again.
 					context.tempQuantity = state.quantity;
 					context.animationStatus = AnimationStatus.IDLE;
@@ -143,22 +140,18 @@ const { state } = ( store as typeof StoreType )< Store >(
 			// Todo: switch to a data-wp-run directive with a `useLayoutEffect` hook inside.
 			syncTempQuantityOnLoad() {
 				const context = getContext();
-				// If the cart has loaded when we instantiate this element, we sync
-				// the temporary number of items with the number of items in the cart
-				// to avoid triggering the animation. We do this only once, but we
-				// use useLayoutEffect to avoid the useEffect flickering.
-				if ( state.hasCartLoaded ) {
-					context.tempQuantity = state.quantity;
-				}
+				// When we instantiate this element, we sync the temporary
+				// quantity with the quantity in the cart to avoid triggering
+				// the animation. We do this only once, and we use
+				// useLayoutEffect to avoid the useEffect flickering.
+				context.tempQuantity = state.quantity;
 			},
 			startAnimation() {
 				const context = getContext();
-				// We start the animation if the cart has loaded, the temporary number
-				// of items is out of sync with the number of items in the cart, the
-				// button is not loading (because that means the user started the
-				// interaction) and the animation hasn't started yet.
+				// We start the animation if the temporary quantity is out of
+				// sync with the quantity in the cart and the animation hasn't
+				// started yet.
 				if (
-					state.hasCartLoaded &&
 					context.tempQuantity !== state.quantity &&
 					context.animationStatus === AnimationStatus.IDLE
 				) {
