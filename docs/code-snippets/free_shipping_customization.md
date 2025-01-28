@@ -58,7 +58,7 @@ add_filter( 'woocommerce_package_rates', 'my_hide_shipping_when_free_is_availabl
 
 ### How do I only show Local Pickup and Free Shipping?
 
-The snippet below hides everything but `free_shipping` and `local_pickup`, if it's available and the customer's cart qualifies. 
+The snippet below hides everything but `free_shipping`, `local_pickup` and the new Local Pickup `pickup_location`, if it's available and the customer's cart qualifies. 
 
 ```php
 
@@ -73,16 +73,14 @@ function hide_shipping_when_free_is_available( $rates, $package ) {
 		// Only modify rates if free_shipping is present.
 		if ( 'free_shipping' === $rate->method_id ) {
 			$new_rates[ $rate_id ] = $rate;
-			break;
 		}
 	}
 
 	if ( ! empty( $new_rates ) ) {
-		//Save local pickup if it's present.
+		// Save local pickup and pickup locations if present.
 		foreach ( $rates as $rate_id => $rate ) {
-			if ('local_pickup' === $rate->method_id ) {
+			if ('local_pickup' === $rate->method_id || 'pickup_location' === $rate->method_id) {
 				$new_rates[ $rate_id ] = $rate;
-				break;
 			}
 		}
 		return $new_rates;
@@ -122,7 +120,7 @@ function hide_all_shipping_when_free_is_available( $rates, $package ) {
 		// Empty the $available_methods array
 		unset( $rates );
  
-		// Add Free Shipping back into $avaialble_methods
+		// Add Free Shipping back into $available_methods
 		$rates = array();
 		$rates[] = $freeshipping;
  
