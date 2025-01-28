@@ -13,6 +13,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { isNumber, isString } from '@woocommerce/types';
 import { COUNTRY_LOCALE } from '@woocommerce/block-settings';
 import { useCheckoutAddress } from '@woocommerce/base-context';
+import { useSchemaParser } from '@woocommerce/base-hooks';
 
 /**
  * Gets props from the core locale, then maps them to the shape we require in the client.
@@ -104,6 +105,7 @@ const useFormFields = (
 ): KeyedFormField[] => {
 	const { defaultFields, billingAddress, shippingAddress } =
 		useCheckoutAddress();
+	const { parser, data } = useSchemaParser( formType );
 	let addressCountry = '';
 	if ( formType === 'billing' || formType === 'shipping' ) {
 		addressCountry =
@@ -122,11 +124,33 @@ const useFormFields = (
 			const defaultConfig = defaultFields[ field ] || {};
 			const localeConfig = localeConfigs[ field ] || {};
 
-			return {
+			const fieldConfig = {
 				key: field,
 				...defaultConfig,
 				...localeConfig,
 			};
+
+			if ( defaultConfig.rules && parser ) {
+				if ( defaultConfig.rules.required ) {
+					const schema = {
+						type: 'object',
+						additionalProperties: true,
+						properties: defaultConfig.rules.required,
+					};
+					const validation = parser.validate( schema, data );
+
+					defaultConfig.required = validation;
+				}
+				if ( defaultConfig.rules.hidden ) {
+					const schema = {
+						type: 'object',
+						additionalProperties: true,
+						properties: defaultConfig.rules.hidden,
+					};
+					defaultConfig.hidden = parser.validate( schema, data );
+				}
+			}
+			return fieldConfig;
 		} )
 		.sort( ( a, b ) => a.index - b.index );
 };
