@@ -429,7 +429,6 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'hasDarkEditorStyleSupport', current_theme_supports( 'dark-editor-style' ) );
 		$this->asset_data_registry->register_page_id( isset( $attributes['cartPageId'] ) ? $attributes['cartPageId'] : 0 );
 		$this->asset_data_registry->add( 'isBlockTheme', wc_current_theme_is_fse_theme() );
-		$this->asset_data_registry->add( 'isCheckoutBlock', true );
 
 		$pickup_location_settings = LocalPickupUtils::get_local_pickup_settings();
 		$local_pickup_method_ids  = LocalPickupUtils::get_local_pickup_method_ids();
@@ -540,7 +539,6 @@ class Checkout extends AbstractBlock {
 			$this->asset_data_registry->hydrate_api_request( '/wc/store/v1/cart' );
 			$this->asset_data_registry->hydrate_data_from_api_request( 'checkoutData', '/wc/store/v1/checkout' );
 			$this->hydrate_customer_payment_methods();
-			$this->hydrate_default_payment_method();
 		}
 
 		/**
@@ -567,90 +565,34 @@ class Checkout extends AbstractBlock {
 	}
 
 	/**
-	 * Get enabled and default customer payment methods.
-	 *
-	 * @return array The enabled customer payment methods.
-	 */
-	private function get_customer_payment_methods() {
-		if ( ! is_user_logged_in() ) {
-			return;
-		}
-
-		add_filter( 'woocommerce_payment_methods_list_item', [ $this, 'include_token_id_with_payment_methods' ], 10, 2 );
-
-		$enabled_payment_gateways = $this->get_enabled_payment_gateways();
-		$customer_payment_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
-		$payment_methods          = [
-			'enabled' => [],
-			'default' => null,
-		];
-
-		// Filter out payment methods that are not enabled.
-		foreach ( $customer_payment_methods as $payment_method_group => $saved_payment_methods ) {
-			$payment_methods['enabled'][ $payment_method_group ] = array_values(
-				array_filter(
-					$saved_payment_methods,
-					function ( $saved_payment_method ) use ( $enabled_payment_gateways, &$payment_methods ) {
-						if ( true === $saved_payment_method['is_default'] && null === $payment_methods['default'] ) {
-							$payment_methods['default'] = $saved_payment_method;
-						}
-						return in_array( $saved_payment_method['method']['gateway'], array_keys( $enabled_payment_gateways ), true );
-					}
-				)
-			);
-		}
-
-		remove_filter( 'woocommerce_payment_methods_list_item', [ $this, 'include_token_id_with_payment_methods' ], 10, 2 );
-
-		return $payment_methods;
-	}
-
-	/**
-	 * Hydrate the default payment method.
-	 */
-	protected function hydrate_default_payment_method() {
-		$chosen_payment_method       = WC()->session->get( 'chosen_payment_method' );
-		$chosen_payment_method_token = WC()->session->get( 'chosen_payment_method_token' );
-
-		// If payment method is already stored in session, use it.
-		if ( $chosen_payment_method ) {
-			$this->asset_data_registry->add( 'defaultPaymentMethod', $chosen_payment_method );
-			if ( $chosen_payment_method_token ) {
-				$this->asset_data_registry->add( 'defaultPaymentMethodToken', $chosen_payment_method_token );
-			}
-			return;
-		}
-
-		$customer_payment_methods = $this->get_customer_payment_methods();
-		// A saved payment method exists, set as default.
-		if ( $customer_payment_methods && ! empty( $customer_payment_methods['default'] ) ) {
-			$this->asset_data_registry->add( 'defaultPaymentMethod', $customer_payment_methods['default'] );
-			return;
-		}
-
-		// If no saved payment method exists, use the first enabled payment method.
-		$enabled_payment_gateways = $this->get_enabled_payment_gateways();
-		$first_key                = array_key_first( $enabled_payment_gateways );
-		$first_payment_method     = $enabled_payment_gateways[ $first_key ];
-		$this->asset_data_registry->add( 'defaultPaymentMethod', $first_payment_method->id ?? '' );
-	}
-
-	/**
 	 * Get saved customer payment methods for use in checkout.
 	 */
 	protected function hydrate_customer_payment_methods() {
 		if ( ! is_user_logged_in() || $this->asset_data_registry->exists( 'customerPaymentMethods' ) ) {
 			return;
 		}
+		add_filter( 'woocommerce_payment_methods_list_item', [ $this, 'include_token_id_with_payment_methods' ], 10, 2 );
 
-		$customer_payment_methods = $this->get_customer_payment_methods();
+		$payment_gateways = $this->get_enabled_payment_gateways();
+		$payment_methods  = wc_get_customer_saved_methods_list( get_current_user_id() );
 
-		if ( $customer_payment_methods && ! empty( $customer_payment_methods['enabled'] ) ) {
-			$this->asset_data_registry->add(
-				'customerPaymentMethods',
-				$customer_payment_methods['enabled']
+		// Filter out payment methods that are not enabled.
+		foreach ( $payment_methods as $payment_method_group => $saved_payment_methods ) {
+			$payment_methods[ $payment_method_group ] = array_values(
+				array_filter(
+					$saved_payment_methods,
+					function ( $saved_payment_method ) use ( $payment_gateways ) {
+						return in_array( $saved_payment_method['method']['gateway'], array_keys( $payment_gateways ), true );
+					}
+				)
 			);
 		}
+
+		$this->asset_data_registry->add(
+			'customerPaymentMethods',
+			$payment_methods
+		);
+		remove_filter( 'woocommerce_payment_methods_list_item', [ $this, 'include_token_id_with_payment_methods' ], 10, 2 );
 	}
 
 	/**
