@@ -1,18 +1,11 @@
 <?php
 /**
- * Plugin Name: Woo Test Helper
- * Description: A helper plugin to control settings within Woo e2e tests.
- * Version: 0.0.2
- * Author: Automattic
- * Author URI: https://automattic.com
- * Text Domain: woo-test-helper
- * Requires at least: 5.9
- * Requires PHP: 7.3
- * WC requires at least: 6.0
- * WC tested up to: 6.1
+ * Plugin Name: WooCommerce Blocks Test Helper
+ * Description: A helper plugin to control settings within Woo E2E tests.
+ * Plugin URI: https://github.com/woocommerce/woocommerce
+ * Author: WooCommerce
  *
- * @package    WordPress
- * @subpackage Woo Test Helper
+ * @package woocommerce-blocks-test-helper
  */
 
 defined( 'ABSPATH' ) || exit;
