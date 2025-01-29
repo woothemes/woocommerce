@@ -270,6 +270,9 @@ class WC_Install {
 		'9.5.0' => array(
 			'wc_update_950_tracking_option_autoload',
 		),
+		'9.6.1' => array(
+			'wc_update_961_migrate_default_email_base_color',
+		),
 	);
 
 	/**
