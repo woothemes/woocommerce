@@ -128,6 +128,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 					$this->add_new_accordion_item( $inner_block, $parsed_tabs_added_via_hook );
 				}
 			}
+			// We need to invoke the function recursively because the accordion group can be nested.
 			self::update_inner_blocks( $inner_block, $parsed_tabs_added_via_hook );
 		}
 	}
@@ -170,10 +171,11 @@ class BlockifiedProductDetails extends AbstractBlock {
 		);
 
 		$parsed_tabs_added_via_hook = array_reduce(
-			$product_tabs_without_native_tabs,
-			function ( $carry, $tab ) {
+			array_keys( $product_tabs_without_native_tabs ),
+			function ( $carry, $key ) use ( $product_tabs_without_native_tabs ) {
+				$tab = $product_tabs_without_native_tabs[ $key ];
 				ob_start();
-				call_user_func( $tab['callback'] );
+				call_user_func( $tab['callback'], $key, $tab );
 				$content = ob_get_clean();
 
 				$carry[] = $this->create_accordion_item( $tab['title'], $content );
