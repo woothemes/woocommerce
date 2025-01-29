@@ -68,18 +68,18 @@ export const AddToCartWithOptionsEditTemplatePart = ( {
 }: {
 	productType: string;
 } ) => {
-	const currentTheme = useSelect(
-		( select ) => select( coreStore ).getCurrentTheme()?.stylesheet,
-		[]
-	);
-	const templatePartSlug = `${ productType }-product-add-to-cart-with-options`;
-	const themeTemplatePartId = `${ currentTheme }//${ templatePartSlug }`;
-	const wooCommerceTemplatePartId = `woocommerce/woocommerce//${ templatePartSlug }`;
-
 	const { templatePartId } = useSelect(
 		( select ) => {
-			const { getEditedEntityRecord, hasFinishedResolution } =
-				select( coreStore );
+			const {
+				getCurrentTheme,
+				getEditedEntityRecord,
+				hasFinishedResolution,
+			} = select( coreStore );
+
+			const currentTheme = getCurrentTheme()?.stylesheet;
+			const templatePartSlug = `${ productType }-product-add-to-cart-with-options`;
+			const themeTemplatePartId = `${ currentTheme }//${ templatePartSlug }`;
+			const wooCommerceTemplatePartId = `woocommerce/woocommerce//${ templatePartSlug }`;
 
 			const getThemeEntityArgs = [
 				'postType',
@@ -107,7 +107,7 @@ export const AddToCartWithOptionsEditTemplatePart = ( {
 					: themeTemplatePartId,
 			};
 		},
-		[ wooCommerceTemplatePartId, themeTemplatePartId ]
+		[ productType ]
 	);
 
 	const blockProps = useBlockProps();
