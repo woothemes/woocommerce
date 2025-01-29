@@ -1,7 +1,7 @@
 <?php
 
-use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Utilities\ArrayUtil;
 
 /**
  * Shipping Zones API Tests

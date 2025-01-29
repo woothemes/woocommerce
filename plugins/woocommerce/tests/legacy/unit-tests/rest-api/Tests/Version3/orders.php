@@ -10,9 +10,9 @@
 require_once __DIR__ . '/date-filtering.php';
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\CouponHelper;
 use Automattic\WooCommerce\RestApi\UnitTests\Helpers\OrderHelper;
-use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 /**
  * Class WC_Tests_API_Orders

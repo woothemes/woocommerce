@@ -10,8 +10,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use Automattic\WooCommerce\Internal\Utilities\Types;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Internal\Utilities\Types;
 
 /**
  * REST API Order Refunds controller class.

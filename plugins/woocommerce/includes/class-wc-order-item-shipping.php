@@ -7,8 +7,8 @@
  * @since   3.0.0
  */
 
-use Automattic\WooCommerce\Utilities\NumberUtil;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Utilities\NumberUtil;
 
 defined( 'ABSPATH' ) || exit;
 

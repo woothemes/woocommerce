@@ -3,8 +3,8 @@
  * Admin View: Bulk Edit Products
  */
 
-use Automattic\WooCommerce\Utilities\I18nUtil;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Utilities\I18nUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

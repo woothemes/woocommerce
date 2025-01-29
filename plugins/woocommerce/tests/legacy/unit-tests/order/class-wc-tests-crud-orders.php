@@ -6,8 +6,8 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
-use Automattic\WooCommerce\Utilities\OrderUtil;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**
  * Meta

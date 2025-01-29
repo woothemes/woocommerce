@@ -6,8 +6,8 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
-use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 
 /**
  * WC_Tests_Product_Functions class.

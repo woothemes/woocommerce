@@ -10,9 +10,9 @@
  * @since    3.0.0
  */
 
-use Automattic\WooCommerce\Utilities\{ ArrayUtil, NumberUtil, StringUtil };
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Utilities\{ ArrayUtil, NumberUtil, StringUtil };
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

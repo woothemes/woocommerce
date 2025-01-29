@@ -5,8 +5,8 @@
  * @package WooCommerce\Tests\Product
  */
 
-use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 /**
  * Data Functions.

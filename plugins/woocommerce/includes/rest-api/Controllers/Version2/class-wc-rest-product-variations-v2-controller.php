@@ -9,8 +9,8 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
-use Automattic\WooCommerce\Utilities\I18nUtil;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Utilities\I18nUtil;
 
 defined( 'ABSPATH' ) || exit;
 

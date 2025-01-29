@@ -6,8 +6,8 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
-use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 
 /**
  * Test class for WC_Product_CSV_Importer.

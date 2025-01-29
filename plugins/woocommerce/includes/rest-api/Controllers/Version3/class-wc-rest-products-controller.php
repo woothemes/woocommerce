@@ -9,10 +9,10 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
-use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 defined( 'ABSPATH' ) || exit;
 

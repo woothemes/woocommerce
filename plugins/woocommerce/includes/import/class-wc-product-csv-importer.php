@@ -7,9 +7,9 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
-use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

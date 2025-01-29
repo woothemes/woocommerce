@@ -7,6 +7,7 @@ namespace Automattic\WooCommerce\RestApi\UnitTests\Helpers;
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use WC_Product_Simple;
 use WC_Product_External;
 use WC_Product_Grouped;
@@ -14,7 +15,6 @@ use WC_Product_Variable;
 use WC_Product_Variation;
 use WC_Product_Attribute;
 use WC_Cache_Helper;
-use Automattic\WooCommerce\Enums\ProductTaxStatus;
 
 /**
  * Class ProductHelper.

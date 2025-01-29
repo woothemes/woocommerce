@@ -7,8 +7,8 @@ namespace Automattic\WooCommerce\Internal\Features\ProductBlockEditor\ProductTem
 
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\Features\ProductBlockEditor\ProductTemplates\ProductFormTemplateInterface;
-use WC_Tax;
 use Automattic\WooCommerce\Enums\ProductTaxStatus;
+use WC_Tax;
 
 /**
  * Simple Product Template.
