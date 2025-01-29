@@ -15,7 +15,6 @@ import type { BlockConfiguration } from '@wordpress/blocks';
 import ProductTypeSelectorPlugin from './plugins';
 import metadata from './block.json';
 import AddToCartOptionsEdit from './edit';
-import save from './save';
 import './style.scss';
 import type { Attributes } from './types';
 
@@ -46,7 +45,7 @@ if ( shouldBlockifiedAddToCartWithOptionsBeRegistered ) {
 				src: button,
 			},
 			edit: AddToCartOptionsEdit,
-			save,
+			save: () => null,
 			ancestor: [ 'woocommerce/single-product' ],
 		},
 		{
