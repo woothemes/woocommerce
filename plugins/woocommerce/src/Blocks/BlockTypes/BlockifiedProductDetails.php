@@ -54,6 +54,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 					);
 				}
 			}
+			// We need to invoke the function recursively because the accordion group can be nested.
 			self::add_new_accordion_item( $inner_block, $parsed_tabs_added_via_hook );
 		}
 	}
