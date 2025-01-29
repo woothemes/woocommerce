@@ -11,7 +11,7 @@ import { useLayoutContext } from '@woocommerce/admin-layout';
 /**
  * Internal dependencies
  */
-import './woocommerce-services-item.scss';
+import './woocommerce-shipping-item.scss';
 import WooIcon from './woo-icon.svg';
 
 const WooCommerceServicesItem: React.FC< {
@@ -45,7 +45,7 @@ const WooCommerceServicesItem: React.FC< {
 				</span>
 				<span className="woocommerce-list__item-content">
 					{ __(
-						'Print USPS and DHL Express labels straight from your WooCommerce dashboard and save on shipping.',
+						'Print USPS, UPS, and DHL Express labels straight from your WooCommerce dashboard and save on shipping.',
 						'woocommerce'
 					) }
 					<br />

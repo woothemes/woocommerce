@@ -20,7 +20,7 @@ import { redirectToWCSSettings } from './utils';
 /**
  * Plugins required to automate shipping.
  */
-const AUTOMATION_PLUGINS = [ 'woocommerce-services' ];
+const AUTOMATION_PLUGINS = [ 'woocommerce-shipping' ];
 
 export const ShippingRecommendation: React.FC<
 	TaskProps & ShippingRecommendationProps
