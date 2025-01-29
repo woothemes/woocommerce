@@ -17,7 +17,7 @@ const fs = require( 'fs' );
  *
  * @type {string}
  */
-const ROOT_DIR = path.resolve( __dirname, '../../../' );
+const ROOT_DIR = path.resolve( __dirname, '../../../../../' );
 
 /**
  * Path to root Blocks project directory.
