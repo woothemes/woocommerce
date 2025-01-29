@@ -179,6 +179,7 @@ export const formatShippingAddress = (
  * Checks that all required fields in an address are completed based on the settings in countryLocale.
  *
  * @param {Object} address     The address to check.
+ * @param {Object} addressForm The address form.
  * @param {Array}  keysToCheck Optional override to include only specific keys for checking.
  *                             If there are other required fields in the address, but not specified in this arg then
  *                             they will be ignored.
