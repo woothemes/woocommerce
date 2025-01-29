@@ -128,7 +128,7 @@ function getReviewRating( review: Review ): JSX.Element {
 	return (
 		<div className="wc-block-review-list-item__rating wc-block-components-review-list-item__rating">
 			<div
-				className="wc-block-review-list-item__rating__stars wc-block-components-review-list-item__rating__stars"
+				className={ `wc-block-review-list-item__rating__stars wc-block-components-review-list-item__rating__stars wc-block-review-list-item__rating__stars--${ rating }` }
 				role="img"
 				aria-label={ ratingText }
 			>

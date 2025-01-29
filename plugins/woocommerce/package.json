@@ -29,7 +29,7 @@
 		"env:start": "pnpm wp-env start",
 		"env:start:blocks": "pnpm --filter='@woocommerce/block-library' env:start && pnpm playwright install chromium --with-deps",
 		"env:stop": "pnpm wp-env stop",
-		"env:test": "pnpm env:dev",
+		"env:test": "pnpm env:dev --debug",
 		"env:perf": "pnpm env:dev && pnpm env:performance-init",
 		"preinstall": "npx only-allow pnpm",
 		"postinstall": "rimraf -g vendor/woocommerce && XDEBUG_MODE=off composer install --quiet",
@@ -343,17 +343,14 @@
 				{
 					"name": "Core e2e tests - HPOS disabled",
 					"testType": "e2e",
-					"command": "test:e2e:with-env default-hpos-disabled --project=ui",
-					"shardingArguments": [
-						"tests/e2e-pw/**"
-					],
+					"command": "test:e2e:with-env default-hpos-disabled --project=e2e-hpos-disabled",
+					"shardingArguments": [],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-hpos-disabled"
 					],
-					"changes": [],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -805,8 +802,10 @@
 				"node_modules/@woocommerce/eslint-plugin/rules",
 				"node_modules/@woocommerce/eslint-plugin/index.js",
 				"node_modules/@woocommerce/api/dist/",
+				"node_modules/@woocommerce/classic-assets/build",
 				"node_modules/@woocommerce/block-library/build",
 				"node_modules/@woocommerce/block-library/blocks.ini",
+				"node_modules/@woocommerce/admin-library/build",
 				"package.json",
 				"!node_modules/@woocommerce/api/*.ts.map",
 				"!node_modules/@woocommerce/api/*.tsbuildinfo",

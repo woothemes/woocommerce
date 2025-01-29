@@ -8,14 +8,12 @@
  * Feature Flag: coming-soon-newsletter-template
  */
 
-$current_theme     = wp_get_theme()->get_stylesheet();
-$inter_font_family = 'inter';
-$cardo_font_family = 'cardo';
+use Automattic\WooCommerce\Blocks\Templates\ComingSoonTemplate;
 
-if ( 'twentytwentyfour' === $current_theme ) {
-	$inter_font_family = 'body';
-	$cardo_font_family = 'heading';
-}
+$fonts               = ComingSoonTemplate::get_font_families();
+$heading_font_family = $fonts['heading'];
+$body_font_family    = $fonts['body'];
+
 
 ?>
 
@@ -33,16 +31,16 @@ if ( wc_current_theme_is_fse_theme() ) {
 <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:heading {"textAlign":"center","level":1,"fontFamily":"<?php echo esc_html( $cardo_font_family ); ?>"} -->
-<h1 class="wp-block-heading has-text-align-center has-<?php echo esc_html( $cardo_font_family ); ?>-font-family"><?php echo esc_html__( 'Great things are on the horizon', 'woocommerce' ); ?></h1>
+<!-- wp:heading {"textAlign":"center","level":1,"fontFamily":"<?php echo esc_html( $heading_font_family ); ?>"} -->
+<h1 class="wp-block-heading has-text-align-center has-<?php echo esc_html( $heading_font_family ); ?>-font-family"><?php echo esc_html__( 'Great things are on the horizon', 'woocommerce' ); ?></h1>
 <!-- /wp:heading -->
 
 <!-- wp:spacer {"height":"10px"} -->
 <div style="height:10px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:paragraph {"align":"center","fontFamily":"<?php echo esc_html( $inter_font_family ); ?>"} -->
-<p class="has-text-align-center has-<?php echo esc_html( $inter_font_family ); ?>-font-family"><?php echo esc_html__( 'Something big is brewing! Our store is in the works and will be launching soon!', 'woocommerce' ); ?></p>
+<!-- wp:paragraph {"align":"center","fontFamily":"<?php echo esc_html( $body_font_family ); ?>"} -->
+<p class="has-text-align-center has-<?php echo esc_html( $body_font_family ); ?>-font-family"><?php echo esc_html__( 'Something big is brewing! Our store is in the works and will be launching soon!', 'woocommerce' ); ?></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:spacer -->
