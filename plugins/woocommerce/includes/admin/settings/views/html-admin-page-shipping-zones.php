@@ -66,7 +66,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 </table>
 
 <?php
-// phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+/**
+ * Hook: woocommerce_shipping_zones_after_zones_table.
+ * Allow plugins to hook and add custom content after the shipping zones table
+ */
 do_action( 'woocommerce_shipping_zones_after_zones_table' );
 ?>
 
