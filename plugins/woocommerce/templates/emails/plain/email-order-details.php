@@ -21,6 +21,10 @@ defined( 'ABSPATH' ) || exit;
 
 $email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 
+if ( $email_improvements_enabled ) {
+	add_filter( 'woocommerce_order_shipping_to_display_shipped_via', '__return_false' );
+}
+
 do_action( 'woocommerce_email_before_order_table', $order, $sent_to_admin, $plain_text, $email );
 
 if ( $email_improvements_enabled ) {
@@ -48,7 +52,17 @@ $item_totals = $order->get_order_item_totals();
 
 if ( $item_totals ) {
 	foreach ( $item_totals as $total ) {
-		echo wp_kses_post( $total['label'] . "\t " . $total['value'] ) . "\n";
+		if ( $email_improvements_enabled ) {
+			$label = $total['label'];
+			if ( isset( $total['meta'] ) ) {
+				$label .= ' ' . $total['meta'];
+			}
+			echo wp_kses_post( str_pad( wp_kses_post( $label ), 40 ) );
+			echo ' ';
+			echo esc_html( str_pad( wp_kses( $total['value'], array() ), 20, ' ', STR_PAD_LEFT ) ) . "\n";
+		} else {
+			echo wp_kses_post( $total['label'] . "\t " . $total['value'] ) . "\n";
+		}
 	}
 }
 
