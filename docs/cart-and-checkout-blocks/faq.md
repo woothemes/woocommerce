@@ -156,3 +156,15 @@ add_action(
   }
 );
 ```
+
+### How do I render something in the Checkout block?
+
+This depends on what you want to render.
+
+#### Rendering a field
+
+The recommended approach to rendering fields in the Checkout block is to use the [Additional Checkout Fields API](https://developer.woocommerce.com/docs/cart-and-checkout-additional-checkout-fields/).
+
+#### Rendering a custom block
+
+To render a custom block in the Checkout block, the recommended approach is to create a child block of one of the existing Checkout inner blocks. We have an example template that can be used to set up and study an inner block. To install and use it, follow the instructions in [`@woocommerce/extend-cart-checkout-block`](https://github.com/woocommerce/woocommerce/blob/trunk/packages/js/extend-cart-checkout-block/README.md). Please note that this example contains multiple other examples of extensibility, not just inner blocks.
