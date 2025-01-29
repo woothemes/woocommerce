@@ -4,7 +4,7 @@ _Note: This block is a copy of an upstream implementation ( [PR](https://github.
 
 ## Accordion Group
 
-A group of headers and associated expandable content. ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommerce-blocks/assets/js/blocks/accordion/accordion-group))
+A group of headers and associated expandable content. ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommerce/client/blocks/assets/js/blocks/accordion/accordion-group))
 
 -   **Name:** woocommerce/accordion-group
 -   **Experimental:** true
@@ -15,7 +15,7 @@ A group of headers and associated expandable content. ([Source](woocommerce/wooc
 
 ## Accordion Header
 
-Accordion header. ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommerce-blocks/assets/js/blocks/accordion/inner-blocks/accordion-header))
+Accordion header. ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommerce/client/blocks/assets/js/blocks/accordion/inner-blocks/accordion-header))
 
 -   **Name:** woocommerce/accordion-header
 -   **Experimental:** true
@@ -26,7 +26,7 @@ Accordion header. ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommer
 
 ## Accordion
 
-A single accordion that displays a header and expandable content. ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommerce-blocks/assets/js/blocks/accordion/inner-blocks/accordion-item))
+A single accordion that displays a header and expandable content. ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommerce/client/blocks/assets/js/blocks/accordion/inner-blocks/accordion-item))
 
 -   **Name:** woocommerce/accordion-item
 -   **Experimental:** true
@@ -38,7 +38,7 @@ A single accordion that displays a header and expandable content. ([Source](wooc
 
 ## Accordion Panel
 
-Accordion Panel ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommerce-blocks/assets/js/blocks/accordion/inner-blocks/accordion-panel))
+Accordion Panel ([Source](woocommerce/woocommerce/tree/trunk/plugins/woocommerce/client/blocks/assets/js/blocks/accordion/inner-blocks/accordion-panel))
 
 -   **Name:** woocommerce/accordion-panel
 -   **Experimental:** true
