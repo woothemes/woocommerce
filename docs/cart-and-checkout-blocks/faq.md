@@ -128,6 +128,10 @@ dispatch('wc/store/cart').invalidateResolutionForStore()
 
 However, this will cause a brief flash of an empty cart while the new cart is fetched.
 
+### How do I render something in each cart item?
+
+This is currently **not** officially supported, however we have heard of developers doing this using DOM manipulation and React portals. If you choose to take this route, please note that your integrations may stop working if we make changes to the Cart block in the future. 
+
 ## Checkout modifications
 
 ### How do I remove checkout fields?
