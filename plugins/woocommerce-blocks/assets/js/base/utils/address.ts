@@ -14,7 +14,6 @@ import {
 	BillingAddress,
 	CoreAddress,
 	KeyedFormField,
-	defaultFields,
 } from '@woocommerce/settings';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
