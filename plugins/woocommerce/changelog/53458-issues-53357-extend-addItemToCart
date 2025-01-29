@@ -1,4 +1,0 @@
-Significance: patch
-Type: enhancement
-
-Add parameters to addItemToCart() thunk.

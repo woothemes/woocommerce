@@ -234,6 +234,38 @@ class PaymentProvidersTest extends WC_Unit_Test_Case {
 	}
 
 	/**
+	 * Test getting payment gateway base details when a custom provider is present that is mapped using a wildcard.
+	 */
+	public function test_get_payment_gateway_base_details_with_custom_provider_wildcard_mapping() {
+		// Arrange.
+		$fake_gateway = new FakePaymentGateway(
+			'mollie_wc_gateway_bogus', // This should be matched by the wildcard mapping 'mollie_wc_gateway_*'.
+			array(
+				'enabled'                     => true,
+				'plugin_slug'                 => 'mollie',
+				'plugin_file'                 => 'mollie/mollie.php',
+				'recommended_payment_methods' => array(),
+			),
+		);
+
+		update_option( 'mollie-payments-for-woocommerce_test_mode_enabled', 'yes' );
+		update_option( 'mollie-payments-for-woocommerce_test_api_key', 'bogus_key' );
+
+		// Act.
+		$gateway_details = $this->sut->get_payment_gateway_base_details( $fake_gateway, 999 );
+
+		// Assert that the custom provider supplied details are returned.
+		$this->assertSame( 'mollie_wc_gateway_bogus', $gateway_details['id'] );
+		// This settings URL is provided by the custom provider.
+		$this->assertSame( admin_url( 'admin.php?page=wc-settings&tab=mollie_settings&section=mollie_payment_methods' ), $gateway_details['management']['_links']['settings']['href'] );
+		$this->assertTrue( $gateway_details['state']['test_mode'] ); // It should be in test mode because of the DB options. The custom provider logic handles this.
+
+		// Clean up.
+		delete_option( 'mollie-payments-for-woocommerce_test_mode_enabled' );
+		delete_option( 'mollie-payments-for-woocommerce_test_api_key' );
+	}
+
+	/**
 	 * Test getting the plugin slug of a payment gateway instance.
 	 */
 	public function test_get_payment_gateway_plugin_slug() {
@@ -1155,7 +1187,7 @@ class PaymentProvidersTest extends WC_Unit_Test_Case {
 
 		// Assert.
 		$this->assertIsArray( $categories );
-		$this->assertCount( 3, $categories );
+		$this->assertCount( 4, $categories );
 	}
 
 	/**

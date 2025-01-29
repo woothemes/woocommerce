@@ -1,20 +1,14 @@
 /**
  * External dependencies
  */
-import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { useMemo } from '@wordpress/element';
-import { BlockAttributes } from '@wordpress/blocks';
-import { PanelBody } from '@wordpress/components';
+import { useBlockProps } from '@wordpress/block-editor';
 import clsx from 'clsx';
+import { BlockAttributes } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-
-import './editor.scss';
-import { ProductGalleryNextPreviousBlockSettings } from './settings';
-import { ProductGalleryContext } from '../../types';
-import { getNextPreviousImagesWithClassName } from './utils';
+import { PrevButton, NextButton } from './icons';
 
 const getAlignmentStyle = ( alignment: string ): string => {
 	switch ( alignment ) {
@@ -31,10 +25,8 @@ const getAlignmentStyle = ( alignment: string ): string => {
 
 export const Edit = ( {
 	attributes,
-	context,
 }: {
 	attributes: BlockAttributes;
-	context: ProductGalleryContext;
 } ): JSX.Element => {
 	const blockProps = useBlockProps( {
 		style: {
@@ -49,33 +41,15 @@ export const Edit = ( {
 		),
 	} );
 
-	const previousNextImage = useMemo( () => {
-		return getNextPreviousImagesWithClassName(
-			context.nextPreviousButtonsPosition
-		);
-	}, [ context.nextPreviousButtonsPosition ] );
-
 	return (
 		<div { ...blockProps }>
-			<InspectorControls>
-				<PanelBody>
-					<ProductGalleryNextPreviousBlockSettings
-						context={ context }
-					/>
-				</PanelBody>
-			</InspectorControls>
 			<div
 				className={ clsx(
-					'wc-block-product-gallery-large-image-next-previous-container',
-					`wc-block-product-gallery-large-image-next-previous--${ previousNextImage?.classname }`
+					'wc-block-product-gallery-large-image-next-previous-container'
 				) }
 			>
-				{ previousNextImage?.PrevButtonImage && (
-					<previousNextImage.PrevButtonImage />
-				) }
-				{ previousNextImage?.NextButtonImage && (
-					<previousNextImage.NextButtonImage />
-				) }
+				<PrevButton />
+				<NextButton />
 			</div>
 		</div>
 	);

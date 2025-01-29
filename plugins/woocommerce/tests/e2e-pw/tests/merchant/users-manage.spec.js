@@ -1,7 +1,8 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	customer: async ( { api, wpApi }, use ) => {
 		const now = Date.now();
 		let user = {
