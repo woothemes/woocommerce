@@ -141,7 +141,7 @@ export const OtherPaymentGateways = ( {
 									text={ decodeEntities(
 										category.description
 									) }
-									position="top right"
+									placement="top-start"
 								>
 									<Gridicon
 										icon="info-outline"
