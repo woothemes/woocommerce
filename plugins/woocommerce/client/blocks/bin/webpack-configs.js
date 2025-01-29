@@ -680,8 +680,10 @@ const getStylingConfig = ( options = {} ) => {
 			devtoolNamespace: 'wc',
 			path: BUILD_DIR,
 			filename: '[name]-style.js',
-			library: [ 'wc', 'blocks', '[name]' ],
-			libraryTarget: 'this',
+			library: {
+				name: [ 'wc', 'blocks', '[name]' ],
+				type: 'window',
+			},
 			uniqueName: '__wcBlocksStyling_webpackJsonp',
 		},
 		optimization: {
@@ -833,8 +835,10 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 		output: {
 			filename: '[name].js',
 			path: BUILD_DIR,
-			library: [ 'wc', '__experimentalInteractivity' ],
-			libraryTarget: 'this',
+			library: {
+				name: [ 'wc', '__experimentalInteractivity' ],
+				type: 'window',
+			},
 			chunkLoadingGlobal: '__wcBlocksJsonp',
 		},
 		resolve: {
