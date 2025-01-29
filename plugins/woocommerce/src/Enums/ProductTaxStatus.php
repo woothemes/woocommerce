@@ -16,7 +16,7 @@ class ProductTaxStatus {
 	const TAXABLE = 'taxable';
 
 	/**
-	 * Tax status for products that are shipping only.
+	 * Indicates that only the shipping cost should be taxed, not the product itself.
 	 *
 	 * @var string
 	 */
