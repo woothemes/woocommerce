@@ -53,7 +53,35 @@ const getPickupDetails = (
 	return '';
 };
 
-const renderDefaultRadioOption = (
+const renderShippingRatesControlOption = (
+	option: CartShippingPackageShippingRate
+): PackageRateOption => {
+	const priceWithTaxes = getSetting( 'displayCartPricesIncludingTax', false )
+		? parseInt( option.price, 10 ) + parseInt( option.taxes, 10 )
+		: parseInt( option.price, 10 );
+
+	const secondaryLabel =
+		priceWithTaxes === 0 ? (
+			<span className="wc-block-checkout__shipping-option--free">
+				{ __( 'Free', 'woocommerce' ) }
+			</span>
+		) : (
+			<FormattedMonetaryAmount
+				currency={ getCurrencyFromPriceResponse( option ) }
+				value={ priceWithTaxes }
+			/>
+		);
+
+	return {
+		label: decodeEntities( option.name ),
+		value: option.rate_id,
+		description: decodeEntities( option.description ),
+		secondaryLabel,
+		secondaryDescription: decodeEntities( option.delivery_time ),
+	};
+};
+
+const renderPickupLocation = (
 	option: CartShippingPackageShippingRate,
 	packageCount?: number
 ): PackageRateOption => {
@@ -118,6 +146,17 @@ const renderDefaultRadioOption = (
 			<ReadMore maxLines={ 2 }>{ decodeEntities( details ) }</ReadMore>
 		) : undefined,
 	};
+};
+
+const renderDefaultRadioOption = (
+	option: CartShippingPackageShippingRate,
+	packageCount?: number
+): PackageRateOption => {
+	if ( option.method_id !== 'pickup_location' ) {
+		return renderShippingRatesControlOption( option );
+	}
+
+	return renderPickupLocation( option, packageCount );
 };
 
 export default renderDefaultRadioOption;
