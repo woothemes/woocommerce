@@ -151,7 +151,7 @@ class DocumentObject {
 	/**
 	 * Get the data for the document object.
 	 *
-	 * This isn't a 1:1 match with Store API because some data is simplified to make it wasier to parse as JSON.
+	 * This isn't a 1:1 match with Store API because some data is simplified to make it easier to parse as JSON.
 	 *
 	 * @return array The data for the document object.
 	 */
