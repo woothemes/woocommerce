@@ -10,14 +10,6 @@ import {
 	useBlockProps,
 } from '@wordpress/block-editor';
 
-export type FeaturesKeys = 'isBlockifiedAddToCart';
-
-export type FeaturesProps = {
-	[ key in FeaturesKeys ]?: boolean;
-};
-
-export type UpdateFeaturesType = ( key: FeaturesKeys, value: boolean ) => void;
-
 const TemplatePartInnerBlocks = ( {
 	blockProps,
 	templatePartId,
