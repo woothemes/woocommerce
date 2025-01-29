@@ -9,7 +9,7 @@ import crypto from 'crypto';
 /**
  * Internal dependencies
  */
-import { generatePostFrontMatter } from './generate-frontmatter';
+import { generatePostFrontMatter, hasContent } from './generate-frontmatter';
 import { generateFileUrl } from './generate-urls';
 
 export interface Category {
@@ -81,43 +81,45 @@ async function processDirectory(
 	}
 
 	markdownFiles.forEach( ( filePath ) => {
-		if ( filePath !== readmePath || ! checkReadme ) {
-			// Skip README.md which we have already processed.
-			const fileContent = fs.readFileSync( filePath, 'utf-8' );
-			const fileFrontmatter = generatePostFrontMatter( fileContent );
+		const fileContent = fs.readFileSync( filePath, 'utf-8' );
 
-			if ( baseUrl.includes( 'github' ) ) {
-				fileFrontmatter.edit_url = generateFileUrl(
-					baseEditUrl,
-					rootDirectory,
-					subDirectory,
-					filePath
-				);
-			}
-
-			const post: Post = { ...fileFrontmatter };
-
-			// Generate hash of the post contents.
-			post.hash = crypto
-				.createHash( 'sha256' )
-				.update( JSON.stringify( fileContent ) )
-				.digest( 'hex' );
-
-			// get the folder name of rootDirectory.
-			const relativePath = path.relative( fullPathToDocs, filePath );
-
-			category.posts.push( {
-				...post,
-				url: generateFileUrl(
-					baseUrl,
-					rootDirectory,
-					subDirectory,
-					filePath
-				),
-				filePath,
-				id: generatePostId( relativePath, projectName ),
-			} );
+		if ( ! hasContent( fileContent ) ) {
+			return;
 		}
+
+		const fileFrontmatter = generatePostFrontMatter( fileContent );
+
+		if ( baseUrl.includes( 'github' ) ) {
+			fileFrontmatter.edit_url = generateFileUrl(
+				baseEditUrl,
+				rootDirectory,
+				subDirectory,
+				filePath
+			);
+		}
+
+		const post: Post = { ...fileFrontmatter };
+
+		// Generate hash of the post contents.
+		post.hash = crypto
+			.createHash( 'sha256' )
+			.update( JSON.stringify( fileContent ) )
+			.digest( 'hex' );
+
+		// get the folder name of rootDirectory.
+		const relativePath = path.relative( fullPathToDocs, filePath );
+
+		category.posts.push( {
+			...post,
+			url: generateFileUrl(
+				baseUrl,
+				rootDirectory,
+				subDirectory,
+				filePath
+			),
+			filePath,
+			id: generatePostId( relativePath, projectName ),
+		} );
 	} );
 
 	// Recursively process subdirectories.
