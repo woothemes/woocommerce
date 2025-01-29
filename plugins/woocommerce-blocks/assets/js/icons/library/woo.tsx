@@ -6,24 +6,17 @@ import clsx from 'clsx';
 
 interface ComponentProps {
 	className?: string;
-	height?: number;
-	width?: number;
 }
 
-const Component = ( {
-	className,
-	height,
-	width,
-	...props
-}: ComponentProps ) => {
+const Component = ( { className, ...props }: ComponentProps ) => {
 	return (
 		<SVG
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 23 6"
 			className={ clsx( 'woo-icon', className ) }
+			{ ...props }
 			width={ 46 }
 			height={ 12 }
-			{ ...props }
 		>
 			<g id="surface1">
 				<path
