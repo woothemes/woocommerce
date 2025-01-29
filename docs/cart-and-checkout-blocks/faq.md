@@ -126,10 +126,33 @@ const { dispatch } = window.wp.data;
 dispatch('wc/store/cart').invalidateResolutionForStore()
 ```
 
-However, this will cause a brief flash of an empty cart while the new cart is fetched. 
+However, this will cause a brief flash of an empty cart while the new cart is fetched.
 
 ## Checkout modifications
 
 ### How do I remove checkout fields?
 
 We don't encourage this due to the wide array of plugins WordPress and Woo support. Some of these may rely on certain checkout fields to function, but if you're certain the fields are safe to remove, please see [Removing Checkout Fields](./removing-checkout-fields.md).
+
+### How do I modify the order or customer data during checkout?
+
+If you want to modify order or customer data submitted during checkout you can use the `woocommerce_store_api_checkout_order_processed` action.
+
+This action fires just before payment is processed. At this point you can modify the order as you would at any other point in the WooCommerce lifecycle, you still have to call `$order->save()` to persist the changes.
+
+As an example, let's make sure the user's first and last names are capitalized:
+
+```php
+add_action(
+  'woocommerce_store_api_checkout_order_processed',
+  function( WC_Order $order ) {
+    $order->set_shipping_first_name( ucfirst( $order->get_shipping_first_name() ) );
+    $order->set_shipping_last_name( ucfirst( $order->get_shipping_last_name() ) );
+
+    $order->set_billing_first_name( ucfirst( $order->get_billing_first_name() ) );
+    $order->set_billing_last_name( ucfirst( $order->get_billing_last_name() ) );
+
+    $order->save();
+  }
+);
+```
