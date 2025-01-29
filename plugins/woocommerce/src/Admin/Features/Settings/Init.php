@@ -173,7 +173,7 @@ class Init {
 		}
 
 		$transformer              = new Transformer();
-		$settings['settingsData'] = $transformer->transform( $pages );
+		$settings['settingsData']['pages'] = $transformer->transform( $pages );
 
 		return $settings;
 	}
