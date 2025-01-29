@@ -30,6 +30,8 @@ const {
 const AddSplitChunkDependencies = require( './add-split-chunk-dependencies' );
 const { sharedOptimizationConfig } = require( './webpack-shared-config' );
 
+const ROOT_DIR = path.resolve( __dirname, '../../../../../' );
+const cacheDirectory = path.join( ROOT_DIR, 'node_modules/.cache/babel-loader' );
 const isProduction = NODE_ENV === 'production';
 
 /**
@@ -86,8 +88,10 @@ const getCoreConfig = ( options = {} ) => {
 				return `${ paramCase( chunkData.chunk.name ) }.js`;
 			},
 			path: path.resolve( __dirname, '../build/' ),
-			library: [ 'wc', '[name]' ],
-			libraryTarget: 'this',
+			library: {
+				name: ['wc', '[name]'],
+				type: 'window'
+			},
 			uniqueName: 'webpackWcBlocksCoreJsonp',
 		},
 		module: {
@@ -105,10 +109,7 @@ const getCoreConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							],
-							cacheDirectory: path.resolve(
-								__dirname,
-								'../../../node_modules/.cache/babel-loader'
-							),
+							cacheDirectory,
 							cacheCompression: false,
 						},
 					},
@@ -182,8 +183,10 @@ const getMainConfig = ( options = {} ) => {
 			// @see https://github.com/Automattic/jetpack/pull/20926
 			chunkFilename: `[name].js?ver=[contenthash]`,
 			filename: `[name].js`,
-			library: [ 'wc', 'blocks', '[name]' ],
-			libraryTarget: 'this',
+			library: {
+				name: [ 'wc', 'blocks', '[name]' ],
+				type: 'window',
+			},
 			uniqueName: 'webpackWcBlocksMainJsonp',
 		},
 		module: {
@@ -204,10 +207,7 @@ const getMainConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: path.resolve(
-								__dirname,
-								'../../../node_modules/.cache/babel-loader'
-							),
+							cacheDirectory,
 							cacheCompression: false,
 						},
 					},
@@ -340,10 +340,7 @@ const getFrontConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: path.resolve(
-								__dirname,
-								'../../../node_modules/.cache/babel-loader'
-							),
+							cacheDirectory,
 							cacheCompression: false,
 						},
 					},
@@ -444,10 +441,7 @@ const getPaymentsConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: path.resolve(
-								__dirname,
-								'../../../node_modules/.cache/babel-loader'
-							),
+							cacheDirectory,
 							cacheCompression: false,
 						},
 					},
@@ -537,10 +531,7 @@ const getExtensionsConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: path.resolve(
-								__dirname,
-								'../../../node_modules/.cache/babel-loader'
-							),
+							cacheDirectory,
 							cacheCompression: false,
 						},
 					},
@@ -629,10 +620,7 @@ const getSiteEditorConfig = ( options = {} ) => {
 									: false,
 								'@babel/plugin-proposal-optional-chaining',
 							].filter( Boolean ),
-							cacheDirectory: path.resolve(
-								__dirname,
-								'../../../node_modules/.cache/babel-loader'
-							),
+							cacheDirectory,
 							cacheCompression: false,
 						},
 					},
@@ -762,10 +750,7 @@ const getStylingConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: path.resolve(
-								__dirname,
-								'../../../node_modules/.cache/babel-loader'
-							),
+							cacheDirectory,
 							cacheCompression: false,
 						},
 					},
@@ -891,10 +876,7 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 									'@babel/plugin-proposal-optional-chaining',
 									'@babel/plugin-proposal-class-properties',
 								],
-								cacheDirectory: path.resolve(
-									__dirname,
-									'../../../node_modules/.cache/babel-loader'
-								),
+								cacheDirectory,
 								cacheCompression: false,
 							},
 						},
@@ -945,7 +927,10 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 				return `[name]-frontend.js`;
 			},
 			uniqueName: 'webpackWcBlocksCartCheckoutFrontendJsonp',
-			library: [ 'wc', '[name]' ],
+			library: {
+				name: ['wc', '[name]'],
+				type: 'window'
+			},
 		},
 		module: {
 			rules: [
@@ -977,10 +962,7 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 								'@babel/plugin-proposal-optional-chaining',
 								'@babel/plugin-proposal-class-properties',
 							].filter( Boolean ),
-							cacheDirectory: path.resolve(
-								__dirname,
-								'../../../node_modules/.cache/babel-loader'
-							),
+							cacheDirectory,
 							cacheCompression: false,
 						},
 					},
