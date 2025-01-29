@@ -173,7 +173,7 @@
 		top: 0;
 		overflow: hidden;
 		position: relative;
-		height: 1em;
+		height: 1.1em;
 		line-height: 1;
 		width: 5.3em;
 		font-family: WooCommerce; /* stylelint-disable-line */
@@ -181,12 +181,17 @@
 	}
 
 	> .wc-block-components-review-list-item__rating__stars::before {
-		content: "\53\53\53\53\53";
-		opacity: 0.25;
-		float: left;
+		content: "\73\73\73\73\73";
+		float: right;
 		top: 0;
-		left: 0;
+		right: 0;
 		position: absolute;
+	}
+
+	@for $i from 1 through 5 {
+		> .wc-block-review-list-item__rating__stars--#{$i}::before {
+			width: 100% - ($i * 20%);
+		}
 	}
 
 	> .wc-block-components-review-list-item__rating__stars span {
@@ -203,7 +208,7 @@
 		top: 0;
 		position: absolute;
 		left: 0;
-		color: #e6a237;
+		color: #d18204;
 	}
 }
 

@@ -36,6 +36,7 @@ jobs:
       needs-code-validation: ${{ steps.target-changes.outputs.needs-code-validation }}
       needs-changelog-validation: ${{ steps.target-changes.outputs.needs-changelog-validation }}
       needs-markdown-validation:  ${{ steps.target-changes.outputs.needs-markdown-validation }}
+      needs-syncpack-validation:  ${{ steps.target-changes.outputs.needs-syncpack-validation }}
     steps:
       - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
         id: target-changes
@@ -47,6 +48,8 @@ jobs:
               - '{packages,plugins}/*/!(changelog/**)/**'
             needs-markdown-validation:
               - '!(.github/**)/**/*.md'
+            needs-syncpack-validation:
+              - '(.syncpackrc)|(pnpm-lock.yaml)'
 
   project-jobs:
     # Since this is a monorepo, not every pull request or change is going to impact every project.
@@ -62,25 +65,11 @@ jobs:
       test-jobs: ${{ steps.project-jobs.outputs.test-jobs }}
       report-jobs: ${{ steps.project-jobs.outputs.report-jobs }}
     steps:
-      # Shallow copy of the branch is fast, but needs a bit of creativity about depth calculation and finding out proper base sha. 
-      - name: Setup - calculate checkout depth
-        id: checkout_depth
-        shell: bash
-        run: |
-          value=$(( ${{ ( github.event_name == 'pull_request' && github.event.pull_request.commits ) || 1 }} + 1 ))
-          echo "value=$value" >> $GITHUB_OUTPUT
-      - name: Setup - checkout
-        uses: 'actions/checkout@v4'
+      - uses: 'actions/checkout@v4'
+        name: 'Checkout'
         with:
-          fetch-depth: ${{ steps.checkout_depth.outputs.value }}
-          ref: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.ref ) || '' }}
-          repository: ${{ ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name ) || '' }}
-      - name: Setup - calculate base sha
-        id: checkout_base_sha
-        shell: bash
-        run: |
-          value=$(git rev-list --no-merges -n ${{ steps.checkout_depth.outputs.value }} HEAD | tail -1)
-          echo "value=$value" >> $GITHUB_OUTPUT
+          # We tried to speed checkout up with shallow copies, but supporting PRs from forks forces us to follow this approach.
+          fetch-depth: ${{ ( ( github.base_ref && '0' ) || '1' ) }}
       # Now let's get to generating the build matrix itself.
       - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
@@ -94,7 +83,7 @@ jobs:
             // - Pushes: run CI jobs aiming pushes without filtering based on the content changes
 
             let baseRef   = '';
-            const baseSha = ${{ toJson( github.event_name == 'pull_request' && steps.checkout_base_sha.outputs.value ) }};
+            const baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
             if ( baseSha ) {
               // Use-case: trigger is pull request
               baseRef = `--base-ref ${ baseSha }`;
@@ -137,17 +126,11 @@ jobs:
       matrix:
         include: ${{ fromJSON( needs.project-jobs.outputs.lint-jobs ) }}
     steps:
-      - name: 'Calculate checkout depth'
-        id: checkout_depth
-        shell: bash
-        run: |
-          fetch_commits=$(( ${{ github.event.pull_request.commits }} + 1 ))
-          echo "fetch_commits=$fetch_commits" >> $GITHUB_OUTPUT
-
       - uses: 'actions/checkout@v4'
+        name: 'Checkout'
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: ${{ steps.checkout_depth.outputs.fetch_commits }}
+          # We tried to speed checkout up with shallow copies, but `git merge-base ...` used on different levels of tooling forces us to follow this approach.
+          fetch-depth: ${{ ( ( matrix.projectName == '@woocommerce/plugin-woocommerce' && '0' ) || '1' ) }}
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
         id: 'setup-monorepo'
@@ -452,6 +435,34 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           label: 'metric: flaky e2e test'
+
+  validate-syncpack:
+    name: 'Validate dependencies version'
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-syncpack-validation == 'true' }}
+    needs: [ 'identify-jobs-to-run' ]
+    runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: read
+
+    steps:
+      - uses: 'actions/checkout@v4'
+
+      - name: 'Setup - node'
+        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
+        with:
+          node-version-file: .nvmrc
+
+      - name: 'Setup - syncpack'
+        run: npm install -g syncpack@^10.9.3
+
+      - name: 'Validate - mismatches'
+        run: syncpack list-mismatches
+
+      - name: 'Validate - prompt mitigation on failed validation'
+        if: failure()
+        run: |
+          echo "Dependency version mismatch detected. This can usually be fixed automatically by updating the pinned version in \`.syncpackrc\` and then running: \`pnpm sync-dependencies\`"
+          exit 1
 
   validate-changelog:
     name: 'Validate changelog'

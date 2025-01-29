@@ -57,5 +57,5 @@
 		}
 	},
 	"allowedBlocks": [ "woocommerce/accordion-item" ],
-	"textdomain": "default"
+	"textdomain": "woocommerce"
 }

@@ -9,14 +9,13 @@ import {
 } from '@wordpress/block-editor';
 import { BlockEditProps, InnerBlockTemplate } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { moveInnerBlocksToPosition } from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
 import type { ProductGalleryAttributes } from './types';
+import { moveInnerBlocksToPosition } from './utils';
 
 const TEMPLATE: InnerBlockTemplate[] = [
 	[
@@ -88,16 +87,6 @@ const TEMPLATE: InnerBlockTemplate[] = [
 	],
 ];
 
-const getMode = ( currentTemplateId: string, templateType: string ) => {
-	if (
-		templateType === 'wp_template_part' &&
-		currentTemplateId.includes( 'product-gallery' )
-	) {
-		return 'full';
-	}
-	return 'standard';
-};
-
 export const Edit = ( {
 	clientId,
 	attributes,
@@ -105,31 +94,14 @@ export const Edit = ( {
 }: BlockEditProps< ProductGalleryAttributes > ) => {
 	const blockProps = useBlockProps();
 
-	const { currentTemplateId, templateType } = useSelect( ( select ) => {
-		const store = select( 'core/edit-site' );
-		return {
-			currentTemplateId: store ? store.getEditedPostId() : '',
-			templateType: store ? store.getEditedPostType() : '',
-		};
-	}, [] );
-
 	useEffect( () => {
-		const mode = getMode( currentTemplateId, templateType );
-
 		setAttributes( {
 			...attributes,
-			mode,
 			productGalleryClientId: clientId,
 		} );
 		// Move the Thumbnails block to the correct above or below the Large Image based on the thumbnailsPosition attribute.
 		moveInnerBlocksToPosition( attributes, clientId );
-	}, [
-		setAttributes,
-		attributes,
-		clientId,
-		currentTemplateId,
-		templateType,
-	] );
+	}, [ setAttributes, attributes, clientId ] );
 
 	return (
 		<div { ...blockProps }>
