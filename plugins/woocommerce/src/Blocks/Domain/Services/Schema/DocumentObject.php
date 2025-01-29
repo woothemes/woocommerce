@@ -70,8 +70,6 @@ class DocumentObject {
 	public function __construct( array $request_data = [] ) {
 		$this->cart_controller   = new CartController();
 		$this->schema_controller = StoreApi::container()->get( SchemaController::class );
-		$this->cart              = $this->cart_controller->get_cart_for_response();
-		$this->customer          = ! empty( wc()->customer ) ? wc()->customer : new WC_Customer();
 		$this->request_data      = $request_data;
 	}
 
@@ -182,6 +180,11 @@ class DocumentObject {
 	 * @return array The data for the document object.
 	 */
 	public function get_data() {
+		// Get cart and customer objects before returning data. These may be set via setters in the future if needs
+		// arrise to modify where cart/customer come from.
+		$this->cart     = $this->cart_controller->get_cart_for_response();
+		$this->customer = ! empty( wc()->customer ) ? wc()->customer : new WC_Customer();
+
 		return [
 			'cart'     => $this->get_cart_data(),
 			'customer' => $this->get_customer_data(),
