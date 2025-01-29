@@ -42,6 +42,7 @@ class EmailPreview {
 		'woocommerce_email_footer_text_color',
 		'woocommerce_email_header_alignment',
 		'woocommerce_email_header_image',
+		'woocommerce_email_header_image_width',
 		'woocommerce_email_text_color',
 	);
 
@@ -134,6 +135,7 @@ class EmailPreview {
 			"woocommerce_{$email_id}_subject",
 			"woocommerce_{$email_id}_heading",
 			"woocommerce_{$email_id}_additional_content",
+			"woocommerce_{$email_id}_email_type",
 		);
 	}
 
@@ -283,7 +285,13 @@ class EmailPreview {
 			$this->set_email_type( self::DEFAULT_EMAIL_TYPE );
 		}
 
-		$content = $this->email->get_content_html();
+		if ( 'plain' === $this->email->get_email_type() ) {
+			$content  = '<pre style="word-wrap: break-word; white-space: pre-wrap;">';
+			$content .= $this->email->get_content_plain();
+			$content .= '</pre>';
+		} else {
+			$content = $this->email->get_content_html();
+		}
 		$inlined = $this->email->style_inline( $content );
 
 		$this->clean_up_filters();
