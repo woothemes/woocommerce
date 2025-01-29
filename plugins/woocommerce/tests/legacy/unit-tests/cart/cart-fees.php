@@ -1,7 +1,5 @@
 <?php
 
-use Automattic\WooCommerce\Enums\ProductTaxStatus;
-
 /**
  * Class WC_Cart_Fees.
  * @package WooCommerce\Tests\Cart

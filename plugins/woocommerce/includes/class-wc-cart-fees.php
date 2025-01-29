@@ -12,8 +12,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use Automattic\WooCommerce\Enums\ProductTaxStatus;
-
 /**
  * WC_Cart_Fees class.
  *
