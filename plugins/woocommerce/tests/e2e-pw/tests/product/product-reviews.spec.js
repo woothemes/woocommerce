@@ -1,9 +1,12 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 const { faker } = require( '@faker-js/faker' );
-const { CUSTOMER_STATE_PATH } = require( '../../playwright.config' );
+const {
+	ADMIN_STATE_PATH,
+	CUSTOMER_STATE_PATH,
+} = require( '../../playwright.config' );
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	products: async ( { api }, use ) => {
 		const timestamp = Date.now().toString();
 		const products = [];
