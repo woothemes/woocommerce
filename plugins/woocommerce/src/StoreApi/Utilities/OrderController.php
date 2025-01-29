@@ -6,7 +6,7 @@ use Automattic\WooCommerce\StoreApi\Exceptions\RouteException;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Utilities\DiscountsUtil;
-
+use Automattic\WooCommerce\StoreApi\Utilities\PaymentUtils;
 /**
  * OrderController class.
  * Helper class which creates and syncs orders with the cart.
@@ -48,77 +48,11 @@ class OrderController {
 		$order = new \WC_Order();
 		$order->set_status( 'checkout-draft' );
 		$order->set_created_via( 'store-api' );
-		$order->set_payment_method( $this->get_default_payment_method() );
 		$this->update_order_from_cart( $order );
 
 		remove_filter( 'woocommerce_default_order_status', array( $this, 'default_order_status' ) );
 
 		return $order;
-	}
-
-	protected function get_enabled_payment_gateways() {
-		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		return array_filter(
-			$payment_gateways,
-			function ( $payment_gateway ) {
-				return 'yes' === $payment_gateway->enabled;
-			}
-		);
-	}
-
-	private function get_customer_payment_methods() {
-		if ( ! is_user_logged_in() ) {
-			return;
-		}
-
-		add_filter( 'woocommerce_payment_methods_list_item', [ $this, 'include_token_id_with_payment_methods' ], 10, 2 );
-
-		$enabled_payment_gateways = $this->get_enabled_payment_gateways();
-		$customer_payment_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
-		$payment_methods          = [
-			'enabled' => [],
-			'default' => null,
-		];
-
-		// Filter out payment methods that are not enabled.
-		foreach ( $customer_payment_methods as $payment_method_group => $saved_payment_methods ) {
-			$payment_methods['enabled'][ $payment_method_group ] = array_values(
-				array_filter(
-					$saved_payment_methods,
-					function ( $saved_payment_method ) use ( $enabled_payment_gateways, &$payment_methods ) {
-						if ( true === $saved_payment_method['is_default'] && null === $payment_methods['default'] ) {
-							$payment_methods['default'] = $saved_payment_method;
-						}
-						return in_array( $saved_payment_method['method']['gateway'], array_keys( $enabled_payment_gateways ), true );
-					}
-				)
-			);
-		}
-
-		remove_filter( 'woocommerce_payment_methods_list_item', [ $this, 'include_token_id_with_payment_methods' ], 10, 2 );
-
-		return $payment_methods;
-	}
-
-	public function get_default_payment_method() {
-		$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
-
-		// If payment method is already stored in session, use it.
-		if ( $chosen_payment_method ) {
-			return $chosen_payment_method;
-		}
-
-		$customer_payment_methods = $this->get_customer_payment_methods();
-		// A saved payment method exists, set as default.
-		if ( $customer_payment_methods && ! empty( $customer_payment_methods['default'] ) ) {
-			return $customer_payment_methods['default'];
-		}
-
-		// If no saved payment method exists, use the first enabled payment method.
-		$enabled_payment_gateways = $this->get_enabled_payment_gateways();
-		$first_key                = array_key_first( $enabled_payment_gateways );
-		$first_payment_method     = $enabled_payment_gateways[ $first_key ];
-		return $first_payment_method->id ?? '';
 	}
 
 	/**
@@ -179,7 +113,7 @@ class OrderController {
 		$order->set_customer_user_agent( wc_get_user_agent() );
 		$order->update_meta_data( 'is_vat_exempt', wc()->cart->get_customer()->get_is_vat_exempt() ? 'yes' : 'no' );
 		$order->calculate_totals();
-		$order->set_payment_method( $this->get_default_payment_method() );
+		$order->set_payment_method( PaymentUtils::get_default_payment_method() );
 	}
 
 	/**

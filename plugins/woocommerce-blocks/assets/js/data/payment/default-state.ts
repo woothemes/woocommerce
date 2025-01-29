@@ -15,53 +15,6 @@ import { SavedPaymentMethod } from './types';
 import { STATUS as PAYMENT_STATUS } from './constants';
 import { checkoutData } from '../checkout/constants';
 
-/**
- * Set the default payment method data. This can be in two places,
- * Either as part of the `defaultPaymentMethod` object or
- * as a token stored in `wcSettings`.
- */
-function getDefaultPaymentMethodData() {
-	const defaultPaymentMethod = getSetting< SavedPaymentMethod | string >(
-		'defaultPaymentMethod',
-		''
-	);
-
-	// Saved payment method token stored in wcSettings.
-	const defaultPaymentMethodToken = getSetting< string >(
-		'defaultPaymentMethodToken',
-		''
-	);
-
-	if ( ! defaultPaymentMethodToken || ! defaultPaymentMethod ) {
-		return {};
-	}
-
-	// If a token has been hydrated to wcSettings, use it.
-	if ( defaultPaymentMethod && defaultPaymentMethodToken ) {
-		const savedTokenKey = `wc-${ defaultPaymentMethod }-payment-token`;
-		return {
-			token: defaultPaymentMethodToken,
-			payment_method: defaultPaymentMethod,
-			[ savedTokenKey ]: defaultPaymentMethodToken,
-			isSavedToken: true,
-		};
-	}
-
-	// If the default payment method is a SavedPaymentMethod object,
-	// find the token and set the payment method data.
-	if (
-		typeof defaultPaymentMethod !== 'string' &&
-		defaultPaymentMethod?.tokenId
-	) {
-		const token = defaultPaymentMethod.tokenId.toString();
-		const slug = defaultPaymentMethod.method.gateway;
-		const savedTokenKey = `wc-${ slug }-payment-token`;
-		return { token, payment_method: slug, [ savedTokenKey ]: token };
-	}
-
-	return {};
-}
-
 export interface PaymentState {
 	status: string;
 	activePaymentMethod: string;
@@ -86,7 +39,7 @@ export const defaultPaymentState: PaymentState = {
 	savedPaymentMethods: getSetting<
 		Record< string, SavedPaymentMethod[] > | EmptyObjectType
 	>( 'customerPaymentMethods', {} ),
-	paymentMethodData: getDefaultPaymentMethodData(),
+	paymentMethodData: {},
 	paymentResult: null,
 	paymentMethodsInitialized: false,
 	expressPaymentMethodsInitialized: false,

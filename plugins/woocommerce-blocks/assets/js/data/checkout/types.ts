@@ -71,5 +71,4 @@ export type CheckoutPutData = {
 	additional_fields?: AdditionalValues;
 	order_notes?: string;
 	payment_method?: string;
-	payment_method_token?: string;
 };

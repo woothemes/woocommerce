@@ -26,7 +26,6 @@ const localState = {
 		orderNotes: '',
 		additionalFields: {} as AdditionalValues,
 		activePaymentMethod: '',
-		activeSavedToken: '',
 	},
 };
 
@@ -42,7 +41,6 @@ const initialize = () => {
 		orderNotes: store.getOrderNotes(),
 		additionalFields: store.getAdditionalFields(),
 		activePaymentMethod: paymentStore.getActivePaymentMethod(),
-		activeSavedToken: paymentStore.getActiveSavedToken(),
 	};
 	localState.isInitialized = true;
 };
@@ -77,7 +75,6 @@ const updateCheckoutData = (): void => {
 		orderNotes: checkoutStore.getOrderNotes(),
 		additionalFields: checkoutStore.getAdditionalFields(),
 		activePaymentMethod: paymentStore.getActivePaymentMethod(),
-		activeSavedToken: paymentStore.getActiveSavedToken(),
 	};
 
 	// Don't push changes if the active payment method is empty
@@ -114,13 +111,6 @@ const updateCheckoutData = (): void => {
 		localState.checkoutData.activePaymentMethod
 	) {
 		requestData.payment_method = newCheckoutData.activePaymentMethod;
-	}
-
-	if (
-		newCheckoutData.activeSavedToken !==
-		localState.checkoutData.activeSavedToken
-	) {
-		requestData.payment_method_token = newCheckoutData.activeSavedToken;
 	}
 
 	// If nothing's changed, skip update

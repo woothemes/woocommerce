@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\StoreApi\Routes\V1;
 
 use Automattic\WooCommerce\StoreApi\Payments\PaymentResult;
@@ -783,12 +785,7 @@ class Checkout extends AbstractCartRoute {
 		$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
 		if ( isset( $request['payment_method'] ) && in_array( $request['payment_method'], array_keys( $available_gateways ), true ) ) {
 			WC()->session->set( 'chosen_payment_method', sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
-			WC()->session->set( 'chosen_payment_method_token', '' );
 			$this->order->set_payment_method( sanitize_text_field( wp_unslash( $request['payment_method'] ) ) );
-		}
-
-		if ( isset( $request['payment_method_token'] ) && '' !== $request['payment_method_token'] ) {
-			WC()->session->set( 'chosen_payment_method_token', sanitize_text_field( wp_unslash( $request['payment_method_token'] ) ) );
 		}
 	}
 
