@@ -136,6 +136,30 @@ export const applyExtensionCartUpdate =
 	};
 
 /**
+ * Syncs the cart with the iAPI store.
+ *
+ * @throws Will throw an error if there is an API problem.
+ */
+export const syncCartWithIAPIStore =
+	() =>
+	async ( { dispatch }: CartThunkArgs ) => {
+		try {
+			const { response } = await apiFetchWithHeaders< {
+				response: CartResponse;
+			} >( {
+				path: '/wc/store/v1/cart',
+				method: 'GET',
+				cache: 'no-store',
+			} );
+			dispatch.receiveCart( response );
+			return response;
+		} catch ( error ) {
+			dispatch.receiveError( isApiErrorResponse( error ) ? error : null );
+			return Promise.reject( error );
+		}
+	};
+
+/**
  * Applies a coupon code and either invalidates caches, or receives an error if
  * the coupon cannot be applied.
  *

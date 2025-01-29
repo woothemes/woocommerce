@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { store } from '@woocommerce/interactivity';
+import { store, effect } from '@woocommerce/interactivity';
 import type { store as StoreType } from '@wordpress/interactivity'; // Todo: remove once we import from `@wordpress/interactivity`.
 
 /**
@@ -26,6 +26,7 @@ export type Store = {
 	};
 	actions: {
 		addCartItem: ( args: { id: number; quantity: number } ) => void;
+		// Todo: Check why if I switch to an async function here the types of the store stop working.
 		refreshCartItems: () => void;
 	};
 };
@@ -102,22 +103,23 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 					const message = ( error as Error ).message;
 
 					// Question: can we import this dynamically so it's not loaded on page load?
-					const { actions } = store< StoreNoticesStore >(
-						'woocommerce/store-notices'
-					);
+					const { actions: noticeActions } =
+						store< StoreNoticesStore >(
+							'woocommerce/store-notices'
+						);
 
 					// If the user deleted the hooked store notice block, the
 					// store won't be present and we should not add a notice.
-					if ( 'addNotice' in actions ) {
+					if ( 'addNotice' in noticeActions ) {
 						// The old implementation always overwrites the last
 						// notice, so we remove the last notice before adding a
 						// new one.
 						// Todo: Review this implementation.
 						if ( state.noticeId !== '' ) {
-							actions.removeNotice( state.noticeId );
+							noticeActions.removeNotice( state.noticeId );
 						}
 
-						const noticeId = actions.addNotice( {
+						const noticeId = noticeActions.addNotice( {
 							notice: message,
 							type: 'error',
 							dismissible: true,
@@ -171,3 +173,44 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 		},
 	}
 );
+
+let ignoreUpdate = false;
+
+window.addEventListener(
+	'woocommerce-cart-sync-required',
+	async ( event: Event ) => {
+		const customEvent = event as CustomEvent< {
+			type: string;
+			id: number;
+		} >;
+		if ( customEvent.detail.type === 'from_@wordpress/data' ) {
+			console.log(
+				`Cart sync received on the iAPI store: data-${ customEvent.detail.id }`
+			);
+			// Todo: investigate how to avoid infinite loops without causing racing conditions.
+			ignoreUpdate = true;
+			await actions.refreshCartItems();
+			ignoreUpdate = false;
+		}
+	}
+);
+
+let id = 0;
+
+// Question: Should this event be triggered manually so it's not triggered on optimistic updates?
+effect( () => {
+	// Deeply subscribe to all the `state.cart` properties.
+	JSON.stringify( state.cart );
+
+	if ( ! ignoreUpdate ) {
+		console.log( `Cart sync started on the iAPI store: iapi-${ ++id }` );
+
+		// Dispatch the event to sync the @wordpress/data store.
+		window.dispatchEvent(
+			// Question: What are the usual names for WooCommerce events?
+			new CustomEvent( 'woocommerce-cart-sync-required', {
+				detail: { type: 'from_iAPI', id },
+			} )
+		);
+	}
+} );
