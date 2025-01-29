@@ -5,27 +5,19 @@ namespace Automattic\WooCommerce\Tests\Blocks\Domain\Services\Schema;
 
 use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
+use WC_Customer;
 
 /**
  * DocumentObjectTests class.
  */
 class DocumentObjectTests extends TestCase {
 	/**
-	 * Setup test product data. Called before every test.
-	 */
-	protected function setUp(): void {
-		parent::setUp();
-		wp_set_current_user( 0 );
-		WC()->cart->empty_cart();
-		WC()->session->destroy_session();
-	}
-
-	/**
 	 * test_validate_selected_shipping_methods.
 	 */
 	public function test_default_document_schema() {
 		$document_object = new DocumentObject();
-		$data            = $document_object->get_data();
+		$document_object->set_customer( new WC_Customer( 0 ) );
+		$data = $document_object->get_data();
 
 		$this->assertEquals(
 			$data['cart'],
@@ -55,9 +47,9 @@ class DocumentObjectTests extends TestCase {
 					'address_1'  => '',
 					'address_2'  => '',
 					'city'       => '',
-					'state'      => 'CA',
+					'state'      => '',
 					'postcode'   => '',
-					'country'    => 'US',
+					'country'    => '',
 					'phone'      => '',
 				],
 				'billing_address'  => [
@@ -67,9 +59,9 @@ class DocumentObjectTests extends TestCase {
 					'address_1'  => '',
 					'address_2'  => '',
 					'city'       => '',
-					'state'      => 'CA',
+					'state'      => '',
 					'postcode'   => '',
-					'country'    => 'US',
+					'country'    => '',
 					'email'      => '',
 					'phone'      => '',
 				],
@@ -106,7 +98,8 @@ class DocumentObjectTests extends TestCase {
 				],
 			]
 		);
-		$data            = $document_object->get_data();
+		$document_object->set_customer( new WC_Customer( 0 ) );
+		$data = $document_object->get_data();
 		$this->assertEquals(
 			$data['customer'],
 			[
@@ -118,9 +111,9 @@ class DocumentObjectTests extends TestCase {
 					'address_1'  => '',
 					'address_2'  => '',
 					'city'       => '',
-					'state'      => 'CA',
+					'state'      => '',
 					'postcode'   => '',
-					'country'    => 'US',
+					'country'    => '',
 					'phone'      => '',
 				],
 				'billing_address'  => [
@@ -130,9 +123,9 @@ class DocumentObjectTests extends TestCase {
 					'address_1'  => '',
 					'address_2'  => '',
 					'city'       => '',
-					'state'      => 'CA',
+					'state'      => '',
 					'postcode'   => '',
-					'country'    => 'US',
+					'country'    => '',
 					'email'      => '',
 					'phone'      => '',
 				],

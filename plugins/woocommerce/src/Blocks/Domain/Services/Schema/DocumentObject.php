@@ -83,6 +83,24 @@ class DocumentObject {
 	}
 
 	/**
+	 * Set the customer object.
+	 *
+	 * @param WC_Customer $customer The customer object.
+	 */
+	public function set_customer( WC_Customer $customer ) {
+		$this->customer = $customer;
+	}
+
+	/**
+	 * Set the cart object.
+	 *
+	 * @param WC_Cart $cart The cart object.
+	 */
+	public function set_cart( WC_Cart $cart ) {
+		$this->cart = $cart;
+	}
+
+	/**
 	 * Gets a subset of cart data.
 	 *
 	 * @return array The cart data.
@@ -180,10 +198,14 @@ class DocumentObject {
 	 * @return array The data for the document object.
 	 */
 	public function get_data() {
-		// Get cart and customer objects before returning data. These may be set via setters in the future if needs
-		// arrise to modify where cart/customer come from.
-		$this->cart     = $this->cart_controller->get_cart_for_response();
-		$this->customer = ! empty( WC()->customer ) ? WC()->customer : new WC_Customer();
+		// Get cart and customer objects before returning data if they are null.
+		if ( is_null( $this->cart ) ) {
+			$this->cart = $this->cart_controller->get_cart_for_response();
+		}
+
+		if ( is_null( $this->customer ) ) {
+			$this->customer = ! empty( WC()->customer ) ? WC()->customer : new WC_Customer();
+		}
 
 		return [
 			'cart'     => $this->get_cart_data(),
