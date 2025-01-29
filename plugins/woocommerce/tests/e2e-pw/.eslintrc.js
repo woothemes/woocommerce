@@ -8,6 +8,7 @@ module.exports = {
 		'jest/valid-expect': 'off',
 		'jest/expect-expect': 'off',
 		'jest/no-standalone-expect': 'off',
+		'jest/valid-title': 'off',
 		'testing-library/await-async-utils': 'off',
 	},
 };
