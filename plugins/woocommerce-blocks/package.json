@@ -106,7 +106,7 @@
 		"watch:build:project:bundle": "wireit"
 	},
 	"devDependencies": {
-		"@automattic/color-studio": "2.5.0",
+		"@automattic/color-studio": "4.0.0",
 		"@babel/cli": "7.23.0",
 		"@babel/core": "7.23.2",
 		"@babel/plugin-proposal-class-properties": "7.18.6",

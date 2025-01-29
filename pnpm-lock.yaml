@@ -3777,8 +3777,8 @@ importers:
         version: 1.1.5
     devDependencies:
       '@automattic/color-studio':
-        specifier: 2.5.0
-        version: 2.5.0
+        specifier: 4.0.0
+        version: 4.0.0
       '@babel/cli':
         specifier: 7.23.0
         version: 7.23.0(@babel/core@7.23.2)
@@ -5475,6 +5475,9 @@ packages:
 
   '@automattic/color-studio@2.5.0':
     resolution: {integrity: sha512-gZWaJbx3p1oennAIoJtMGluTmoM95Efk4rc44TSBxWSZZ8gH3Am2eh1o3i1NhrZmg2Zt3AiVFeZZ4AJccIpBKQ==}
+
+  '@automattic/color-studio@4.0.0':
+    resolution: {integrity: sha512-L49rqIzCLnqLFoNJsANUXfmIWqlfgsEaDWcgXHt+lUbpZYDtWphUCVS/kIkSlAPHo3LmcRRzCTIq/DyU5C/nEA==}
 
   '@automattic/components@2.1.1':
     resolution: {integrity: sha512-PqGwe1CI0PtQIaTka5cbX/gKqEkhk4GYTdkExigHdzifnYtPZSmuLsw5mlPdfA8qY141s8wokARU7cDIZE0DCw==}
@@ -25263,6 +25266,7 @@ packages:
 
   sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   sugarss@2.0.0:
     resolution: {integrity: sha512-WfxjozUk0UVA4jm+U1d736AUpzSrNsQcIbyOkoE364GrtWmIrFdk5lksEupgWMD4VaT/0kVx1dobpiDumSgmJQ==}
@@ -27475,6 +27479,8 @@ snapshots:
       - supports-color
 
   '@automattic/color-studio@2.5.0': {}
+
+  '@automattic/color-studio@4.0.0': {}
 
   '@automattic/components@2.1.1(@types/react@17.0.71)(@wordpress/data@6.6.2(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
     dependencies:
