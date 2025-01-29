@@ -203,21 +203,19 @@ class Checkout extends AbstractCartRoute {
 			);
 		}
 
-		if ( WC()->cart->needs_shipping() ) {
-			$shipping_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
+		$address_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
 
-			foreach ( $shipping_fields as $field_key => $field ) {
-				if ( ! isset( $request['shipping_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object ) ) {
+		if ( WC()->cart->needs_shipping() ) {
+			foreach ( $address_fields as $field_key => $field ) {
+				if ( ! isset( $request['shipping_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object, 'shipping_address' ) ) {
 					/* translators: %s: is the field label */
 					throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided shipping address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
 				}
 			}
 		}
 
-		$billing_fields = $this->additional_fields_controller->get_fields_for_group( 'billing' );
-
-		foreach ( $billing_fields as $field_key => $field ) {
-			if ( ! isset( $request['billing_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object ) ) {
+		foreach ( $address_fields as $field_key => $field ) {
+			if ( ! isset( $request['billing_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object, 'billing_address' ) ) {
 				/* translators: %s: is the field label */
 				throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided billing address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
 			}

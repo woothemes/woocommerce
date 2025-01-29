@@ -251,10 +251,12 @@ class CheckoutFields {
 	 *
 	 * @param array               $field The field.
 	 * @param DocumentObject|null $document_object The document object.
+	 * @param string|null         $context Address context.
 	 * @return bool
 	 */
-	public function is_field_required( $field, $document_object = null ) {
+	public function is_field_required( $field, $document_object = null, $context = null ) {
 		if ( $document_object && ! empty( $field['rules']['required'] ) ) {
+			$document_object->set_context( $context );
 			return $this->schema->validate_document_object_rules( $document_object, $field['rules']['required'] );
 		}
 

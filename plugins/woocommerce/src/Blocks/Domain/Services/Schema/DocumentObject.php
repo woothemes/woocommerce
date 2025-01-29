@@ -21,6 +21,13 @@ use Automattic\WooCommerce\StoreApi\Utilities\CartController;
  */
 class DocumentObject {
 	/**
+	 * Docuemnt object context which may adjust the schema response.
+	 *
+	 * @var null|string Examples: shipping_address, billing_address
+	 */
+	protected $context = null;
+
+	/**
 	 * The cart object.
 	 *
 	 * @var WC_Cart|null
@@ -66,6 +73,15 @@ class DocumentObject {
 		$this->cart              = $this->cart_controller->get_cart_for_response();
 		$this->customer          = ! empty( wc()->customer ) ? wc()->customer : new WC_Customer();
 		$this->request_data      = $request_data;
+	}
+
+	/**
+	 * Set document object context.
+	 *
+	 * @param null|string $context Context to set.
+	 */
+	public function set_context( $context = null ) {
+		$this->context = $context;
 	}
 
 	/**
@@ -135,7 +151,7 @@ class DocumentObject {
 	 * @return array The customer data.
 	 */
 	protected function get_customer_data() {
-		return [
+		$customer_data = [
 			'id'               => $this->request_data['customer']['id'] ?? $this->customer->get_id(),
 			'shipping_address' => wp_parse_args(
 				$this->request_data['customer']['shipping_address'] ?? [],
@@ -146,6 +162,16 @@ class DocumentObject {
 				$this->schema_controller->get( BillingAddressSchema::IDENTIFIER )->get_item_response( $this->customer )
 			),
 		];
+
+		if ( 'shipping_address' === $this->context ) {
+			$customer_data['address'] = $customer_data['shipping_address'];
+		}
+
+		if ( 'billing_address' === $this->context ) {
+			$customer_data['address'] = $customer_data['billing_address'];
+		}
+
+		return $customer_data;
 	}
 
 	/**
