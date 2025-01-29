@@ -7,9 +7,7 @@ const glob = require( 'glob' );
 const { translations } = require( '../test-data/data/data.ts' );
 const { getTestTranslation } = require( '../utils/get-test-translation.js' );
 
-ensureDirSync(
-	path.join( __dirname, '../../../../../i18n/languages' )
-);
+ensureDirSync( path.join( __dirname, '../../../../../i18n/languages' ) );
 
 const builtJsFiles = glob.sync(
 	`${ path.dirname( __filename ) }/../../../build/**/*.js`,
