@@ -229,6 +229,28 @@ Create an "Add To Cart" composition by using blocks
 -	**Supports:** interactivity
 -	**Attributes:** isDescendentOfSingleProductBlock
 
+## Grouped Product Selector (Experimental) - woocommerce/add-to-cart-with-options-grouped-product-selector
+
+Display a group of products that can be added to the cart.
+
+-	**Name:** woocommerce/add-to-cart-with-options-grouped-product-selector
+-	**Category:** woocommerce-product-elements
+-   **Ancestor:** woocommerce/add-to-cart-with-options
+-   **Parent:** 
+-	**Supports:** 
+-	**Attributes:** 
+
+## Grouped Product Selector Item Template (Experimental) - woocommerce/add-to-cart-with-options-grouped-product-selector-item
+
+A list item template that represents a child product within the Grouped Product Selector block.
+
+-	**Name:** woocommerce/add-to-cart-with-options-grouped-product-selector-item
+-	**Category:** woocommerce-product-elements
+-   **Ancestor:** woocommerce/add-to-cart-with-options-grouped-product-selector
+-   **Parent:** 
+-	**Supports:** ~~inserter~~
+-	**Attributes:** 
+
 ## Quantity Selector (Experimental) - woocommerce/add-to-cart-with-options-quantity-selector
 
 Display an input field to select the number of products to add to cart.
@@ -1208,6 +1230,17 @@ The contents of this block will display when there are no products found.
 -	**Supports:** align, color (background, gradients, link, text), typography (fontSize, lineHeight), ~~html~~, ~~reusable~~
 -	**Attributes:** 
 
+## Blockified Product Details - woocommerce/blockified-product-details
+
+Display a product's description, attributes, and reviews
+
+-	**Name:** woocommerce/blockified-product-details
+-	**Category:** woocommerce
+-   **Ancestor:** 
+-   **Parent:** 
+-	**Supports:** 
+-	**Attributes:** 
+
 ## Add to Cart with Options - woocommerce/add-to-cart-form
 
 Display a button so the customer can add a product to their cart. Options will also be displayed depending on product type. e.g. quantity, variation.
@@ -1349,7 +1382,7 @@ Showcase your products relevant images and media.
 -   **Ancestor:** woocommerce/single-product
 -   **Parent:** 
 -	**Supports:** align, interactivity
--	**Attributes:** cropImages, fullScreenOnClick, hoverZoom, mode
+-	**Attributes:** cropImages, fullScreenOnClick, hoverZoom
 
 ## Large Image - woocommerce/product-gallery-large-image
 
@@ -1393,7 +1426,7 @@ Display the Thumbnails of a product.
 -   **Ancestor:** woocommerce/product-gallery
 -   **Parent:** 
 -	**Supports:** spacing (margin)
--	**Attributes:** numberOfThumbnails, thumbnailsPosition
+-	**Attributes:** numberOfThumbnails
 
 ## Newest Products - woocommerce/product-new
 
