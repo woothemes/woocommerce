@@ -10,7 +10,7 @@ import { addFilter, removeFilter } from '@wordpress/hooks';
 import { getAdminLink } from '@woocommerce/settings';
 import { __ } from '@wordpress/i18n';
 import { useDispatch } from '@wordpress/data';
-import { OPTIONS_STORE_NAME } from '@woocommerce/data';
+import { OPTIONS_STORE_NAME, ONBOARDING_STORE_NAME } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 
 /**
@@ -26,6 +26,7 @@ import {
 import { EmailSentPage, MobileAppLoginStepperPage } from './pages';
 import './style.scss';
 import { SETUP_TASK_HELP_ITEMS_FILTER } from '../../activity-panel/panels/help';
+import { isNewBranding } from '~/utils/admin-settings';
 
 export const MobileAppModal = () => {
 	const [ guideIsOpen, setGuideIsOpen ] = useState( false );
@@ -37,6 +38,16 @@ export const MobileAppModal = () => {
 
 	const [ pageContent, setPageContent ] = useState< React.ReactNode >();
 	const [ searchParams ] = useSearchParams();
+
+	const { invalidateResolutionForStoreSelector } = useDispatch(
+		ONBOARDING_STORE_NAME
+	);
+
+	if ( isNewBranding() ) {
+		import( './style-new.scss' );
+	} else {
+		import( './style-old.scss' );
+	}
 
 	useEffect( () => {
 		if ( searchParams.get( 'mobileAppModal' ) ) {
@@ -115,31 +126,45 @@ export const MobileAppModal = () => {
 		state,
 		isRetryingMagicLinkSend,
 		magicLinkRequestStatus,
+		completeAppInstallationStep,
 	] );
+
+	const clearQueryString = useCallback( () => {
+		// clear the search params that we use so that the URL is clean
+		updateQueryString(
+			{
+				jetpackState: undefined,
+				mobileAppModal: undefined,
+			},
+			undefined,
+			Object.fromEntries( searchParams.entries() )
+		);
+	}, [ searchParams ] );
+
+	const onFinish = () => {
+		updateOptions( {
+			woocommerce_admin_dismissed_mobile_app_modal: 'yes',
+		} ).then( () =>
+			invalidateResolutionForStoreSelector( 'getTaskLists' )
+		);
+
+		clearQueryString();
+		setGuideIsOpen( false );
+	};
 
 	return (
 		<>
 			{ guideIsOpen && (
 				<Guide
-					onFinish={ () => {
-						updateOptions( {
-							woocommerce_admin_dismissed_mobile_app_modal: 'yes',
-						} );
-						// clear the search params that we use so that the URL is clean
-						updateQueryString(
-							{
-								jetpackState: undefined,
-								mobileAppModal: undefined,
-							},
-							undefined,
-							Object.fromEntries( searchParams.entries() )
-						);
-					} }
+					onFinish={ onFinish }
 					className={ 'woocommerce__mobile-app-welcome-modal' }
 					pages={ [
 						{
 							content: (
-								<ModalIllustrationLayout body={ pageContent } />
+								<ModalIllustrationLayout
+									body={ pageContent }
+									onDismiss={ onFinish }
+								/>
 							),
 						},
 					] }
@@ -201,6 +226,5 @@ export const MobileAppHelpMenuEntryLoader = () => {
 
 registerPlugin( 'woocommerce-mobile-app-modal', {
 	render: MobileAppHelpMenuEntryLoader,
-	// @ts-expect-error 'scope' does exist. @types/wordpress__plugins is outdated.
 	scope: 'woocommerce-admin',
 } );

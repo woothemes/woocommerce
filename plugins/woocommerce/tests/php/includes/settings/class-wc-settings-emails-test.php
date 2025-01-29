@@ -70,7 +70,7 @@ class WC_Settings_Emails_Test extends WC_Settings_Unit_Test_Case {
 
 		$expected = array(
 			'email_notification_settings'              => array( 'title', 'sectionend' ),
-			''                                         => 'email_notification',
+			''                                         => array( 'email_notification', 'email_preview' ),
 			'email_recipient_options'                  => 'sectionend',
 			'email_options'                            => array( 'title', 'sectionend' ),
 			'woocommerce_email_from_name'              => 'text',

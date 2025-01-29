@@ -8,12 +8,17 @@
  * @version 3.4.0
  */
 
+use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Checkout class.
  */
 class WC_Checkout {
+	use CogsAwareTrait;
 
 	/**
 	 * The single instance of the class.
@@ -393,7 +398,7 @@ class WC_Checkout {
 			 * different items or cost, create a new order. We use a hash to
 			 * detect changes which is based on cart items + order total.
 			 */
-			if ( $order && $order->has_cart_hash( $cart_hash ) && $order->has_status( array( 'pending', 'failed' ) ) ) {
+			if ( $order && $order->has_cart_hash( $cart_hash ) && $order->has_status( array( OrderStatus::PENDING, OrderStatus::FAILED ) ) ) {
 				/**
 				 * Indicates that we are resuming checkout for an existing order (which is pending payment, and which
 				 * has not changed since it was added to the current shopping session).
@@ -423,7 +428,7 @@ class WC_Checkout {
 			foreach ( $data as $key => $value ) {
 				if ( is_callable( array( $order, "set_{$key}" ) ) ) {
 					$order->{"set_{$key}"}( $value );
-					// Store custom fields prefixed with wither shipping_ or billing_. This is for backwards compatibility with 2.6.x.
+					// Store custom fields prefixed with either shipping_ or billing_. This is for backwards compatibility with 2.6.x.
 				} elseif ( isset( $fields_prefix[ current( explode( '_', $key ) ) ] ) ) {
 					if ( ! isset( $shipping_fields[ $key ] ) ) {
 						$order->update_meta_data( '_' . $key, $value );
@@ -450,6 +455,10 @@ class WC_Checkout {
 			$order->set_customer_note( isset( $data['order_comments'] ) ? $data['order_comments'] : '' );
 			$order->set_payment_method( isset( $available_gateways[ $data['payment_method'] ] ) ? $available_gateways[ $data['payment_method'] ] : $data['payment_method'] );
 			$this->set_data_from_cart( $order );
+
+			if ( $this->cogs_is_enabled() ) {
+				$order->calculate_cogs_total_value();
+			}
 
 			/**
 			 * Action hook to adjust order before save.
@@ -478,7 +487,7 @@ class WC_Checkout {
 			return $order_id;
 		} catch ( Exception $e ) {
 			if ( $order && $order instanceof WC_Order ) {
-				$order->get_data_store()->release_held_coupons( $order );
+				wc_release_coupons_for_order( $order );
 				/**
 				 * Action hook fired when an order is discarded due to Exception.
 				 *
@@ -546,8 +555,8 @@ class WC_Checkout {
 					array(
 						'name'         => $product->get_name(),
 						'tax_class'    => $product->get_tax_class(),
-						'product_id'   => $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id(),
-						'variation_id' => $product->is_type( 'variation' ) ? $product->get_id() : 0,
+						'product_id'   => $product->is_type( ProductType::VARIATION ) ? $product->get_parent_id() : $product->get_id(),
+						'variation_id' => $product->is_type( ProductType::VARIATION ) ? $product->get_id() : 0,
 					)
 				);
 			}
@@ -624,6 +633,7 @@ class WC_Checkout {
 						'taxes'        => array(
 							'total' => $shipping_rate->taxes,
 						),
+						'tax_status'   => $shipping_rate->tax_status,
 					)
 				);
 
@@ -876,6 +886,8 @@ class WC_Checkout {
 				}
 
 				if ( in_array( 'phone', $format, true ) ) {
+					$data[ $key ] = wc_sanitize_phone_number( $data[ $key ] );
+
 					if ( $validate_fieldset && '' !== $data[ $key ] && ! WC_Validation::is_phone( $data[ $key ] ) ) {
 						/* translators: %s: phone number */
 						$errors->add( $key . '_validation', sprintf( __( '%s is not a valid phone number.', 'woocommerce' ), '<strong>' . esc_html( $field_label ) . '</strong>' ), array( 'id' => $key ) );
@@ -1191,7 +1203,7 @@ class WC_Checkout {
 				if ( is_callable( array( $customer, "set_{$key}" ) ) ) {
 					$customer->{"set_{$key}"}( $value );
 
-					// Store custom fields prefixed with wither shipping_ or billing_.
+					// Store custom fields prefixed with either shipping_ or billing_.
 				} elseif ( 0 === stripos( $key, 'billing_' ) || 0 === stripos( $key, 'shipping_' ) ) {
 					$customer->update_meta_data( $key, $value );
 				}

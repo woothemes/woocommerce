@@ -73,7 +73,28 @@ export class Editor extends CoreEditor {
 
 	async revertTemplate( { templateName }: { templateName: string } ) {
 		await this.page.getByPlaceholder( 'Search' ).fill( templateName );
-		await this.page.getByLabel( templateName, { exact: true } ).click();
+
+		// Depending on the context, we need to click either on a link (in the template page)
+		// or a button (in the template-parts/patterns page) to visit the template.
+		const link = this.page.getByRole( 'link', {
+			name: templateName,
+			exact: true,
+		} );
+
+		if ( await link.isVisible() ) {
+			await link.click();
+		}
+
+		const button = this.page
+			.getByRole( 'button', {
+				name: new RegExp( templateName, 'i' ),
+				exact: true,
+			} )
+			.and( this.page.locator( '.is-link' ) );
+
+		if ( await button.isVisible() ) {
+			await button.click();
+		}
 
 		await this.page.getByLabel( 'Actions' ).click();
 		await this.page

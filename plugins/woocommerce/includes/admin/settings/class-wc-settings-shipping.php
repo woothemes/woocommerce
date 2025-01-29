@@ -31,6 +31,13 @@ class WC_Settings_Shipping extends WC_Settings_Page {
 	}
 
 	/**
+	 * Setting page icon.
+	 *
+	 * @var string
+	 */
+	public $icon = 'shipping';
+
+	/**
 	 * Add this page to settings.
 	 *
 	 * @param array $pages Current pages.

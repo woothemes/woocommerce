@@ -26,6 +26,7 @@ import type {
 } from '@woocommerce/types';
 import NoticeBanner from '@woocommerce/base-components/notice-banner';
 import type { ReactElement } from 'react';
+import { useMemo } from '@wordpress/element';
 
 /**
  * Renders a shipping rate control option.
@@ -60,7 +61,26 @@ const renderShippingRatesControlOption = (
 	};
 };
 
-const Block = ( { noShippingPlaceholder = null } ): ReactElement | null => {
+const NoShippingAddressMessage = () => {
+	return (
+		<p
+			role="status"
+			aria-live="polite"
+			className="wc-block-components-shipping-rates-control__no-shipping-address-message"
+		>
+			{ __(
+				'Enter a shipping address to view shipping options.',
+				'woocommerce'
+			) }
+		</p>
+	);
+};
+
+const Block = ( {
+	noShippingPlaceholder = null,
+}: {
+	noShippingPlaceholder?: ReactElement | null;
+} ) => {
 	const { isEditor } = useEditorContext();
 
 	const {
@@ -73,19 +93,22 @@ const Block = ( { noShippingPlaceholder = null } ): ReactElement | null => {
 
 	const { shippingAddress } = useCustomerData();
 
-	const filteredShippingRates = isCollectable
-		? shippingRates.map( ( shippingRatesPackage ) => {
-				return {
-					...shippingRatesPackage,
-					shipping_rates: shippingRatesPackage.shipping_rates.filter(
-						( shippingRatesPackageRate ) =>
-							! hasCollectableRate(
-								shippingRatesPackageRate.method_id
-							)
-					),
-				};
-		  } )
-		: shippingRates;
+	const filteredShippingRates = useMemo( () => {
+		return isCollectable
+			? shippingRates.map( ( shippingRatesPackage ) => {
+					return {
+						...shippingRatesPackage,
+						shipping_rates:
+							shippingRatesPackage.shipping_rates.filter(
+								( shippingRatesPackageRate ) =>
+									! hasCollectableRate(
+										shippingRatesPackageRate.method_id
+									)
+							),
+					};
+			  } )
+			: shippingRates;
+	}, [ shippingRates, isCollectable ] );
 
 	if ( ! needsShipping ) {
 		return null;
@@ -95,14 +118,7 @@ const Block = ( { noShippingPlaceholder = null } ): ReactElement | null => {
 		getShippingRatesPackageCount( shippingRates );
 
 	if ( ! hasCalculatedShipping && ! shippingRatesPackageCount ) {
-		return (
-			<p>
-				{ __(
-					'Shipping options will be displayed here after entering your full shipping address.',
-					'woocommerce'
-				) }
-			</p>
-		);
+		return <NoShippingAddressMessage />;
 	}
 	const addressComplete = isAddressComplete( shippingAddress );
 
@@ -124,15 +140,12 @@ const Block = ( { noShippingPlaceholder = null } ): ReactElement | null => {
 									status="warning"
 								>
 									{ __(
-										'There are no shipping options available. Please check your shipping address.',
+										'No shipping options are available for this address. Please verify the address is correct or try a different address.',
 										'woocommerce'
 									) }
 								</NoticeBanner>
 							) : (
-								__(
-									'Add a shipping address to view shipping options.',
-									'woocommerce'
-								)
+								<NoShippingAddressMessage />
 							) }
 						</>
 					}

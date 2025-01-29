@@ -12,10 +12,24 @@
 	"textdomain": "woocommerce",
 	"apiVersion": 3,
 	"ancestor": [
-		"woocommerce/product-filter"
+		"woocommerce/product-filter",
+		"woocommerce/product-filter-attribute",
+		"woocommerce/product-filter-price",
+		"woocommerce/product-filter-rating",
+		"woocommerce/product-filter-status",
+		"woocommerce/product-filter-active"
 	],
+	"usesContext": [
+		"filterData"
+	],
+	"attributes": {
+		"clearType": {
+			"type": "string",
+			"default": ""
+		}
+	},
 	"supports": {
 		"interactivity": true,
-		"inserter": false
+		"inserter": true
 	}
 }

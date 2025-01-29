@@ -9,7 +9,7 @@ use Automattic\WooCommerce\Tests\Blocks\Helpers\FixtureData;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Package;
-
+use WC_Gateway_BACS;
 
 /**
  * AdditionalFields Controller Tests.
@@ -97,13 +97,15 @@ class AdditionalFields extends MockeryTestCase {
 	/**
 	 * Tear down Rest API server and remove fields.
 	 */
-	protected function tearDown(): void {
-		parent::tearDown();
-		unset( WC()->countries->locale );
-		remove_all_filters( 'woocommerce_get_country_locale' );
+	public function tearDown(): void {
 		global $wp_rest_server;
 		$wp_rest_server = null;
+		unset( WC()->countries->locale );
+		WC()->cart->empty_cart();
+		remove_all_filters( 'woocommerce_get_country_locale' );
+		remove_all_actions( 'doing_it_wrong_run' );
 		$this->unregister_fields();
+		parent::tearDown();
 	}
 
 	/**
@@ -1191,7 +1193,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1242,7 +1244,7 @@ class AdditionalFields extends MockeryTestCase {
 					$id          => array( 'array-instead-of-text' ),
 
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1303,7 +1305,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -1372,7 +1374,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'invalid',
@@ -1448,7 +1450,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -1525,7 +1527,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'my-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'invalid',
@@ -1593,7 +1595,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'req. field',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1638,7 +1640,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1683,7 +1685,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'gov id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => '',
 				),
@@ -1738,7 +1740,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'req. field',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1771,7 +1773,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id'            => 'gov id',
 					'plugin-namespace/my-required-field' => 'req. field',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1831,7 +1833,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 				),
@@ -1886,7 +1888,7 @@ class AdditionalFields extends MockeryTestCase {
 					'plugin-namespace/gov-id' => 'my-gov-id',
 
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'invalid-prop',
 				),
@@ -1934,7 +1936,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'shipping-saved-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -1993,7 +1995,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'shipping-saved-gov-id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function'   => 'engineering',
 					'plugin-namespace/leave-on-porch' => true,
@@ -2113,7 +2115,7 @@ class AdditionalFields extends MockeryTestCase {
 					'phone'                   => '',
 					'plugin-namespace/gov-id' => 'gov id',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					'plugin-namespace/job-function' => 'engineering',
 					$id                             => 'value',
@@ -2195,7 +2197,7 @@ class AdditionalFields extends MockeryTestCase {
 					'country'    => 'GB',
 					'phone'      => '',
 				),
-				'payment_method'    => 'bacs',
+				'payment_method'    => WC_Gateway_BACS::ID,
 				'additional_fields' => array(
 					$id => 'my-value',
 				),
@@ -2214,5 +2216,160 @@ class AdditionalFields extends MockeryTestCase {
 				'woocommerce_set_additional_field_value',
 			)
 		);
+	}
+
+	/**
+	 * Mocks the doing_it_wrong function.
+	 *
+	 * @param string $error_id The ID of the field.
+	 * @param string $message The message to mock.
+	 * @return object The mocker.
+	 */
+	private function add_doing_it_wrong_error_mocker( $error_id, $message ) {
+		$doing_it_wrong_mocker = \Mockery::mock( 'ActionCallback' );
+		$doing_it_wrong_mocker->shouldReceive( 'doing_it_wrong_run' )->withArgs( array( $error_id, esc_html( $message ) ) )->once();
+		add_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+		return $doing_it_wrong_mocker;
+	}
+
+	/**
+	 * Test for errors when providing the wrong rules schema.
+	 */
+	public function test_invalid_rules_schema() {
+		$doing_it_wrong_mocker = $this->add_doing_it_wrong_error_mocker( 'woocommerce_register_additional_checkout_field', 'Unable to register field with id: "namespace/test-id". The rules must be an array.' );
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'       => 'namespace/test-id',
+				'label'    => 'Test Field',
+				'location' => 'address',
+				'required' => true,
+				'rules'    => 'invalid-rules',
+			)
+		);
+		remove_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+
+		// Ensures the field didn't register.
+		$this->assertEquals( \count( $this->controller->get_additional_fields() ), count( $this->fields ), \sprintf( 'An unexpected field is registered' ) );
+	}
+
+	/**
+	 * Test for errors when providing the wrong validation rules schema.
+	 */
+	public function test_invalid_validation_rules_schema() {
+		$doing_it_wrong_mocker = $this->add_doing_it_wrong_error_mocker( 'woocommerce_register_additional_checkout_field', 'Unable to register field with id: "namespace/test-id". The properties must match schema: {properties}' );
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'       => 'namespace/test-id',
+				'label'    => 'Test Field',
+				'location' => 'address',
+				'required' => true,
+				'rules'    => array(
+					'validation' => array(
+						'type'    => 'invalid-type',
+						'pattern' => '^[A-Z]{2}[0-9A-Z]{2,12}$',
+					),
+				),
+			)
+		);
+		remove_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+
+		$doing_it_wrong_mocker = $this->add_doing_it_wrong_error_mocker( 'woocommerce_register_additional_checkout_field', 'Unable to register field with id: "namespace/test-id". The validation rules must be an array.' );
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'       => 'namespace/test-id',
+				'label'    => 'Test Field',
+				'location' => 'address',
+				'required' => true,
+				'rules'    => array(
+					'validation' => 'invalid-value',
+				),
+			)
+		);
+		remove_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+
+		// Ensures the field didn't register.
+		$this->assertEquals( \count( $this->controller->get_additional_fields() ), count( $this->fields ), \sprintf( 'An unexpected field is registered' ) );
+	}
+
+	/**
+	 * Test registration is successful with valid validation rules schema.
+	 */
+	public function test_valid_validation_rules_schema() {
+		$doing_it_wrong_mocker = \Mockery::mock( 'ActionCallback' );
+		$doing_it_wrong_mocker->shouldReceive( 'doing_it_wrong_run' )->never();
+		add_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'       => 'namespace/test-id',
+				'label'    => 'Test Field',
+				'location' => 'address',
+				'required' => true,
+				'rules'    => array(
+					'validation' => array(
+						'type'    => 'string',
+						'pattern' => '^[A-Z]{2}[0-9A-Z]{2,12}$',
+					),
+				),
+			)
+		);
+		remove_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+		$this->assertNotEquals( \count( $this->controller->get_additional_fields() ), count( $this->fields ) );
+	}
+
+	/**
+	 * Test for errors when providing the wrong required rules schema.
+	 */
+	public function test_invalid_required_rules_schema() {
+		$doing_it_wrong_mocker = $this->add_doing_it_wrong_error_mocker( 'woocommerce_register_additional_checkout_field', 'Unable to register field with id: "namespace/test-id". The required rules must be an array.' );
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'       => 'namespace/test-id',
+				'label'    => 'Test Field',
+				'location' => 'address',
+				'required' => true,
+				'rules'    => array(
+					'required' => 'invalid-value',
+				),
+			)
+		);
+		remove_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+
+		// Ensures the field didn't register.
+		$this->assertEquals( \count( $this->controller->get_additional_fields() ), count( $this->fields ), \sprintf( 'An unexpected field is registered' ) );
+	}
+
+	/**
+	 * Test for errors when providing the wrong required rules schema.
+	 */
+	public function test_valid_required_rules_schema() {
+		$doing_it_wrong_mocker = \Mockery::mock( 'ActionCallback' );
+		$doing_it_wrong_mocker->shouldReceive( 'doing_it_wrong_run' )->never();
+		add_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+		\woocommerce_register_additional_checkout_field(
+			array(
+				'id'       => 'namespace/test-id',
+				'label'    => 'Test Field',
+				'location' => 'address',
+				'required' => true,
+				'rules'    => array(
+					'required' => array(
+						'cart' => array(
+							'properties' => array(
+								'billing_address' => array(
+									'properties' => array(
+										'country' => array(
+											'type' => 'string',
+											'enum' => 'GB',
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+			)
+		);
+		remove_action( 'doing_it_wrong_run', array( $doing_it_wrong_mocker, 'doing_it_wrong_run' ), 10, 2 );
+		$this->assertNotEquals( \count( $this->controller->get_additional_fields() ), count( $this->fields ) );
 	}
 }

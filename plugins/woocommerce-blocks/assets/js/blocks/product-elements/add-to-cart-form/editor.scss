@@ -6,11 +6,12 @@
 	width: 400px;
 	.components-disabled {
 		display: flex;
+		> .quantity:not(.wc-block-components-quantity-selector) .qty {
+			padding-top: 0;
+			padding-bottom: 0;
+			height: calc(100% - 4px); // 4px border width
+		}
 	}
-}
-
-.wc-block-editor-quantity-selector-style {
-	width: 100%;
 }
 
 .quantity .qty {
@@ -27,10 +28,6 @@ div.product form.cart div.quantity {
 
 input {
 	height: auto;
-}
-
-.wc-block-components-quantity-selector--input {
-	padding: unset;
 }
 
 .wc-block-add-to-cart-form.wc-block-add-to-cart-form--stepper {

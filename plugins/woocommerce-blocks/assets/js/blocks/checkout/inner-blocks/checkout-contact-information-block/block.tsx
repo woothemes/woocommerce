@@ -13,7 +13,7 @@ import {
 	CheckboxControl,
 } from '@woocommerce/blocks-components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 import { CONTACT_FORM_KEYS } from '@woocommerce/block-settings';
 import { Form } from '@woocommerce/base-components/cart-checkout';
 
@@ -22,15 +22,17 @@ import { Form } from '@woocommerce/base-components/cart-checkout';
  */
 import CreatePassword from './create-password';
 
+const guestCheckoutNoticeId = 'wc-guest-checkout-notice';
+
 const CreateAccountUI = (): React.ReactElement | null => {
 	const { shouldCreateAccount } = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			shouldCreateAccount: store.getShouldCreateAccount(),
 		};
 	} );
 	const { __internalSetShouldCreateAccount, __internalSetCustomerPassword } =
-		useDispatch( CHECKOUT_STORE_KEY );
+		useDispatch( checkoutStore );
 
 	// Work out what fields need to be displayed for the current shopper.
 	const allowGuestCheckout = getSetting( 'checkoutAllowsGuest', false );
@@ -53,7 +55,10 @@ const CreateAccountUI = (): React.ReactElement | null => {
 	return (
 		<>
 			{ allowGuestCheckout && (
-				<p className="wc-block-checkout__guest-checkout-notice">
+				<p
+					id={ guestCheckoutNoticeId }
+					className="wc-block-checkout__guest-checkout-notice"
+				>
 					{ __(
 						'You are currently checking out as a guest.',
 						'woocommerce'
@@ -82,14 +87,14 @@ const CreateAccountUI = (): React.ReactElement | null => {
 
 const Block = (): JSX.Element => {
 	const { additionalFields, customerId } = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			additionalFields: store.getAdditionalFields(),
 			customerId: store.getCustomerId(),
 		};
 	} );
 
-	const { setAdditionalFields } = useDispatch( CHECKOUT_STORE_KEY );
+	const { setAdditionalFields } = useDispatch( checkoutStore );
 	const { billingAddress, setEmail } = useCheckoutAddress();
 	const { dispatchCheckoutEvent } = useStoreEvents();
 	const onChangeEmail = ( value: string ) => {
@@ -114,6 +119,7 @@ const Block = (): JSX.Element => {
 			<Form< ContactFormValues >
 				id="contact"
 				addressType="contact"
+				ariaDescribedBy={ guestCheckoutNoticeId }
 				onChange={ onChangeForm }
 				values={ contactFormValues }
 				fields={ CONTACT_FORM_KEYS }

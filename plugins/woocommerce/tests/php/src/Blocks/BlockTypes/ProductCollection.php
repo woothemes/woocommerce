@@ -1278,4 +1278,83 @@ class ProductCollection extends \WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'wc_product_meta_lookup.total_sales DESC', $query->request );
 	}
+
+	/**
+	 * Test the menu_order sorting functionality.
+	 */
+	public function test_menu_order_sorting() {
+		$parsed_block                              = $this->get_base_parsed_block();
+		$parsed_block['attrs']['query']['orderBy'] = 'menu_order';
+		$parsed_block['attrs']['query']['order']   = 'asc';
+		$merged_query                              = $this->initialize_merged_query( $parsed_block );
+
+		$this->assertEquals( 'menu_order', $merged_query['orderby'] );
+		$this->assertEquals( 'ASC', $merged_query['order'] );
+	}
+
+	/**
+	 * Test the random sorting functionality.
+	 */
+	public function test_random_sorting() {
+		$parsed_block                              = $this->get_base_parsed_block();
+		$parsed_block['attrs']['query']['orderBy'] = 'random';
+		$merged_query                              = $this->initialize_merged_query( $parsed_block );
+
+		$this->assertEquals( 'rand', $merged_query['orderby'] );
+	}
+
+	/**
+	 * Tests that the hand-picked collection handler works with empty product selection.
+	 */
+	public function test_collection_hand_picked_empty() {
+		// Frontend.
+		$parsed_block                        = $this->get_base_parsed_block();
+		$parsed_block['attrs']['collection'] = 'woocommerce/product-collection/hand-picked';
+		$parsed_block['attrs']['query']['woocommerceHandPickedProducts'] = array();
+		$result_frontend = $this->initialize_merged_query( $parsed_block );
+
+		// Editor.
+		$request = $this->build_request(
+			array( 'woocommerceHandPickedProducts' => array() )
+		);
+		$request->set_param(
+			'productCollectionQueryContext',
+			array(
+				'collection' => 'woocommerce/product-collection/hand-picked',
+			)
+		);
+		$result_editor = $this->block_instance->update_rest_query_in_editor( array(), $request );
+
+		$this->assertEquals( array( -1 ), $result_frontend['post__in'] );
+		$this->assertEquals( array( -1 ), $result_editor['post__in'] );
+	}
+
+	/**
+	 * Tests that the hand-picked collection handler preserves product order.
+	 */
+	public function test_collection_hand_picked_order() {
+		$product_ids = array( 4, 2, 7, 1 );
+
+		// Frontend.
+		$parsed_block                        = $this->get_base_parsed_block();
+		$parsed_block['attrs']['collection'] = 'woocommerce/product-collection/hand-picked';
+		$parsed_block['attrs']['query']['woocommerceHandPickedProducts'] = $product_ids;
+		$result_frontend = $this->initialize_merged_query( $parsed_block );
+
+		// Editor.
+		$request = $this->build_request(
+			array( 'woocommerceHandPickedProducts' => $product_ids )
+		);
+		$request->set_param(
+			'productCollectionQueryContext',
+			array(
+				'collection' => 'woocommerce/product-collection/hand-picked',
+			)
+		);
+		$result_editor = $this->block_instance->update_rest_query_in_editor( array(), $request );
+
+		// Order should be preserved exactly as specified.
+		$this->assertEquals( $product_ids, $result_frontend['post__in'] );
+		$this->assertEquals( $product_ids, $result_editor['post__in'] );
+	}
 }

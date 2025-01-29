@@ -1,0 +1,57 @@
+.woocommerce-incentive-banner {
+	background-color: $studio-woocommerce-purple-0;
+	margin: 24px;
+	box-shadow: none;
+	border-radius: 8px;
+
+	&__content {
+		display: flex;
+		align-items: center;
+		padding: 0 calc(48px);
+
+		@media screen and ( max-width: 782px ) {
+			padding: 0;
+		}
+
+		& > img {
+			margin-right: 32px;
+
+			@media screen and ( max-width: 782px ) {
+				display: none;
+			}
+		}
+	}
+
+	&__body {
+		padding: calc(32px) calc(24px);
+		flex: 1;
+
+		& > h2 {
+			font-size: 14px;
+			line-height: 20px;
+			color: $gray-900;
+		}
+		& > p {
+			font-size: 13px;
+			line-height: 20px;
+			color: $gray-700;
+		}
+
+		@media screen and ( max-width: 782px ) {
+			padding: calc(32px) $gap;
+		}
+	}
+
+	&__terms {
+		font-size: 12px;
+		color: $gray-700;
+	}
+
+	@media screen and ( max-width: 1024px ) {
+		margin: 24px 0;
+	}
+
+	@media screen and ( max-width: 782px ) {
+		margin: 24px -20px;
+	}
+}

@@ -99,6 +99,11 @@
 		&:active {
 			opacity: 1;
 		}
+
+		&:focus {
+			outline: 2px solid currentColor !important;
+			outline-offset: 0;
+		}
 	}
 }
 
@@ -150,6 +155,13 @@
 	}
 	&.is-info {
 		@extend %info;
+	}
+	&:focus {
+		outline-width: 0;
+	}
+	&:focus-visible {
+		outline-width: 2px;
+		outline-style: solid;
 	}
 }
 

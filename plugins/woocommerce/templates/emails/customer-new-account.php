@@ -12,13 +12,18 @@
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 6.0.0
+ * @version 9.7.0
  */
+
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
 
+$email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+
 do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
+<?php echo $email_improvements_enabled ? '<div class="email-introduction">' : ''; ?>
 <?php /* translators: %s: Customer username */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $user_login ) ); ?></p>
 <?php /* translators: %1$s: Site title, %2$s: Username, %3$s: My account link */ ?>
@@ -27,13 +32,16 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 	<?php // If the password has not been set by the user during the sign up process, send them a link to set a new password ?>
 	<p><a href="<?php echo esc_attr( $set_password_url ); ?>"><?php printf( esc_html__( 'Click here to set your new password.', 'woocommerce' ) ); ?></a></p>
 <?php endif; ?>
+<?php echo $email_improvements_enabled ? '</div>' : ''; ?>
 
 <?php
 /**
  * Show user-defined additional content - this is set in each email's settings.
  */
 if ( $additional_content ) {
+	echo $email_improvements_enabled ? '<div class="email-additional-content">' : '';
 	echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) );
+	echo $email_improvements_enabled ? '</div>' : '';
 }
 
 do_action( 'woocommerce_email_footer', $email );

@@ -3,7 +3,6 @@
  */
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
 import {
 	thumbnailsPositionLeft,
 	thumbnailsPositionBottom,
@@ -11,6 +10,7 @@ import {
 } from '@woocommerce/icons';
 import { useDispatch } from '@wordpress/data';
 import {
+	Icon,
 	RangeControl,
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore - Ignoring because `__experimentalToggleGroupControlOption` is not yet in the type definitions.
@@ -29,10 +29,6 @@ import { ThumbnailsPosition } from '../constants';
 import type { ProductGalleryThumbnailsSettingsProps } from '../../../types';
 
 const positionHelp: Record< ThumbnailsPosition, string > = {
-	[ ThumbnailsPosition.OFF ]: __(
-		'No thumbnails will be displayed.',
-		'woocommerce'
-	),
 	[ ThumbnailsPosition.LEFT ]: __(
 		'A strip of small images will appear to the left of the main gallery image.',
 		'woocommerce'
@@ -53,14 +49,13 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 	const maxNumberOfThumbnails = 8;
 	const minNumberOfThumbnails = 3;
 	const { productGalleryClientId } = context;
-	// @ts-expect-error @wordpress/block-editor/store types not provided
 	const { updateBlockAttributes } = useDispatch( blockEditorStore );
 
 	return (
 		<>
 			<ToggleGroupControl
 				className="wc-block-editor-product-gallery-thumbnails__position-toggle"
-				isBlock={ true }
+				isBlock
 				label={ __( 'Thumbnails', 'woocommerce' ) }
 				value={ context.thumbnailsPosition }
 				help={
@@ -74,10 +69,6 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 					} )
 				}
 			>
-				<ToggleGroupControlOption
-					value={ ThumbnailsPosition.OFF }
-					label={ __( 'Off', 'woocommerce' ) }
-				/>
 				<ToggleGroupControlOption
 					value={ ThumbnailsPosition.LEFT }
 					label={
@@ -97,24 +88,22 @@ export const ProductGalleryThumbnailsBlockSettings = ( {
 					}
 				/>
 			</ToggleGroupControl>
-			{ context.thumbnailsPosition !== ThumbnailsPosition.OFF && (
-				<RangeControl
-					label={ __( 'Number of Thumbnails', 'woocommerce' ) }
-					value={ context.thumbnailsNumberOfThumbnails }
-					onChange={ ( value: number ) =>
-						updateBlockAttributes( productGalleryClientId, {
-							thumbnailsNumberOfThumbnails: Math.round( value ),
-						} )
-					}
-					help={ __(
-						'Choose how many thumbnails (3-8) will display. If more images exist, a “View all” button will display.',
-						'woocommerce'
-					) }
-					max={ maxNumberOfThumbnails }
-					min={ minNumberOfThumbnails }
-					step={ 1 }
-				/>
-			) }
+			<RangeControl
+				label={ __( 'Number of Thumbnails', 'woocommerce' ) }
+				value={ context.thumbnailsNumberOfThumbnails }
+				onChange={ ( value: number ) =>
+					updateBlockAttributes( productGalleryClientId, {
+						thumbnailsNumberOfThumbnails: Math.round( value ),
+					} )
+				}
+				help={ __(
+					'Choose how many thumbnails (3-8) will display. If more images exist, a “View all” button will display.',
+					'woocommerce'
+				) }
+				max={ maxNumberOfThumbnails }
+				min={ minNumberOfThumbnails }
+				step={ 1 }
+			/>
 		</>
 	);
 };

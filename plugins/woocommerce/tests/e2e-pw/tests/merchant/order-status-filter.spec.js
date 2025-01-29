@@ -1,4 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const orderBatchId = [];
@@ -18,9 +20,9 @@ const orderStatus = [
 
 test.describe(
 	'WooCommerce Orders > Filter Order by Status',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -60,7 +62,7 @@ test.describe(
 			test( `should filter by ${ orderStatus[ i ][ 0 ] }`, async ( {
 				page,
 			} ) => {
-				await page.goto( '/wp-admin/admin.php?page=wc-orders' );
+				await page.goto( 'wp-admin/admin.php?page=wc-orders' );
 
 				await page.locator( `li.${ orderStatus[ i ][ 1 ] }` ).click();
 				await expect(

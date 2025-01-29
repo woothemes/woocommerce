@@ -1,6 +1,9 @@
+/**
+ * Internal dependencies
+ */
+import { tags } from '../../fixtures/fixtures';
 const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-
 const randomNum = new Date().getTime().toString();
 const customer = {
 	username: `customer${ randomNum }`,
@@ -10,7 +13,7 @@ const customer = {
 
 test.describe(
 	'Customer can pay for their order through My Account',
-	{ tag: [ '@payments', '@services', '@hpos' ] },
+	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
 		let productId, orderId;
 
@@ -95,6 +98,15 @@ test.describe(
 			await expect(
 				page.getByRole( 'button', { name: 'Pay for order' } )
 			).toBeVisible();
+
+			// Handle notice if present
+			await page.addLocatorHandler(
+				page.getByRole( 'link', { name: 'Dismiss' } ),
+				async () => {
+					await page.getByRole( 'link', { name: 'Dismiss' } ).click();
+				}
+			);
+
 			await page.locator( '#place_order' ).click();
 
 			await expect(

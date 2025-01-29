@@ -3,7 +3,10 @@
  */
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { useDebounce } from 'use-debounce';
-import { objectHasProp } from '@woocommerce/types';
+import {
+	objectHasProp,
+	type WCStoreV1ProductsCollectionProps,
+} from '@woocommerce/types';
 import { sort } from 'fast-sort';
 import { useShallowEqual } from '@woocommerce/base-hooks';
 
@@ -155,17 +158,20 @@ export const useCollectionData = ( {
 		return buildCollectionDataQuery( collectionDataQueryState );
 	}, [ collectionDataQueryState ] );
 
-	return useCollection( {
-		namespace: '/wc/store/v1',
-		resourceName: 'products/collection-data',
-		query: {
-			...queryState,
-			page: undefined,
-			per_page: undefined,
-			orderby: undefined,
-			order: undefined,
-			...collectionDataQueryVars,
-		},
-		shouldSelect: debouncedShouldSelect,
-	} );
+	const { results, isLoading }: { results: unknown; isLoading: boolean } =
+		useCollection( {
+			namespace: '/wc/store/v1',
+			resourceName: 'products/collection-data',
+			query: {
+				...queryState,
+				page: undefined,
+				per_page: undefined,
+				orderby: undefined,
+				order: undefined,
+				...collectionDataQueryVars,
+			},
+			shouldSelect: debouncedShouldSelect,
+		} );
+
+	return { data: results as WCStoreV1ProductsCollectionProps, isLoading };
 };

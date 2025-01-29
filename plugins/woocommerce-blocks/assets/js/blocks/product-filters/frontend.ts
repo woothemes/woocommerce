@@ -37,7 +37,7 @@ function isParamsEqual(
 	return true;
 }
 
-export function navigate( href: string, options = {} ) {
+function navigate( href: string, options = {} ) {
 	/**
 	 * We may need to reset the current page when changing filters.
 	 * This is because the current page may not exist for this set
@@ -67,43 +67,149 @@ export function navigate( href: string, options = {} ) {
 	return navigateFn( href, options );
 }
 
-export interface ProductFiltersContext {
-	isDialogOpen: boolean;
-	hasPageWithWordPressAdminBar: boolean;
+export type ActiveFilter = {
+	label: string;
+	type: 'attribute' | 'price' | 'rating' | 'status';
+	value: string | null;
+	attribute?: {
+		slug: string;
+		queryType: 'and' | 'or';
+	};
+	price?: {
+		min: number | null;
+		max: number | null;
+	};
+};
+
+export type ProductFiltersContext = {
+	isOverlayOpened: boolean;
 	params: Record< string, string >;
 	originalParams: Record< string, string >;
-}
+	activeFilters: ActiveFilter[];
+};
 
-store( 'woocommerce/product-filters', {
+const productFiltersStore = store( 'woocommerce/product-filters', {
 	state: {
-		isDialogOpen: () => {
-			const context = getContext< ProductFiltersContext >();
-			return context.isDialogOpen;
+		get params() {
+			const { activeFilters } = getContext< ProductFiltersContext >();
+			const params: Record< string, string > = {};
+
+			function addParam( key: string, value: string ) {
+				if ( key in params && params[ key ].length > 0 )
+					return ( params[ key ] = `${ params[ key ] },${ value }` );
+				params[ key ] = value;
+			}
+
+			activeFilters.forEach( ( filter ) => {
+				const { type, value } = filter;
+
+				if ( ! value ) return;
+
+				if ( type === 'price' && 'price' in filter ) {
+					if ( filter.price.min )
+						params.min_price = filter.price.min.toString();
+					if ( filter.price.max )
+						params.max_price = filter.price.max.toString();
+				}
+
+				if ( type === 'status' ) {
+					addParam( 'filter_stock_status', value );
+				}
+
+				if ( type === 'rating' ) {
+					addParam( `rating_filter`, value );
+				}
+
+				if ( type === 'attribute' && 'attribute' in filter ) {
+					addParam( `filter_${ filter.attribute.slug }`, value );
+					params[ `query_type_${ filter.attribute.slug }` ] =
+						filter.attribute.queryType;
+				}
+			} );
+			return params;
+		},
+		get activeFilters() {
+			const { activeFilters } = getContext< ProductFiltersContext >();
+			return activeFilters
+				.filter( ( item ) => !! item.value )
+				.sort( ( a, b ) => {
+					return a.label
+						.toLowerCase()
+						.localeCompare( b.label.toLowerCase() );
+				} )
+				.map( ( item ) => ( {
+					...item,
+					uid: `${ item.type }/${ item.value }`,
+				} ) );
 		},
 	},
 	actions: {
-		openDialog: () => {
+		openOverlay: () => {
 			const context = getContext< ProductFiltersContext >();
-			document.body.classList.add( 'wc-modal--open' );
-			context.hasPageWithWordPressAdminBar = Boolean(
-				document.getElementById( 'wpadminbar' )
+			context.isOverlayOpened = true;
+			if ( document.getElementById( 'wpadminbar' ) ) {
+				const scrollTop = (
+					document.documentElement ||
+					document.body.parentNode ||
+					document.body
+				).scrollTop;
+				document.body.style.setProperty(
+					'--adminbar-mobile-padding',
+					`max(calc(var(--wp-admin--admin-bar--height) - ${ scrollTop }px), 0px)`
+				);
+			}
+		},
+		closeOverlay: () => {
+			const context = getContext< ProductFiltersContext >();
+			context.isOverlayOpened = false;
+		},
+		closeOverlayOnEscape: ( event: KeyboardEvent ) => {
+			const context = getContext< ProductFiltersContext >();
+			if ( context.isOverlayOpened && event.key === 'Escape' ) {
+				productFiltersStore.actions.closeOverlay();
+			}
+		},
+		setActiveFilter: ( activeFilter: ActiveFilter ) => {
+			const { value, type } = activeFilter;
+			const context = getContext< ProductFiltersContext >();
+			const newActiveFilters = context.activeFilters.filter(
+				( item ) => ! ( item.value === value && item.type === type )
 			);
 
-			context.isDialogOpen = true;
+			newActiveFilters.push( activeFilter );
+
+			context.activeFilters = newActiveFilters;
 		},
-		closeDialog: () => {
+		removeActiveFiltersBy: (
+			callback: ( item: ActiveFilter ) => boolean
+		) => {
 			const context = getContext< ProductFiltersContext >();
-			document.body.classList.remove( 'wc-modal--open' );
-
-			context.isDialogOpen = false;
+			context.activeFilters = context.activeFilters.filter(
+				( item ) => ! callback( item )
+			);
 		},
-	},
-	callbacks: {
-		maybeNavigate: () => {
-			const { params, originalParams } =
-				getContext< ProductFiltersContext >();
+		removeActiveFiltersByType: ( type: ActiveFilter[ 'type' ] ) => {
+			productFiltersStore.actions.removeActiveFiltersBy(
+				( item ) => item.type === type
+			);
+		},
+		removeActiveFilter: (
+			type: ActiveFilter[ 'type' ],
+			value: ActiveFilter[ 'value' ]
+		) => {
+			productFiltersStore.actions.removeActiveFiltersBy(
+				( item ) => item.type === type && item.value === value
+			);
+		},
+		navigate: () => {
+			const { originalParams } = getContext< ProductFiltersContext >();
 
-			if ( isParamsEqual( params, originalParams ) ) {
+			if (
+				isParamsEqual(
+					productFiltersStore.state.params,
+					originalParams
+				)
+			) {
 				return;
 			}
 
@@ -114,10 +220,26 @@ store( 'woocommerce/product-filters', {
 				searchParams.delete( key, originalParams[ key ] );
 			}
 
-			for ( const key in params ) {
-				searchParams.set( key, params[ key ] );
+			for ( const key in productFiltersStore.state.params ) {
+				searchParams.set(
+					key,
+					productFiltersStore.state.params[ key ]
+				);
 			}
+
 			navigate( url.href );
 		},
 	},
+	callbacks: {
+		scrollLimit: () => {
+			const { isOverlayOpened } = getContext< ProductFiltersContext >();
+			if ( isOverlayOpened ) {
+				document.body.style.overflow = 'hidden';
+			} else {
+				document.body.style.overflow = 'auto';
+			}
+		},
+	},
 } );
+
+export type ProductFiltersStore = typeof productFiltersStore;

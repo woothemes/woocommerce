@@ -7,6 +7,7 @@ import { CART_STORE_KEY as storeKey } from '@woocommerce/block-data';
 import { Cart } from '@woocommerce/type-defs/cart';
 import { createRoot } from '@wordpress/element';
 import NoticeBanner from '@woocommerce/base-components/notice-banner';
+import { decodeEntities } from '@wordpress/html-entities';
 
 interface Context {
 	isLoading: boolean;
@@ -158,8 +159,10 @@ const { state } = store< Store >( 'woocommerce/product-button', {
 					storeNoticeBlock ??
 					document.querySelector( storeNoticeClass );
 
+				const message = ( error as Error ).message;
+
 				if ( domNode ) {
-					injectNotice( domNode, ( error as Error ).message );
+					injectNotice( domNode, decodeEntities( message ) );
 				}
 
 				// We don't care about errors blocking execution, but will

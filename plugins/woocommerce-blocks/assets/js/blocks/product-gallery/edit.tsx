@@ -9,22 +9,13 @@ import {
 } from '@wordpress/block-editor';
 import { BlockEditProps, InnerBlockTemplate } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
-import ErrorPlaceholder, {
-	ErrorObject,
-} from '@woocommerce/editor-components/error-placeholder';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import {
-	moveInnerBlocksToPosition,
-	getInnerBlocksLockAttributes,
-	getClassNameByNextPreviousButtonsPosition,
-} from './utils';
 import { ProductGalleryBlockSettings } from './block-settings/index';
 import type { ProductGalleryAttributes } from './types';
+import { moveInnerBlocksToPosition } from './utils';
 
 const TEMPLATE: InnerBlockTemplate[] = [
 	[
@@ -40,10 +31,7 @@ const TEMPLATE: InnerBlockTemplate[] = [
 			},
 		},
 		[
-			[
-				'woocommerce/product-gallery-thumbnails',
-				getInnerBlocksLockAttributes( 'lock' ),
-			],
+			[ 'woocommerce/product-gallery-thumbnails' ],
 			[
 				'core/group',
 				{
@@ -59,12 +47,11 @@ const TEMPLATE: InnerBlockTemplate[] = [
 					metadata: {
 						name: 'Large Image and Navigation',
 					},
-					...getInnerBlocksLockAttributes( 'lock' ),
 				},
 				[
 					[
 						'woocommerce/product-gallery-large-image',
-						getInnerBlocksLockAttributes( 'lock' ),
+						{},
 						[
 							[
 								'woocommerce/product-sale-badge',
@@ -80,7 +67,6 @@ const TEMPLATE: InnerBlockTemplate[] = [
 											},
 										},
 									},
-									lock: { move: true },
 								},
 							],
 							[
@@ -90,81 +76,32 @@ const TEMPLATE: InnerBlockTemplate[] = [
 										type: 'flex',
 										verticalAlignment: 'bottom',
 									},
-									lock: { move: true, remove: true },
 								},
 							],
 						],
 					],
-					[
-						'woocommerce/product-gallery-pager',
-						{ lock: { move: true, remove: true } },
-					],
+					[ 'woocommerce/product-gallery-pager' ],
 				],
 			],
 		],
 	],
 ];
 
-const getMode = ( currentTemplateId: string, templateType: string ) => {
-	if (
-		templateType === 'wp_template_part' &&
-		currentTemplateId.includes( 'product-gallery' )
-	) {
-		return 'full';
-	}
-	return 'standard';
-};
-
 export const Edit = ( {
 	clientId,
 	attributes,
 	setAttributes,
 }: BlockEditProps< ProductGalleryAttributes > ) => {
-	const blockProps = useBlockProps( {
-		className: getClassNameByNextPreviousButtonsPosition(
-			attributes.nextPreviousButtonsPosition
-		),
-	} );
-
-	const { currentTemplateId, templateType } = useSelect(
-		( select ) => ( {
-			currentTemplateId: select( 'core/edit-site' ).getEditedPostId(),
-			templateType: select( 'core/edit-site' ).getEditedPostType(),
-		} ),
-		[]
-	);
+	const blockProps = useBlockProps();
 
 	useEffect( () => {
-		const mode = getMode( currentTemplateId, templateType );
-		const newProductGalleryClientId =
-			attributes.productGalleryClientId || clientId;
-
 		setAttributes( {
 			...attributes,
-			mode,
-			productGalleryClientId: newProductGalleryClientId,
+			productGalleryClientId: clientId,
 		} );
 		// Move the Thumbnails block to the correct above or below the Large Image based on the thumbnailsPosition attribute.
-		moveInnerBlocksToPosition( attributes, newProductGalleryClientId );
-	}, [
-		setAttributes,
-		attributes,
-		clientId,
-		currentTemplateId,
-		templateType,
-	] );
-
-	if ( attributes.productGalleryClientId !== clientId ) {
-		const error = {
-			message: __(
-				'productGalleryClientId and clientId codes mismatch.',
-				'woocommerce'
-			),
-			type: 'general',
-		} as ErrorObject;
-
-		return <ErrorPlaceholder error={ error } isLoading={ false } />;
-	}
+		moveInnerBlocksToPosition( attributes, clientId );
+	}, [ setAttributes, attributes, clientId ] );
 
 	return (
 		<div { ...blockProps }>
@@ -174,12 +111,9 @@ export const Edit = ( {
 					setAttributes={ setAttributes }
 					context={ {
 						productGalleryClientId: clientId,
-						pagerDisplayMode: attributes.pagerDisplayMode,
 						thumbnailsPosition: attributes.thumbnailsPosition,
 						thumbnailsNumberOfThumbnails:
 							attributes.thumbnailsNumberOfThumbnails,
-						nextPreviousButtonsPosition:
-							attributes.nextPreviousButtonsPosition,
 					} }
 				/>
 			</InspectorControls>

@@ -3,7 +3,7 @@
  */
 import triggerFetch from '@wordpress/api-fetch';
 import { dispatch } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 
 /**
  * Utility function for preparing payment data for the request.
@@ -29,7 +29,7 @@ export const preparePaymentData = (
 };
 
 /**
- * Process headers from an API response an dispatch updates.
+ * Process headers from an API response and dispatch updates.
  */
 export const processCheckoutResponseHeaders = (
 	headers: Headers | undefined
@@ -37,7 +37,8 @@ export const processCheckoutResponseHeaders = (
 	if ( ! headers ) {
 		return;
 	}
-	const { __internalSetCustomerId } = dispatch( CHECKOUT_STORE_KEY );
+	const { __internalSetCustomerId } = dispatch( checkoutStore );
+
 	if (
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore -- this does exist because it's monkey patched in
@@ -52,6 +53,22 @@ export const processCheckoutResponseHeaders = (
 		// @ts-ignore -- this does exist because it's monkey patched in
 		// middleware/store-api-nonce.
 		triggerFetch.setNonce( headers );
+	}
+
+	if (
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		triggerFetch.setCartHash &&
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		typeof triggerFetch.setCartHash === 'function'
+	) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore -- this does exist because it's monkey patched in
+		// middleware/store-api-cart-hash.
+		triggerFetch.setCartHash( headers );
 	}
 
 	// Update user using headers.

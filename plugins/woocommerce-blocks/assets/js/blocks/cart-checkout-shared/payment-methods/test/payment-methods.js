@@ -46,27 +46,30 @@ jest.mock( '@woocommerce/blocks-components', () => {
 	};
 } );
 
-const originalSelect = jest.requireActual( '@wordpress/data' ).select;
-const selectMock = jest
-	.spyOn( wpDataFunctions, 'select' )
-	.mockImplementation( ( storeName ) => {
-		const originalStore = originalSelect( storeName );
-		if ( storeName === PAYMENT_STORE_KEY ) {
-			return {
-				...originalStore,
-				getState: () => {
-					const originalState = originalStore.getState();
-					return {
-						...originalState,
-						savedPaymentMethods: {},
-						availablePaymentMethods: {},
-						paymentMethodsInitialized: true,
-					};
-				},
-			};
-		}
-		return originalStore;
-	} );
+jest.mock( '@wordpress/data', () => {
+	const originalModule = jest.requireActual( '@wordpress/data' );
+	return {
+		...originalModule,
+		select: jest.fn( ( storeName ) => {
+			const originalStore = originalModule.select( storeName );
+			if ( storeName === 'wc/store/payment' ) {
+				return {
+					...originalStore,
+					getState: () => {
+						const originalState = originalStore.getState();
+						return {
+							...originalState,
+							savedPaymentMethods: {},
+							availablePaymentMethods: {},
+							paymentMethodsInitialized: true,
+						};
+					},
+				};
+			}
+			return originalStore;
+		} ),
+	};
+} );
 
 const registerMockPaymentMethods = () => {
 	[ 'cod', 'credit-card' ].forEach( ( name ) => {
@@ -126,9 +129,6 @@ describe( 'PaymentMethods', () => {
 			// We might get more than one match because the `speak()` function
 			// creates an extra `div` with the notice contents used for a11y.
 			expect( noPaymentMethods.length ).toBeGreaterThanOrEqual( 1 );
-
-			// Reset the mock back to how it was because we don't need it anymore after this test.
-			selectMock.mockRestore();
 		} );
 	} );
 

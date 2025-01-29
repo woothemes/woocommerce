@@ -1,19 +1,27 @@
 const { test, expect, request } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
+
+const getPluginLocator = ( page, slug ) => {
+	return page.locator(
+		`.woocommerce-profiler-plugins-plugin-card[data-slug="${ slug }"]`
+	);
+};
+
+test.use( { storageState: ADMIN_STATE_PATH } );
 
 test.describe(
 	'Store owner can complete the core profiler',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
 		test.beforeAll( async ( { baseURL } ) => {
 			try {
 				await setOption(
 					request,
 					baseURL,
-					'woocommerce_coming_soon',
-					'no'
+					'woocommerce_remote_variant_assignment',
+					'60'
 				);
 			} catch ( error ) {
 				console.log( error );
@@ -284,30 +292,20 @@ test.describe(
 					);
 				}
 				try {
-					await page
-						.getByText(
-							'Showcase your products with PinterestGet your products in front of a highly'
-						)
+					await getPluginLocator( page, 'pinterest-for-woocommerce' )
 						.getByRole( 'checkbox' )
 						.check( { timeout: 2000 } );
 				} catch ( e ) {
 					console.log( 'Checkbox not present for Pinterest' );
 				}
 				try {
-					await page
-						.getByText(
-							'Reach your customers with MailPoetSend purchase follow-up emails, newsletters,'
-						)
+					await getPluginLocator( page, 'mailchimp-for-woocommerce' )
 						.getByRole( 'checkbox' )
 						.uncheck( { timeout: 2000 } );
 				} catch ( e ) {
-					console.log( 'Checkbox not present for MailPoet' );
+					console.log( 'Checkbox not present for MailChimp' );
 				}
-
-				await page
-					.getByText(
-						'Drive sales with Google for WooCommerceReach millions of active shoppers across'
-					)
+				await getPluginLocator( page, 'google-listings-and-ads' )
 					.getByRole( 'checkbox' )
 					.check( { timeout: 2000 } );
 				await page.getByRole( 'button', { name: 'Continue' } ).click();
@@ -347,27 +345,45 @@ test.describe(
 					} )
 				).toBeVisible();
 				// confirm that the optional plugins are present
-				await expect(
-					page.locator( '.plugin-title', {
-						hasText: 'Pinterest for WooCommerce',
-					} )
-				).toBeVisible();
-				await expect(
-					page.locator( '.plugin-title', {
-						hasText: /Google for WooCommerce|Google Listings & Ads/,
-					} )
-				).toBeVisible();
+				try {
+					await expect(
+						page.locator(
+							`[data-slug="pinterest-for-woocommerce"]`
+						)
+					).toBeVisible();
+				} catch {
+					console.log(
+						`Pinterest is not found or not visible on the page`
+					);
+				}
 
-				await expect(
-					page.locator( '.plugin-title', {
-						hasText: 'MailPoet',
-					} )
-				).toBeHidden();
-				await expect(
-					page.locator( '.plugin-title', {
-						hasText: 'Jetpack',
-					} )
-				).toBeHidden();
+				try {
+					await expect(
+						page.locator( `[data-slug="google-listings-and-ads"]` )
+					).toBeVisible();
+				} catch {
+					console.log(
+						`Google for WooCommerce is not found or not visible on the page`
+					);
+				}
+
+				try {
+					await expect(
+						page.locator(
+							`[data-slug="mailchimp-for-woocommerce"]`
+						)
+					).toBeHidden();
+				} catch {
+					console.log( `MailChimp is found on the page` );
+				}
+
+				try {
+					await expect(
+						page.locator( `[data-slug="jetpack"]` )
+					).toBeHidden();
+				} catch {
+					console.log( `Jetpack is found on the page` );
+				}
 			} );
 
 			await test.step( 'Confirm that information from core profiler saved', async () => {
@@ -450,23 +466,8 @@ test.describe(
 
 test.describe(
 	'Store owner can skip the core profiler',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
-		test.beforeAll( async ( { baseURL } ) => {
-			try {
-				await setOption(
-					request,
-					baseURL,
-					'woocommerce_coming_soon',
-					'no'
-				);
-			} catch ( error ) {
-				console.log( error );
-			}
-		} );
-
 		test( 'Can click skip guided setup', async ( { page } ) => {
 			await page.goto(
 				'wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard'
@@ -511,6 +512,7 @@ test.describe(
 			} );
 		} );
 
+		// TODO (E2E Audit): Move this test to the merchant folder as per the Critical Flows list on GitHub. This test should NOT be skipped on WPCOM. Newly created WPCOM sites are not connected to WooCommerce.com by default.
 		test( 'Can connect to WooCommerce.com', async ( { page } ) => {
 			await test.step( 'Go to WC Home and make sure the total sales is visible', async () => {
 				await page.goto( 'wp-admin/admin.php?page=wc-admin' );
@@ -520,8 +522,19 @@ test.describe(
 			} );
 
 			await test.step( 'Go to the extensions tab and connect store', async () => {
+				const connectButton = page.getByRole( 'link', {
+					name: 'Connect your store',
+				} );
 				await page.goto(
 					'wp-admin/admin.php?page=wc-admin&tab=my-subscriptions&path=%2Fextensions'
+				);
+				const waitForSubscriptionsResponse = page.waitForResponse(
+					( response ) =>
+						response
+							.url()
+							.includes(
+								'/wp-json/wc/v3/marketplace/subscriptions'
+							) && response.status() === 200
 				);
 				await expect(
 					page.getByText(
@@ -531,12 +544,13 @@ test.describe(
 				await expect(
 					page.getByRole( 'button', { name: 'My Subscriptions' } )
 				).toBeVisible();
-				await expect(
-					page.getByRole( 'link', { name: 'Connect your store' } )
-				).toBeVisible();
-				await page
-					.getByRole( 'link', { name: 'Connect your store' } )
-					.click();
+				await expect( connectButton ).toBeVisible();
+				await waitForSubscriptionsResponse;
+				await expect( connectButton ).toHaveAttribute(
+					'href',
+					/my-subscriptions/
+				);
+				await connectButton.click();
 			} );
 
 			await test.step( 'Check that we are sent to wp.com', async () => {

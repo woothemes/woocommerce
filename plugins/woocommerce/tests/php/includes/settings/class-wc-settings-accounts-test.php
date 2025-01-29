@@ -67,7 +67,6 @@ class WC_Settings_Accounts_Test extends WC_Settings_Unit_Test_Case {
 			'woocommerce_trash_failed_orders'              => 'relative_date_selector',
 			'woocommerce_trash_cancelled_orders'           => 'relative_date_selector',
 			'woocommerce_anonymize_completed_orders'       => 'relative_date_selector',
-			'woocommerce_enable_delayed_account_creation'  => 'checkbox',
 		);
 
 		$this->assertEquals( $expected, $settings_ids_and_types );

@@ -14,8 +14,8 @@ $primarytext:       desaturate(lighten($primary, 50%), 18%) !default;    // Text
 $secondary:         desaturate(lighten($primary, 40%), 21%) !default;    // Secondary buttons
 $secondarytext:     desaturate(darken($secondary, 60%), 21%) !default;   // Text on secondary color bg
 
-$highlight:         adjust-hue($primary, 150deg) !default;               // Prices, In stock labels, sales flash
-$highlightext:      desaturate(lighten($highlight, 50%), 18%) !default;  // Text on highlight color bg
+$highlight:         adjust-hue(darken($primary, 18%), 150deg) !default;  // Prices, In stock labels, sales flash
+$highlightext:      desaturate(lighten($highlight, 80%), 18%) !default;  // Text on highlight color bg
 
 $contentbg:         #fff !default;                                     // Content BG - Tabs (active state)
 $subtext:           #767676 !default;                                  // small, breadcrumbs etc
@@ -35,4 +35,7 @@ $subtext:           #767676 !default;                                  // small,
 	--wc-highligh-text: #{$highlightext};
 	--wc-content-bg: #{$contentbg};
 	--wc-subtext: #{$subtext};
+	--wc-form-border-color: rgba(32, 7, 7, 0.8);
+	--wc-form-border-radius: 4px;
+	--wc-form-border-width: 1px;
 }

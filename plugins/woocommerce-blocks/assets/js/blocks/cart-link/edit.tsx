@@ -43,7 +43,7 @@ const Edit = ( { attributes, setAttributes }: Props ): JSX.Element => {
 				<PanelBody title={ __( 'Settings', 'woocommerce' ) }>
 					<ToggleGroupControl
 						className="wc-block-editor-mini-cart__cart-icon-toggle"
-						isBlock={ true }
+						isBlock
 						label={ __( 'Cart Icon', 'woocommerce' ) }
 						value={ cartIcon }
 						onChange={ ( value: 'cart' | 'bag' | 'bag-alt' ) => {

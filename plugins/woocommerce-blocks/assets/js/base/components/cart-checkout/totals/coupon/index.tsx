@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { useState, useRef } from '@wordpress/element';
 import Button from '@woocommerce/base-components/button';
 import LoadingMask from '@woocommerce/base-components/loading-mask';
-import { withInstanceId } from '@wordpress/compose';
 import {
 	ValidatedTextInput,
 	ValidationInputError,
@@ -13,7 +12,7 @@ import {
 	Panel,
 } from '@woocommerce/blocks-components';
 import { useSelect } from '@wordpress/data';
-import { VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { validationStore } from '@woocommerce/block-data';
 import type { MouseEvent, MouseEventHandler } from 'react';
 
 /**
@@ -51,9 +50,9 @@ export const TotalsCoupon = ( {
 		useState( displayCouponForm );
 	const textInputId = `wc-block-components-totals-coupon__input-${ instanceId }`;
 	const { validationErrorId } = useSelect( ( select ) => {
-		const store = select( VALIDATION_STORE_KEY );
+		const store = select( validationStore );
 		return {
-			validationErrorId: store.getValidationErrorId( textInputId ),
+			validationErrorId: store.getValidationErrorId( instanceId ),
 		};
 	} );
 	const inputRef = useRef< ValidatedTextInputHandle >( null );
@@ -82,6 +81,7 @@ export const TotalsCoupon = ( {
 			className="wc-block-components-totals-coupon"
 			initialOpen={ isCouponFormVisible }
 			hasBorder={ false }
+			headingLevel={ 2 }
 			title={ __( 'Add a coupon', 'woocommerce' ) }
 			state={ [ isCouponFormVisible, setIsCouponFormVisible ] }
 		>
@@ -122,7 +122,7 @@ export const TotalsCoupon = ( {
 					</form>
 					<ValidationInputError
 						propertyName="coupon"
-						elementId={ textInputId }
+						elementId={ instanceId }
 					/>
 				</div>
 			</LoadingMask>
@@ -130,4 +130,4 @@ export const TotalsCoupon = ( {
 	);
 };
 
-export default withInstanceId( TotalsCoupon );
+export default TotalsCoupon;

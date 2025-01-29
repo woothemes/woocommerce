@@ -9,6 +9,7 @@
 use Automattic\WooCommerce\Admin\API\Reports\GenericQuery;
 use Automattic\WooCommerce\Admin\API\Reports\Products\DataStore as ProductsDataStore;
 use Automattic\WooCommerce\Admin\ReportCSVExporter;
+use Automattic\WooCommerce\Enums\OrderStatus;
 
 /**
  * Reports product stats tests class
@@ -33,7 +34,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$product->save();
 
 		$order = WC_Helper_Order::create_order( 1, $product );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_shipping_total( 10 );
 		$order->set_discount_total( 20 );
 		$order->set_discount_tax( 0 );
@@ -98,7 +99,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$date_created_2 = $date_created + 5;
 
 		$order = WC_Helper_Order::create_order( 1, $product );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_shipping_total( 10 );
 		$order->set_discount_total( 20 );
 		$order->set_discount_tax( 0 );
@@ -109,7 +110,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$order->save();
 
 		$order_2 = WC_Helper_Order::create_order( 1, $product_2 );
-		$order_2->set_status( 'completed' );
+		$order_2->set_status( OrderStatus::COMPLETED );
 		$order_2->set_shipping_total( 10 );
 		$order_2->set_discount_total( 20 );
 		$order_2->set_discount_tax( 0 );
@@ -211,7 +212,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		wp_set_object_terms( $product->get_id(), $term['term_id'], 'product_cat' );
 
 		$order = WC_Helper_Order::create_order( 1, $product );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_shipping_total( 10 );
 		$order->set_discount_total( 20 );
 		$order->set_discount_tax( 0 );
@@ -292,7 +293,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		wp_set_object_terms( $product->get_id(), $term['term_id'], 'product_cat' );
 
 		$order = WC_Helper_Order::create_order( 1, $variation );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_shipping_total( 10 );
 		$order->set_discount_total( 20 );
 		$order->set_discount_tax( 0 );
@@ -357,7 +358,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$product->save();
 
 		$order = WC_Helper_Order::create_order( 1, $product );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_shipping_total( 10 );
 		$order->set_discount_total( 20 );
 		$order->set_discount_tax( 0 );
@@ -432,7 +433,7 @@ class WC_Admin_Tests_Reports_Products extends WC_Unit_Test_Case {
 		$product->save();
 
 		$order = WC_Helper_Order::create_order( 1, $product );
-		$order->set_status( 'completed' );
+		$order->set_status( OrderStatus::COMPLETED );
 		$order->set_shipping_total( 10 );
 		$order->set_discount_total( 20 );
 		$order->set_discount_tax( 0 );

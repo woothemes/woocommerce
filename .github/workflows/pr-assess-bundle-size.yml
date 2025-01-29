@@ -2,6 +2,11 @@ name: Compressed Size
 
 on:
     pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+            - ready_for_review
         paths:
             - '**.jsx?'
             - '**.tsx?'
@@ -35,8 +40,10 @@ env:
 jobs:
     build:
         name: Check Asset Sizes
+        if: github.event.pull_request.draft == false && github.event.pull_request.user.login != 'github-actions[bot]'
         runs-on: ubuntu-latest
         permissions:
+            contents: read
             pull-requests: write
 
         steps:
@@ -48,6 +55,10 @@ jobs:
                   install: '@woocommerce/plugin-woocommerce...'
                   build: '@woocommerce/plugin-woocommerce'
                   pull-package-deps: '@woocommerce/plugin-woocommerce'
+
+            - name: Enable corepack for pnpm
+              shell: 'bash'
+              run: 'corepack enable pnpm'
 
             - uses: preactjs/compressed-size-action@f780fd104362cfce9e118f9198df2ee37d12946c
               env:

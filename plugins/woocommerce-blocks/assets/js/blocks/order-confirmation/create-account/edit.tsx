@@ -4,13 +4,18 @@
 import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import type { TemplateArray, BlockAttributes } from '@wordpress/blocks';
-import { Disabled, PanelBody, ToggleControl } from '@wordpress/components';
+import {
+	Disabled,
+	PanelBody,
+	ToggleControl,
+	ExternalLink,
+} from '@wordpress/components';
 import {
 	InnerBlocks,
 	useBlockProps,
 	InspectorControls,
 } from '@wordpress/block-editor';
-import { getSetting } from '@woocommerce/settings';
+import { getSetting, ADMIN_URL } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -85,6 +90,8 @@ export const Edit = ( {
 		return null;
 	}
 
+	const generatePassword = getSetting( 'registrationGeneratePassword', true );
+
 	return (
 		<div { ...blockProps }>
 			<InnerBlocks
@@ -101,21 +108,39 @@ export const Edit = ( {
 			<Disabled>
 				<Form isEditor={ true } />
 			</Disabled>
+			{ ! generatePassword && (
+				<InspectorControls>
+					<PanelBody title={ __( 'Style', 'woocommerce' ) }>
+						<ToggleControl
+							label={ __( 'Dark mode inputs', 'woocommerce' ) }
+							help={ __(
+								'Inputs styled specifically for use on dark background colors.',
+								'woocommerce'
+							) }
+							checked={ attributes.hasDarkControls }
+							onChange={ () =>
+								setAttributes( {
+									hasDarkControls:
+										! attributes.hasDarkControls,
+								} )
+							}
+						/>
+					</PanelBody>
+				</InspectorControls>
+			) }
 			<InspectorControls>
-				<PanelBody title={ __( 'Style', 'woocommerce' ) }>
-					<ToggleControl
-						label={ __( 'Dark mode inputs', 'woocommerce' ) }
-						help={ __(
-							'Inputs styled specifically for use on dark background colors.',
+				<PanelBody>
+					<p>
+						{ __(
+							'Configure this feature in your store settings.',
 							'woocommerce'
 						) }
-						checked={ attributes.hasDarkControls }
-						onChange={ () =>
-							setAttributes( {
-								hasDarkControls: ! attributes.hasDarkControls,
-							} )
-						}
-					/>
+					</p>
+					<ExternalLink
+						href={ `${ ADMIN_URL }admin.php?page=wc-settings&tab=account` }
+					>
+						{ __( 'Manage account settings', 'woocommerce' ) }
+					</ExternalLink>
 				</PanelBody>
 			</InspectorControls>
 		</div>

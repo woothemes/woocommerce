@@ -64,6 +64,10 @@ export const DEFAULT_QUERY: ProductCollectionQuery = {
 	timeFrame: undefined,
 	priceRange: undefined,
 	filterable: false,
+	relatedBy: {
+		categories: true,
+		tags: true,
+	},
 };
 
 export const DEFAULT_ATTRIBUTES: Pick<

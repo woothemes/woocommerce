@@ -54,6 +54,7 @@ function getEdit<
 		const { getEvaluationContext } = useEvaluationContext( context );
 
 		const { shouldHide, shouldDisable } = useSelect(
+			// @ts-expect-error TODO: react-18-upgrade
 			( select: typeof WPSelect ) => {
 				const evaluationContext = getEvaluationContext( select );
 

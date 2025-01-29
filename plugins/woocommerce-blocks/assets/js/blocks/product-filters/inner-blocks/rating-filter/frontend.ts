@@ -1,76 +1,85 @@
 /**
  * External dependencies
  */
-import { getContext, store } from '@woocommerce/interactivity';
-import { CheckboxListContext } from '@woocommerce/interactivity-components/checkbox-list';
-import { DropdownContext } from '@woocommerce/interactivity-components/dropdown';
+import { getContext, store, getElement } from '@woocommerce/interactivity';
 
 /**
  * Internal dependencies
  */
-import { navigate } from '../../frontend';
+import type { ProductFiltersStore } from '../../frontend';
 
-function getUrl( filters: Array< string | null > ) {
-	filters = filters.filter( Boolean );
-	const url = new URL( window.location.href );
+type ProductFilterRatingContext = {
+	hasFilterOptions: boolean;
+	activeLabelTemplate: string;
+};
 
-	if ( filters.length ) {
-		// add filters to url
-		url.searchParams.set( 'rating_filter', filters.join( ',' ) );
-	} else {
-		// remove filters from url
-		url.searchParams.delete( 'rating_filter' );
-	}
+const { state, actions } = store( 'woocommerce/product-filter-rating', {
+	state: {
+		get selectedFilters() {
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
 
-	return url.href;
-}
+			return ( productFiltersStore.state.activeFilters || [] )
+				.filter( ( item ) => item.type === 'rating' )
+				.map( ( item ) => item.value )
+				.filter( Boolean );
+		},
+		get hasSelectedFilters(): boolean {
+			return state.selectedFilters.length > 0;
+		},
+		get isItemSelected(): boolean {
+			const { props } = getElement();
 
-store( 'woocommerce/product-filter-rating', {
+			if ( ! props.value ) return false;
+
+			return state.selectedFilters.includes( props.value );
+		},
+	},
 	actions: {
-		onCheckboxChange: () => {
-			const checkboxContext = getContext< CheckboxListContext >(
-				'woocommerce/interactivity-checkbox-list'
+		getActiveLabel( label: string ) {
+			const { activeLabelTemplate } =
+				getContext< ProductFilterRatingContext >();
+			return activeLabelTemplate.replace( '{{label}}', label );
+		},
+		toggleFilter: () => {
+			const { props } = getElement();
+			let filterItem = props[ 'data-filter-item' ];
+
+			if ( typeof filterItem === 'string' )
+				filterItem = JSON.parse( filterItem );
+
+			const { ariaLabel, value } = filterItem;
+
+			if ( ! value || ! ariaLabel ) return;
+
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
 			);
 
-			const filters = checkboxContext.items
-				.filter( ( item ) => {
-					return item.checked;
-				} )
-				.map( ( item ) => {
-					return item.value;
+			if ( state.selectedFilters.includes( value ) ) {
+				productFiltersStore.actions.removeActiveFilter(
+					'rating',
+					value
+				);
+			} else {
+				productFiltersStore.actions.setActiveFilter( {
+					type: 'rating',
+					value,
+					label: actions.getActiveLabel( ariaLabel ),
 				} );
-
-			navigate( getUrl( filters ) );
-		},
-		onDropdownChange: () => {
-			const dropdownContext = getContext< DropdownContext >(
-				'woocommerce/interactivity-dropdown'
-			);
-
-			const selectedItems = dropdownContext.selectedItems;
-			const items = selectedItems || [];
-			const filters = items.map( ( i ) => i.value );
-
-			navigate( getUrl( filters ) );
-		},
-		removeFilter: () => {
-			const { value } = getContext< { value: string } >();
-			// get the active filters from the url:
-			const url = new URL( window.location.href );
-			const currentFilters =
-				url.searchParams.get( 'rating_filter' ) || '';
-
-			// split out the active filters into an array.
-			const filtersArr =
-				currentFilters === '' ? [] : currentFilters.split( ',' );
-
-			const index = filtersArr.indexOf( value );
-
-			if ( index > -1 ) {
-				filtersArr.splice( index, 1 );
 			}
 
-			navigate( getUrl( filtersArr ) );
+			productFiltersStore.actions.navigate();
+		},
+		clearFilters: () => {
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+
+			productFiltersStore.actions.removeActiveFiltersByType( 'rating' );
+
+			productFiltersStore.actions.navigate();
 		},
 	},
 } );

@@ -1,12 +1,14 @@
-const { test, expect, request } = require( '@playwright/test' );
+const { request } = require( '@playwright/test' );
+const { test, expect, tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 test.describe(
 	'Launch Your Store - logged in',
-	{ tag: [ '@gutenberg', '@services', '@skip-on-default-wpcom' ] },
+	{ tag: [ tags.GUTENBERG, tags.SKIP_ON_WPCOM ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeEach( async ( { baseURL } ) => {
 			await new wcApi( {
@@ -85,7 +87,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( baseURL + '/shop/' );
+			await page.goto( baseURL + 'shop/' );
 
 			await expect(
 				page.getByText(
@@ -121,7 +123,7 @@ test.describe(
 			}
 
 			await page.goto(
-				'/wp-admin/admin.php?page=wc-settings&tab=site-visibility'
+				'wp-admin/admin.php?page=wc-settings&tab=site-visibility'
 			);
 
 			// The Coming soon radio should not be checked.
@@ -209,7 +211,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
 				page.getByRole( 'menuitem', {
@@ -241,7 +243,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
 				page.getByRole( 'menuitem', {
@@ -270,7 +272,7 @@ test.describe(
 				console.log( error );
 			}
 
-			await page.goto( '/wp-admin/admin.php?page=wc-admin' );
+			await page.goto( 'wp-admin/admin.php?page=wc-admin' );
 
 			await expect(
 				page.getByRole( 'menuitem', {

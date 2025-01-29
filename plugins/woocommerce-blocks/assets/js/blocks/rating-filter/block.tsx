@@ -4,9 +4,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { speak } from '@wordpress/a11y';
 import { Icon, chevronDown } from '@wordpress/icons';
-import Rating, {
-	RatingValues,
-} from '@woocommerce/base-components/product-rating';
+import Rating from '@woocommerce/base-components/product-rating';
 import { usePrevious, useShallowEqual } from '@woocommerce/base-hooks';
 import {
 	useQueryStateByKey,
@@ -33,7 +31,8 @@ import { previewOptions } from './preview';
 import './style.scss';
 import { Attributes } from './types';
 import { formatSlug, getActiveFilters, generateUniqueId } from './utils';
-import { useSetWraperVisibility } from '../filter-wrapper/context';
+import { useSetWrapperVisibility } from '../filter-wrapper/context';
+import type { RatingValues } from '../product-collection/types';
 
 export const QUERY_PARAM_KEY = 'rating_filter';
 
@@ -64,7 +63,7 @@ const RatingFilterBlock = ( {
 	isEditor: boolean;
 	noRatingsNotice?: ReactElement | null;
 } ) => {
-	const setWrapperVisibility = useSetWraperVisibility();
+	const setWrapperVisibility = useSetWrapperVisibility();
 
 	const filteringForPhpTemplate = getSettingWithCoercion(
 		'isRenderingPhpTemplate',
@@ -76,7 +75,7 @@ const RatingFilterBlock = ( {
 
 	const [ queryState ] = useQueryStateByContext();
 
-	const { results: filteredCounts, isLoading: filteredCountsLoading } =
+	const { data: filteredCounts, isLoading: filteredCountsLoading } =
 		useCollectionData( {
 			queryRating: true,
 			queryState,
@@ -486,6 +485,10 @@ const RatingFilterBlock = ( {
 							isLoading={ isLoading }
 							disabled={ isLoading || isDisabled }
 							onClick={ () => onSubmit( checked ) }
+							screenReaderLabel={ __(
+								'Apply rating filter',
+								'woocommerce'
+							) }
 						/>
 					) }
 				</div>
