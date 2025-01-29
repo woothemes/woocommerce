@@ -11,6 +11,15 @@ use Yoast\PHPUnitPolyfills\TestCases\TestCase;
  */
 class DocumentObjectTests extends TestCase {
 	/**
+	 * Setup test product data. Called before every test.
+	 */
+	protected function setUp(): void {
+		parent::setUp();
+		wp_set_current_user( 0 );
+		wc_empty_cart();
+	}
+
+	/**
 	 * test_validate_selected_shipping_methods.
 	 */
 	public function test_default_document_schema() {
