@@ -110,6 +110,7 @@ const getLegacyRoute = (
 			),
 			content: (
 				<LegacyContent
+					settingsData={ settingsData }
 					settingsPage={ settingsPage }
 					activeSection={ activeSection }
 				/>
