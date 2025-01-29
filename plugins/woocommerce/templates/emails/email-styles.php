@@ -135,6 +135,20 @@ body {
 }
 
 <?php if ( $email_improvements_enabled ) : ?>
+.hr {
+	border-bottom: 1px solid #1e1e1e;
+	opacity: 0.2;
+	margin: 16px 0;
+}
+
+.hr-top {
+	margin-top: 32px;
+}
+
+.hr-bottom {
+	margin-bottom: 32px;
+}
+
 #template_header_image {
 	padding: 32px 32px 0;
 }
@@ -164,6 +178,10 @@ body {
 
 .email-additional-content p {
 	text-align: center;
+}
+
+.email-additional-content-aligned p {
+	text-align: <?php echo is_rtl() ? 'right' : 'left'; ?>;
 }
 
 <?php else : ?>
