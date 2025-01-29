@@ -67,7 +67,6 @@ const blocks = {
 		customDir: 'classic-template',
 	},
 	'classic-shortcode': {},
-	'store-notices': {},
 	'page-content-wrapper': {},
 	'price-filter': {},
 	'product-best-sellers': {},
