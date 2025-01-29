@@ -75,7 +75,7 @@ function hide_shipping_when_free_is_available( $rates, $package ) {
 	}
 
 	if ( ! empty( $new_rates ) ) {
-		// Save local pickup and pickup locations if present.
+		// Save local pickup and methods supporting 'local-pickup' if present.
 		foreach ( $rates as $rate_id => $rate ) {
 			$method = WC()->shipping()->shipping_methods[ $rate->method_id ];
       if ( $method instanceof WC_Shipping_Method && $method->supports( 'local-pickup' ) ) {
