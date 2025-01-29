@@ -32,7 +32,6 @@ import type {
 	CartResponseCoupons,
 } from '@woocommerce/types';
 import { emptyHiddenAddressFields } from '@woocommerce/base-utils';
-import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 /**
  * Internal dependencies
  */
