@@ -105,6 +105,7 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 			}
 			$post = $previous_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			setup_postdata( $post );
+			wc_setup_product_data( get_post( $product->get_id() ) );
 
 			do_action( 'woocommerce_grouped_product_list_after', $grouped_product_columns, $quantites_required, $product );
 			?>
