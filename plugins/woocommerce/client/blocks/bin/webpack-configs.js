@@ -31,6 +31,7 @@ const AddSplitChunkDependencies = require( './add-split-chunk-dependencies' );
 const { sharedOptimizationConfig } = require( './webpack-shared-config' );
 
 const ROOT_DIR = path.resolve( __dirname, '../../../../../' );
+const BUILD_DIR = path.resolve( __dirname, '../build/' );
 const cacheDirectory = path.join( ROOT_DIR, 'node_modules/.cache/babel-loader' );
 const isProduction = NODE_ENV === 'production';
 
@@ -87,7 +88,7 @@ const getCoreConfig = ( options = {} ) => {
 			filename: ( chunkData ) => {
 				return `${ paramCase( chunkData.chunk.name ) }.js`;
 			},
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			library: {
 				name: ['wc', '[name]'],
 				type: 'window'
@@ -173,7 +174,7 @@ const getMainConfig = ( options = {} ) => {
 		entry: getEntryConfig( 'main', options.exclude || [] ),
 		output: {
 			devtoolNamespace: 'wc',
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			// This is a cache busting mechanism which ensures that the script is loaded via the browser with a ?ver=hash
 			// string. The hash is based on the built file contents.
 			// @see https://github.com/webpack/webpack/issues/2329
@@ -295,7 +296,7 @@ const getFrontConfig = ( options = {} ) => {
 		entry: getEntryConfig( 'frontend', options.exclude || [] ),
 		output: {
 			devtoolNamespace: 'wc',
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			// This is a cache busting mechanism which ensures that the script is loaded via the browser with a ?ver=hash
 			// string. The hash is based on the built file contents.
 			// @see https://github.com/webpack/webpack/issues/2329
@@ -407,7 +408,7 @@ const getPaymentsConfig = ( options = {} ) => {
 		entry: getEntryConfig( 'payments', options.exclude || [] ),
 		output: {
 			devtoolNamespace: 'wc',
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			filename: `[name].js`,
 			uniqueName: 'webpackWcBlocksPaymentMethodExtensionJsonp',
 		},
@@ -497,7 +498,7 @@ const getExtensionsConfig = ( options = {} ) => {
 		entry: getEntryConfig( 'extensions', options.exclude || [] ),
 		output: {
 			devtoolNamespace: 'wc',
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			filename: '[name].js',
 			uniqueName: 'webpackWcBlocksExtensionsMethodExtensionJsonp',
 		},
@@ -587,7 +588,7 @@ const getSiteEditorConfig = ( options = {} ) => {
 		entry: getEntryConfig( 'editor', options.exclude || [] ),
 		output: {
 			devtoolNamespace: 'wc',
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			filename: `[name].js`,
 			chunkLoadingGlobal: 'webpackWcBlocksExtensionsMethodExtensionJsonp',
 		},
@@ -677,7 +678,7 @@ const getStylingConfig = ( options = {} ) => {
 		entry: getEntryConfig( 'styling', options.exclude || [] ),
 		output: {
 			devtoolNamespace: 'wc',
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			filename: '[name]-style.js',
 			library: [ 'wc', 'blocks', '[name]' ],
 			libraryTarget: 'this',
@@ -831,7 +832,7 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 		},
 		output: {
 			filename: '[name].js',
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			library: [ 'wc', '__experimentalInteractivity' ],
 			libraryTarget: 'this',
 			chunkLoadingGlobal: 'webpackWcBlocksJsonp',
@@ -905,7 +906,7 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 		),
 		output: {
 			devtoolNamespace: 'wc',
-			path: path.resolve( __dirname, '../build/' ),
+			path: BUILD_DIR,
 			// This is a cache busting mechanism which ensures that the script is loaded via the browser with a ?ver=hash
 			// string. The hash is based on the built file contents.
 			// @see https://github.com/webpack/webpack/issues/2329
