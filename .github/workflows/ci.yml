@@ -49,7 +49,7 @@ jobs:
             needs-markdown-validation:
               - '!(.github/**)/**/*.md'
             needs-syncpack-validation:
-              - '(.syncpackrc)|(**/package.json)'
+              - '(.syncpackrc)|(pnpm-lock.yaml)'
 
   project-jobs:
     # Since this is a monorepo, not every pull request or change is going to impact every project.
