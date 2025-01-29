@@ -24,6 +24,7 @@ import {
 import { getHistory, getNewPath } from '@woocommerce/navigation';
 import { __ } from '@wordpress/i18n';
 import { getAdminLink } from '@woocommerce/settings';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -100,6 +101,8 @@ const SettingsPaymentsMain = () => {
 	useEffect( () => {
 		if ( location.pathname === '' ) {
 			hideWooCommerceNavTab( 'block' );
+			// Record the page view event
+			recordEvent( 'settings_payments_pageview' );
 		}
 	}, [ location ] );
 	return (

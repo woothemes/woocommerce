@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Card, CardBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
 import { PaymentIncentive, PaymentProvider } from '@woocommerce/data';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -75,11 +76,28 @@ export const IncentiveBanner = ( {
 
 	const context = 'wc_settings_payments__banner';
 
+	useEffect( () => {
+		// Record the event when the incentive is shown.
+		recordEvent( 'settings_payments_incentive_show', {
+			incentive_id: incentive.promo_id,
+			provider_id: provider.id,
+			display_context: context,
+		} );
+	} );
+
 	/**
 	 * Handles accepting the incentive.
 	 * Triggers the onAccept callback, dismisses the banner, and triggers plugin setup.
 	 */
 	const handleAccept = () => {
+		// Record the event when the user accepts the incentive.
+		recordEvent( 'settings_payments_incentive_accept', {
+			incentive_id: incentive.promo_id,
+			provider_id: provider.id,
+			display_context: context,
+		} );
+
+		// Accept the incentive and setup the plugin.
 		setIsBusy( true );
 		onAccept( incentive.promo_id );
 		onDismiss( incentive._links.dismiss.href, context ); // We also dismiss the incentive when it is accepted.
@@ -93,6 +111,14 @@ export const IncentiveBanner = ( {
 	 * Triggers the onDismiss callback and hides the banner.
 	 */
 	const handleDismiss = () => {
+		// Record the event when the user dismisses the incentive.
+		recordEvent( 'settings_payments_incentive_dismiss', {
+			incentive_id: incentive.promo_id,
+			provider_id: provider.id,
+			display_context: context,
+		} );
+
+		// Dimiss the incentive.
 		setIsBusy( true );
 		onDismiss( incentive._links.dismiss.href, context );
 		setIsBusy( false );
