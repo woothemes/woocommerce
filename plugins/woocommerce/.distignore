@@ -37,3 +37,4 @@ tsconfig.*
 webpack.config.js
 client/legacy/
 /client/admin/
+/client/blocks/
