@@ -93,7 +93,7 @@ const getCoreConfig = ( options = {} ) => {
 				name: ['wc', '[name]'],
 				type: 'window'
 			},
-			uniqueName: '__wcBlocks_webpackJsonp',
+			uniqueName: 'webpackWcBlocksCoreJsonp',
 		},
 		module: {
 			rules: [
@@ -188,7 +188,7 @@ const getMainConfig = ( options = {} ) => {
 				name: [ 'wc', 'blocks', '[name]' ],
 				type: 'window',
 			},
-			uniqueName: '__wcBlocksMain_webpackJsonp',
+			uniqueName: 'webpackWcBlocksMainJsonp',
 		},
 		module: {
 			rules: [
@@ -308,7 +308,7 @@ const getFrontConfig = ( options = {} ) => {
 			filename: () => {
 				return '[name]-frontend.js';
 			},
-			uniqueName: '__wcBlocksFrontend_webpackJsonp',
+			uniqueName: 'webpackWcBlocksFrontendJsonp',
 			library: [ 'wc', '[name]' ],
 		},
 		module: {
@@ -410,7 +410,7 @@ const getPaymentsConfig = ( options = {} ) => {
 			devtoolNamespace: 'wc',
 			path: BUILD_DIR,
 			filename: `[name].js`,
-			uniqueName: '__wcBlocksPayments_webpackJsonp',
+			uniqueName: 'webpackWcBlocksPaymentMethodExtensionJsonp',
 		},
 		module: {
 			rules: [
@@ -500,7 +500,7 @@ const getExtensionsConfig = ( options = {} ) => {
 			devtoolNamespace: 'wc',
 			path: BUILD_DIR,
 			filename: '[name].js',
-			uniqueName: '__wcBlocksExtensions_webpackJsonp',
+			uniqueName: 'webpackWcBlocksExtensionsMethodExtensionJsonp',
 		},
 		module: {
 			rules: [
@@ -590,7 +590,7 @@ const getSiteEditorConfig = ( options = {} ) => {
 			devtoolNamespace: 'wc',
 			path: BUILD_DIR,
 			filename: `[name].js`,
-			chunkLoadingGlobal: '__wcBlocksSiteEditor_webpackJsonp',
+			chunkLoadingGlobal: 'webpackWcBlocksExtensionsMethodExtensionJsonp',
 		},
 		module: {
 			rules: [
@@ -684,7 +684,7 @@ const getStylingConfig = ( options = {} ) => {
 				name: [ 'wc', 'blocks', '[name]' ],
 				type: 'window',
 			},
-			uniqueName: '__wcBlocksStyling_webpackJsonp',
+			uniqueName: 'webpackWcBlocksStylingJsonp',
 		},
 		optimization: {
 			splitChunks: {
@@ -839,7 +839,7 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 				name: [ 'wc', '__experimentalInteractivity' ],
 				type: 'window',
 			},
-			chunkLoadingGlobal: '__wcBlocksJsonp',
+			chunkLoadingGlobal: 'webpackWcBlocksJsonp',
 		},
 		resolve: {
 			alias,
@@ -931,7 +931,7 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 
 				return `[name]-frontend.js`;
 			},
-			uniqueName: '__wcBlocksCartCheckoutFrontend_webpackJsonp',
+			uniqueName: 'webpackWcBlocksCartCheckoutFrontendJsonp',
 			library: {
 				name: ['wc', '[name]'],
 				type: 'window'
