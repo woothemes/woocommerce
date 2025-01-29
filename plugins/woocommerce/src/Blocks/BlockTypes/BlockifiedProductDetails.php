@@ -116,10 +116,11 @@ class BlockifiedProductDetails extends AbstractBlock {
 		);
 
 		$parsed_tabs_added_via_hook = array_reduce(
-			$product_tabs_without_native_tabs,
-			function ( $carry, $tab ) {
+			array_keys( $product_tabs_without_native_tabs ),
+			function ( $carry, $key ) use ( $product_tabs_without_native_tabs ) {
+				$tab = $product_tabs_without_native_tabs[ $key ];
 				ob_start();
-				call_user_func( $tab['callback'] );
+				call_user_func( $tab['callback'], $key, $tab );
 				$content = ob_get_clean();
 
 				$carry[] = $this->create_accordion_item( $tab['title'], $content );
