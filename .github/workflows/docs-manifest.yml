@@ -1,0 +1,50 @@
+name: Update Docs Manifest
+
+on:
+  pull_request_target:
+    types: [closed]
+    paths:
+      - 'docs/**'  # Only run when files in docs directory change
+
+jobs:
+  update-manifest:
+    # Only run if the PR was merged (not just closed)
+    if: github.event.pull_request.merged == true && github.repository_owner == 'woocommerce'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: trunk
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate and commit manifest
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Generate new manifest
+          pnpm utils md-docs create docs woocommerce -o docs/docs-manifest.json
+          
+          # Check if there are changes
+          if [[ -n "$(git status --porcelain docs/docs-manifest.json)" ]]; then
+            git add docs/docs-manifest.json
+            git commit -m "Update docs manifest after merging #${{ github.event.pull_request.number }}"
+            git push origin trunk
+          else
+            echo "No manifest changes needed"
+          fi 
