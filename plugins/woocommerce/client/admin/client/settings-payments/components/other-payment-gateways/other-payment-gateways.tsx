@@ -193,10 +193,16 @@ export const OtherPaymentGateways = ( {
 														!! installingPlugin
 													}
 												>
-													{ __(
-														'Install',
-														'woocommerce'
-													) }
+													{ installingPlugin ===
+													extension.id
+														? __(
+																'Installing',
+																'woocommerce'
+														  )
+														: __(
+																'Install',
+																'woocommerce'
+														  ) }
 												</Button>
 											</div>
 										</div>
