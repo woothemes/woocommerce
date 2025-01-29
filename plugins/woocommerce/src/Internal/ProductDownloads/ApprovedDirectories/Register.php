@@ -32,6 +32,13 @@ class Register {
 	private $mode_option = 'wc_downloads_approved_directories_mode';
 
 	/**
+	 * Cache for valid paths, to avoid making duplicate queries.
+	 *
+	 * @var array<string, bool>
+	 */
+	private array $valid_paths = array();
+
+	/**
 	 * Sets up the approved directories sub-system.
 	 *
 	 * @internal
@@ -240,6 +247,10 @@ class Register {
 	public function is_valid_path( string $download_url ): bool {
 		global $wpdb;
 
+		if ( $download_url && array_key_exists( $download_url, $this->valid_paths ) ) {
+			return $this->valid_paths[ $download_url ];
+		}
+
 		$parent_directories = array();
 
 		foreach ( ( new URL( $this->normalize_url( $download_url ) ) )->get_all_parent_urls() as $parent ) {
@@ -247,6 +258,8 @@ class Register {
 		}
 
 		if ( empty( $parent_directories ) ) {
+			$this->valid_paths[ $download_url ] = false;
+
 			return false;
 		}
 
@@ -267,7 +280,9 @@ class Register {
 		);
 		// phpcs:enable
 
-		return $matches > 0;
+		$this->valid_paths[ $download_url ] = $matches > 0;
+
+		return $this->valid_paths[ $download_url ];
 	}
 
 	/**
