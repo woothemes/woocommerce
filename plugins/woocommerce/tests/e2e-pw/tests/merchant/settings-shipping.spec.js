@@ -1,9 +1,10 @@
 const { test, expect } = require( '@playwright/test' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 //todo audit follow-up: possible duplication with create-shipping-classes.spec.js and create-shipping-zones.spec.js
 test.describe( 'WooCommerce Shipping Settings', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test.afterAll( async ( { baseURL } ) => {
 		const api = new wcApi( {

@@ -1,8 +1,9 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 test.describe( 'WC Home Task List >', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	// TODO (E2E Audit): This test should be combined with other WC Homepage setup tests like the tests in activate-and-setup/stats-overview.spec.js into a single spec.
 	test(
@@ -38,12 +39,23 @@ test.describe( 'WC Home Task List >', () => {
 					page.getByText( 'Store management' )
 				).toBeVisible();
 			} );
-
-			await test.step( 'Re-enable task list', async () => {
-				await page.goto(
-					'wp-admin/admin.php?page=wc-admin&reset_task_list=1'
-				);
-			} );
 		}
 	);
+
+	test.afterAll( async ( { browser } ) => {
+		await test.step( 'Re-enable task list', async () => {
+			const context = await browser.newContext();
+			const page = await context.newPage();
+
+			await page.goto(
+				'wp-admin/admin.php?page=wc-admin&reset_task_list=1'
+			);
+			await expect(
+				page.getByText( 'Customize your store' )
+			).toBeVisible();
+
+			await page.close();
+			await context.close();
+		} );
+	} );
 } );
