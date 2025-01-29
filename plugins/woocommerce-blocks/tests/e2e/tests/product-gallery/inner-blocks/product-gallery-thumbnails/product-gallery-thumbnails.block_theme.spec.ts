@@ -76,11 +76,13 @@ test.describe( 'Product Gallery Thumbnails block', () => {
 			page,
 			editor,
 		} ) => {
-			const productGalleryBlock = editor.canvas.locator(
-				'[data-type="woocommerce/product-gallery"]'
-			);
+			const thumbnailsBlock = editor.canvas
+				.locator( '[data-type="woocommerce/product-gallery"]' )
+				.locator(
+					'[data-block-name="woocommerce/product-gallery-thumbnails"]'
+				);
 
-			await editor.selectBlocks( productGalleryBlock );
+			await editor.selectBlocks( thumbnailsBlock );
 
 			await editor.openDocumentSettingsSidebar();
 			const numberOfThumbnailInput = page
@@ -92,7 +94,7 @@ test.describe( 'Product Gallery Thumbnails block', () => {
 			await numberOfThumbnailInput.fill( '4.2' );
 			await page.keyboard.press( 'Enter' );
 
-			const numberOfThumbnailsOnScreen = productGalleryBlock.locator(
+			const numberOfThumbnailsOnScreen = thumbnailsBlock.locator(
 				'.wc-block-product-gallery-thumbnails__thumbnail'
 			);
 
