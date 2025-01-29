@@ -76,11 +76,8 @@ test.describe( 'Product Gallery Thumbnails block', () => {
 			page,
 			editor,
 		} ) => {
-			const thumbnailsBlock = editor.canvas
-				.locator( '[data-type="woocommerce/product-gallery"]' )
-				.locator(
-					'[data-block-name="woocommerce/product-gallery-thumbnails"]'
-				);
+			const thumbnailsBlock =
+				editor.canvas.getByLabel( 'Block: Thumbnails' );
 
 			await editor.selectBlocks( thumbnailsBlock );
 
