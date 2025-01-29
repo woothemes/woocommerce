@@ -218,7 +218,7 @@ class WC_Comments {
 	/**
 	 * Callback for 'wp_insert_comment' to delete the comment count cache if the comment is included in the count.
 	 *
-	 * @param int $comment_id The comment ID.
+	 * @param int        $comment_id The comment ID.
 	 * @param WP_Comment $comment Comment object.
 	 *
 	 * @return void
@@ -253,8 +253,8 @@ class WC_Comments {
 	 * @return bool
 	 */
 	private static function is_comment_excluded_from_wp_comment_counts( $comment ) {
-		return in_array( $comment->comment_type, [ 'action_log', 'order_note', 'webhook_delivery' ], true ) ||
-		       get_post_type( $comment->comment_post_ID ) === 'product';
+		return in_array( $comment->comment_type, array( 'action_log', 'order_note', 'webhook_delivery' ), true )
+			|| get_post_type( $comment->comment_post_ID ) === 'product';
 	}
 
 	/**
