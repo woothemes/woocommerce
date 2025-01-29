@@ -63,7 +63,9 @@ if ( ! class_exists( 'WC_Email_Customer_Note', false ) ) :
 		 * @return string
 		 */
 		public function get_default_subject() {
-			return __( 'Note added to your {site_title} order from {order_date}', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'A note has been added to your order from {site_title}', 'woocommerce' )
+				: __( 'Note added to your {site_title} order from {order_date}', 'woocommerce' );
 		}
 
 		/**
@@ -161,7 +163,9 @@ if ( ! class_exists( 'WC_Email_Customer_Note', false ) ) :
 		 * @return string
 		 */
 		public function get_default_additional_content() {
-			return __( 'Thanks for reading.', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'Thanks again! If you need any help with your order, please contact us at {store_email}.', 'woocommerce' )
+				: __( 'Thanks for reading.', 'woocommerce' );
 		}
 	}
 

@@ -83,7 +83,9 @@ if ( ! class_exists( 'WC_Email_Customer_Completed_Order', false ) ) :
 		 * @return string
 		 */
 		public function get_default_subject() {
-			return __( 'Your {site_title} order is now complete', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'Your order from {site_title} is on its way!', 'woocommerce' )
+				: __( 'Your {site_title} order is now complete', 'woocommerce' );
 		}
 
 		/**
@@ -141,7 +143,9 @@ if ( ! class_exists( 'WC_Email_Customer_Completed_Order', false ) ) :
 		 * @return string
 		 */
 		public function get_default_additional_content() {
-			return __( 'Thanks for shopping with us.', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'Thanks again! If you need any help with your order, please contact us at {store_email}.', 'woocommerce' )
+				: __( 'Thanks for shopping with us.', 'woocommerce' );
 		}
 	}
 

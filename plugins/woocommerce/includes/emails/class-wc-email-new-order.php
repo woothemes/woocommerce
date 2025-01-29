@@ -67,7 +67,9 @@ if ( ! class_exists( 'WC_Email_New_Order' ) ) :
 		 * @return string
 		 */
 		public function get_default_subject() {
-			return __( '[{site_title}]: New order #{order_number}', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( "[{site_title}]: Cha-ching! You've got a new order: #{order_number}", 'woocommerce' )
+				: __( '[{site_title}]: New order #{order_number}', 'woocommerce' );
 		}
 
 		/**
@@ -77,7 +79,9 @@ if ( ! class_exists( 'WC_Email_New_Order' ) ) :
 		 * @return string
 		 */
 		public function get_default_heading() {
-			return __( 'New Order: #{order_number}', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'New order: #{order_number}', 'woocommerce' )
+				: __( 'New Order: #{order_number}', 'woocommerce' );
 		}
 
 		/**
@@ -168,7 +172,9 @@ if ( ! class_exists( 'WC_Email_New_Order' ) ) :
 		 * @return string
 		 */
 		public function get_default_additional_content() {
-			return __( 'Congratulations on the sale.', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'Congratulations on the sale!', 'woocommerce' )
+				: __( 'Congratulations on the sale.', 'woocommerce' );
 		}
 
 		/**

@@ -69,7 +69,9 @@ if ( ! class_exists( 'WC_Email_Failed_Order', false ) ) :
 		 * @return string
 		 */
 		public function get_default_heading() {
-			return __( 'Order Failed: #{order_number}', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'Order failed: #{order_number}', 'woocommerce' )
+				: __( 'Order Failed: #{order_number}', 'woocommerce' );
 		}
 
 		/**
@@ -143,7 +145,9 @@ if ( ! class_exists( 'WC_Email_Failed_Order', false ) ) :
 		 * @return string
 		 */
 		public function get_default_additional_content() {
-			return __( 'Hopefully they’ll be back. Read more about <a href="https://woocommerce.com/document/managing-orders/">troubleshooting failed payments</a>.', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'We hope they’ll be back soon! Read more about <a href="https://woocommerce.com/document/managing-orders/">troubleshooting failed payments</a>', 'woocommerce' )
+				: __( 'Hopefully they’ll be back. Read more about <a href="https://woocommerce.com/document/managing-orders/">troubleshooting failed payments</a>.', 'woocommerce' );
 		}
 
 		/**

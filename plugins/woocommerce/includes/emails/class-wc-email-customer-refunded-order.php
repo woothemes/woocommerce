@@ -88,9 +88,13 @@ if ( ! class_exists( 'WC_Email_Customer_Refunded_Order', false ) ) :
 		 */
 		public function get_default_heading( $partial = false ) {
 			if ( $partial ) {
-				return __( 'Partial Refund: Order {order_number}', 'woocommerce' );
+				return $this->email_improvements_enabled
+					? __( 'Partial refund: Order {order_number}', 'woocommerce' )
+					: __( 'Partial Refund: Order {order_number}', 'woocommerce' );
 			} else {
-				return __( 'Order Refunded: {order_number}', 'woocommerce' );
+				return $this->email_improvements_enabled
+					? __( 'Order refunded: {order_number}', 'woocommerce' )
+					: __( 'Order Refunded: {order_number}', 'woocommerce' );
 			}
 		}
 
@@ -231,7 +235,9 @@ if ( ! class_exists( 'WC_Email_Customer_Refunded_Order', false ) ) :
 		 * @return string
 		 */
 		public function get_default_additional_content() {
-			return __( 'We hope to see you again soon.', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'If you need any help with your order, please contact us at {store_email}.', 'woocommerce' )
+				: __( 'We hope to see you again soon.', 'woocommerce' );
 		}
 
 		/**

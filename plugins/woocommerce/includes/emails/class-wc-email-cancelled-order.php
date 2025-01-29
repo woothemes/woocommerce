@@ -70,7 +70,9 @@ if ( ! class_exists( 'WC_Email_Cancelled_Order', false ) ) :
 		 * @return string
 		 */
 		public function get_default_heading() {
-			return __( 'Order Cancelled: #{order_number}', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'Order cancelled: #{order_number}', 'woocommerce' )
+				: __( 'Order Cancelled: #{order_number}', 'woocommerce' );
 		}
 
 		/**

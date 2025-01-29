@@ -140,7 +140,9 @@ if ( ! class_exists( 'WC_Email_Customer_Failed_Order', false ) ) :
 		 * @return string
 		 */
 		public function get_default_additional_content() {
-			return '';
+			return $this->email_improvements_enabled
+				? __( 'If you need any help with your order, please contact us at {store_email}.', 'woocommerce' )
+				: '';
 		}
 	}
 
