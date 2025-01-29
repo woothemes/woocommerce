@@ -16,12 +16,8 @@ class DocumentObjectTests extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		wp_set_current_user( 0 );
-		$customer = get_user_by( 'email', 'testaccount@test.com' );
-
-		if ( $customer ) {
-			wp_delete_user( $customer->ID );
-		}
-		wc_empty_cart();
+		WC()->cart->empty_cart();
+		WC()->session->destroy_session();
 	}
 
 	/**
