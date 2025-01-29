@@ -1,7 +1,3 @@
-const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle } = require( '../../utils/editor' );
-const { setComingSoon } = require( '../../utils/coming-soon' );
-
 /**
  * External dependencies
  */
@@ -11,6 +7,14 @@ import {
 	goToPageEditor,
 	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 
 const firstProductName = 'First Product';
 const firstProductPrice = '10.00';
@@ -24,7 +28,7 @@ const shippingZoneNamePT = 'Portugal Flat Local';
 const shippingCountryPT = 'PT';
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Cart Block',
 	cartBlockPage: async ( { page, testPage }, use ) => {
 		await goToPageEditor( { page } );
@@ -46,9 +50,7 @@ test.describe(
 	() => {
 		let product1Id, product2Id, shippingZoneNLId, shippingZonePTId;
 
-		test.beforeAll( async ( { api, baseURL } ) => {
-			await setComingSoon( { baseURL, enabled: 'no' } );
-
+		test.beforeAll( async ( { api } ) => {
 			// make sure the currency is USD
 			await api.put( 'settings/general/woocommerce_currency', {
 				value: 'USD',

@@ -85,6 +85,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			'autoload'    => false,
 			'desc_tip'    => true,
 		);
+		$logo_image_width           = null;
 		$header_alignment           = null;
 		$font_family                = null;
 
@@ -136,6 +137,13 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				'default'     => '',
 				'autoload'    => false,
 				'desc_tip'    => true,
+			);
+			$logo_image_width           = array(
+				'title'    => __( 'Logo width (px)', 'woocommerce' ),
+				'id'       => 'woocommerce_email_header_image_width',
+				'desc_tip' => '',
+				'default'  => 120,
+				'type'     => 'number',
 			);
 			$header_alignment           = array(
 				'title'    => __( 'Header alignment', 'woocommerce' ),
@@ -332,6 +340,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				),
 
 				$logo_image,
+
+				$logo_image_width,
 
 				$header_alignment,
 
@@ -624,7 +634,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
-		$this->delete_transient_email_settings( null );
+		$this->delete_transient_email_settings();
 		$emails      = WC()->mailer()->get_emails();
 		$email_types = array();
 		foreach ( $emails as $type => $email ) {
@@ -649,7 +659,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * @param object $email The email object to run the method on.
 	 */
 	public function email_preview_single( $email ) {
-		$this->delete_transient_email_settings( $email->id );
+		$this->delete_transient_email_settings();
 		// Email types array should have a single entry for current email.
 		$email_types = array(
 			array(
@@ -677,14 +687,9 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	/**
 	 * Deletes transient with email settings used for live preview. This is to
 	 * prevent conflicts where the preview would show values from previous session.
-	 *
-	 * @param string|null $email_id Email ID.
 	 */
-	private function delete_transient_email_settings( ?string $email_id ) {
-		$setting_ids = array_merge(
-			EmailPreview::get_email_style_settings_ids(),
-			EmailPreview::get_email_content_settings_ids( $email_id ),
-		);
+	private function delete_transient_email_settings() {
+		$setting_ids = EmailPreview::get_all_email_settings_ids();
 		foreach ( $setting_ids as $id ) {
 			delete_transient( $id );
 		}
@@ -741,8 +746,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 */
 	public function email_font_family( $value ) {
 		$option_value = $value['value'];
-		// This is a temporary fix to prevent using custom fonts without fallback
-		$custom_fonts = null; // $this->get_custom_fonts();
+		// This is a temporary fix to prevent using custom fonts without fallback.
+		$custom_fonts = null;
 
 		?>
 		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">

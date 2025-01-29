@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+CI: enable wp-env debug mode to get more details on occasional test containers startup failures.
