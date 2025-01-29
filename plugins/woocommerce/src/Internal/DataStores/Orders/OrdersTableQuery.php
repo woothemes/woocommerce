@@ -7,6 +7,7 @@
 namespace Automattic\WooCommerce\Internal\DataStores\Orders;
 
 use Automattic\WooCommerce\Internal\Utilities\DatabaseUtil;
+use Automattic\WooCommerce\Caches\OrderAggregateCache;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -172,6 +173,13 @@ class OrdersTableQuery {
 	private $order_datastore = null;
 
 	/**
+	 * Instance of the OrderAggregateCache class.
+	 *
+	 * @var OrderAggregateCache
+	 */
+	private $order_aggregate_cache = null;
+
+	/**
 	 * Whether to run filters to modify the query or not.
 	 *
 	 * @var boolean
@@ -185,7 +193,8 @@ class OrdersTableQuery {
 	 */
 	public function __construct( $args = array() ) {
 		// Note that ideally we would inject this dependency via constructor, but that's not possible since this class needs to be backward compatible with WC_Order_Query class.
-		$this->order_datastore = wc_get_container()->get( OrdersTableDataStore::class );
+		$this->order_datastore       = wc_get_container()->get( OrdersTableDataStore::class );
+		$this->order_aggregate_cache = wc_get_container()->get( OrderAggregateCache::class );
 
 		$this->tables   = $this->order_datastore::get_all_table_names_with_id();
 		$this->mappings = $this->order_datastore->get_all_order_column_mappings();
@@ -1361,11 +1370,33 @@ class OrdersTableQuery {
 		}
 
 		if ( $this->limits ) {
-			$this->found_orders  = absint( $wpdb->get_var( $this->count_sql ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$this->found_orders  = $this->get_count();
 			$this->max_num_pages = (int) ceil( $this->found_orders / $this->args['limit'] );
 		} else {
 			$this->found_orders = count( $this->orders );
 		}
+	}
+
+	/**
+	 * Get the order count by cache or SQL.
+	 */
+	private function get_count() {
+		global $wpdb;
+
+		$where_string  = substr( $this->count_sql, strpos( $this->count_sql, 'WHERE 1=1 AND' ) + 14, -1 );
+		$where_clauses = explode( ' AND ', $where_string );
+
+		// We can only use the aggregate cache when the filters are limited to type and status.
+		if (
+			count( $where_clauses ) === 2 &&
+			str_starts_with( $where_clauses[0], "({$wpdb->prefix}wc_orders.status" ) &&
+			str_starts_with( $where_clauses[1], "({$wpdb->prefix}wc_orders.type" )
+		) {
+			$statuses = array();
+			return $this->order_aggregate_cache->get_count( $statuses );
+		}
+
+		return absint( $wpdb->get_var( $this->count_sql ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	}
 
 	/**
