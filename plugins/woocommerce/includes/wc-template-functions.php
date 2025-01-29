@@ -54,7 +54,7 @@ function wc_template_redirect() {
 		$wp_query->set_404();
 		status_header( 404 );
 
-		$template = get_query_template('404');
+		$template = get_query_template( '404' );
 		if ( $template ) {
 			include $template;
 		}
@@ -1571,7 +1571,7 @@ if ( ! function_exists( 'woocommerce_catalog_ordering' ) ) {
 		if ( ! wc_get_loop_prop( 'is_paginated' ) || ! woocommerce_products_will_display() ) {
 			return;
 		}
-		$show_default_orderby    = 'menu_order' === apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', 'menu_order' ) );
+		$show_default_orderby = 'menu_order' === apply_filters( 'woocommerce_default_catalog_orderby', get_option( 'woocommerce_default_catalog_orderby', 'menu_order' ) );
 
 		if ( isset( $attributes ) && isset( $attributes['useLabel'] ) && $attributes['useLabel'] ) {
 			/**
