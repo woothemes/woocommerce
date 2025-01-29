@@ -30,7 +30,6 @@ if ( ! class_exists( 'WC_Email_Customer_Failed_Order', false ) ) :
 			$this->id             = 'customer_failed_order';
 			$this->customer_email = true;
 			$this->title          = __( 'Failed order', 'woocommerce' );
-			$this->description    = __( 'Order failed emails are sent to customers when their orders are marked as failed.', 'woocommerce' );
 			$this->template_html  = 'emails/customer-failed-order.php';
 			$this->template_plain = 'emails/plain/customer-failed-order.php';
 			$this->placeholders   = array(
@@ -43,6 +42,11 @@ if ( ! class_exists( 'WC_Email_Customer_Failed_Order', false ) ) :
 
 			// Call parent constructor.
 			parent::__construct();
+
+			// Must be after parent's constructor which sets `email_improvements_enabled` property.
+			$this->description = $this->email_improvements_enabled
+				? __( 'Let shoppers know when their order has failed and what to do next.', 'woocommerce' )
+				: __( 'Order failed emails are sent to customers when their orders are marked as failed.', 'woocommerce' );
 		}
 
 		/**

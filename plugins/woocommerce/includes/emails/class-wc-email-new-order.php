@@ -29,7 +29,6 @@ if ( ! class_exists( 'WC_Email_New_Order' ) ) :
 		public function __construct() {
 			$this->id             = 'new_order';
 			$this->title          = __( 'New order', 'woocommerce' );
-			$this->description    = __( 'New order emails are sent to chosen recipient(s) when a new order is received.', 'woocommerce' );
 			$this->template_html  = 'emails/admin-new-order.php';
 			$this->template_plain = 'emails/plain/admin-new-order.php';
 			$this->placeholders   = array(
@@ -51,6 +50,11 @@ if ( ! class_exists( 'WC_Email_New_Order' ) ) :
 
 			// Call parent constructor.
 			parent::__construct();
+
+			// Must be after parent's constructor which sets `email_improvements_enabled` property.
+			$this->description = $this->email_improvements_enabled
+				? __( 'Choose who gets notified when a new order is received.', 'woocommerce' )
+				: __( 'New order emails are sent to chosen recipient(s) when a new order is received.', 'woocommerce' );
 
 			// Other settings.
 			$this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );

@@ -34,7 +34,6 @@ if ( ! class_exists( 'WC_Email_Customer_Invoice', false ) ) :
 			$this->id             = 'customer_invoice';
 			$this->customer_email = true;
 			$this->title          = __( 'Order details', 'woocommerce' );
-			$this->description    = __( 'Order detail emails can be sent to customers containing their order information and payment links.', 'woocommerce' );
 			$this->template_html  = 'emails/customer-invoice.php';
 			$this->template_plain = 'emails/plain/customer-invoice.php';
 			$this->placeholders   = array(
@@ -44,6 +43,11 @@ if ( ! class_exists( 'WC_Email_Customer_Invoice', false ) ) :
 
 			// Call parent constructor.
 			parent::__construct();
+
+			// Must be after parent's constructor which sets `email_improvements_enabled` property.
+			$this->description = $this->email_improvements_enabled
+				? __( 'Manually send an email to your shoppers containing their order information and payment links.', 'woocommerce' )
+				: __( 'Order detail emails can be sent to customers containing their order information and payment links.', 'woocommerce' );
 
 			$this->manual = true;
 		}
