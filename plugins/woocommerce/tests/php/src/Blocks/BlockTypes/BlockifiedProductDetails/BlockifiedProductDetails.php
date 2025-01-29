@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-namespace Automattic\WooCommerce\Tests\Blocks\BlockTypes;
+namespace Automattic\WooCommerce\Tests\Blocks\BlockTypes\BlockifiedProductDetails;
 
 use WC_Helper_Product;
 
@@ -86,11 +86,11 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 	 */
 	public function test_product_details_render_with_no_hook() {
 
-		$template = file_get_contents( __DIR__ . '/test_product_details_render_with_no_hook_template.html' );
+		$template = file_get_contents( __DIR__ . '/test_product_details_render_with_no_hook_template.html' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		$serialized_blocks = do_blocks( $template );
 
-		$expected_serialized_blocks                    = file_get_contents( __DIR__ . '/test_product_details_render_with_no_hook_expected_result.html' );
+		$expected_serialized_blocks                    = file_get_contents( __DIR__ . '/test_product_details_render_with_no_hook_expected_result.html' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$serialized_blocks_without_whitespace          = wp_strip_all_tags( $serialized_blocks, true );
 		$expected_serialized_blocks_without_whitespace = wp_strip_all_tags( $expected_serialized_blocks, true );
 		$this->assertEquals( $serialized_blocks_without_whitespace, $expected_serialized_blocks_without_whitespace, '' );
@@ -126,11 +126,11 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 			}
 		);
 
-		$template = file_get_contents( __DIR__ . '/test_product_details_render_with_hook_template.html' );
+		$template = file_get_contents( __DIR__ . '/test_product_details_render_with_hook_template.html' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		$serialized_blocks = do_blocks( $template );
 
-		$expected_serialized_blocks = file_get_contents( __DIR__ . '/test_product_details_render_with_hook_expected_result.html' );
+		$expected_serialized_blocks = file_get_contents( __DIR__ . '/test_product_details_render_with_hook_expected_result.html' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
 		$serialized_blocks_without_whitespace          = wp_strip_all_tags( $serialized_blocks, true );
 		$expected_serialized_blocks_without_whitespace = wp_strip_all_tags( $expected_serialized_blocks, true );
