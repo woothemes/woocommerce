@@ -12,8 +12,6 @@ import {
 	isAddressComplete,
 	selectedRatesAreCollectable,
 } from '@woocommerce/base-utils';
-import { useFormFields } from '@woocommerce/base-components/cart-checkout/form/prepare-form-fields';
-import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 
 const Block = ( {
 	className = '',
@@ -25,7 +23,7 @@ const Block = ( {
 	const prefersCollection = useSelect( ( select ) =>
 		select( checkoutStore ).prefersCollection()
 	);
-	const shippingFields = useFormFields( ADDRESS_FORM_KEYS, 'shipping' );
+
 	if ( ! cartNeedsShipping ) {
 		return null;
 	}
@@ -37,11 +35,12 @@ const Block = ( {
 		)
 	);
 
-	const hasCompleteAddress = isAddressComplete(
-		shippingAddress,
-		shippingFields,
-		[ 'state', 'country', 'postcode', 'city' ]
-	);
+	const hasCompleteAddress = isAddressComplete( shippingAddress, [
+		'state',
+		'country',
+		'postcode',
+		'city',
+	] );
 
 	return (
 		<TotalsWrapper className={ className }>
