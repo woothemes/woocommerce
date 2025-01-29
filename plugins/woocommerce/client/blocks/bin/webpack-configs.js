@@ -93,7 +93,7 @@ const getCoreConfig = ( options = {} ) => {
 				name: ['wc', '[name]'],
 				type: 'window'
 			},
-			uniqueName: 'webpackWcBlocksCoreJsonp',
+			uniqueName: '__wcBlocks_webpackJsonp',
 		},
 		module: {
 			rules: [
@@ -188,7 +188,7 @@ const getMainConfig = ( options = {} ) => {
 				name: [ 'wc', 'blocks', '[name]' ],
 				type: 'window',
 			},
-			uniqueName: 'webpackWcBlocksMainJsonp',
+			uniqueName: '__wcBlocksMain_webpackJsonp',
 		},
 		module: {
 			rules: [
@@ -308,7 +308,7 @@ const getFrontConfig = ( options = {} ) => {
 			filename: () => {
 				return '[name]-frontend.js';
 			},
-			uniqueName: 'webpackWcBlocksFrontendJsonp',
+			uniqueName: '__wcBlocksFrontend_webpackJsonp',
 			library: [ 'wc', '[name]' ],
 		},
 		module: {
@@ -410,7 +410,7 @@ const getPaymentsConfig = ( options = {} ) => {
 			devtoolNamespace: 'wc',
 			path: BUILD_DIR,
 			filename: `[name].js`,
-			uniqueName: 'webpackWcBlocksPaymentMethodExtensionJsonp',
+			uniqueName: '__wcBlocksPayments_webpackJsonp',
 		},
 		module: {
 			rules: [
@@ -500,7 +500,7 @@ const getExtensionsConfig = ( options = {} ) => {
 			devtoolNamespace: 'wc',
 			path: BUILD_DIR,
 			filename: '[name].js',
-			uniqueName: 'webpackWcBlocksExtensionsMethodExtensionJsonp',
+			uniqueName: '__wcBlocksExtensions_webpackJsonp',
 		},
 		module: {
 			rules: [
@@ -590,7 +590,7 @@ const getSiteEditorConfig = ( options = {} ) => {
 			devtoolNamespace: 'wc',
 			path: BUILD_DIR,
 			filename: `[name].js`,
-			chunkLoadingGlobal: 'webpackWcBlocksExtensionsMethodExtensionJsonp',
+			chunkLoadingGlobal: '__wcBlocksSiteEditor_webpackJsonp',
 		},
 		module: {
 			rules: [
@@ -682,7 +682,7 @@ const getStylingConfig = ( options = {} ) => {
 			filename: '[name]-style.js',
 			library: [ 'wc', 'blocks', '[name]' ],
 			libraryTarget: 'this',
-			uniqueName: 'webpackWcBlocksStylingJsonp',
+			uniqueName: '__wcBlocksStyling_webpackJsonp',
 		},
 		optimization: {
 			splitChunks: {
@@ -835,7 +835,7 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 			path: BUILD_DIR,
 			library: [ 'wc', '__experimentalInteractivity' ],
 			libraryTarget: 'this',
-			chunkLoadingGlobal: 'webpackWcBlocksJsonp',
+			chunkLoadingGlobal: '__wcBlocksJsonp',
 		},
 		resolve: {
 			alias,
@@ -927,7 +927,7 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 
 				return `[name]-frontend.js`;
 			},
-			uniqueName: 'webpackWcBlocksCartCheckoutFrontendJsonp',
+			uniqueName: '__wcBlocksCartCheckoutFrontend_webpackJsonp',
 			library: {
 				name: ['wc', '[name]'],
 				type: 'window'
