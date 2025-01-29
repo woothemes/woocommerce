@@ -8,7 +8,6 @@ import {
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import { BlockEditProps, InnerBlockTemplate } from '@wordpress/blocks';
-import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
