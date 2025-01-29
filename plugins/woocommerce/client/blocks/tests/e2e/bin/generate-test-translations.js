@@ -7,16 +7,15 @@ const glob = require( 'glob' );
 const { translations } = require( '../test-data/data/data.ts' );
 const { getTestTranslation } = require( '../utils/get-test-translation.js' );
 
-ensureDirSync( path.join( __dirname, '../../../../../i18n/languages' ) );
+const ROOT_DIR = path.resolve( __dirname, '../../../../../' );
+const BUILD_DIR = path.resolve( __dirname, '../../../build/' );
+const TESTS_DIR = path.resolve( __dirname, '../tests/' );
+const LANGUAGES_DIR = path.join( ROOT_DIR, 'i18n/languages/' );
 
-const builtJsFiles = glob.sync(
-	`${ path.dirname( __filename ) }/../../../build/**/*.js`,
-	{}
-);
-const testFiles = glob.sync(
-	`${ path.dirname( __filename ) }/../tests/**/*.{js,ts}`,
-	{}
-);
+ensureDirSync( LANGUAGES_DIR );
+
+const builtJsFiles = glob.sync( path.join( BUILD_DIR, '**/*.js' ) );
+const testFiles = glob.sync( path.join( TESTS_DIR, '**/*.{js,ts}' ) );
 
 // Scan the test files to collect translations used in the tests. We'll use this
 // to generate the test translations json files.
@@ -83,9 +82,7 @@ builtJsFiles.forEach( ( filePath ) => {
 		.digest( 'hex' );
 
 	writeJsonSync(
-		`${ path.dirname(
-			__filename
-		) }/../../../../../i18n/languages/woocommerce-${ locale }-${ md5Path }.json`,
+		path.join( LANGUAGES_DIR, `woocommerce-${ locale }-${ md5Path }.json` ),
 		data
 	);
 } );
