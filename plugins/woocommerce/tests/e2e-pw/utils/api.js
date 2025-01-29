@@ -1,6 +1,5 @@
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { async } = require( 'regenerator-runtime' );
-const config = require( '../playwright.config' );
+const config = require( '../playwright.config' ).default;
 
 let api;
 
@@ -52,7 +51,7 @@ const throwCustomError = (
 
 const update = {
 	storeDetails: async ( store ) => {
-		const res = await api.post( 'settings/general/batch', {
+		await api.post( 'settings/general/batch', {
 			update: [
 				{
 					id: 'woocommerce_store_address',
@@ -89,7 +88,7 @@ const get = {
 	coupons: async ( params ) => {
 		const response = await api
 			.get( 'coupons', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -111,7 +110,7 @@ const get = {
 	orders: async ( params ) => {
 		const response = await api
 			.get( 'orders', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -124,7 +123,7 @@ const get = {
 	products: async ( params ) => {
 		const response = await api
 			.get( 'products', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -137,7 +136,7 @@ const get = {
 	productAttributes: async ( params ) => {
 		const response = await api
 			.get( 'products/attributes', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -150,7 +149,7 @@ const get = {
 	productCategories: async ( params ) => {
 		const response = await api
 			.get( 'products/categories', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -163,7 +162,7 @@ const get = {
 	productTags: async ( params ) => {
 		const response = await api
 			.get( 'products/tags', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -176,7 +175,7 @@ const get = {
 	shippingClasses: async ( params ) => {
 		const response = await api
 			.get( 'products/shipping_classes', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -190,7 +189,7 @@ const get = {
 	shippingZones: async ( params ) => {
 		const response = await api
 			.get( 'shipping/zones', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -203,7 +202,7 @@ const get = {
 	shippingZoneMethods: async ( shippingZoneId ) => {
 		const response = await api
 			.get( `shipping/zones/${ shippingZoneId }/methods` )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -216,7 +215,7 @@ const get = {
 	taxClasses: async () => {
 		const response = await api
 			.get( 'taxes/classes' )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -229,7 +228,7 @@ const get = {
 	taxRates: async ( params ) => {
 		const response = await api
 			.get( 'taxes', params )
-			.then( ( response ) => response )
+			.then( ( r ) => r )
 			.catch( ( error ) => {
 				throwCustomError(
 					error,
@@ -264,9 +263,9 @@ const create = {
 	 * Batch create product variations.
 	 *
 	 * @see {@link [Batch update product variations](https://woocommerce.github.io/woocommerce-rest-api-docs/#batch-update-product-variations)}
-	 * @param {number|string} productId Product ID to add variations to
-	 * @param {object[]} variations Array of variations to add. See [Product variation properties](https://woocommerce.github.io/woocommerce-rest-api-docs/#product-variation-properties)
-	 * @returns {Promise<number[]>} Array of variation ID's.
+	 * @param {number|string} productId  Product ID to add variations to
+	 * @param {object[]}      variations Array of variations to add. See [Product variation properties](https://woocommerce.github.io/woocommerce-rest-api-docs/#product-variation-properties)
+	 * @return {Promise<number[]>} Array of variation ID's.
 	 */
 	productVariations: async ( productId, variations ) => {
 		const response = await api.post(

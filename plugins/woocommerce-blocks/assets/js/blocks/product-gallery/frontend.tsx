@@ -9,7 +9,8 @@ import {
 import { StorePart } from '@woocommerce/utils';
 
 export interface ProductGalleryContext {
-	selectedImage: string;
+	// It's an actual image number, not an index, hence one-based!
+	selectedImageNumber: number;
 	firstMainImageId: string;
 	imageId: string;
 	visibleImagesIds: string[];
@@ -45,73 +46,67 @@ const getImageIndex = ( context: ProductGalleryContext, imageId: string ) => {
 	return imagesIds.indexOf( imageId );
 };
 
-const getImageId = ( context: ProductGalleryContext, imageIndex: number ) => {
-	const imagesIds = getCurrentImages( context );
-
-	if ( imageIndex < 0 ) {
-		return imagesIds.at( 0 ) || '';
-	}
-
-	if ( imageIndex > imagesIds.length - 1 ) {
-		return imagesIds.at( -1 ) || '';
-	}
-
-	return imagesIds[ imageIndex ];
-};
-
 const disableArrows = (
 	context: ProductGalleryContext,
-	nextImageIndex: number
+	newImageNumber: number
 ) => {
 	const imagesIds = getCurrentImages( context );
-	context.disableLeft = nextImageIndex === 0;
-	context.disableRight = nextImageIndex === imagesIds.length - 1;
+	// One-based index so it ranges from 1 to imagesIds.length.
+	context.disableLeft = newImageNumber === 1;
+	context.disableRight = newImageNumber === imagesIds.length;
 };
 
 const selectImage = (
 	context: ProductGalleryContext,
-	type: 'prev' | 'next' | 'current'
+	type: 'prev' | 'next' | 'current' | 'first' | 'closeDialog'
 ) => {
-	const selectedImageIdIndex = getImageIndex(
-		context,
-		context.selectedImage
-	);
+	const {
+		selectedImageNumber,
+		imageId,
+		dialogVisibleImagesIds,
+		visibleImagesIds,
+	} = context;
+	// Default to the first image.
+	let newImageNumber = 1;
 
-	// explicit "current"
-	let nextPotentialIndex = selectedImageIdIndex;
+	// Current means the image that has been clicked.
+	if ( type === 'current' ) {
+		newImageNumber = getImageIndex( context, imageId ) + 1;
+	}
 
 	if ( type === 'prev' ) {
-		nextPotentialIndex = selectedImageIdIndex - 1;
+		newImageNumber = Math.max( 1, selectedImageNumber - 1 );
 	}
+
 	if ( type === 'next' ) {
-		nextPotentialIndex = selectedImageIdIndex + 1;
+		newImageNumber = Math.min(
+			dialogVisibleImagesIds.length,
+			selectedImageNumber + 1
+		);
 	}
 
-	const newImageId = getImageId( context, nextPotentialIndex );
-	const newImageIndex = getImageIndex( context, newImageId );
-	context.selectedImage = newImageId;
-	disableArrows( context, newImageIndex );
-};
-
-const closeDialog = ( context: ProductGalleryContext ) => {
-	context.isDialogOpen = false;
-	document.body.classList.remove( 'wc-block-product-gallery-modal-open' );
-
-	if ( context.elementThatTriggeredDialogOpening ) {
-		context.elementThatTriggeredDialogOpening?.focus();
-		context.elementThatTriggeredDialogOpening = null;
+	// Close dialog is a temporary case that will be removed.
+	// Currently, the number of images in the dialog may differ from the number of
+	// images in the gallery, so we're falling back to the first image if
+	// current one is unavailable in regular gallery.
+	if ( type === 'closeDialog' ) {
+		newImageNumber =
+			selectedImageNumber > visibleImagesIds.length
+				? 1
+				: selectedImageNumber;
 	}
 
-	// Recalculate images and arrows. Image in dialog may be last
-	// or not be available in on-page gallery.
-	selectImage( context, 'current' );
+	context.selectedImageNumber = newImageNumber;
+	disableArrows( context, newImageNumber );
 };
 
 const productGallery = {
 	state: {
 		get isSelected() {
-			const { selectedImage, imageId } = getContext();
-			return selectedImage === imageId;
+			const context = getContext();
+			const { selectedImageNumber, imageId } = context;
+			const imageIndex = getImageIndex( context, imageId );
+			return selectedImageNumber === imageIndex + 1;
 		},
 		get disableLeft() {
 			return getContext().disableLeft;
@@ -130,69 +125,20 @@ const productGallery = {
 		},
 	},
 	actions: {
-		closeDialog: () => {
-			const context = getContext();
-			closeDialog( context );
-		},
-		openDialog: () => {
-			const context = getContext();
-			context.isDialogOpen = true;
-			document.body.classList.add(
-				'wc-block-product-gallery-modal-open'
-			);
-			const dialogPopUp = document.querySelector(
-				'dialog[aria-label="Product gallery"]'
-			);
-			if ( ! dialogPopUp ) {
-				return;
-			}
-			( dialogPopUp as HTMLElement ).focus();
-
-			const dialogPreviousButton = dialogPopUp.querySelectorAll(
-				'.wc-block-product-gallery-large-image-next-previous--button'
-			)[ 0 ];
-
-			if ( ! dialogPreviousButton ) {
-				return;
-			}
-
-			// Recalculate images and arrows. Last image now may not be last in the dialog.
-			selectImage( context, 'current' );
-			setTimeout( () => {
-				( dialogPreviousButton as HTMLButtonElement ).focus();
-			}, 100 );
-		},
 		selectImage: () => {
-			const context = getContext();
-			const nextImageIndex = getImageIndex( context, context.imageId );
-			context.selectedImage = context.imageId;
-			disableArrows( context, nextImageIndex );
+			selectImage( getContext(), 'current' );
 		},
 		selectNextImage: ( event?: MouseEvent ) => {
 			if ( event ) {
 				event.stopPropagation();
 			}
-			const context = getContext();
-			selectImage( context, 'next' );
+			selectImage( getContext(), 'next' );
 		},
 		selectPreviousImage: ( event?: MouseEvent ) => {
 			if ( event ) {
 				event.stopPropagation();
 			}
-			const context = getContext();
-			selectImage( context, 'prev' );
-		},
-		onThumbnailKeyDown: ( event: KeyboardEvent ) => {
-			if (
-				event.code === 'Enter' ||
-				event.code === 'Space' ||
-				event.code === 'NumpadEnter'
-			) {
-				if ( event.code === 'Space' ) {
-					event.preventDefault();
-				}
-				productGallery.actions.selectImage();
-			}
+			selectImage( getContext(), 'prev' );
 		},
 		onSelectedLargeImageKeyDown: ( event: KeyboardEvent ) => {
 			if (
@@ -225,6 +171,41 @@ const productGallery = {
 					viewAllImagesElement;
 			}
 		},
+		onThumbnailKeyDown: ( event: KeyboardEvent ) => {
+			if (
+				event.code === 'Enter' ||
+				event.code === 'Space' ||
+				event.code === 'NumpadEnter'
+			) {
+				if ( event.code === 'Space' ) {
+					event.preventDefault();
+				}
+				productGallery.actions.selectImage();
+			}
+		},
+		onDialogKeyDown: ( event: KeyboardEvent ) => {
+			if ( event.code === 'Escape' ) {
+				actions.closeDialog();
+			}
+		},
+		openDialog: () => {
+			const context = getContext();
+			context.isDialogOpen = true;
+			const triggerElement = getElement()?.ref;
+			if ( triggerElement ) {
+				context.elementThatTriggeredDialogOpening = triggerElement;
+			}
+			document.body.classList.add(
+				'wc-block-product-gallery-dialog-open'
+			);
+		},
+		closeDialog: () => {
+			const context = getContext();
+			context.isDialogOpen = false;
+			document.body.classList.remove(
+				'wc-block-product-gallery-dialog-open'
+			);
+		},
 	},
 	callbacks: {
 		watchForChangesOnAddToCartForm: () => {
@@ -250,7 +231,11 @@ const productGallery = {
 							currentImageAttribute
 						)
 					) {
-						context.selectedImage = currentImageAttribute;
+						const nextImageIndex = getImageIndex(
+							context,
+							currentImageAttribute
+						);
+						context.selectedImageNumber = nextImageIndex + 1;
 					}
 				}
 			} );
@@ -264,7 +249,7 @@ const productGallery = {
 			);
 
 			const selectFirstImage = () => {
-				context.selectedImage = context.firstMainImageId;
+				selectImage( context, 'first' );
 			};
 
 			if ( clearVariationsLink ) {
@@ -279,93 +264,27 @@ const productGallery = {
 				document.removeEventListener( 'click', selectFirstImage );
 			};
 		},
-		keyboardAccess: () => {
+		dialogStateChange: () => {
 			const context = getContext();
-			let allowNavigation = true;
+			const { ref: dialogRef } = getElement() || {};
 
-			const handleKeyEvents = ( event: KeyboardEvent ) => {
-				if ( ! allowNavigation || ! context.isDialogOpen ) {
-					return;
+			if ( context.isDialogOpen && dialogRef instanceof HTMLElement ) {
+				dialogRef.focus();
+				const selectedImage = dialogRef.querySelector(
+					`[data-image-index="${ context.selectedImageNumber }"]`
+				);
+
+				if ( selectedImage instanceof HTMLElement ) {
+					selectedImage.scrollIntoView( {
+						behavior: 'auto',
+						block: 'center',
+					} );
+					selectedImage.focus();
 				}
-
-				// Disable navigation for a brief period to prevent spamming.
-				allowNavigation = false;
-
-				requestAnimationFrame( () => {
-					allowNavigation = true;
-				} );
-
-				// Check if the esc key is pressed.
-				if ( event.code === 'Escape' ) {
-					closeDialog( context );
-				}
-
-				// Check if left arrow key is pressed.
-				if ( event.code === 'ArrowLeft' ) {
-					productGallery.actions.selectPreviousImage();
-				}
-
-				// Check if right arrow key is pressed.
-				if ( event.code === 'ArrowRight' ) {
-					productGallery.actions.selectNextImage();
-				}
-			};
-
-			document.addEventListener( 'keydown', handleKeyEvents );
-
-			return () =>
-				document.removeEventListener( 'keydown', handleKeyEvents );
-		},
-		dialogFocusTrap: () => {
-			const dialogPopUp = document.querySelector(
-				'dialog[aria-label="Product gallery"]'
-			) as HTMLElement | null;
-
-			if ( ! dialogPopUp ) {
-				return;
+			} else if ( context.elementThatTriggeredDialogOpening ) {
+				context.elementThatTriggeredDialogOpening.focus();
+				context.elementThatTriggeredDialogOpening = null;
 			}
-
-			const handleKeyEvents = ( event: KeyboardEvent ) => {
-				if ( event.code === 'Tab' ) {
-					const focusableElementsSelectors =
-						'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
-					const focusableElements = dialogPopUp.querySelectorAll(
-						focusableElementsSelectors
-					);
-
-					if ( ! focusableElements.length ) {
-						return;
-					}
-
-					const firstFocusableElement =
-						focusableElements[ 0 ] as HTMLElement;
-					const lastFocusableElement = focusableElements[
-						focusableElements.length - 1
-					] as HTMLElement;
-
-					if (
-						! event.shiftKey &&
-						event.target === lastFocusableElement
-					) {
-						event.preventDefault();
-						firstFocusableElement.focus();
-					}
-
-					if (
-						event.shiftKey &&
-						event.target === firstFocusableElement
-					) {
-						event.preventDefault();
-						lastFocusableElement.focus();
-					}
-				}
-			};
-
-			dialogPopUp.addEventListener( 'keydown', handleKeyEvents );
-
-			return () =>
-				dialogPopUp.removeEventListener( 'keydown', handleKeyEvents );
 		},
 	},
 };
