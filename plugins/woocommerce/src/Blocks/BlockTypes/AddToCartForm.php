@@ -30,8 +30,10 @@ class AddToCartForm extends AbstractBlock {
 	 */
 	protected function initialize() {
 		parent::initialize();
-		add_filter( 'wc_add_to_cart_message_html', array( $this, 'add_to_cart_message_html_filter' ), 10, 2 );
-		add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'add_to_cart_redirect_filter' ), 10, 1 );
+		// Scope the excecution of this hook to be only when the add to cart form is submitted.
+		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+			add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'add_to_cart_redirect_filter' ), 10, 1 );
+		}
 	}
 
 	/**
@@ -174,11 +176,7 @@ class AddToCartForm extends AbstractBlock {
 		$product_html = $is_stepper_style ? $this->add_steppers( $product_html, $product_name ) : $product_html;
 
 		$parsed_attributes                     = $this->parse_attributes( $attributes );
-		$is_descendent_of_single_product_block = $parsed_attributes['isDescendentOfSingleProductBlock'];
-
-		if ( ! $is_external_product_with_url ) {
-			$product_html = $this->add_is_descendent_of_single_product_block_hidden_input_to_product_form( $product_html, $is_descendent_of_single_product_block );
-		}
+		$is_descendent_of_single_product_block = is_null( $previous_product ) || $post_id !== $previous_product->get_id();
 
 		$product_html       = $is_stepper_style ? $this->add_stepper_classes_to_add_to_cart_form_input( $product_html ) : $product_html;
 		$classes_and_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, array(), array( 'extra_classes' ) );
@@ -222,62 +220,16 @@ class AddToCartForm extends AbstractBlock {
 	}
 
 	/**
-	 * Add a hidden input to the Add to Cart form to indicate that it is a descendent of a Single Product block.
-	 *
-	 * @param string $product_html The Add to Cart Form HTML.
-	 * @param string $is_descendent_of_single_product_block Indicates if block is descendent of Single Product block.
-	 *
-	 * @return string The Add to Cart Form HTML with the hidden input.
-	 */
-	protected function add_is_descendent_of_single_product_block_hidden_input_to_product_form( $product_html, $is_descendent_of_single_product_block ) {
-		$hidden_is_descendent_of_single_product_block_input = sprintf(
-			'<input type="hidden" name="is-descendent-of-single-product-block" value="%1$s">',
-			$is_descendent_of_single_product_block ? 'true' : 'false'
-		);
-		$regex_pattern                                      = '/<button\s+type="submit"[^>]*>.*?<\/button>/i';
-
-		preg_match( $regex_pattern, $product_html, $input_matches );
-
-		if ( ! empty( $input_matches ) ) {
-			$product_html = preg_replace( $regex_pattern, $hidden_is_descendent_of_single_product_block_input . $input_matches[0], $product_html );
-		}
-
-		return $product_html;
-	}
-
-	/**
-	 * Filter the add to cart message to prevent the Notice from being displayed when the Add to Cart form is a descendent of a Single Product block
-	 * and the Add to Cart button is clicked.
-	 *
-	 * @param string $message Message to be displayed when product is added to the cart.
-	 */
-	public function add_to_cart_message_html_filter( $message ) {
-		// phpcs:ignore
-		if ( isset( $_POST['is-descendent-of-single-product-block'] ) && 'true' === $_POST['is-descendent-of-single-product-block'] ) {
-			return false;
-		}
-		return $message;
-	}
-
-	/**
-	 * Hooks into the `woocommerce_add_to_cart_redirect` filter to prevent redirecting
-	 * to another page when the block is inside the Single Product block and the Add to Cart button
-	 * is clicked.
+	 * Hooks into the `woocommerce_add_to_cart_redirect` filter to redirect to
+	 * the request referer when the add to cart return to url is not set.
 	 *
 	 * @param string $url The URL to redirect to after the product is added to the cart.
 	 * @return string The filtered redirect URL.
 	 */
 	public function add_to_cart_redirect_filter( $url ) {
-		// phpcs:ignore
-		if ( isset( $_POST['is-descendent-of-single-product-block'] ) && 'true' == $_POST['is-descendent-of-single-product-block'] ) {
-
-			if ( 'yes' === get_option( 'woocommerce_cart_redirect_after_add' ) ) {
-				return wc_get_cart_url();
-			}
-
-			return wp_validate_redirect( wp_get_referer(), $url );
+		if ( $url ) {
+			return $url;
 		}
-
-		return $url;
+		return wp_validate_redirect( wp_get_referer(), $url );
 	}
 }
