@@ -156,7 +156,7 @@ const useFormFields = (
 		.sort( ( a, b ) => a.index - b.index );
 };
 
-const staticFormFields = (
+const prepareFormFields = (
 	fieldKeys: ( keyof FormFields )[],
 	country: string
 ): KeyedFormField[] => {
@@ -179,4 +179,4 @@ const staticFormFields = (
 		.sort( ( a, b ) => a.index - b.index );
 };
 
-export { useFormFields, staticFormFields };
+export { useFormFields, prepareFormFields };

@@ -32,7 +32,6 @@ import type {
 	CartResponseCoupons,
 } from '@woocommerce/types';
 import { emptyHiddenAddressFields } from '@woocommerce/base-utils';
-import { staticFormFields } from '@woocommerce/base-components/cart-checkout/form/prepare-form-fields';
 import { ADDRESS_FORM_KEYS } from '@woocommerce/block-settings';
 /**
  * Internal dependencies
@@ -219,19 +218,11 @@ export const useStoreCart = (
 
 			// Update refs to keep the hook stable.
 			const billingAddress = emptyHiddenAddressFields(
-				decodeValues( cartData.billingAddress ),
-				staticFormFields(
-					ADDRESS_FORM_KEYS,
-					cartData.billingAddress.country
-				)
+				decodeValues( cartData.billingAddress )
 			);
 			const shippingAddress = cartData.needsShipping
 				? emptyHiddenAddressFields(
-						decodeValues( cartData.shippingAddress ),
-						staticFormFields(
-							ADDRESS_FORM_KEYS,
-							cartData.shippingAddress.country
-						)
+						decodeValues( cartData.shippingAddress )
 				  )
 				: billingAddress;
 
