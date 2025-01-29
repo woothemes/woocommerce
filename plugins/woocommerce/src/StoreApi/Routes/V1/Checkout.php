@@ -204,7 +204,7 @@ class Checkout extends AbstractCartRoute {
 		}
 
 		if ( WC()->cart->needs_shipping() ) {
-			$shipping_fields = $this->additional_fields_controller->get_fields_for_group( 'shipping' );
+			$shipping_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
 
 			foreach ( $shipping_fields as $field_key => $field ) {
 				if ( ! isset( $request['shipping_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object ) ) {
