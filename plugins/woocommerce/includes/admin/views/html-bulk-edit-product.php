@@ -75,7 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<select class="tax_status" name="_tax_status">
 						<?php
 						$options = array(
-							''         => __( '— No change —', 'woocommerce' ),
+							''                         => __( '— No change —', 'woocommerce' ),
 							ProductTaxStatus::TAXABLE  => __( 'Taxable', 'woocommerce' ),
 							ProductTaxStatus::SHIPPING => __( 'Shipping only', 'woocommerce' ),
 							ProductTaxStatus::NONE     => _x( 'None', 'Tax status', 'woocommerce' ),

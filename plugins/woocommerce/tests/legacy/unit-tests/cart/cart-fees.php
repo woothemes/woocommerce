@@ -43,7 +43,7 @@ class WC_Tests_WC_Cart_Fees extends WC_Unit_Test_Case {
 				'name'      => 'newfee2',
 				'amount'    => 10,
 				'tax_class' => 'Reduced rate',
-				ProductTaxStatus::TAXABLE   => true,
+				'taxable'   => true,
 			),
 		);
 		$cart_fees->set_fees( $args );

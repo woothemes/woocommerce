@@ -37,7 +37,7 @@ final class WC_Cart_Fees {
 		'id'        => '',
 		'name'      => '',
 		'tax_class' => '',
-		ProductTaxStatus::TAXABLE   => false,
+		'taxable'   => false,
 		'amount'    => 0,
 		'total'     => 0,
 	);

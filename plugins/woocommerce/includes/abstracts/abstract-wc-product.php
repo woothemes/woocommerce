@@ -1737,6 +1737,13 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_taxable() {
+		/**
+		 * Filters whether a product is taxable.
+		 *
+		 * @since 2.7.0
+		 * @param bool          $taxable Whether the product is taxable.
+		 * @param WC_Product    $product Product object.
+		 */
 		return apply_filters( 'woocommerce_product_is_taxable', $this->get_tax_status() === ProductTaxStatus::TAXABLE && wc_tax_enabled(), $this );
 	}
 
