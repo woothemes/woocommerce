@@ -13,7 +13,7 @@ import type { PaymentMethodInterface } from '@woocommerce/types';
 import { useSelect, useDispatch } from '@wordpress/data';
 import {
 	checkoutStore,
-	PAYMENT_STORE_KEY,
+	paymentStore,
 	CART_STORE_KEY,
 } from '@woocommerce/block-data';
 import { ValidationInputError } from '@woocommerce/blocks-components';
@@ -58,7 +58,7 @@ export const usePaymentMethodInterface = (): PaymentMethodInterface => {
 		} );
 	const { paymentStatus, activePaymentMethod, shouldSavePayment } = useSelect(
 		( select ) => {
-			const store = select( PAYMENT_STORE_KEY );
+			const store = select( paymentStore );
 
 			return {
 				// The paymentStatus is exposed to third parties via the payment method interface so the API must not be changed
@@ -111,8 +111,7 @@ export const usePaymentMethodInterface = (): PaymentMethodInterface => {
 		}
 	);
 
-	const { __internalSetExpressPaymentError } =
-		useDispatch( PAYMENT_STORE_KEY );
+	const { __internalSetExpressPaymentError } = useDispatch( paymentStore );
 
 	const { onPaymentProcessing, onPaymentSetup } = usePaymentEventsContext();
 	const {

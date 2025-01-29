@@ -2,13 +2,19 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import type { Options as NoticeOptions } from '@wordpress/notices';
+import {
+	Options as NoticeOptions,
+	store as noticesStore,
+} from '@wordpress/notices';
 import { select, dispatch } from '@wordpress/data';
+import { CurriedSelectorsOf } from '@wordpress/data/build-types/types';
 
 /**
  * Internal dependencies
  */
 import { noticeContexts } from '../context/event-emit/utils';
+import type { PaymentStoreDescriptor } from '../../data/payment';
+import type { StoreNoticesStoreDescriptor } from '../../data/store-notices';
 
 export const DEFAULT_ERROR_MESSAGE = __(
 	'Something went wrong. Please contact us to get assistance.',
@@ -33,14 +39,16 @@ export const createNotice = (
 	options: Partial< NoticeOptions >
 ) => {
 	const noticeContext = options?.context;
-	const suppressNotices =
-		select( 'wc/store/payment' ).isExpressPaymentMethodActive();
+	const selectors = select(
+		'wc/store/payment'
+	) as CurriedSelectorsOf< PaymentStoreDescriptor >;
+	const suppressNotices = selectors.isExpressPaymentMethodActive();
 
 	if ( suppressNotices || noticeContext === undefined ) {
 		return;
 	}
 
-	dispatch( 'core/notices' ).createNotice( status, message, {
+	dispatch( noticesStore ).createNotice( status, message, {
 		isDismissible: true,
 		...options,
 		context: noticeContext,
@@ -54,11 +62,12 @@ export const createNotice = (
  * @see https://github.com/WordPress/gutenberg/pull/44059
  */
 export const removeAllNotices = () => {
-	const containers = select(
+	const selectors = select(
 		'wc/store/store-notices'
-	).getRegisteredContainers();
-	const { removeNotice } = dispatch( 'core/notices' );
-	const { getNotices } = select( 'core/notices' );
+	) as CurriedSelectorsOf< StoreNoticesStoreDescriptor >;
+	const containers = selectors.getRegisteredContainers();
+	const { removeNotice } = dispatch( noticesStore );
+	const { getNotices } = select( noticesStore );
 
 	containers.forEach( ( container ) => {
 		getNotices( container ).forEach( ( notice ) => {
@@ -68,8 +77,8 @@ export const removeAllNotices = () => {
 };
 
 export const removeNoticesWithContext = ( context: string ) => {
-	const { removeNotice } = dispatch( 'core/notices' );
-	const { getNotices } = select( 'core/notices' );
+	const { removeNotice } = dispatch( noticesStore );
+	const { getNotices } = select( noticesStore );
 
 	getNotices( context ).forEach( ( notice ) => {
 		removeNotice( notice.id, context );

@@ -97,10 +97,10 @@ An example of data held within the Payment Data Store is shown below. This examp
 
 ## Usage
 
-To utilize this store you will import the `PAYMENT_STORE_KEY` in any module referencing it. Assuming `@woocommerce/block-data` is registered as an external pointing to `wc.wcBlocksData` you can import the key via:
+To utilize this store you will import the `paymentStore` `StoreDescriptor` in any module referencing it. Assuming `@woocommerce/block-data` is registered as an external pointing to `wc.wcBlocksData` you can import the key via:
 
 ```js
-const { PAYMENT_STORE_KEY } = window.wc.wcBlocksData;
+const { paymentStore } = window.wc.wcBlocksData;
 ```
 
 ## Selectors
@@ -133,7 +133,7 @@ Returns the current state of the payment store.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const currentState = store.getState();
 ```
 
@@ -148,7 +148,7 @@ Queries if the status is `idle`.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isPaymentIdle = store.isPaymentIdle();
 ```
 
@@ -163,7 +163,7 @@ Queries if an express payment method has been clicked.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isExpressPaymentStarted = store.isExpressPaymentStarted();
 ```
 
@@ -178,7 +178,7 @@ Queries if the status is `processing`.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isPaymentProcessing = store.isPaymentProcessing();
 ```
 
@@ -193,7 +193,7 @@ Queries if the status is `ready`.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isPaymentReady = store.isPaymentReady();
 ```
 
@@ -208,7 +208,7 @@ Queries if the status is `error`.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const hasPaymentError = store.hasPaymentError();
 ```
 
@@ -223,7 +223,7 @@ Returns whether an express payment method is active, this will be true when the 
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isExpressPaymentMethodActive = store.isExpressPaymentMethodActive();
 ```
 
@@ -238,7 +238,7 @@ Returns the active saved token. Payment methods that customers have saved to the
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const activeSavedToken = store.getActiveSavedToken();
 ```
 
@@ -253,7 +253,7 @@ Returns the active payment method's ID.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const activePaymentMethod = store.getActivePaymentMethod();
 ```
 
@@ -268,7 +268,7 @@ Returns the available payment methods. This does not include express payment met
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const availablePaymentMethods = store.getAvailablePaymentMethods();
 ```
 
@@ -299,7 +299,7 @@ Returns the available express payment methods.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const availableExpressPaymentMethods =
 	store.getAvailableExpressPaymentMethods();
 ```
@@ -328,7 +328,7 @@ Returns the current payment method data. This will change every time the active 
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const paymentMethodData = store.getPaymentMethodData();
 ```
 
@@ -366,7 +366,7 @@ savedPaymentMethods: {
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const savedPaymentMethods = store.getSavedPaymentMethods();
 ```
 
@@ -404,7 +404,7 @@ activeSavedPaymentMethods: {
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const activeSavedPaymentMethods = store.getActiveSavedPaymentMethods();
 ```
 
@@ -420,7 +420,7 @@ Returns the list of payment methods that are incompatible with Checkout block.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const incompatiblePaymentMethods = store.getIncompatiblePaymentMethods();
 ```
 
@@ -435,7 +435,7 @@ Returns whether the payment method should be saved to the customer's account.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const shouldSavePaymentMethod = store.getShouldSavePaymentMethod();
 ```
 
@@ -450,7 +450,7 @@ Returns whether the payment methods have been initialized.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const paymentMethodsInitialized = store.paymentMethodsInitialized();
 ```
 
@@ -465,7 +465,7 @@ Returns whether the express payment methods have been initialized.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const expressPaymentMethodsInitialized =
 	store.expressPaymentMethodsInitialized();
 ```
@@ -490,7 +490,7 @@ Returns the result of the last payment attempt.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const paymentResult = store.getPaymentResult();
 ```
 
@@ -507,7 +507,7 @@ Queries if the status is `pristine`.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isPaymentPristine = store.isPaymentPristine();
 ```
 
@@ -524,7 +524,7 @@ Queries if the status is `started`.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isPaymentStarted = store.isPaymentStarted();
 ```
 
@@ -541,7 +541,7 @@ Queries if the status is `success`.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isPaymentSuccess = store.isPaymentSuccess();
 ```
 
@@ -558,7 +558,7 @@ Queries if the status is `failed`.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const isPaymentFailed = store.isPaymentFailed();
 ```
 
@@ -582,7 +582,7 @@ Returns an object with booleans representing the payment status.
 #### _Example_ <!-- omit in toc -->
 
 ```js
-const store = select( PAYMENT_STORE_KEY );
+const store = select( paymentStore );
 const currentStatus = store.getCurrentStatus();
 ```
 

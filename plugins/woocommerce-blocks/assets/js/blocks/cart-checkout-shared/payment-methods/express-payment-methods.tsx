@@ -15,6 +15,11 @@ import {
 import { useEditorContext } from '@woocommerce/base-context';
 import deprecated from '@wordpress/deprecated';
 import { useDispatch, useSelect } from '@wordpress/data';
+import {
+	ActionCreatorsOf,
+	ConfigOf,
+	CurriedSelectorsOf,
+} from '@wordpress/data/build-types/types';
 
 /**
  * Internal dependencies
@@ -22,6 +27,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import PaymentMethodErrorBoundary from './payment-method-error-boundary';
 import { STORE_KEY as PAYMENT_STORE_KEY } from '../../../data/payment/constants';
 import { useExpressPaymentContext } from '../../cart-checkout-shared/payment-methods/express-payment/express-payment-context';
+import type { PaymentStoreDescriptor } from '../../../data/payment';
 
 const ExpressPaymentMethods = () => {
 	const { isEditor } = useEditorContext();
@@ -39,7 +45,9 @@ const ExpressPaymentMethods = () => {
 
 	const { activePaymentMethod, paymentMethodData } = useSelect(
 		( select ) => {
-			const store = select( PAYMENT_STORE_KEY );
+			const store = select(
+				PAYMENT_STORE_KEY
+			) as CurriedSelectorsOf< PaymentStoreDescriptor >;
 			return {
 				activePaymentMethod: store.getActivePaymentMethod(),
 				paymentMethodData: store.getPaymentMethodData(),
@@ -53,7 +61,9 @@ const ExpressPaymentMethods = () => {
 		__internalSetPaymentError,
 		__internalSetPaymentMethodData,
 		__internalSetExpressPaymentError,
-	} = useDispatch( PAYMENT_STORE_KEY );
+	} = useDispatch( PAYMENT_STORE_KEY ) as ActionCreatorsOf<
+		ConfigOf< PaymentStoreDescriptor >
+	>;
 	const { paymentMethods } = useExpressPaymentMethods();
 
 	const paymentMethodInterface = usePaymentMethodInterface();

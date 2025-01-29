@@ -12,14 +12,14 @@ import ExternalLinkCard from '@woocommerce/editor-components/external-link-card'
 import { __ } from '@wordpress/i18n';
 import type { BlockAttributes } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
-import { PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { paymentStore } from '@woocommerce/block-data';
 import { ADMIN_URL } from '@woocommerce/settings';
 
 const allStyleControls = [ 'height', 'borderRadius' ];
 
 const atLeastOnePaymentMethodSupportsOneOf = ( styleControl: string[] ) => {
 	const availableExpressMethods =
-		select( PAYMENT_STORE_KEY ).getAvailableExpressPaymentMethods();
+		select( paymentStore ).getAvailableExpressPaymentMethods();
 
 	return Object.values( availableExpressMethods ).reduce(
 		( acc, currentValue ) => {
@@ -106,7 +106,7 @@ const ExpressPaymentToggle = ( {
 
 const ExpressPaymentMethods = () => {
 	const availableExpressMethods =
-		select( PAYMENT_STORE_KEY ).getAvailableExpressPaymentMethods();
+		select( paymentStore ).getAvailableExpressPaymentMethods();
 
 	if ( Object.entries( availableExpressMethods ).length < 1 ) {
 		return (
