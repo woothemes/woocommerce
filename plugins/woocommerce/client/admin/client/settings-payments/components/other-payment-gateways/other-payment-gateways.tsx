@@ -132,7 +132,10 @@ export const OtherPaymentGateways = ( {
 					}
 
 					return (
-						<div key={ category.id }>
+						<div
+							className="other-payment-gateways__content__category-container"
+							key={ category.id }
+						>
 							<div className="other-payment-gateways__content__title">
 								<h3 className="other-payment-gateways__content__title__h3">
 									{ decodeEntities( category.title ) }
