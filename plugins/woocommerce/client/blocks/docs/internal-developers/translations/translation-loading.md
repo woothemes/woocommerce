@@ -230,8 +230,8 @@ The following function handles the loading of fallback translations for JS/TS fi
 ```php
 /**
  * WordPress will look for translation in the following order:
- * - wp-content/plugins/woocommerce-blocks/languages/woo-gutenberg-products-block-{locale}-{handle}.json
- * - wp-content/plugins/woocommerce-blocks/languages/woo-gutenberg-products-block-{locale}-{md5-handle}.json
+ * - wp-content/plugins/woocommerce/client/blocks/languages/woo-gutenberg-products-block-{locale}-{handle}.json
+ * - wp-content/plugins/woocommerce/client/blocks/languages/woo-gutenberg-products-block-{locale}-{md5-handle}.json
  * - wp-content/languages/plugins/woo-gutenberg-products-block-{locale}-{md5-handle}.json
  *
  * We check if the last one exists, and if it doesn't we try to load the

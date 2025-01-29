@@ -12,10 +12,10 @@ Run the following command from the repository root to build the WooCommerce plug
 pnpm --filter='@woocommerce/plugin-woocommerce' watch:build
 ```
 
-Next, run the following command from the [`woocommerce-blocks` plugin folder](../../../woocommerce-blocks/) to start a `wp-env` instance and install all the testing products, languages, etc.:
+Next, run the following command from the [`blocks` client folder](../../../blocks/) to start a `wp-env` instance and install all the testing products, languages, etc.:
 
 ```sh
-cd plugins/woocommerce-blocks/
+cd plugins/woocommerce/client/blocks/
 pnpm env:start
 ```
 

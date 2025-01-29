@@ -64,7 +64,7 @@ pnpm --filter='@woocommerce/admin-library' test:watch
 pnpm --filter='@woocommerce/admin-library' ts:check
 ```
 
-### `plugins/woocommerce-blocks`
+### `plugins/woocommerce/client/blocks`
 
 This directory contains the client for WooCommerce + Gutenberg.
 
