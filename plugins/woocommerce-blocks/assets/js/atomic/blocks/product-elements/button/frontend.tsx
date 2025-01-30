@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
-import { store, getContext as getContextFn } from '@woocommerce/interactivity';
-import type { store as StoreType } from '@wordpress/interactivity'; // Todo: if we ever release this, make sure we are not bundling the `@wordpress/interactivity` package.
+import {
+	store,
+	getContext as getContextFn,
+	useLayoutEffect,
+} from '@wordpress/interactivity';
 
-// Todo: remove once we import from `@wordpress/interactivity`.
 /**
  * Internal dependencies
  */
@@ -51,8 +53,7 @@ interface Store {
 
 const { state: wooState } = store< WooStore >( 'woocommerce' );
 
-// Todo: Remove the type cast once we import from `@wordpress/interactivity`.
-const { state } = ( store as typeof StoreType )< Store >(
+const { state } = store< Store >(
 	'woocommerce/product-button',
 	{
 		state: {
@@ -85,6 +86,7 @@ const { state } = ( store as typeof StoreType )< Store >(
 					: state.quantity;
 
 				if ( quantity === 0 ) return addToCartText;
+
 				return state.inTheCartText.replace(
 					'###',
 					quantity.toString()
@@ -144,7 +146,9 @@ const { state } = ( store as typeof StoreType )< Store >(
 				// quantity with the quantity in the cart to avoid triggering
 				// the animation. We do this only once, and we use
 				// useLayoutEffect to avoid the useEffect flickering.
-				context.tempQuantity = state.quantity;
+				useLayoutEffect( () => {
+					context.tempQuantity = state.quantity;
+				}, [] );
 			},
 			startAnimation() {
 				const context = getContext();
@@ -159,7 +163,6 @@ const { state } = ( store as typeof StoreType )< Store >(
 				}
 			},
 		},
-	}
-	// Todo: Lock this store once we import from `@wordpress/interactivity`.
-	// { lock: true }
+	},
+	{ lock: true }
 );

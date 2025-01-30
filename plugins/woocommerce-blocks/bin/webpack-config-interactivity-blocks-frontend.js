@@ -71,6 +71,12 @@ module.exports = {
 					},
 				},
 			},
+			{
+				test: /\.s[c|a]ss$/,
+				use: {
+					loader: 'ignore-loader',
+				},
+			},
 		],
 	},
 };
