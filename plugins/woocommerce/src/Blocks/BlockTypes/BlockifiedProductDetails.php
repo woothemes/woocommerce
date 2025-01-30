@@ -14,7 +14,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 	protected $block_name = 'blockified-product-details';
 
 	public function add_block_type_metadata( $metadata ) {
-		if ( $metadata['name'] === 'woocommerce/accordion-group' ) {
+		if ( 'woocommerce/accordion-group' === $metadata['name'] ) {
 			$metadata['attributes']['__isProductDetailsChildren'] = array(
 				'type'    => 'boolean',
 				'default' => false,
@@ -26,16 +26,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 
 	protected function initialize() {
 		add_filter( 'block_type_metadata', array( $this, 'add_block_type_metadata' ), 10, 2 );
-		add_filter( 'pre_render_block', array( $this, 'inject_attribute' ), 10, 3 );
 		parent::initialize();
-	}
-
-	public function inject_attribute( $block_content, $parsed_block, $parent_block ) {
-		if ( isset( $parent_block->parsed_block['blockName'] ) && $parent_block->parsed_block['blockName'] === 'woocommerce/accordion-group' ) {
-			do_action( 'qm/debug', 'inject_attribute' );
-		}
-
-		return $block_content;
 	}
 
 	/**
@@ -165,7 +156,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 
 
 	private function inject_is_product_details_children_attribute( &$accordion_group ) {
-		$accordion_group['attrs']['__isProductDetailsChildren'] = true;
+		$accordion_group['attributes']['__isProductDetailsChildren'] = true;
 	}
 
 
