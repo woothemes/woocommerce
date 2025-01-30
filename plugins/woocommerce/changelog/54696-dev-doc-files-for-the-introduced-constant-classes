@@ -1,0 +1,4 @@
+Significance: minor
+Type: dev
+
+Adds a new README.md file in the Enums root folder introducing the constant classes and updates the index file referencing it (docs/README.md).

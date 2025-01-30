@@ -10,6 +10,7 @@
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -480,7 +481,7 @@ class WC_Product_Variation extends WC_Product_Simple {
 				'shipping_class_id'  => 0,
 				'image_id'           => 0,
 				'purchase_note'      => '',
-				'catalog_visibility' => 'visible',
+				'catalog_visibility' => CatalogVisibility::VISIBLE,
 			)
 		);
 
@@ -606,9 +607,7 @@ class WC_Product_Variation extends WC_Product_Simple {
 
 	/**
 	 * Get the value of the "Cost of Goods Sold value is additive" flag for this product.
-	 *
-	 * If the flag is set to true, the effective value is equal to sum of the defined values for the variation and the parent product.
-	 * Otherwise, the effective value is equal to the defined value for this variation.
+	 * See get_cogs_effective_value_core.
 	 *
 	 * @return bool The current value of the flag.
 	 */
@@ -618,6 +617,7 @@ class WC_Product_Variation extends WC_Product_Simple {
 
 	/**
 	 * Set the value of the "Cost of Goods Sold value is additive" flag for this product.
+	 * See get_cogs_effective_value_core.
 	 *
 	 * WARNING! If the Cost of Goods Sold feature is disabled this value will NOT be persisted when the product is saved.
 	 *
@@ -628,19 +628,46 @@ class WC_Product_Variation extends WC_Product_Simple {
 	}
 
 	/**
-	 * Get the effective value of the Cost of Goods Sold for this product.
-	 * (the final, actual monetary value).
+	 * Replacement of the parent adjust_cogs_value_before_set method
+	 * to disable the conversion of zero to null.
 	 *
-	 * See get_cogs_value_is_additive.
+	 * @param float|null $value Cost value passed to the set_cogs_value method.
+	 * @return float|null The actual value that will be set for the cost property.
+	 */
+	protected function adjust_cogs_value_before_set( ?float $value ): ?float {
+		return $value;
+	}
+
+	/**
+	 * Get the effective total value of the Cost of Goods Sold for this product.
+	 * (the monetary value that will be applied to orders and used for analytics purposes).
+	 *
+	 * If "additive" flag is set, the total value is equal to sum of the effective values of the variation and the parent product.
+	 * Otherwise, if the defined value for this variation is null, the effective value is equal to the effective value of the parent product.
+	 * Otherwise, the effective value is equal to the effective value of the variation.
 	 *
 	 * @return float
 	 */
-	protected function get_cogs_effective_value_core(): float {
+	protected function get_cogs_total_value_core(): float {
 		if ( $this->get_cogs_value_is_additive() ) {
-			$parent_value = (float) get_post_meta( $this->get_parent_id(), '_cogs_total_value', true );
-			return parent::get_cogs_value() + $parent_value;
+			return $this->get_parent_cogs_effective_value() + $this->get_cogs_effective_value();
+		} else {
+			return is_null( $this->get_cogs_value() ) ? $this->get_parent_cogs_effective_value() : $this->get_cogs_effective_value();
 		}
+	}
 
-		return parent::get_cogs_value();
+	/**
+	 * Get the Cost of Goods Sold effective value of the parent product.
+	 *
+	 * @return float Cost of Goods Sold effective value of the parent product.
+	 */
+	public function get_parent_cogs_effective_value(): float {
+		$parent_cogs = $this->parent_data['cogs_effective_value'] ?? null;
+		if ( is_null( $parent_cogs ) ) {
+			$parent_product                            = wc_get_product( $this->get_parent_id() );
+			$parent_cogs                               = $parent_product ? $parent_product->get_cogs_effective_value() : 0;
+			$this->parent_data['cogs_effective_value'] = $parent_cogs;
+		}
+		return $parent_cogs;
 	}
 }

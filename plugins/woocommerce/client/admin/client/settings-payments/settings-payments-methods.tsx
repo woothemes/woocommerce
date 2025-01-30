@@ -4,6 +4,7 @@
 import {
 	type RecommendedPaymentMethod,
 	PAYMENT_SETTINGS_STORE_NAME,
+	type PaymentSettingsSelectors,
 } from '@woocommerce/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
@@ -25,12 +26,25 @@ import { PaymentMethodListItem } from './components/payment-method-list-item';
 type PaymentMethodsState = Record< string, boolean >;
 
 interface SettingsPaymentsMethodsProps {
+	/**
+	 * Current state of payment methods, mapping method IDs to their enabled status.
+	 */
 	paymentMethodsState: PaymentMethodsState;
+	/**
+	 * A callback to update the state of payment methods.
+	 */
 	setPaymentMethodsState: React.Dispatch<
 		React.SetStateAction< PaymentMethodsState >
 	>;
 }
 
+/**
+ * Combines Apple Pay and Google Pay into a single payment method.
+ *
+ * If both Apple Pay and Google Pay exist in the list of payment methods, they are combined into a single
+ * method with the ID `apple_google`, including data from both methods. If either is missing, the original
+ * list is returned.
+ */
 const combineRequestMethods = (
 	paymentMethods: RecommendedPaymentMethod[]
 ) => {
@@ -66,22 +80,29 @@ const combineRequestMethods = (
 		); // Filter null values
 };
 
+/**
+ * A component for displaying and managing the list of recommended payment methods.
+ * Combines Apple Pay and Google Pay into a single method if both exist and allows users
+ * to toggle the enabled/disabled state of each payment method.
+ */
 export const SettingsPaymentsMethods: React.FC<
 	SettingsPaymentsMethodsProps
 > = ( { paymentMethodsState, setPaymentMethodsState } ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const { paymentMethods, isFetching } = useSelect( ( select ) => {
-		const paymentProviders =
-			select( PAYMENT_SETTINGS_STORE_NAME ).getPaymentProviders() || [];
+		const paymentSettings = select(
+			PAYMENT_SETTINGS_STORE_NAME
+		) as PaymentSettingsSelectors;
+		const paymentProviders = paymentSettings.getPaymentProviders() || [];
 		const recommendedPaymentMethods =
 			getRecommendedPaymentMethods( paymentProviders );
 
 		return {
-			isFetching: select( PAYMENT_SETTINGS_STORE_NAME ).isFetching(),
+			isFetching: paymentSettings.isFetching(),
 			paymentMethods: combineRequestMethods( recommendedPaymentMethods ),
 		};
-	} );
+	}, [] );
 
 	const initialPaymentMethodsState = paymentMethods.reduce<
 		Record< string, boolean >

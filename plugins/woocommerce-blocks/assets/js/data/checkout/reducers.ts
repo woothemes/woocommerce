@@ -1,12 +1,18 @@
 /**
+ * External dependencies
+ */
+import type { Reducer } from 'redux';
+
+/**
  * Internal dependencies
  */
 import { ACTION_TYPES as types } from './action-types';
 import { STATUS } from './constants';
-import { defaultState } from './default-state';
-import { CheckoutAction } from './actions';
+import { CheckoutState, defaultState } from './default-state';
 
-const reducer = ( state = defaultState, action: CheckoutAction ) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore-next-line
+const reducer: Reducer< CheckoutState > = ( state = defaultState, action ) => {
 	let newState = state;
 	switch ( action.type ) {
 		case types.SET_IDLE:

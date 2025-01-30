@@ -4,6 +4,7 @@
 import { eye } from '@woocommerce/icons';
 import { useProductDataContext } from '@woocommerce/shared-context';
 import { __ } from '@wordpress/i18n';
+import { recordEvent } from '@woocommerce/tracks';
 import {
 	Icon,
 	ToolbarGroup,
@@ -42,10 +43,23 @@ export default function ToolbarProductTypeGroup() {
 					currentProductType?.label ||
 					__( 'Switch product type', 'woocommerce' )
 				}
+				label={ __( 'Switch product type', 'woocommerce' ) }
 				value={ currentProductType?.slug }
 				controls={ productTypes.map( ( productType ) => ( {
 					title: productType.label,
-					onClick: () => set( productType.slug ),
+					onClick: () => {
+						set( productType.slug );
+						if ( currentProductType?.slug !== productType.slug ) {
+							recordEvent(
+								'blocks_add_to_cart_with_options_product_type_switched',
+								{
+									context: 'toolbar',
+									from: currentProductType?.slug,
+									to: productType.slug,
+								}
+							);
+						}
+					},
 				} ) ) }
 			/>
 		</ToolbarGroup>

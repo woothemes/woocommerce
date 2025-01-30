@@ -7,6 +7,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -382,9 +383,11 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 		);
 
 		if ( $this->cogs_feature_is_enabled() ) {
+			$cogs_value = get_post_meta( $id, '_cogs_total_value', true );
+			$cogs_value = '' === $cogs_value ? null : (float) $cogs_value;
 			$product->set_props(
 				array(
-					'cogs_value'             => (float) get_post_meta( $id, '_cogs_total_value', true ),
+					'cogs_value'             => $cogs_value,
 					'cogs_value_is_additive' => 'yes' === get_post_meta( $id, '_cogs_value_is_additive', true ),
 				)
 			);
@@ -403,13 +406,13 @@ class WC_Product_Variation_Data_Store_CPT extends WC_Product_Data_Store_CPT impl
 		$exclude_catalog = in_array( 'exclude-from-catalog', $term_names, true );
 
 		if ( $exclude_search && $exclude_catalog ) {
-			$catalog_visibility = 'hidden';
+			$catalog_visibility = CatalogVisibility::HIDDEN;
 		} elseif ( $exclude_search ) {
-			$catalog_visibility = 'catalog';
+			$catalog_visibility = CatalogVisibility::CATALOG;
 		} elseif ( $exclude_catalog ) {
-			$catalog_visibility = 'search';
+			$catalog_visibility = CatalogVisibility::SEARCH;
 		} else {
-			$catalog_visibility = 'visible';
+			$catalog_visibility = CatalogVisibility::VISIBLE;
 		}
 
 		$product->set_parent_data(

@@ -6,6 +6,11 @@ import apiFetch from '@wordpress/api-fetch';
 import { useEffect, useState } from '@wordpress/element';
 import { debounce } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import { emailPreviewNonce } from './settings-email-preview-nonce';
+
 type EmailPreviewIframeProps = {
 	src: string;
 	setIsLoading: ( isLoading: boolean ) => void;
@@ -18,6 +23,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	settingsIds,
 } ) => {
 	const [ counter, setCounter ] = useState( 0 );
+	const nonce = emailPreviewNonce();
 
 	useEffect( () => {
 		const handleFieldChange = async ( jqEvent: JQuery.Event ) => {
@@ -32,7 +38,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 
 			try {
 				await apiFetch( {
-					path: 'wc-admin-email/settings/email/save-transient',
+					path: `wc-admin-email/settings/email/save-transient?nonce=${ nonce }`,
 					method: 'POST',
 					data: { key, value },
 				} );
@@ -63,13 +69,15 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 				}
 			} );
 		};
-	}, [ setIsLoading, settingsIds, setCounter ] );
+	}, [ nonce, setIsLoading, settingsIds, setCounter ] );
 
 	return (
-		<iframe
-			src={ `${ src }&hash=${ counter }` }
-			title={ __( 'Email preview frame', 'woocommerce' ) }
-			onLoad={ () => setIsLoading( false ) }
-		/>
+		<div>
+			<iframe
+				src={ `${ src }&hash=${ counter }` }
+				title={ __( 'Email preview frame', 'woocommerce' ) }
+				onLoad={ () => setIsLoading( false ) }
+			/>
+		</div>
 	);
 };

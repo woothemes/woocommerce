@@ -3,16 +3,15 @@
  */
 import { useSelect } from '@wordpress/data';
 import { PLUGINS_STORE_NAME } from '@woocommerce/data';
+import type { PluginSelectors } from '@woocommerce/data';
 import { differenceWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '~/marketing/data-multichannel/constants';
-import {
-	RecommendedChannelsState,
-	RecommendedChannel,
-} from '~/marketing/data-multichannel/types';
+import { RecommendedChannel } from '~/marketing/data-multichannel/types';
+import { Selectors } from '~/marketing/data-multichannel/selectors';
 
 type UseRecommendedChannels = {
 	loading: boolean;
@@ -21,12 +20,14 @@ type UseRecommendedChannels = {
 
 export const useRecommendedChannels = (): UseRecommendedChannels => {
 	return useSelect( ( select ) => {
-		const { hasFinishedResolution, getRecommendedChannels } =
-			select( STORE_KEY );
-		const { data, error } =
-			getRecommendedChannels< RecommendedChannelsState >();
+		const { hasFinishedResolution, getRecommendedChannels } = select(
+			STORE_KEY
+		) as Selectors;
+		const { data, error } = getRecommendedChannels();
 
-		const { getActivePlugins } = select( PLUGINS_STORE_NAME );
+		const { getActivePlugins } = select(
+			PLUGINS_STORE_NAME
+		) as PluginSelectors;
 		const activePlugins = getActivePlugins();
 
 		/**
@@ -44,5 +45,5 @@ export const useRecommendedChannels = (): UseRecommendedChannels => {
 			data: nonActiveRecommendedChannels,
 			error,
 		};
-	} );
+	}, [] );
 };

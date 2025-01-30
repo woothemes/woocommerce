@@ -1,95 +1,171 @@
 /**
  * External dependencies
  */
-import { store, getContext, getElement } from '@woocommerce/interactivity';
+import { store, getContext } from '@woocommerce/interactivity';
+import { HTMLElementEvent } from '@woocommerce/types';
+import { formatPrice, getCurrency } from '@woocommerce/price-format';
 
 /**
  * Internal dependencies
  */
-import { ProductFiltersContext } from '../../frontend';
+import { ActiveFilter, ProductFiltersStore } from '../../frontend';
 
-export type PriceFilterContext = {
-	minPrice: number;
-	maxPrice: number;
+export type ProductFilterPriceContext = {
 	minRange: number;
 	maxRange: number;
+	hasFilterOptions: boolean;
+	activeLabelTemplates: Record< string, string >;
 };
 
 function inRange( value: number, min: number, max: number ) {
 	return value >= min && value <= max;
 }
 
-store( 'woocommerce/product-filter-price', {
+function activeFilterValue( min: null | number, max: null | number ) {
+	if ( min === null && max === null ) return null;
+	if ( max === null ) return `${ min }-`;
+	if ( min === null ) return `-${ max }`;
+	return `${ min }-${ max }`;
+}
+
+const { state, actions } = store( 'woocommerce/product-filter-price', {
+	state: {
+		get minPrice() {
+			const context = getContext< ProductFilterPriceContext >();
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+			return productFiltersStore.state.params?.min_price
+				? parseInt( productFiltersStore.state.params.min_price, 10 )
+				: context.minRange;
+		},
+		get maxPrice() {
+			const context = getContext< ProductFilterPriceContext >();
+			const productFiltersStore = store< ProductFiltersStore >(
+				'woocommerce/product-filters'
+			);
+			return productFiltersStore.state.params?.max_price
+				? parseInt( productFiltersStore.state.params.max_price, 10 )
+				: context.maxRange;
+		},
+		get formattedMinPrice(): string {
+			return formatPrice(
+				state.minPrice,
+				getCurrency( { minorUnit: 0 } )
+			);
+		},
+		get formattedMaxPrice(): string {
+			return formatPrice(
+				state.maxPrice,
+				getCurrency( { minorUnit: 0 } )
+			);
+		},
+		get hasSelectedFilters(): boolean {
+			const context = getContext< ProductFilterPriceContext >();
+
+			return (
+				state.minPrice > context.minRange ||
+				state.maxPrice < context.maxRange
+			);
+		},
+	},
 	actions: {
-		setPrices: () => {
-			const context = getContext< PriceFilterContext >();
-			const prices: Record< string, string > = {};
-			const { ref } = getElement();
-			const targetMinPriceAttribute =
-				ref.getAttribute( 'data-target-min-price' ) ?? 'data-min-price';
-			const targetMaxPriceAttribute =
-				ref.getAttribute( 'data-target-max-price' ) ?? 'data-max-price';
-
-			const minPrice = ref.getAttribute( targetMinPriceAttribute );
+		getActiveLabel( min: null | number, max: null | number ) {
+			const context = getContext< ProductFilterPriceContext >();
 			if (
-				minPrice &&
-				inRange( minPrice, context.minRange, context.maxRange ) &&
-				minPrice < context.maxPrice
-			) {
-				prices.minPrice = minPrice;
+				min &&
+				min > context.minRange &&
+				max &&
+				max < context.maxRange
+			)
+				return context.activeLabelTemplates.minAndMax
+					.replace(
+						'{{min}}',
+						formatPrice( min, getCurrency( { minorUnit: 0 } ) )
+					)
+					.replace(
+						'{{max}}',
+						formatPrice( max, getCurrency( { minorUnit: 0 } ) )
+					);
+
+			if ( min && min > context.minRange ) {
+				return context.activeLabelTemplates.minOnly.replace(
+					'{{min}}',
+					formatPrice( min, getCurrency( { minorUnit: 0 } ) )
+				);
 			}
 
-			const maxPrice = ref.getAttribute( targetMaxPriceAttribute );
-			if (
-				maxPrice &&
-				inRange( maxPrice, context.minRange, context.maxRange ) &&
-				maxPrice > context.minPrice
-			) {
-				prices.maxPrice = maxPrice;
+			if ( max && max < context.maxRange ) {
+				return context.activeLabelTemplates.maxOnly.replace(
+					'{{max}}',
+					formatPrice( max, getCurrency( { minorUnit: 0 } ) )
+				);
 			}
 
-			Object.assign( context, prices );
-
-			const productFiltersContext = getContext< ProductFiltersContext >(
+			return '';
+		},
+		setPrice: ( type: 'min' | 'max', value: number ) => {
+			const context = getContext< ProductFilterPriceContext >();
+			const productFiltersStore = store< ProductFiltersStore >(
 				'woocommerce/product-filters'
 			);
 
-			const validatedPrices: Record< string, string > = {};
-			const params = { ...productFiltersContext.params };
-
-			if (
-				Number( context.minPrice ) > context.minRange &&
-				Number( context.minPrice ) < context.maxRange
-			) {
-				validatedPrices.min_price = context.minPrice.toString();
-			} else {
-				delete params.min_price;
-			}
-
-			if (
-				Number( context.maxPrice ) > context.minRange &&
-				Number( context.maxPrice ) < context.maxRange
-			) {
-				validatedPrices.max_price = context.maxPrice.toString();
-			} else {
-				delete params.max_price;
-			}
-
-			productFiltersContext.params = {
-				...params,
-				...validatedPrices,
+			const price: ActiveFilter[ 'price' ] = {
+				min: state.minPrice,
+				max: state.maxPrice,
 			};
+
+			if (
+				type === 'min' &&
+				value &&
+				inRange( value, context.minRange, context.maxRange ) &&
+				value < state.maxPrice
+			) {
+				price.min = value;
+			}
+
+			if (
+				type === 'max' &&
+				value &&
+				inRange( value, context.minRange, context.maxRange ) &&
+				value > state.minPrice
+			) {
+				price.max = value;
+			}
+
+			if ( price.min === context.minRange ) price.min = null;
+			if ( price.max === context.maxRange ) price.max = null;
+
+			productFiltersStore.actions.removeActiveFiltersByType( 'price' );
+
+			productFiltersStore.actions.setActiveFilter( {
+				type: 'price',
+				value: activeFilterValue( price.min, price.max ),
+				label: actions.getActiveLabel( price.min, price.max ),
+				price,
+			} );
+		},
+		setMinPrice: ( e: HTMLElementEvent< HTMLInputElement > ) => {
+			const price = parseInt( e.target.value, 10 );
+			actions.setPrice( 'min', price );
+		},
+		setMaxPrice: ( e: HTMLElementEvent< HTMLInputElement > ) => {
+			const price = parseInt( e.target.value, 10 );
+			actions.setPrice( 'max', price );
 		},
 		clearFilters: () => {
-			const productFiltersContext = getContext< ProductFiltersContext >(
+			const productFiltersStore = store< ProductFiltersStore >(
 				'woocommerce/product-filters'
 			);
-			const updatedParams = productFiltersContext.params;
 
-			delete updatedParams.min_price;
-			delete updatedParams.max_price;
+			productFiltersStore.actions.removeActiveFiltersByType( 'price' );
 
-			productFiltersContext.params = updatedParams;
+			productFiltersStore.actions.navigate();
 		},
 	},
 } );
+
+export type ProductFilterPriceStore = {
+	state: typeof state;
+	actions: typeof actions;
+};

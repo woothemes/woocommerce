@@ -3,6 +3,7 @@ const { activateTheme, DEFAULT_THEME } = require( '../../utils/themes' );
 const { setOption } = require( '../../utils/options' );
 const { AssemblerPage } = require( './assembler/assembler.page' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const CUSTOMIZE_STORE_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store';
@@ -18,7 +19,7 @@ test.describe(
 	'Store owner can view the Intro page',
 	{ tag: tags.GUTENBERG },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			// In some environments the tour blocks clicking other elements.
@@ -123,7 +124,7 @@ test.describe(
 		);
 
 		test(
-			'it shows the "non default block theme" banner when the theme is a block theme different than TT4',
+			'it shows the "non default block theme" banner when the theme is a block theme different than TT4 and redirects to the editor',
 			{ tag: [ tags.COULD_BE_LOWER_LEVEL_TEST ] },
 			async ( { page, baseURL } ) => {
 				await activateTheme( baseURL, 'twentytwentythree' );
@@ -133,8 +134,15 @@ test.describe(
 				await expect( page.locator( 'h1' ) ).toHaveText(
 					'Customize your theme'
 				);
+
+				const button = page.getByRole( 'button', {
+					name: 'Go to the Editor',
+				} );
+				await expect( button ).toBeVisible();
+				await button.click();
+				// Expecting heading from editor to be visible.
 				await expect(
-					page.getByRole( 'button', { name: 'Go to the Editor' } )
+					page.getByRole( 'heading', { name: 'Design' } )
 				).toBeVisible();
 			}
 		);

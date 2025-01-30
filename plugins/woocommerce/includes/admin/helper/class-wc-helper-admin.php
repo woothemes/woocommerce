@@ -83,12 +83,15 @@ class WC_Helper_Admin {
 			'wooUpdateCount'             => WC_Helper_Updater::get_updates_count_based_on_site_status(),
 			'woocomConnectNoticeType'    => $woo_connect_notice_type,
 			'dismissNoticeNonce'         => wp_create_nonce( 'dismiss_notice' ),
+			'connected_notice'           => PluginsHelper::get_wccom_connected_notice( $auth_user_email ),
 		);
 
 		if ( WC_Helper::is_site_connected() ) {
 			$settings['wccomHelper']['subscription_expired_notice']  = PluginsHelper::get_expired_subscription_notice( false );
 			$settings['wccomHelper']['subscription_expiring_notice'] = PluginsHelper::get_expiring_subscription_notice( false );
 			$settings['wccomHelper']['subscription_missing_notice']  = PluginsHelper::get_missing_subscription_notice();
+		} else {
+			$settings['wccomHelper']['disconnected_notice'] = PluginsHelper::get_wccom_disconnected_notice();
 		}
 
 		return $settings;
