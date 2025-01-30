@@ -7,7 +7,7 @@ namespace Automattic\WooCommerce\Enums;
 /**
  * Enum class for all the catalog visibility values.
  */
-class CatalogVisibility {
+final class CatalogVisibility {
 	/**
 	 * Product is visible on both shop and search results.
 	 *
