@@ -119,6 +119,7 @@ const CheckoutProcessor = () => {
 	const currentShippingAddress = useRef( shippingAddress );
 	const currentRedirectUrl = useRef( redirectUrl );
 	const [ isProcessingOrder, setIsProcessingOrder ] = useState( false );
+
 	const paymentMethodId = useMemo( () => {
 		const merged = {
 			...expressPaymentMethods,

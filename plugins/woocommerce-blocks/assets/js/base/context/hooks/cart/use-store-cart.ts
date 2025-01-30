@@ -32,6 +32,7 @@ import type {
 	CartResponseCoupons,
 } from '@woocommerce/types';
 import { emptyHiddenAddressFields } from '@woocommerce/base-utils';
+
 /**
  * Internal dependencies
  */
@@ -147,6 +148,7 @@ export const useStoreCart = (
 	const currentResults = useRef();
 	const billingAddressRef = useRef( defaultBillingAddress );
 	const shippingAddressRef = useRef( defaultShippingAddress );
+
 	// This will keep track of jQuery and DOM events that invalidate the store resolution.
 	useStoreCartEventListeners();
 

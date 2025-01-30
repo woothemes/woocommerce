@@ -20,6 +20,7 @@ import { useSelect } from '@wordpress/data';
 import { CART_STORE_KEY } from '@woocommerce/block-data';
 import { emptyAddressFields } from '@woocommerce/base-utils';
 import type { CartResponseBillingAddress } from '@woocommerce/types';
+
 /**
  * Internal dependencies
  */
@@ -35,7 +36,6 @@ const Block = (): JSX.Element => {
 		setUseShippingAsBilling,
 		setEditingBillingAddress,
 	} = useCheckoutAddress();
-
 	const { isEditor } = useEditorContext();
 	const isGuest = getSetting( 'currentUserId' ) === 0;
 

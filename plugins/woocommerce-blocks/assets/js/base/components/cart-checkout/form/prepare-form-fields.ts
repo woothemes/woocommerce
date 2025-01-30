@@ -7,7 +7,7 @@ import {
 	CountryAddressFields,
 	KeyedFormField,
 	LocaleSpecificFormField,
-	defaultFields as DEFAULT_FIELDS,
+	defaultFields,
 } from '@woocommerce/settings';
 import { __, sprintf } from '@wordpress/i18n';
 import { isNumber, isString } from '@woocommerce/types';
@@ -92,18 +92,23 @@ const countryAddressFields: CountryAddressFields = Object.entries(
 		return obj;
 	}, {} );
 
+/**
+ * Combines address fields, including fields from the locale, and sorts them by index.
+ */
 const prepareFormFields = (
+	// ist of field keys--only address fields matching these will be returned
 	fieldKeys: ( keyof FormFields )[],
-	country: string
+	// Address country code. If unknown, locale fields will not be merged.
+	addressCountry = ''
 ): KeyedFormField[] => {
 	const localeConfigs: FormFields =
-		country && countryAddressFields[ country ] !== undefined
-			? countryAddressFields[ country ]
+		addressCountry && countryAddressFields[ addressCountry ] !== undefined
+			? countryAddressFields[ addressCountry ]
 			: ( {} as FormFields );
 
 	return fieldKeys
 		.map( ( field ) => {
-			const defaultConfig = DEFAULT_FIELDS[ field ] || {};
+			const defaultConfig = defaultFields[ field ] || {};
 			const localeConfig = localeConfigs[ field ] || {};
 
 			return {

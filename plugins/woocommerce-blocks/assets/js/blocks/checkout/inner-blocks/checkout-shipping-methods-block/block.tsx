@@ -27,6 +27,7 @@ import type {
 import NoticeBanner from '@woocommerce/base-components/notice-banner';
 import type { ReactElement } from 'react';
 import { useMemo } from '@wordpress/element';
+
 /**
  * Renders a shipping rate control option.
  *
@@ -91,6 +92,7 @@ const Block = ( {
 	} = useShippingData();
 
 	const { shippingAddress } = useCustomerData();
+
 	const filteredShippingRates = useMemo( () => {
 		return isCollectable
 			? shippingRates.map( ( shippingRatesPackage ) => {

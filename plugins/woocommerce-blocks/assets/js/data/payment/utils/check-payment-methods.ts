@@ -18,6 +18,7 @@ import {
 	getPaymentMethods,
 } from '@woocommerce/blocks-registry';
 import { previewCart } from '@woocommerce/resource-previews';
+
 /**
  * Internal dependencies
  */

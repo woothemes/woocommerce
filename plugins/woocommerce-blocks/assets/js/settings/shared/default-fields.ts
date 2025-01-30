@@ -4,6 +4,7 @@
 import type { AllHTMLAttributes, AriaAttributes } from 'react';
 import type { JSONSchemaType } from 'ajv';
 import type { DocumentSchema } from '@woocommerce/base-hooks';
+
 /**
  * Internal dependencies
  */
