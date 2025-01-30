@@ -1,8 +1,32 @@
 declare global {
 	interface BaseSettingsField {
 		title?: string;
-		type: string;
-		id?: string;
+		type:
+			| 'text'
+			| 'password'
+			| 'title'
+			| 'multi_select_countries'
+			| 'color'
+			| 'datetime'
+			| 'datetime-local'
+			| 'date'
+			| 'month'
+			| 'time'
+			| 'week'
+			| 'number'
+			| 'email'
+			| 'url'
+			| 'tel'
+			| 'select'
+			| 'radio'
+			| 'relative_date_selector'
+			| 'textarea'
+			| 'sectionend'
+			| 'single_select_page'
+			| 'single_select_page_with_search'
+			| 'single_select_country'
+			| 'slotfill_placeholder';
+		id: string;
 		desc?: string;
 		desc_tip?: boolean | string;
 		default?: string | number | boolean | object;
@@ -22,29 +46,43 @@ declare global {
 		[ key: string ]: any;
 	}
 
-	interface GroupSettingsField extends BaseSettingsField {
-		type: 'group';
-		settings: SettingsField[];
+	interface CustomSettingsField {
+		id: string;
+		type: 'custom';
+		content: string;
 	}
+
+	interface GroupSettingsField {
+		type: 'group';
+		id: string;
+		settings: Exclude< SettingsField, GroupSettingsField >[];
+		label?: string;
+		desc?: string;
+		title?: string;
+	}
+
 	interface CheckboxSettingsField extends BaseSettingsField {
 		type: 'checkbox';
 		checkboxgroup?: 'start' | 'end' | '';
 	}
 
-	interface CheckboxGroupSettingsField extends BaseSettingsField {
+	interface CheckboxGroupSettingsField {
+		id: string;
 		type: 'checkboxgroup';
+		title: string;
 		settings: CheckboxSettingsField[];
 	}
 
 	type SettingsField =
 		| BaseSettingsField
+		| CustomSettingsField
 		| GroupSettingsField
 		| CheckboxGroupSettingsField
 		| CheckboxSettingsField;
 
 	interface SettingsSection {
 		label: string;
-		settings: SettingField[];
+		settings: SettingsField[];
 	}
 
 	interface SettingsPage {
@@ -59,15 +97,6 @@ declare global {
 
 	interface SettingsData {
 		[ key: string ]: SettingsPage;
-	}
-
-	interface SettingsGroup {
-		label: string;
-		desc: string;
-		id: string;
-		title: string;
-		type: 'group';
-		settings: SettingsField[];
 	}
 }
 

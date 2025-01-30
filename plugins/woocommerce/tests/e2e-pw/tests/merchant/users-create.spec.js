@@ -1,5 +1,6 @@
 const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
 const { logIn } = require( '../../utils/login' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const now = Date.now();
 const users = [
@@ -10,17 +11,10 @@ const users = [
 		last_name: `the ${ now }th`,
 		role: 'Customer',
 	},
-	{
-		username: `manager.${ now }`,
-		email: `manager.${ now }@example.com`,
-		first_name: `Manager`,
-		last_name: `the ${ now }th`,
-		role: 'Shop manager',
-	},
 ];
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	user: async ( { api }, use ) => {
 		const user = {};
 		await use( user );

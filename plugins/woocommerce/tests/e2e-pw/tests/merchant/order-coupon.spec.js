@@ -1,4 +1,5 @@
 const { test, expect, tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 let productId, couponId, orderId;
@@ -13,7 +14,7 @@ test.describe(
 	'WooCommerce Orders > Apply Coupon',
 	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			const api = new wcApi( {
@@ -119,50 +120,44 @@ test.describe(
 			).toBeVisible();
 		} );
 
-		test(
-			'can remove a coupon',
-			{ tag: [ tags.SKIP_ON_WPCOM ] },
-			async ( { page } ) => {
-				await page.goto(
-					`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
-				);
-				// assert that there is a coupon on the order
-				await expect(
-					page
-						.locator( '#woocommerce-order-items li' )
-						.filter( { hasText: couponCode } )
-				).toBeVisible();
-				await expect(
-					page.getByRole( 'cell', { name: 'Coupon(s)' } )
-				).toBeVisible();
-				await expect(
-					page.getByRole( 'cell', {
-						name: `- $${ couponAmount }.00`,
-					} )
-				).toBeVisible();
-				await expect(
-					page.getByRole( 'cell', {
-						name: `$${ discountedPrice }`,
-						exact: true,
-					} )
-				).toBeVisible();
-				// remove the coupon
-				await page
-					.locator( 'a.remove-coupon' )
-					.dispatchEvent( 'click' ); // have to use dispatchEvent because nothing visible to click on
+		test( 'can remove a coupon', async ( { page } ) => {
+			await page.goto(
+				`wp-admin/admin.php?page=wc-orders&action=edit&id=${ orderId }`
+			);
+			// assert that there is a coupon on the order
+			await expect(
+				page
+					.locator( '#woocommerce-order-items li' )
+					.filter( { hasText: couponCode } )
+			).toBeVisible();
+			await expect(
+				page.getByRole( 'cell', { name: 'Coupon(s)' } )
+			).toBeVisible();
+			await expect(
+				page.getByRole( 'cell', {
+					name: `- $${ couponAmount }.00`,
+				} )
+			).toBeVisible();
+			await expect(
+				page.getByRole( 'cell', {
+					name: `$${ discountedPrice }`,
+					exact: true,
+				} )
+			).toBeVisible();
+			// remove the coupon
+			await page.locator( 'a.remove-coupon' ).dispatchEvent( 'click' ); // have to use dispatchEvent because nothing visible to click on
 
-				// make sure the coupon was removed
-				await expect(
-					page.locator( '.wc_coupon_list li', {
-						hasText: couponCode,
-					} )
-				).toBeHidden();
-				await expect(
-					page
-						.getByRole( 'cell', { name: `$${ productPrice }` } )
-						.nth( 1 )
-				).toBeVisible();
-			}
-		);
+			// make sure the coupon was removed
+			await expect(
+				page.locator( '.wc_coupon_list li', {
+					hasText: couponCode,
+				} )
+			).toBeHidden();
+			await expect(
+				page
+					.getByRole( 'cell', { name: `$${ productPrice }` } )
+					.nth( 1 )
+			).toBeVisible();
+		} );
 	}
 );

@@ -41,6 +41,7 @@ import {
 } from '../../utils/black-background-pattern-update-button';
 import { useIsActiveNewNeutralVariation } from '../../hooks/use-is-active-new-neutral-variation';
 import './style.scss';
+import { PatternWithBlocks } from '~/customize-store/types/pattern';
 
 export const SidebarNavigationScreenHomepage = ( {
 	onNavigateBackClick,
@@ -66,7 +67,7 @@ export const SidebarNavigationScreenHomepage = ( {
 	);
 
 	const onClickPattern = useCallback(
-		( pattern, selectedBlocks ) => {
+		( pattern: PatternWithBlocks, selectedBlocks: BlockInstance[] ) => {
 			if ( pattern === selectedPattern ) {
 				return;
 			}

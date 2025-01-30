@@ -3,11 +3,15 @@
  */
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { getAdminLink } from '@woocommerce/settings';
+import { dispatch } from '@wordpress/data';
 /* eslint-disable @woocommerce/dependency-group */
 // @ts-ignore No types for this exist yet.
 import { privateApis as routerPrivateApis } from '@wordpress/router';
 // @ts-ignore No types for this exist yet.
 import { unlock } from '@wordpress/edit-site/build-module/lock-unlock';
+// @ts-ignore No types for this exist yet.
+import { store as editSiteStore } from '@wordpress/edit-site/build-module/store';
 /* eslint-enable @woocommerce/dependency-group */
 
 /**
@@ -19,21 +23,14 @@ import { useActiveRoute } from './route';
 
 const { RouterProvider } = unlock( routerPrivateApis );
 
-const SettingsLayout = () => {
-	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
-
-	return (
-		<Layout
-			route={ route }
-			settingsPage={ settingsPage }
-			tabs={ tabs }
-			activeSection={ activeSection }
-		/>
-	);
-};
+// Set the back button to go to the WooCommerce home page.
+dispatch( editSiteStore ).updateSettings( {
+	__experimentalDashboardLink: getAdminLink( 'admin.php?page=wc-admin' ),
+} );
 
 export const SettingsEditor = () => {
 	const isRequiredGutenbergVersion = isGutenbergVersionAtLeast( 19.0 );
+	const { route, settingsPage, tabs, activeSection } = useActiveRoute();
 
 	if ( ! isRequiredGutenbergVersion ) {
 		return (
@@ -48,11 +45,16 @@ export const SettingsEditor = () => {
 	}
 
 	return (
-		<RouterProvider>
-			<SettingsLayout />
-		</RouterProvider>
+		<Layout
+			route={ route }
+			settingsPage={ settingsPage }
+			tabs={ tabs }
+			activeSection={ activeSection }
+		/>
 	);
 };
 
 export * from './components';
 export * from './legacy';
+export * from './route';
+export { RouterProvider };

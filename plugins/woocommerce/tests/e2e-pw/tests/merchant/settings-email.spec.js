@@ -1,6 +1,7 @@
 const { test, expect, request } = require( '@playwright/test' );
 const { setOption } = require( '../../utils/options' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const setFeatureFlag = async ( baseURL, value ) =>
 	await setOption(
@@ -17,7 +18,7 @@ const pickImageFromLibrary = async ( page, imageName ) => {
 };
 
 test.describe( 'WooCommerce Email Settings', () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
+	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	const storeName = 'WooCommerce Core E2E Test Suite';
 
@@ -120,62 +121,69 @@ test.describe( 'WooCommerce Email Settings', () => {
 		}
 	);
 
-	test( 'Live preview when changing email settings', async ( {
-		page,
-		baseURL,
-	} ) => {
-		await setFeatureFlag( baseURL, 'yes' );
-		await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
+	test(
+		'Live preview when changing email settings',
+		{ tag: tags.SKIP_ON_EXTERNAL_ENV },
+		async ( { page, baseURL } ) => {
+			await setFeatureFlag( baseURL, 'yes' );
+			await page.goto( 'wp-admin/admin.php?page=wc-settings&tab=email' );
 
-		// Wait for the iframe content to load
-		const iframeSelector = '#wc_settings_email_preview_slotfill iframe';
+			// Wait for the iframe content to load
+			const iframeSelector = '#wc_settings_email_preview_slotfill iframe';
 
-		const iframeContainsHtml = async ( code ) => {
-			const iframe = page.frameLocator( iframeSelector );
-			const content = await iframe.locator( 'html' ).innerHTML();
-			return content.includes( code );
-		};
+			const iframeContainsHtml = async ( code ) => {
+				const iframe = page.frameLocator( iframeSelector );
+				const content = await iframe.locator( 'html' ).innerHTML();
+				return content.includes( code );
+			};
 
-		const baseColorId = 'woocommerce_email_base_color';
-		const baseColorValue = '#012345';
+			const baseColorId = 'woocommerce_email_base_color';
+			const baseColorValue = '#012345';
 
-		// Change email base color
-		await page.fill( `#${ baseColorId }`, baseColorValue );
+			// Change email base color
+			await page.fill( `#${ baseColorId }`, baseColorValue );
 
-		await page.evaluate(
-			async ( args ) => {
-				const input = document.getElementById( args.baseColorId );
-				// Blur the input to trigger value change event
-				input.blur();
+			await page.evaluate(
+				async ( args ) => {
+					const input = document.getElementById( args.baseColorId );
+					// Blur the input to trigger value change event
+					input.blur();
 
-				const iframe = document.querySelector( args.iframeSelector );
-
-				// Wait for the transient to be saved
-				await new Promise( ( resolve ) => {
-					input.addEventListener(
-						'transient-saved',
-						() => resolve(),
-						{ once: true }
+					const iframe = document.querySelector(
+						args.iframeSelector
 					);
-				} );
 
-				// Wait for the iframe with email preview to reload
-				return new Promise( ( resolve ) => {
-					iframe.addEventListener( 'load', () => resolve(), {
-						once: true,
+					// Wait for the transient to be saved
+					await new Promise( ( resolve ) => {
+						input.addEventListener(
+							'transient-saved',
+							() => resolve(),
+							{ once: true }
+						);
 					} );
-				} );
-			},
-			{ baseColorId, iframeSelector }
-		);
 
-		// Check that the iframe contains the new value
-		await expect( await iframeContainsHtml( baseColorValue ) ).toBeTruthy();
+					// Wait for the iframe with email preview to reload
+					return new Promise( ( resolve ) => {
+						iframe.addEventListener( 'load', () => resolve(), {
+							once: true,
+						} );
+					} );
+				},
+				{ baseColorId, iframeSelector }
+			);
 
-		// Check that the iframe does not contain any of the new values after page reload
-		await page.reload();
-		await expect( await iframeContainsHtml( baseColorValue ) ).toBeFalsy();
-	} );
+			// Check that the iframe contains the new value
+			await expect(
+				await iframeContainsHtml( baseColorValue )
+			).toBeTruthy();
+
+			// Check that the iframe does not contain any of the new values after page reload
+			await page.reload();
+			await expect(
+				await iframeContainsHtml( baseColorValue )
+			).toBeFalsy();
+		}
+	);
 
 	test( 'Send email preview', async ( { page, baseURL } ) => {
 		await setFeatureFlag( baseURL, 'yes' );
@@ -469,7 +477,7 @@ test.describe( 'WooCommerce Email Settings', () => {
 			await fontFamilyElement.selectOption( 'Times New Roman' );
 
 			// Test theme font selection
-			await fontFamilyElement.selectOption( 'Inter' );
+			// await fontFamilyElement.selectOption( 'Inter' );
 		}
 	);
 

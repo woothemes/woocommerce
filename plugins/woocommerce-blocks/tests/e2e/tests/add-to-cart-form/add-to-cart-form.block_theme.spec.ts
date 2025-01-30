@@ -213,12 +213,6 @@ test.describe( `${ blockData.name } Block`, () => {
 	} );
 
 	test.describe( 'Stepper Layout', () => {
-		test.beforeEach( async ( { requestUtils } ) => {
-			await requestUtils.setFeatureFlag(
-				'add-to-cart-with-options-stepper-layout',
-				true
-			);
-		} );
 		test( 'has the stepper option visible', async ( {
 			admin,
 			editor,
@@ -481,7 +475,7 @@ test.describe( `${ blockData.name } Block`, () => {
 		await blockUtils.configureSingleProductBlock( productName );
 
 		const addToCartFormBlock = await editor.getBlockByName(
-			'woocommerce/add-to-cart-form'
+			blockData.slug
 		);
 		await editor.selectBlocks( addToCartFormBlock );
 

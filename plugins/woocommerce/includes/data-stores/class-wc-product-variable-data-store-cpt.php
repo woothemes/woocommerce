@@ -5,6 +5,8 @@
  * @package WooCommerce\Classes
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -142,12 +144,12 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					'ID'         => 'ASC',
 				),
 				'fields'      => 'ids',
-				'post_status' => array( 'publish', 'private' ),
+				'post_status' => array( ProductStatus::PUBLISH, ProductStatus::PRIVATE ),
 				'numberposts' => -1, // phpcs:ignore WordPress.VIP.PostsPerPage.posts_per_page_numberposts
 			);
 
 			$visible_only_args                = $all_args;
-			$visible_only_args['post_status'] = 'publish';
+			$visible_only_args['post_status'] = ProductStatus::PUBLISH;
 
 			if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
 				$visible_only_args['tax_query'][] = array(
@@ -161,7 +163,10 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			$children['visible'] = get_posts( apply_filters( 'woocommerce_variable_children_args', $visible_only_args, $product, true ) );
 			$children['version'] = $transient_version;
 
-			set_transient( $children_transient_name, $children, DAY_IN_SECONDS * 30 );
+			// Validate the children data before storing it in the transient.
+			if ( $this->validate_children_data( $children, $transient_version ) ) {
+				set_transient( $children_transient_name, $children, DAY_IN_SECONDS * 30 );
+			}
 		}
 
 		$children['all']     = wp_parse_id_list( (array) $children['all'] );
@@ -386,7 +391,10 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					$transient_cached_prices_array[ $price_hash ][ $key ] = $values;
 				}
 
-				set_transient( $transient_name, wp_json_encode( $transient_cached_prices_array ), DAY_IN_SECONDS * 30 );
+				// Validate the prices data before storing it in the transient.
+				if ( $this->validate_prices_data( $transient_cached_prices_array, $transient_version ) ) {
+					set_transient( $transient_name, wp_json_encode( $transient_cached_prices_array ), DAY_IN_SECONDS * 30 );
+				}
 			}
 
 			/**
@@ -673,7 +681,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					'post_parent' => $product_id,
 					'post_type'   => 'product_variation',
 					'fields'      => 'ids',
-					'post_status' => array( 'any', 'trash', 'auto-draft' ),
+					'post_status' => array( 'any', ProductStatus::TRASH, ProductStatus::AUTO_DRAFT ),
 					'numberposts' => -1, // phpcs:ignore WordPress.VIP.PostsPerPage.posts_per_page_numberposts
 				)
 			)

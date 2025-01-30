@@ -8,7 +8,6 @@ import {
 	InnerBlockLayoutContextProvider,
 	ProductDataContextProvider,
 } from '@woocommerce/shared-context';
-import { createBlocksFromTemplate } from '@woocommerce/atomic-utils';
 import { PanelBody, Button } from '@wordpress/components';
 import { backup } from '@wordpress/icons';
 import { ProductResponseItem } from '@woocommerce/types';
@@ -19,6 +18,11 @@ import {
 	// @ts-ignore
 	BlockContextProvider,
 } from '@wordpress/block-editor';
+// eslint-disable-next-line @woocommerce/dependency-group
+import {
+	// @ts-expect-error Type definitions for this function are missing in Gutenberg
+	createBlocksFromInnerBlocksTemplate,
+} from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -44,7 +48,7 @@ const LayoutEditor = ( {
 	const resetInnerBlocks = useCallback( () => {
 		replaceInnerBlocks(
 			clientId,
-			createBlocksFromTemplate( DEFAULT_INNER_BLOCKS ),
+			createBlocksFromInnerBlocksTemplate( DEFAULT_INNER_BLOCKS ),
 			false
 		);
 	}, [ clientId, replaceInnerBlocks ] );

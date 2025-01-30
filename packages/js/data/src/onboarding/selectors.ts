@@ -153,6 +153,7 @@ export type OnboardingSelectors = {
 	) => ReturnType< typeof getTaskListsByIds >;
 	getTaskLists: () => ReturnType< typeof getTaskLists >;
 	getTaskList: ( id: string ) => ReturnType< typeof getTaskList >;
+	getTask: ( id: string ) => ReturnType< typeof getTask >;
 	getFreeExtensions: () => ReturnType< typeof getFreeExtensions >;
 	getCoreProfilerCompletedSteps: () => ReturnType<
 		typeof getCoreProfilerCompletedSteps

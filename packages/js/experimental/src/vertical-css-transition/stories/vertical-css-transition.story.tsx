@@ -28,10 +28,12 @@ const Parent: React.FC< VerticalCSSTransitionProps > = ( args ) => {
 				{ expanded ? 'collapse' : 'expand' }
 			</button>
 			<VerticalCSSTransition { ...args } in={ expanded }>
-				<div>some content</div>
-				<div>
-					some more content <br /> line 2 <br /> line 3
-				</div>
+				<>
+					<div>some content</div>
+					<div>
+						some more content <br /> line 2 <br /> line 3
+					</div>
+				</>
 			</VerticalCSSTransition>
 		</>
 	);

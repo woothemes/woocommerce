@@ -1,7 +1,3 @@
-const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
-const { fillPageTitle, publishPage } = require( '../../utils/editor' );
-const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
-
 /**
  * External dependencies
  */
@@ -10,7 +6,17 @@ import {
 	getCanvas,
 	goToPageEditor,
 	insertBlock,
+	publishPage,
 } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
+const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
 const simpleProductName = 'Simplest Product';
 const singleProductPrice = '555.00';
@@ -48,14 +54,14 @@ const blocks = [
 let productId, shippingZoneId, productTagId, attributeId, productCategoryId;
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Woocommerce Blocks',
 } );
 
 test.describe(
 	'Add WooCommerce Blocks Into Page',
 	{
-		tag: [ tags.GUTENBERG, tags.SKIP_ON_PRESSABLE, tags.SKIP_ON_WPCOM ],
+		tag: [ tags.GUTENBERG, tags.SKIP_ON_EXTERNAL_ENV ],
 	},
 	() => {
 		test.beforeAll( async ( { api } ) => {

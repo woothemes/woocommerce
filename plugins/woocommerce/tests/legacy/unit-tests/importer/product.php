@@ -5,6 +5,7 @@
  * @package WooCommerce\Tests\Importer
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 /**
@@ -363,7 +364,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'       => 0,
 				'product_url'           => '',
 				'button_text'           => '',
-				'status'                => 'publish',
+				'status'                => ProductStatus::PUBLISH,
 				'raw_image_id'          => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_1_front.jpg',
 				'raw_gallery_image_ids' => array( 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_1_back.jpg' ),
 				'virtual'               => '',
@@ -407,7 +408,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'       => 90,
 				'product_url'           => '',
 				'button_text'           => '',
-				'status'                => 'publish',
+				'status'                => ProductStatus::PUBLISH,
 				'raw_image_id'          => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/cd_1_angle.jpg',
 				'raw_gallery_image_ids' => array( 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/cd_1_flat.jpg' ),
 				'virtual'               => true,
@@ -460,7 +461,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'    => 0,
 				'product_url'        => 'https://woocommerce.com/products/product-csv-import-suite/',
 				'button_text'        => 'Buy on WooCommerce.com',
-				'status'             => 'publish',
+				'status'             => ProductStatus::PUBLISH,
 				'raw_image_id'       => null,
 				'virtual'            => false,
 				'downloadable'       => false,
@@ -496,7 +497,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'       => 0,
 				'product_url'           => '',
 				'button_text'           => '',
-				'status'                => 'publish',
+				'status'                => ProductStatus::PUBLISH,
 				'raw_image_id'          => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_4_front.jpg',
 				'raw_gallery_image_ids' => array(
 					'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_4_back.jpg',
@@ -548,7 +549,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'    => 0,
 				'product_url'        => '',
 				'button_text'        => '',
-				'status'             => 'publish',
+				'status'             => ProductStatus::PUBLISH,
 				'raw_image_id'       => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_4_front.jpg',
 				'virtual'            => false,
 				'downloadable'       => false,
@@ -593,7 +594,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'    => 0,
 				'product_url'        => '',
 				'button_text'        => '',
-				'status'             => 'publish',
+				'status'             => ProductStatus::PUBLISH,
 				'raw_image_id'       => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_3_front.jpg',
 				'virtual'            => false,
 				'downloadable'       => false,
@@ -638,7 +639,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'download_expiry'       => 0,
 				'product_url'           => '',
 				'button_text'           => '',
-				'status'                => 'publish',
+				'status'                => ProductStatus::PUBLISH,
 				'raw_image_id'          => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_1_front.jpg',
 				'raw_gallery_image_ids' => array( 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/cd_1_angle.jpg' ),
 				'virtual'               => false,

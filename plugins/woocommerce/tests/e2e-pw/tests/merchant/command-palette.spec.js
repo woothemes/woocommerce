@@ -1,9 +1,13 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-
 /**
  * External dependencies
  */
 import { disableWelcomeModal } from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+import { expect, test as baseTest } from '../../fixtures/fixtures';
 
 // need to figure out whether tests are being run on a mac
 const macOS = process.platform === 'darwin';
@@ -30,7 +34,7 @@ const clickOnCommandPaletteOption = async ( { page, optionName } ) => {
 };
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	product: async ( { api }, use ) => {
 		let product = {
 			id: 0,
@@ -60,15 +64,10 @@ test( 'can use the "Add new product" command', async ( { page } ) => {
 		optionName: 'Add new product',
 	} );
 
-	/*
-	 * Verify that the page has loaded.
-	 * Unfortunatelly, the top heading for product and coupon does not specify what new thing is being added.
-	 * We need to check the input label to make sure.
-	 */
+	// Verify that the page has loaded.
 	await expect(
-		page.getByRole( 'heading', { name: 'Add new' } )
+		page.getByRole( 'heading', { name: 'Add new product' } )
 	).toBeVisible();
-	await expect( page.getByLabel( 'Product name' ) ).toBeVisible();
 } );
 
 test( 'can use the "Add new order" command', async ( { page } ) => {

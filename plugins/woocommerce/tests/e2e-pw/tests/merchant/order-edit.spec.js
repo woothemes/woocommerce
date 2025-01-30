@@ -2,11 +2,13 @@ const { test, expect } = require( '@playwright/test' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 const uuid = require( 'uuid' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
+
+test.use( { storageState: ADMIN_STATE_PATH } );
 
 test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
-
 	let orderId, secondOrderId, orderToCancel, customerId;
+	const username = `big.archie.${ Date.now() }`;
 
 	test.beforeAll( async ( { baseURL } ) => {
 		const api = new wcApi( {
@@ -37,7 +39,6 @@ test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 				orderToCancel = response.data.id;
 			} );
 
-		const username = `big.archie.${ Date.now() }`;
 		await api
 			.post( 'customers', {
 				email: `${ username }@email.addr`,
@@ -268,7 +269,7 @@ test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 			await page
 				.getByRole( 'combobox' )
 				.nth( 4 )
-				.pressSequentially( 'big.archie' );
+				.pressSequentially( username );
 			await page.waitForSelector( 'li.select2-results__option' );
 			await page.locator( 'li.select2-results__option' ).click();
 		} );
@@ -326,7 +327,7 @@ test.describe( 'Edit order', { tag: [ tags.SERVICES, tags.HPOS ] }, () => {
 			await page
 				.getByRole( 'combobox' )
 				.nth( 4 )
-				.pressSequentially( 'big.archie' );
+				.pressSequentially( username );
 			await page.waitForSelector( 'li.select2-results__option' );
 			await page.locator( 'li.select2-results__option' ).click();
 		} );
@@ -372,8 +373,6 @@ test.describe(
 	'Edit order > Downloadable product permissions',
 	{ tag: [ tags.SERVICES, tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
 		const productName = 'TDP 001';
 		const product2Name = 'TDP 002';
 		const customerBilling = {

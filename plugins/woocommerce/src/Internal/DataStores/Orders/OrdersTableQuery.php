@@ -921,8 +921,13 @@ class OrdersTableQuery {
 		if ( ! isset( $this->sql ) || '' === $this->sql ) {
 			wc_doing_it_wrong( __FUNCTION__, 'Count query can only be build after main query is built.', '7.3.0' );
 		}
-		$orders_table    = $this->tables['orders'];
-		$this->count_sql = "SELECT COUNT(DISTINCT $fields) FROM  $orders_table $join WHERE $where";
+		$orders_table = $this->tables['orders'];
+		$count_fields = "COUNT(DISTINCT $fields)";
+		if ( "{$orders_table}.id" === $fields && '' === $join ) {
+			// DISTINCT adds performance overhead, exclude the DISTINCT function when confident it is not needed.
+			$count_fields = 'COUNT(*)';
+		}
+		$this->count_sql = "SELECT $count_fields FROM $orders_table $join WHERE $where";
 
 		if ( ! $this->suppress_filters ) {
 			/**
@@ -1351,7 +1356,7 @@ class OrdersTableQuery {
 		$this->orders = array_map( 'absint', $wpdb->get_col( $this->sql ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		// Set max_num_pages and found_orders if necessary.
-		if ( ( $this->arg_isset( 'no_found_rows' ) && ! $this->args['no_found_rows'] ) || empty( $this->orders ) ) {
+		if ( ( $this->arg_isset( 'no_found_rows' ) && $this->args['no_found_rows'] ) || empty( $this->orders ) ) {
 			return;
 		}
 
