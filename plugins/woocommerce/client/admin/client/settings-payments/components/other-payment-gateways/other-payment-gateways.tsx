@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Gridicon } from '@automattic/components';
-import { Button, Tooltip } from '@wordpress/components';
+import { Button, Popover } from '@wordpress/components';
 import React, { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -10,6 +10,7 @@ import {
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
 } from '@woocommerce/data';
+import { useDebounce } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -64,6 +65,15 @@ export const OtherPaymentGateways = ( {
 	// Determine the initial expanded state based on URL params.
 	const initialExpanded = urlParams.get( 'other_pes_section' ) === 'expanded';
 	const [ isExpanded, setIsExpanded ] = useState( initialExpanded );
+	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
+
+	const hidePopoverDebounced = useDebounce( () => {
+		setPopoverVisible( false );
+	}, 500 );
+	const showPopover = () => {
+		setPopoverVisible( true );
+		hidePopoverDebounced.cancel();
+	};
 
 	// Group suggestions by category.
 	const suggestionsByCategory = useMemo(
@@ -141,17 +151,54 @@ export const OtherPaymentGateways = ( {
 								<h3 className="other-payment-gateways__content__title__h3">
 									{ decodeEntities( category.title ) }
 								</h3>
-								<Tooltip
-									text={ decodeEntities(
-										category.description
-									) }
-									placement="top-start"
+								<span
+									className="other-payment-gateways__content__title__icon-container"
+									onClick={ () =>
+										setPopoverVisible( ! isPopoverVisible )
+									}
+									onMouseEnter={ showPopover }
+									onMouseLeave={ hidePopoverDebounced }
+									onKeyDown={ ( event ) => {
+										if (
+											event.key === 'Enter' ||
+											event.key === ' '
+										) {
+											setPopoverVisible(
+												! isPopoverVisible
+											);
+										}
+									} }
+									tabIndex={ 0 }
+									role="button"
 								>
 									<Gridicon
 										icon="info-outline"
-										className="other-payment-gateways__content__title__tooltip"
+										className="other-payment-gateways__content__title__icon"
 									/>
-								</Tooltip>
+									{ isPopoverVisible && (
+										<Popover
+											className="other-payment-gateways__content__title-popover"
+											placement="top-start"
+											offset={ 4 }
+											variant="unstyled"
+											focusOnMount={ true }
+											noArrow={ true }
+											shift={ true }
+											inline={ true }
+											onClose={ () =>
+												setPopoverVisible( false )
+											}
+										>
+											<div className="components-popover__content-container">
+												<p>
+													{ decodeEntities(
+														category.description
+													) }
+												</p>
+											</div>
+										</Popover>
+									) }
+								</span>
 							</div>
 
 							<div className="other-payment-gateways__content__grid">
@@ -220,7 +267,13 @@ export const OtherPaymentGateways = ( {
 				}
 			)
 		);
-	}, [ suggestionsByCategory, installingPlugin, setupPlugin, isFetching ] );
+	}, [
+		suggestionsByCategory,
+		installingPlugin,
+		setupPlugin,
+		isFetching,
+		isPopoverVisible,
+	] );
 
 	// Don't render the component if there are no suggestions and not fetching.
 	if ( ! isFetching && suggestions.length === 0 ) {
