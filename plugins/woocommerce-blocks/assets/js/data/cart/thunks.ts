@@ -29,7 +29,11 @@ import { cartStore } from '@woocommerce/block-data';
 import { notifyQuantityChanges } from './notify-quantity-changes';
 import { updateCartErrorNotices } from './notify-errors';
 import { apiFetchWithHeaders } from '../shared-controls';
-import { getIsCustomerDataDirty, setIsCustomerDataDirty } from './utils';
+import {
+	getIsCustomerDataDirty,
+	setIsCustomerDataDirty,
+	setIgnoreSync,
+} from './utils';
 
 interface CartThunkArgs {
 	select: CurriedSelectorsOf< typeof cartStore >;
@@ -41,14 +45,16 @@ interface CartThunkArgs {
  * of any unexpected quantity changes occurred.
  */
 export const receiveCart =
-	( response: Partial< CartResponse > ) =>
+	( response: Partial< CartResponse >, options?: { sync?: boolean } ) =>
 	( { dispatch, select }: CartThunkArgs ) => {
 		const cartResponse = camelCaseKeys( response ) as unknown as Cart;
 		const oldCart = select.getCartData();
 		const oldCartErrors = [ ...oldCart.errors, ...select.getCartErrors() ];
 
 		// Set data from the response.
-		dispatch.setCartData( cartResponse );
+		if ( options?.sync === false ) setIgnoreSync( true );
+		dispatch.setCartData( cartResponse, options );
+		if ( options?.sync === false ) setIgnoreSync( false );
 
 		// Get the new cart data before showing updates.
 		const newCart = select.getCartData();
@@ -151,7 +157,7 @@ export const syncCartWithIAPIStore =
 				method: 'GET',
 				cache: 'no-store',
 			} );
-			dispatch.receiveCart( response );
+			dispatch.receiveCart( response, { sync: false } );
 			return response;
 		} catch ( error ) {
 			dispatch.receiveError( isApiErrorResponse( error ) ? error : null );

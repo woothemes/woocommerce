@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { store, effect } from '@woocommerce/interactivity';
+import { store } from '@woocommerce/interactivity';
 import type { store as StoreType } from '@wordpress/interactivity'; // Todo: remove once we import from `@wordpress/interactivity`.
 
 /**
@@ -50,6 +50,18 @@ function generateError( json: StoreAPIError ) {
 
 let pendingRefresh = false;
 let refreshTimeout = 3000;
+let eventId = 0;
+
+function emmitSyncEvent() {
+	console.log( `Cart sync started on the iAPI store: iapi-${ ++eventId }` );
+
+	window.dispatchEvent(
+		// Question: What are the usual names for WooCommerce events?
+		new CustomEvent( 'woocommerce-cart-sync-required', {
+			detail: { type: 'from_iAPI', id: eventId },
+		} )
+	);
+}
 
 // Todo: Remove the type cast once we import from `@wordpress/interactivity`.
 // Question: disable "used before defined" lint rule?
@@ -99,6 +111,9 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 
 					// Updates the local cart.
 					state.cart.items[ itemIndex ] = json;
+
+					// Dispatches the event to sync the @wordpress/data store.
+					emmitSyncEvent();
 				} catch ( error ) {
 					const message = ( error as Error ).message;
 
@@ -174,8 +189,6 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 	}
 );
 
-let ignoreUpdate = false;
-
 window.addEventListener(
 	'woocommerce-cart-sync-required',
 	async ( event: Event ) => {
@@ -187,30 +200,7 @@ window.addEventListener(
 			console.log(
 				`Cart sync received on the iAPI store: data-${ customEvent.detail.id }`
 			);
-			// Todo: investigate how to avoid infinite loops without causing racing conditions.
-			ignoreUpdate = true;
-			await actions.refreshCartItems();
-			ignoreUpdate = false;
+			actions.refreshCartItems();
 		}
 	}
 );
-
-let id = 0;
-
-// Question: Should this event be triggered manually so it's not triggered on optimistic updates?
-effect( () => {
-	// Deeply subscribe to all the `state.cart` properties.
-	JSON.stringify( state.cart );
-
-	if ( ! ignoreUpdate ) {
-		console.log( `Cart sync started on the iAPI store: iapi-${ ++id }` );
-
-		// Dispatch the event to sync the @wordpress/data store.
-		window.dispatchEvent(
-			// Question: What are the usual names for WooCommerce events?
-			new CustomEvent( 'woocommerce-cart-sync-required', {
-				detail: { type: 'from_iAPI', id },
-			} )
-		);
-	}
-} );

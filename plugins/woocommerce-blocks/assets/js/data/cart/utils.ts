@@ -140,3 +140,12 @@ export const setIsCustomerDataDirty = debounce(
 	},
 	300
 );
+
+/**
+ * Controls whether to ignore sync events.
+ */
+let ignoreSync = false;
+export const setIgnoreSync = ( value: boolean ) => {
+	ignoreSync = value;
+};
+export const getIgnoreSync = () => ignoreSync;

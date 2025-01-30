@@ -29,6 +29,7 @@ import {
 	isAddingToCart,
 } from './persistence-layer';
 import { defaultCartState } from './default-state';
+import { getIgnoreSync } from './utils';
 
 export const config = {
 	reducer,
@@ -105,19 +106,23 @@ function diffObjects( obj1, obj2, path = [] ) {
 	}
 }
 
-let previousCart = {};
+let previousCart: object | null = null;
 let id = 0;
-let ignoreUpdate = false;
 
 // Emmits event to sync iAPI store.
 subscribe( () => {
-	const cart = select( STORE_KEY ).getCartData();
-	if ( ! ignoreUpdate && previousCart !== cart ) {
+	// const { cartData } = store.instantiate().store.getState();
+	const cartData = select( STORE_KEY ).getCartData();
+	if (
+		! getIgnoreSync() &&
+		previousCart !== null &&
+		previousCart !== cartData
+	) {
 		console.groupCollapsed(
 			`Cart sync started on the @wordpress/data store: data-${ ++id }`
 		);
 		// Todo: check why there are multiple updates of the cart on page load.
-		diffObjects( previousCart, cart );
+		diffObjects( previousCart, cartData );
 		console.groupEnd();
 
 		window.dispatchEvent(
@@ -126,31 +131,25 @@ subscribe( () => {
 				detail: { type: 'from_@wordpress/data', id },
 			} )
 		);
-
-		previousCart = cart;
 	}
+	previousCart = cartData;
 }, store );
 
 // Listens to cart sync events from the iAPI store.
-window.addEventListener(
-	'woocommerce-cart-sync-required',
-	async ( event: Event ) => {
-		const customEvent = event as CustomEvent< {
-			type: string;
-			id: number;
-		} >;
-		if ( customEvent.detail.type === 'from_iAPI' ) {
-			console.log(
-				`Cart sync received on the @wordpress/data store: iapi-${ customEvent.detail.id }`
-			);
+window.addEventListener( 'woocommerce-cart-sync-required', ( event: Event ) => {
+	const customEvent = event as CustomEvent< {
+		type: string;
+		id: number;
+	} >;
+	if ( customEvent.detail.type === 'from_iAPI' ) {
+		console.log(
+			`Cart sync received on the @wordpress/data store: iapi-${ customEvent.detail.id }`
+		);
 
-			// Todo: investigate how to avoid infinite loops without causing racing conditions.
-			ignoreUpdate = true;
-			await wpDispatch( store ).syncCartWithIAPIStore();
-			ignoreUpdate = false;
-		}
+		// Todo: investigate how to avoid infinite loops without causing racing conditions.
+		wpDispatch( store ).syncCartWithIAPIStore();
 	}
-);
+} );
 
 // This will skip the debounce and immediately push changes to the server when a field is blurred.
 document.body.addEventListener( 'focusout', ( event: FocusEvent ) => {
