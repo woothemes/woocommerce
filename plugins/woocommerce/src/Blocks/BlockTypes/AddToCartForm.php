@@ -31,7 +31,7 @@ class AddToCartForm extends AbstractBlock {
 	protected function initialize() {
 		parent::initialize();
 		// Scope the excecution of this hook to be only when the add to cart form is submitted.
-		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'add_to_cart_redirect_filter' ), 10, 1 );
 		}
 	}
