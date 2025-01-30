@@ -1,102 +1,14 @@
+$admin-bar-height: 32px;
 $gallery: ".wc-block-product-gallery";
 $large-image: "#{$gallery}-large-image";
 $thumbnails: "#{$gallery}-thumbnails";
 $next-previous: "#{$large-image}-next-previous";
 $next-previous-left-off: "#{$next-previous}-left--off";
 $next-previous-right-off: "#{$next-previous}-right--off";
-$gallery-next-previous-outside-image: "#{$gallery}[data-next-previous-buttons-position='outsideTheImage']:not(.is-single-product-gallery-image)";
-$gallery-next-previous-inside-image: "#{$gallery}:not([data-next-previous-buttons-position='outsideTheImage']:not(.is-single-product-gallery-image))";
-
 $outside-image-offset: 30px;
 $outside-image-max-width: calc(100% - (2 * $outside-image-offset));
 $thumbnails-gap: 15px;
 $default-number-of-thumbnails: 3;
-$dialog-header-height: 29px;
-$dialog-header-padding-top: calc(30px / 2);
-$dialog-padding: 16px;
-$admin-bar-desktop-height: 32px;
-$admin-bar-mobile-height: 46px;
-
-$full-height-desktop: calc(100vh - (2 * $dialog-header-height) - $dialog-header-padding-top);
-$full-height-desktop-admin-bar: calc($full-height-desktop - $admin-bar-desktop-height);
-$full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-height);
-
-@mixin full-height-admin {
-	.admin-bar & {
-		max-height: $full-height-desktop-admin-bar;
-	}
-
-	@media screen and (max-width: 782px) {
-		.admin-bar & {
-			max-height: $full-height-mobile-admin-bar;
-		}
-	}
-}
-
-// Product Gallery
-#{$gallery} {
-	dialog {
-		flex-direction: column;
-		position: fixed;
-		border: none;
-		top: 0;
-		z-index: 9999;
-		padding: $dialog-padding;
-		height: 100vh;
-
-		.admin-bar & {
-			margin-top: $admin-bar-desktop-height;
-
-			.wc-block-product-gallery-dialog__header {
-				padding-top: $dialog-header-padding-top;
-			}
-		}
-
-		@media screen and (max-width: 782px) {
-			.admin-bar & {
-				margin-top: $admin-bar-mobile-height;
-			}
-		}
-
-		.wc-block-product-galler-dialog__header-right {
-			display: flex;
-			justify-content: flex-end;
-
-			.wc-block-product-gallery-dialog__close {
-				border: none;
-				background-color: transparent;
-				outline: none;
-				cursor: pointer;
-			}
-		}
-
-		#{$large-image} {
-			img {
-				max-height: $full-height-desktop;
-				width: 100%;
-			}
-
-			.wc-block-product-gallery-large-image__container {
-				height: $full-height-desktop;
-				overflow: hidden;
-			}
-
-			img,
-			.wc-block-product-gallery-large-image__container {
-				@include full-height-admin();
-			}
-
-			.wc-block-product-gallery-large-image__wrapper {
-				align-items: center;
-			}
-		}
-
-		#{$next-previous} {
-			height: $full-height-desktop;
-			@include full-height-admin();
-		}
-	}
-}
 
 // Large Image
 #{$large-image} {
@@ -104,14 +16,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	height: fit-content;
 	position: relative;
 	flex-grow: 1;
-
-	// Restrict the width of the Large Image when the Next/Previous buttons are outside the image.
-	#{$gallery-next-previous-outside-image} & .wc-block-product-gallery-large-image__image-element {
-		margin-right: auto;
-		margin-left: auto;
-		width: 100%;
-		max-width: $outside-image-max-width;
-	}
 
 	.wc-block-product-gallery-large-image__container {
 		display: flex;
@@ -136,7 +40,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		scroll-snap-align: none center;
 	}
 
-	#{$gallery-next-previous-inside-image} & .wc-block-product-gallery-large-image__image-element {
+	.wc-block-product-gallery-large-image__image-element {
 		width: 100%;
 		overflow: hidden;
 		margin-right: auto;
@@ -173,14 +77,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		top: 5px;
 		left: 5px;
 
-		// Reset the margin of the inner blocks when the Next/Previous buttons are outside the image.
-		#{$gallery-next-previous-outside-image} & > * {
-			margin-left: $outside-image-offset;
-			margin-right: $outside-image-offset;
-		}
-
-		// Unset the margin of the inner blocks when the Next/Previous buttons are inside the image.
-		#{$gallery-next-previous-inside-image}  & > * {
+		> * {
 			margin-left: unset;
 			margin-right: unset;
 		}
@@ -190,7 +87,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 // Next/Previous Buttons
 #{$next-previous} {
 	display: flex;
-	position: absolute;
+	align-items: flex-end;
 	flex-direction: row;
 	justify-content: space-between;
 	width: 100%;
@@ -243,24 +140,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	margin-right: 15px;
 }
 
-// Next/Previous Buttons Outside the Image Settings
-#{$gallery-next-previous-outside-image} .wc-block-product-gallery-large-image-next-previous-left--outside-image {
-	bottom: 0;
-	left: 0;
-	position: absolute;
-}
-
-#{$gallery-next-previous-outside-image} .wc-block-product-gallery-large-image-next-previous-right--outside-image {
-	bottom: 0;
-	right: 0;
-	position: absolute;
-}
-
-#{$gallery-next-previous-outside-image} #{$large-image} #{$next-previous} {
-	margin-right: 0;
-	margin-left: 0;
-}
-
 .wc-block-product-gallery-large-image-next-previous-container {
 	display: flex;
 	flex-direction: row;
@@ -272,38 +151,10 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		margin-top: 15px;
 		margin-bottom: 15px;
 	}
-}
 
-// Pager
-.wc-block-product-gallery-pager__pager {
-	display: flex;
-	justify-content: center;
-	list-style: none;
-	gap: $gap-small;
-	margin-top: 0;
-	margin-bottom: 0;
-	padding: 0;
-
-	button {
-		border: none;
-		background: none;
-		color: inherit;
-		font-size: inherit;
-		font-weight: inherit;
-		padding: 0;
-		cursor: pointer;
+	svg {
+		z-index: 1;
 	}
-}
-
-.wc-block-product-gallery-pager__pager-item {
-	@include font-size(regular);
-	color: $gray-600;
-	cursor: pointer;
-}
-
-.wc-block-product-gallery-pager__pager-item--is-active {
-	font-weight: bold;
-	color: $black;
 }
 
 // Thumbnails
@@ -445,6 +296,80 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 
 			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
 				font-size: 1rem;
+			}
+		}
+	}
+}
+
+$dialog-padding: 20px;
+
+body.wc-block-product-gallery-dialog-open {
+	overflow: hidden;
+}
+
+.wc-block-product-gallery-dialog {
+	height: 100vh;
+	width: 100vw;
+	padding: 0;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+	overflow: hidden;
+
+	.admin-bar & {
+		// Subtract the admin bar height.
+		height: calc(100vh - $admin-bar-height);
+		top: $admin-bar-height;
+	}
+
+	&__close-button {
+		padding: 5px;
+		position: absolute;
+		right: 25px;
+		top: 25px;
+		background: none;
+		border: none;
+		cursor: pointer;
+	}
+
+	&__content {
+		// Subtract the top and bottom padding.
+		height: calc(100vh - ($dialog-padding * 2));
+		overflow: hidden;
+		padding: 20px 0;
+
+		@media (min-width: 765px) {
+			padding: 20px 0;
+		}
+
+		.admin-bar & {
+			// Subtract the admin bar height.
+			height: calc(100vh - ($dialog-padding * 2) - $admin-bar-height);
+		}
+	}
+
+	&__images-container {
+		height: 100%;
+		overflow-y: auto;
+		box-sizing: border-box;
+		padding: 3px 0;
+	}
+
+	&__images {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		img {
+			max-width: 100%;
+			height: auto;
+			margin-bottom: 20px;
+
+			&:last-child {
+				margin-bottom: 0;
 			}
 		}
 	}

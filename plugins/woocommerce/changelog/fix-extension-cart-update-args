@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Fix an issue where extensionCartUpdate would return undefined if not overwriting dirty customer data.

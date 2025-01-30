@@ -1,5 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const searchString = 'James Doe';
@@ -74,7 +75,7 @@ test.describe(
 	'WooCommerce Orders > Search orders',
 	{ tag: [ tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		let productId, customerId, orderId;
 

@@ -17,7 +17,7 @@ import { Button } from '@ariakit/react';
 import { useShippingData } from '@woocommerce/base-context/hooks';
 import { innerBlockAreas } from '@woocommerce/blocks-checkout';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore as checkoutStoreDescriptor } from '@woocommerce/block-data';
 import ExternalLinkCard from '@woocommerce/editor-components/external-link-card';
 import { useEffect } from '@wordpress/element';
 
@@ -170,9 +170,9 @@ export const Edit = ( {
 		// each time the attribute changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ setAttributes ] );
-	const { setPrefersCollection } = useDispatch( CHECKOUT_STORE_KEY );
+	const { setPrefersCollection } = useDispatch( checkoutStoreDescriptor );
 	const { prefersCollection } = useSelect( ( select ) => {
-		const checkoutStore = select( CHECKOUT_STORE_KEY );
+		const checkoutStore = select( checkoutStoreDescriptor );
 		return {
 			prefersCollection: checkoutStore.prefersCollection(),
 		};

@@ -16,7 +16,7 @@ import {
 } from '@woocommerce/base-utils';
 import { useDispatch, useSelect, select as selectStore } from '@wordpress/data';
 import {
-	CHECKOUT_STORE_KEY,
+	checkoutStore,
 	PAYMENT_STORE_KEY,
 	validationStore,
 	CART_STORE_KEY,
@@ -62,7 +62,7 @@ const CheckoutProcessor = () => {
 		redirectUrl,
 		shouldCreateAccount,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			additionalFields: store.getAdditionalFields(),
 			customerId: store.getCustomerId(),
@@ -79,7 +79,7 @@ const CheckoutProcessor = () => {
 	} );
 
 	const { __internalSetHasError, __internalProcessCheckoutResponse } =
-		useDispatch( CHECKOUT_STORE_KEY );
+		useDispatch( checkoutStore );
 
 	const hasValidationErrors = useSelect(
 		( select ) => select( validationStore ).hasValidationErrors

@@ -6,6 +6,7 @@ const { setOption } = require( '../../../utils/options' );
 const { encodeCredentials } = require( '../../../utils/plugin-utils' );
 const { admin } = require( '../../../test-data/data' );
 const { tags } = require( '../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../playwright.config' );
 
 const test = base.extend( {
 	pageObject: async ( { page }, use ) => {
@@ -24,12 +25,12 @@ async function prepareAssembler( pageObject, baseURL ) {
 		.waitFor( { state: 'hidden' } );
 }
 
+test.use( { storageState: ADMIN_STATE_PATH } );
+
 test.describe(
 	'Assembler -> Homepage',
 	{ tag: [ tags.GUTENBERG, tags.NOT_E2E, tags.NON_CRITICAL ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
 		test.beforeAll( async ( { baseURL } ) => {
 			try {
 				// In some environments the tour blocks clicking other elements.
@@ -231,8 +232,6 @@ test.describe(
 );
 
 test.describe( 'Homepage tracking banner', { tag: tags.NOT_E2E }, () => {
-	test.use( { storageState: process.env.ADMINSTATE } );
-
 	test.beforeAll( async ( { baseURL } ) => {
 		try {
 			// In some environments the tour blocks clicking other elements.
