@@ -234,7 +234,7 @@ $dialog-padding: 20px;
 	@for $i from 3 through 8 {
 		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
 			$gap-width: $thumbnails-gap * ($i - 1);
-			$border-width: $i * $thumbnails-border-widthx * 2;
+			$border-width: $i * $thumbnails-border-width * 2;
 
 			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
 		}
