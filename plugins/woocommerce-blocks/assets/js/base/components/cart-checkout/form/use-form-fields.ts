@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import { FormFields, KeyedFormField } from '@woocommerce/settings';
+import {
+	CURRENT_USER_IS_ADMIN,
+	FormFields,
+	KeyedFormField,
+} from '@woocommerce/settings';
 import { useSchemaParser } from '@woocommerce/base-hooks';
 import { useRef } from '@wordpress/element';
 import fastDeepEqual from 'fast-deep-equal/es6';
@@ -36,24 +40,43 @@ export const useFormFields = (
 	const updatedFields = formFields.map( ( field ) => {
 		const defaultConfig = defaultFields[ field.key ] || {};
 		if ( defaultConfig.rules && parser ) {
-			if ( defaultConfig.rules.required ) {
+			if (
+				defaultConfig.rules.required &&
+				typeof defaultConfig.rules.required === 'object' &&
+				Object.keys( defaultConfig.rules.required ).length > 0
+			) {
 				const schema = {
 					type: 'object',
-					additionalProperties: true,
 					properties: defaultConfig.rules.required,
 				};
-				const validation = parser.validate( schema, data );
-
-				field.required = validation;
+				try {
+					const validation = parser.validate( schema, data );
+					field.required = validation;
+				} catch ( error ) {
+					if ( CURRENT_USER_IS_ADMIN ) {
+						// eslint-disable-next-line no-console
+						console.error( error );
+					}
+				}
 			}
-			if ( defaultConfig.rules.hidden ) {
+			if (
+				defaultConfig.rules.hidden &&
+				typeof defaultConfig.rules.hidden === 'object' &&
+				Object.keys( defaultConfig.rules.hidden ).length > 0
+			) {
 				const schema = {
 					type: 'object',
-					additionalProperties: true,
 					properties: defaultConfig.rules.hidden,
 				};
-				const result = parser.validate( schema, data );
-				field.hidden = result;
+				try {
+					const result = parser.validate( schema, data );
+					field.hidden = result;
+				} catch ( error ) {
+					if ( CURRENT_USER_IS_ADMIN ) {
+						// eslint-disable-next-line no-console
+						console.error( error );
+					}
+				}
 			}
 		}
 		return field;
