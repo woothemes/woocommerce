@@ -229,7 +229,7 @@ export const OtherPaymentGateways = ( {
 											</span>
 											<div className="other-payment-gateways__content__grid-item__content__actions">
 												<Button
-													variant="primary"
+													variant="link"
 													onClick={ () =>
 														setupPlugin(
 															extension.id,

@@ -243,8 +243,17 @@
 						display: flex;
 						gap: $gap-smaller; /* Space between buttons */
 						padding-top: 4px; /* Space between description and buttons */
+
 						button {
 							align-self: flex-start; /* Align button to the left */
+						}
+
+						button.components-button.is-link {
+							text-decoration: none;
+						}
+
+						button.components-button.is-link.is-busy {
+							padding: 0 3px;
 						}
 					}
 				}
