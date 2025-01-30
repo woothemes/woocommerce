@@ -3,6 +3,7 @@
  * Admin View: Bulk Edit Products
  */
 
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -74,10 +75,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<select class="tax_status" name="_tax_status">
 						<?php
 						$options = array(
-							''         => __( '— No change —', 'woocommerce' ),
-							'taxable'  => __( 'Taxable', 'woocommerce' ),
-							'shipping' => __( 'Shipping only', 'woocommerce' ),
-							'none'     => _x( 'None', 'Tax status', 'woocommerce' ),
+							''                         => __( '— No change —', 'woocommerce' ),
+							ProductTaxStatus::TAXABLE  => __( 'Taxable', 'woocommerce' ),
+							ProductTaxStatus::SHIPPING => __( 'Shipping only', 'woocommerce' ),
+							ProductTaxStatus::NONE     => _x( 'None', 'Tax status', 'woocommerce' ),
 						);
 						foreach ( $options as $key => $value ) {
 							echo '<option value="' . esc_attr( $key ) . '">' . esc_html( $value ) . '</option>';

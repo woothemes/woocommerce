@@ -7,6 +7,7 @@ namespace Automattic\WooCommerce\Internal\Features\ProductBlockEditor\ProductTem
 
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\Features\ProductBlockEditor\ProductTemplates\ProductFormTemplateInterface;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use WC_Tax;
 
 /**
@@ -293,7 +294,7 @@ class SimpleProductTemplate extends AbstractProductFormTemplate implements Produ
 						'options'  => array(
 							array(
 								'label' => __( 'Product and shipping', 'woocommerce' ),
-								'value' => 'taxable',
+								'value' => ProductTaxStatus::TAXABLE,
 							),
 							array(
 								'label' => __( 'Only shipping', 'woocommerce' ),

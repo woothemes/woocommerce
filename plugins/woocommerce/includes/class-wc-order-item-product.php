@@ -7,6 +7,7 @@
  * @since   3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
@@ -431,7 +432,7 @@ class WC_Order_Item_Product extends WC_Order_Item {
 	 */
 	public function get_tax_status() {
 		$product = $this->get_product();
-		return $product ? $product->get_tax_status() : 'taxable';
+		return $product ? $product->get_tax_status() : ProductTaxStatus::TAXABLE;
 	}
 
 	/*

@@ -13,6 +13,7 @@
  * @version 3.2.0
  */
 
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -230,7 +231,7 @@ final class WC_Cart_Totals {
 			$item->key                     = $cart_item_key;
 			$item->object                  = $cart_item;
 			$item->tax_class               = $cart_item['data']->get_tax_class();
-			$item->taxable                 = 'taxable' === $cart_item['data']->get_tax_status();
+			$item->taxable                 = ProductTaxStatus::TAXABLE === $cart_item['data']->get_tax_status();
 			$item->price_includes_tax      = wc_prices_include_tax();
 			$item->quantity                = $cart_item['quantity'];
 			$item->price                   = wc_add_number_precision_deep( (float) $cart_item['data']->get_price() * (float) $cart_item['quantity'] );

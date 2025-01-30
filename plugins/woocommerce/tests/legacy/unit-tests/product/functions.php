@@ -6,6 +6,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
 /**
@@ -661,26 +662,26 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 	 */
 	public function test_wc_get_products_tax() {
 		$product_1 = new WC_Product_Simple();
-		$product_1->set_tax_status( 'taxable' );
+		$product_1->set_tax_status( ProductTaxStatus::TAXABLE );
 		$product_1->set_tax_class( 'reduced-rate' );
 		$product_1->save();
 
 		$product_2 = new WC_Product_Simple();
-		$product_2->set_tax_status( 'none' );
+		$product_2->set_tax_status( ProductTaxStatus::NONE );
 		$product_2->set_tax_class( 'standard' );
 		$product_2->save();
 
 		$products = wc_get_products(
 			array(
 				'return'     => 'ids',
-				'tax_status' => 'taxable',
+				'tax_status' => ProductTaxStatus::TAXABLE,
 			)
 		);
 		$this->assertEquals( array( $product_1->get_id() ), $products );
 		$products = wc_get_products(
 			array(
 				'return'     => 'ids',
-				'tax_status' => 'none',
+				'tax_status' => ProductTaxStatus::NONE,
 			)
 		);
 		$this->assertEquals( array( $product_2->get_id() ), $products );

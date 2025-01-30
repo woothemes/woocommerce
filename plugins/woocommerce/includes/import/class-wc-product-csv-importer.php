@@ -7,6 +7,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductTaxStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 
@@ -398,7 +399,7 @@ class WC_Product_CSV_Importer extends WC_Product_Importer {
 		$value = $this->unescape_data( $value );
 
 		if ( 'true' === strtolower( $value ) || 'false' === strtolower( $value ) ) {
-			$value = wc_string_to_bool( $value ) ? 'taxable' : 'none';
+			$value = wc_string_to_bool( $value ) ? ProductTaxStatus::TAXABLE : ProductTaxStatus::NONE;
 		}
 
 		return wc_clean( $value );
