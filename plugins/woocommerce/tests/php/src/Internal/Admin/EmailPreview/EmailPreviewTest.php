@@ -72,7 +72,7 @@ class EmailPreviewTest extends WC_Unit_Test_Case {
 	public function test_it_returns_order_email_preview_under_feature_flag() {
 		$message       = $this->sut->render();
 		$order_title   = 'Thank you for your order';
-		$order_content = "Just to let you know — we've received your order #12345, and it is now being processed:";
+		$order_content = 'We’ve received your order and will let you know when it’s on its way to you!';
 		$order_product = 'Dummy Product';
 		$this->assertStringContainsString( $order_title, $message );
 		$this->assertStringContainsString( $order_content, $message );
