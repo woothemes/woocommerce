@@ -14,6 +14,7 @@ import {
 	BillingAddress,
 	CoreAddress,
 	KeyedFormField,
+	defaultFields,
 } from '@woocommerce/settings';
 import { decodeEntities } from '@wordpress/html-entities';
 import {
@@ -96,7 +97,11 @@ export const emptyHiddenAddressFields = <
 >(
 	address: T
 ): T => {
-	const addressForm = prepareFormFields( ADDRESS_FORM_KEYS, address.country );
+	const addressForm = prepareFormFields(
+		ADDRESS_FORM_KEYS,
+		defaultFields,
+		address.country
+	);
 	const newAddress = Object.assign( {}, address ) as T;
 
 	addressForm.forEach( ( { key = '', hidden = false } ) => {
@@ -119,7 +124,11 @@ export const emptyAddressFields = <
 >(
 	address: T
 ): T => {
-	const addressForm = prepareFormFields( ADDRESS_FORM_KEYS, address.country );
+	const addressForm = prepareFormFields(
+		ADDRESS_FORM_KEYS,
+		defaultFields,
+		address.country
+	);
 	const newAddress = Object.assign( {}, address ) as T;
 
 	addressForm.forEach( ( { key = '' } ) => {
@@ -191,7 +200,11 @@ export const isAddressComplete = (
 	if ( ! address.country ) {
 		return false;
 	}
-	const addressForm = prepareFormFields( ADDRESS_FORM_KEYS, address.country );
+	const addressForm = prepareFormFields(
+		ADDRESS_FORM_KEYS,
+		defaultFields,
+		address.country
+	);
 
 	// Filter the address form so only fields from the keysToCheck arg remain, if that arg is empty, then default to the
 	// full address form.
