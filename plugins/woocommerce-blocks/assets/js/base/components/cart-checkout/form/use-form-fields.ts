@@ -4,6 +4,8 @@
 import { FormFields, KeyedFormField } from '@woocommerce/settings';
 import { useCheckoutAddress } from '@woocommerce/base-context';
 import { useSchemaParser } from '@woocommerce/base-hooks';
+import { useRef } from '@wordpress/element';
+import fastDeepEqual from 'fast-deep-equal/es6';
 
 /**
  * Internal dependencies
@@ -16,11 +18,13 @@ import prepareFormFields from './prepare-form-fields';
 export const useFormFields = (
 	// List of field keys to include in the form.
 	fieldKeys: ( keyof FormFields )[],
+	// Default fields from settings.
+	defaultFields: FormFields,
 	// Form type, can be billing, shipping, contact, additional-information, or calculator.
 	formType: string
 ): KeyedFormField[] => {
-	const { defaultFields, billingAddress, shippingAddress } =
-		useCheckoutAddress();
+	const currentResults = useRef< KeyedFormField[] >( [] );
+	const { billingAddress, shippingAddress } = useCheckoutAddress();
 	const { parser, data } = useSchemaParser( formType );
 	let addressCountry = '';
 	if ( formType === 'billing' || formType === 'shipping' ) {
@@ -30,9 +34,13 @@ export const useFormFields = (
 				: shippingAddress.country;
 	}
 
-	const formFields = prepareFormFields( fieldKeys, addressCountry );
+	const formFields = prepareFormFields(
+		fieldKeys,
+		defaultFields,
+		addressCountry
+	);
 
-	return formFields.map( ( field ) => {
+	const updatedFields = formFields.map( ( field ) => {
 		const defaultConfig = defaultFields[ field.key ] || {};
 		if ( defaultConfig.rules && parser ) {
 			if ( defaultConfig.rules.required ) {
@@ -57,4 +65,13 @@ export const useFormFields = (
 		}
 		return field;
 	} );
+
+	if (
+		! currentResults.current ||
+		! fastDeepEqual( currentResults.current, updatedFields )
+	) {
+		currentResults.current = updatedFields;
+	}
+
+	return currentResults.current;
 };
