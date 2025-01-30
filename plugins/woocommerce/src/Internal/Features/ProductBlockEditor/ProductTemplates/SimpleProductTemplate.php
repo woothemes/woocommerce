@@ -7,6 +7,7 @@ namespace Automattic\WooCommerce\Internal\Features\ProductBlockEditor\ProductTem
 
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\Features\ProductBlockEditor\ProductTemplates\ProductFormTemplateInterface;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Enums\ProductStockStatus;
 use WC_Tax;
 
@@ -566,7 +567,7 @@ class SimpleProductTemplate extends AbstractProductFormTemplate implements Produ
 				'order'      => 20,
 				'attributes' => array(
 					'label'      => __( 'Hide in product catalog', 'woocommerce' ),
-					'visibility' => 'search',
+					'visibility' => CatalogVisibility::SEARCH,
 				),
 			)
 		);
@@ -577,7 +578,7 @@ class SimpleProductTemplate extends AbstractProductFormTemplate implements Produ
 				'order'      => 30,
 				'attributes' => array(
 					'label'      => __( 'Hide from search results', 'woocommerce' ),
-					'visibility' => 'catalog',
+					'visibility' => CatalogVisibility::CATALOG,
 				),
 			)
 		);

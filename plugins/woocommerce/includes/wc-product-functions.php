@@ -12,6 +12,7 @@ use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
@@ -957,10 +958,10 @@ function wc_get_product_visibility_options() {
 	return apply_filters(
 		'woocommerce_product_visibility_options',
 		array(
-			'visible' => __( 'Shop and search results', 'woocommerce' ),
-			'catalog' => __( 'Shop only', 'woocommerce' ),
-			'search'  => __( 'Search results only', 'woocommerce' ),
-			'hidden'  => __( 'Hidden', 'woocommerce' ),
+			CatalogVisibility::VISIBLE => __( 'Shop and search results', 'woocommerce' ),
+			CatalogVisibility::CATALOG => __( 'Shop only', 'woocommerce' ),
+			CatalogVisibility::SEARCH  => __( 'Search results only', 'woocommerce' ),
+			CatalogVisibility::HIDDEN  => __( 'Hidden', 'woocommerce' ),
 		)
 	);
 }

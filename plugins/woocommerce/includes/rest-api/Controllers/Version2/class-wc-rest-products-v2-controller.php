@@ -11,6 +11,7 @@
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -1768,8 +1769,8 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 				'catalog_visibility'    => array(
 					'description' => __( 'Catalog visibility.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'visible',
-					'enum'        => array( 'visible', 'catalog', 'search', 'hidden' ),
+					'default'     => CatalogVisibility::VISIBLE,
+					'enum'        => array( CatalogVisibility::VISIBLE, CatalogVisibility::CATALOG, CatalogVisibility::SEARCH, CatalogVisibility::HIDDEN ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'description'           => array(

@@ -1,6 +1,7 @@
 <?php
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
@@ -160,7 +161,7 @@ class WC_Tests_Product_CSV_Exporter extends WC_Unit_Test_Case {
 		$this->assertEquals( ProductStockStatus::IN_STOCK === $product->get_stock_status(), $row['stock_status'] );
 		$this->assertEquals( $product->get_menu_order(), $row['menu_order'] );
 
-		$this->assertContains( $row['catalog_visibility'], array( 'visible', 'catalog', 'search', 'hidden' ) );
+		$this->assertContains( $row['catalog_visibility'], array( CatalogVisibility::VISIBLE, CatalogVisibility::CATALOG, CatalogVisibility::SEARCH, CatalogVisibility::HIDDEN ) );
 		$this->assertContains( $row['backorders'], array( 1, 0, 'notify' ) );
 
 		$expected_parent = '';
