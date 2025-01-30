@@ -19,10 +19,6 @@ export interface ProductGalleryContext {
 	elementThatTriggeredDialogOpening: HTMLElement | null;
 	disableLeft: boolean;
 	disableRight: boolean;
-	touchStartX: number;
-	touchCurrentX: number;
-	isDragging: boolean;
-	currentTranslateX: number;
 }
 
 const getContext = ( ns?: string ) =>
@@ -103,9 +99,6 @@ const selectImage = (
 	disableArrows( context, newImageNumber );
 };
 
-const SWIPE_THRESHOLD = 50; // Minimum distance to trigger image change
-const SNAP_THRESHOLD = 0.3; // Percentage of image width to trigger snap
-
 const productGallery = {
 	state: {
 		get isSelected() {
@@ -128,13 +121,6 @@ const productGallery = {
 		},
 		get thumbnailTabIndex(): string {
 			return state.isSelected ? '0' : '-1';
-		},
-		get translateX(): number {
-			const context = getContext();
-			if ( ! context.isDragging ) return 0;
-
-			const delta = context.touchCurrentX - context.touchStartX;
-			return context.currentTranslateX + delta;
 		},
 	},
 	actions: {
