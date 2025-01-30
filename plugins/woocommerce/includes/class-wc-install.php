@@ -8,7 +8,6 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Notes\Notes;
-use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\TransientFiles\TransientFilesEngine;
 use Automattic\WooCommerce\Internal\DataStores\Orders\{ CustomOrdersTableController, DataSynchronizer, OrdersTableDataStore };
@@ -1194,7 +1193,7 @@ class WC_Install {
 				'exclude-from-search',
 				'exclude-from-catalog',
 				'featured',
-				ProductStockStatus::OUT_OF_STOCK,
+				'outofstock',
 				'rated-1',
 				'rated-2',
 				'rated-3',
