@@ -15,15 +15,15 @@ class CheckoutFieldsFrontend {
 	 *
 	 * @var CheckoutFields
 	 */
-	private $checkout_fields_controller;
+	private $additional_fields_controller;
 
 	/**
 	 * Sets up core fields.
 	 *
-	 * @param CheckoutFields $checkout_fields_controller Instance of the checkout field controller.
+	 * @param CheckoutFields $additional_fields_controller Instance of the checkout field controller.
 	 */
-	public function __construct( CheckoutFields $checkout_fields_controller ) {
-		$this->checkout_fields_controller = $checkout_fields_controller;
+	public function __construct( CheckoutFields $additional_fields_controller ) {
+		$this->additional_fields_controller = $additional_fields_controller;
 	}
 
 	/**
@@ -79,7 +79,7 @@ class CheckoutFieldsFrontend {
 	 */
 	public function render_order_address_fields( $address_type, $order ) {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $this->render_additional_fields( $this->checkout_fields_controller->get_order_additional_fields_with_values( $order, 'address', $address_type, 'view' ) );
+		echo $this->render_additional_fields( $this->additional_fields_controller->get_order_additional_fields_with_values( $order, 'address', $address_type, 'view' ) );
 	}
 
 	/**
@@ -89,8 +89,8 @@ class CheckoutFieldsFrontend {
 	 */
 	public function render_order_other_fields( $order ) {
 		$fields = array_merge(
-			$this->checkout_fields_controller->get_order_additional_fields_with_values( $order, 'contact', 'other', 'view' ),
-			$this->checkout_fields_controller->get_order_additional_fields_with_values( $order, 'order', 'other', 'view' ),
+			$this->additional_fields_controller->get_order_additional_fields_with_values( $order, 'contact', 'other', 'view' ),
+			$this->additional_fields_controller->get_order_additional_fields_with_values( $order, 'order', 'other', 'view' ),
 		);
 
 		if ( ! $fields ) {
@@ -114,15 +114,15 @@ class CheckoutFieldsFrontend {
 		}
 
 		$customer = new WC_Customer( get_current_user_id() );
-		$fields   = $this->checkout_fields_controller->get_fields_for_location( 'address' );
+		$fields   = $this->additional_fields_controller->get_fields_for_location( 'address' );
 
 		if ( ! $fields || ! $customer ) {
 			return;
 		}
 
 		foreach ( $fields as $key => $field ) {
-			$value = $this->checkout_fields_controller->format_additional_field_value(
-				$this->checkout_fields_controller->get_field_from_object( $key, $customer, $address_type ),
+			$value = $this->additional_fields_controller->format_additional_field_value(
+				$this->additional_fields_controller->get_field_from_object( $key, $customer, $address_type ),
 				$field
 			);
 
@@ -141,7 +141,7 @@ class CheckoutFieldsFrontend {
 	 * @return array
 	 */
 	public function edit_account_form_required_fields( $fields ) {
-		$additional_fields = $this->checkout_fields_controller->get_fields_for_location( 'contact' );
+		$additional_fields = $this->additional_fields_controller->get_fields_for_location( 'contact' );
 
 		foreach ( $additional_fields as $key => $field ) {
 			if ( ! empty( $field['required'] ) ) {
@@ -157,13 +157,13 @@ class CheckoutFieldsFrontend {
 	 */
 	public function edit_account_form_fields() {
 		$customer = new WC_Customer( get_current_user_id() );
-		$fields   = $this->checkout_fields_controller->get_fields_for_location( 'contact' );
+		$fields   = $this->additional_fields_controller->get_fields_for_location( 'contact' );
 
 		foreach ( $fields as $key => $field ) {
 			$field_key           = CheckoutFields::get_group_key( 'other' ) . $key;
 			$form_field          = $field;
 			$form_field['id']    = $field_key;
-			$form_field['value'] = $this->checkout_fields_controller->get_field_from_object( $key, $customer, 'contact' );
+			$form_field['value'] = $this->additional_fields_controller->get_field_from_object( $key, $customer, 'contact' );
 
 			if ( 'select' === $field['type'] ) {
 				$form_field['options'] = array_column( $field['options'], 'label', 'value' );
@@ -188,7 +188,7 @@ class CheckoutFieldsFrontend {
 	public function save_account_form_fields( $user_id ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$customer          = new WC_Customer( $user_id );
-		$additional_fields = $this->checkout_fields_controller->get_fields_for_location( 'contact' );
+		$additional_fields = $this->additional_fields_controller->get_fields_for_location( 'contact' );
 		$field_values      = array();
 
 		foreach ( array_keys( $additional_fields ) as $key ) {
@@ -197,8 +197,8 @@ class CheckoutFieldsFrontend {
 				continue;
 			}
 
-			$field_value = $this->checkout_fields_controller->sanitize_field( $key, wc_clean( wp_unslash( $_POST[ $post_key ] ) ) );
-			$validation  = $this->checkout_fields_controller->validate_field( $key, $field_value );
+			$field_value = $this->additional_fields_controller->sanitize_field( $key, wc_clean( wp_unslash( $_POST[ $post_key ] ) ) );
+			$validation  = $this->additional_fields_controller->validate_field( $key, $field_value );
 
 			if ( is_wp_error( $validation ) && $validation->has_errors() ) {
 				wc_add_notice( $validation->get_error_message(), 'error' );
@@ -210,11 +210,11 @@ class CheckoutFieldsFrontend {
 
 		// Persist individual additional fields to customer.
 		foreach ( $field_values as $key => $value ) {
-			$this->checkout_fields_controller->persist_field_for_customer( $key, $value, $customer, 'other' );
+			$this->additional_fields_controller->persist_field_for_customer( $key, $value, $customer, 'other' );
 		}
 
 		// Validate all fields for this location.
-		$location_validation = $this->checkout_fields_controller->validate_fields_for_location( $field_values, 'contact', 'other' );
+		$location_validation = $this->additional_fields_controller->validate_fields_for_location( $field_values, 'contact', 'other' );
 
 		if ( is_wp_error( $location_validation ) && $location_validation->has_errors() ) {
 			wc_add_notice( $location_validation->get_error_message(), 'error' );
@@ -233,12 +233,12 @@ class CheckoutFieldsFrontend {
 	 */
 	public function edit_address_fields( $address, $address_type ) {
 		$customer = new WC_Customer( get_current_user_id() );
-		$fields   = $this->checkout_fields_controller->get_fields_for_location( 'address' );
+		$fields   = $this->additional_fields_controller->get_fields_for_location( 'address' );
 
 		foreach ( $fields as $key => $field ) {
 			$field_key                      = CheckoutFields::get_group_key( $address_type ) . $key;
 			$address[ $field_key ]          = $field;
-			$address[ $field_key ]['value'] = $this->checkout_fields_controller->get_field_from_object( $key, $customer, $address_type );
+			$address[ $field_key ]['value'] = $this->additional_fields_controller->get_field_from_object( $key, $customer, $address_type );
 
 			if ( 'select' === $field['type'] ) {
 				$address[ $field_key ]['options'] = array_column( $field['options'], 'label', 'value' );
@@ -274,7 +274,7 @@ class CheckoutFieldsFrontend {
 	 */
 	public function save_address_fields( $user_id, $address_type, $address, $customer ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$additional_fields = $this->checkout_fields_controller->get_fields_for_location( 'address' );
+		$additional_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
 		$field_values      = array();
 
 		foreach ( array_keys( $additional_fields ) as $key ) {
@@ -284,8 +284,8 @@ class CheckoutFieldsFrontend {
 				continue;
 			}
 
-			$field_value = $this->checkout_fields_controller->sanitize_field( $key, wc_clean( wp_unslash( $_POST[ $post_key ] ) ) );
-			$validation  = $this->checkout_fields_controller->validate_field( $key, $field_value );
+			$field_value = $this->additional_fields_controller->sanitize_field( $key, wc_clean( wp_unslash( $_POST[ $post_key ] ) ) );
+			$validation  = $this->additional_fields_controller->validate_field( $key, $field_value );
 
 			if ( is_wp_error( $validation ) && $validation->has_errors() ) {
 				wc_add_notice( $validation->get_error_message(), 'error' );
@@ -297,11 +297,11 @@ class CheckoutFieldsFrontend {
 
 		// Persist individual additional fields to customer.
 		foreach ( $field_values as $key => $value ) {
-			$this->checkout_fields_controller->persist_field_for_customer( $key, $value, $customer, $address_type );
+			$this->additional_fields_controller->persist_field_for_customer( $key, $value, $customer, $address_type );
 		}
 
 		// Validate all fields for this location.
-		$location_validation = $this->checkout_fields_controller->validate_fields_for_location( array_merge( $address, $field_values ), 'address', $address_type );
+		$location_validation = $this->additional_fields_controller->validate_fields_for_location( array_merge( $address, $field_values ), 'address', $address_type );
 
 		if ( is_wp_error( $location_validation ) && $location_validation->has_errors() ) {
 			wc_add_notice( $location_validation->get_error_message(), 'error' );
