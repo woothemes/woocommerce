@@ -16,6 +16,7 @@ import {
  */
 import { getAdminSetting } from '~/utils/admin-settings';
 import { GridItemPlaceholder } from '~/settings-payments/components/grid-item-placeholder';
+import { OfficialBadge } from '../official-badge';
 
 const assetUrl = getAdminSetting( 'wcAdminAssetUrl' );
 
@@ -171,6 +172,8 @@ export const OtherPaymentGateways = ( {
 										<div className="other-payment-gateways__content__grid-item__content">
 											<span className="other-payment-gateways__content__grid-item__content__title">
 												{ extension.title }
+												{ /* All payment extension suggestions are official. */ }
+												<OfficialBadge variant="expanded" />
 											</span>
 											<span className="other-payment-gateways__content__grid-item__content__description">
 												{ decodeEntities(

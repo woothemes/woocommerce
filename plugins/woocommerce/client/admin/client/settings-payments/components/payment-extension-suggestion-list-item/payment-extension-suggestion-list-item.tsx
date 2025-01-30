@@ -23,6 +23,7 @@ import {
 import { DefaultDragHandle } from '~/settings-payments/components/sortable';
 import { StatusBadge } from '~/settings-payments/components/status-badge';
 import { IncentiveStatusBadge } from '~/settings-payments/components/incentive-status-badge';
+import { OfficialBadge } from '~/settings-payments/components/official-badge';
 
 type PaymentExtensionSuggestionListItemProps = {
 	/**
@@ -110,6 +111,8 @@ export const PaymentExtensionSuggestionListItem = ( {
 						{ incentive && (
 							<IncentiveStatusBadge incentive={ incentive } />
 						) }
+						{ /* All payment extension suggestions are official. */ }
+						<OfficialBadge variant="expanded" />
 					</span>
 					<span
 						className="woocommerce-list__item-content"
