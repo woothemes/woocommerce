@@ -65,13 +65,14 @@ export const OtherPaymentGateways = ( {
 	// Determine the initial expanded state based on URL params.
 	const initialExpanded = urlParams.get( 'other_pes_section' ) === 'expanded';
 	const [ isExpanded, setIsExpanded ] = useState( initialExpanded );
-	const [ isPopoverVisible, setPopoverVisible ] = useState( false );
+	const [ categoryIdWithPopoverVisible, setCategoryIdWithPopoverVisible ] =
+		useState( '' );
 
 	const hidePopoverDebounced = useDebounce( () => {
-		setPopoverVisible( false );
+		setCategoryIdWithPopoverVisible( '' );
 	}, 500 );
-	const showPopover = () => {
-		setPopoverVisible( true );
+	const showPopover = ( categoryId: string ) => {
+		setCategoryIdWithPopoverVisible( categoryId );
 		hidePopoverDebounced.cancel();
 	};
 
@@ -154,17 +155,27 @@ export const OtherPaymentGateways = ( {
 								<span
 									className="other-payment-gateways__content__title__icon-container"
 									onClick={ () =>
-										setPopoverVisible( ! isPopoverVisible )
+										setCategoryIdWithPopoverVisible(
+											category.id ===
+												categoryIdWithPopoverVisible
+												? ''
+												: category.id
+										)
 									}
-									onMouseEnter={ showPopover }
+									onMouseEnter={ () =>
+										showPopover( category.id )
+									}
 									onMouseLeave={ hidePopoverDebounced }
 									onKeyDown={ ( event ) => {
 										if (
 											event.key === 'Enter' ||
 											event.key === ' '
 										) {
-											setPopoverVisible(
-												! isPopoverVisible
+											setCategoryIdWithPopoverVisible(
+												category.id ===
+													categoryIdWithPopoverVisible
+													? ''
+													: category.id
 											);
 										}
 									} }
@@ -175,7 +186,8 @@ export const OtherPaymentGateways = ( {
 										icon="info-outline"
 										className="other-payment-gateways__content__title__icon"
 									/>
-									{ isPopoverVisible && (
+									{ category.id ===
+										categoryIdWithPopoverVisible && (
 										<Popover
 											className="other-payment-gateways__content__title-popover"
 											placement="top-start"
@@ -186,7 +198,9 @@ export const OtherPaymentGateways = ( {
 											shift={ true }
 											inline={ true }
 											onClose={ () =>
-												setPopoverVisible( false )
+												setCategoryIdWithPopoverVisible(
+													''
+												)
 											}
 										>
 											<div className="components-popover__content-container">
@@ -272,7 +286,7 @@ export const OtherPaymentGateways = ( {
 		installingPlugin,
 		setupPlugin,
 		isFetching,
-		isPopoverVisible,
+		categoryIdWithPopoverVisible,
 	] );
 
 	// Don't render the component if there are no suggestions and not fetching.
