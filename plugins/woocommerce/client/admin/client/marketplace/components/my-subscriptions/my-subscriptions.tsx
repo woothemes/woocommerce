@@ -131,7 +131,7 @@ export default function MySubscriptions(): JSX.Element {
 			{ wccomSettings?.connected_notice && (
 				<Notice
 					id={ 'woo-connect-notice' }
-					description={ wccomSettings?.connectedNotice }
+					description={ wccomSettings?.connected_notice }
 					isDismissible={ true }
 					variant="success"
 					onClose={ handleConnectNoticeClose }
