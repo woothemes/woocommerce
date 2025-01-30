@@ -1,10 +1,12 @@
 <?php
+declare( strict_types = 1);
 
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
+use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
 use WC_Customer;
 use WC_Data;
 use WC_Order;
@@ -242,6 +244,23 @@ class CheckoutFields {
 		// Insert new field into the correct location array.
 		$this->additional_fields[ $field_data['id'] ]        = $field_data;
 		$this->fields_locations[ $field_data['location'] ][] = $field_data['id'];
+	}
+
+	/**
+	 * Returns true if the field is required. Takes rules into consideration if a document object is provided.
+	 *
+	 * @param array               $field The field.
+	 * @param DocumentObject|null $document_object The document object.
+	 * @param string|null         $context Address context.
+	 * @return bool
+	 */
+	public function is_field_required( $field, $document_object = null, $context = null ) {
+		if ( $document_object && ! empty( $field['rules']['required'] ) ) {
+			$document_object->set_context( $context );
+			return $this->schema->validate_document_object_rules( $document_object, $field['rules']['required'] );
+		}
+
+		return true === $field['required'];
 	}
 
 	/**
