@@ -36,6 +36,7 @@ jobs:
       needs-code-validation: ${{ steps.target-changes.outputs.needs-code-validation }}
       needs-changelog-validation: ${{ steps.target-changes.outputs.needs-changelog-validation }}
       needs-markdown-validation:  ${{ steps.target-changes.outputs.needs-markdown-validation }}
+      needs-syncpack-validation:  ${{ steps.target-changes.outputs.needs-syncpack-validation }}
     steps:
       - uses: 'dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36'
         id: target-changes
@@ -47,6 +48,8 @@ jobs:
               - '{packages,plugins}/*/!(changelog/**)/**'
             needs-markdown-validation:
               - '!(.github/**)/**/*.md'
+            needs-syncpack-validation:
+              - '(.syncpackrc)|(pnpm-lock.yaml)'
 
   project-jobs:
     # Since this is a monorepo, not every pull request or change is going to impact every project.
@@ -432,6 +435,34 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           label: 'metric: flaky e2e test'
+
+  validate-syncpack:
+    name: 'Validate dependencies version'
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-syncpack-validation == 'true' }}
+    needs: [ 'identify-jobs-to-run' ]
+    runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: read
+
+    steps:
+      - uses: 'actions/checkout@v4'
+
+      - name: 'Setup - node'
+        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
+        with:
+          node-version-file: .nvmrc
+
+      - name: 'Setup - syncpack'
+        run: npm install -g syncpack@^10.9.3
+
+      - name: 'Validate - mismatches'
+        run: syncpack list-mismatches
+
+      - name: 'Validate - prompt mitigation on failed validation'
+        if: failure()
+        run: |
+          echo "Dependency version mismatch detected. This can usually be fixed automatically by updating the pinned version in \`.syncpackrc\` and then running: \`pnpm sync-dependencies\`"
+          exit 1
 
   validate-changelog:
     name: 'Validate changelog'

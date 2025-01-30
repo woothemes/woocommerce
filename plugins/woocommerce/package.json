@@ -50,11 +50,17 @@
 		"makepot": "composer run-script makepot",
 		"test": "pnpm test:unit",
 		"test:api": "pnpm test:e2e:default --project=api --workers 4",
-		"test:e2e": "pnpm test:e2e:default --project=ui",
+		"test:api:hpos": "pnpm test:e2e:with-env default-hpos-disabled --project=api-hpos-disabled --workers 4",
+		"test:e2e": "pnpm test:e2e:default --project=e2e",
 		"test:e2e:default": "pnpm test:e2e:install && pnpm test:e2e:with-env default",
 		"test:e2e:install": "pnpm playwright install chromium",
 		"test:e2e:blocks": "pnpm --filter='@woocommerce/block-library' test:e2e",
 		"test:e2e:with-env": "pnpm test:e2e:install && bash ./tests/e2e-pw/run-tests-with-env.sh",
+		"test:e2e:pressable": "pnpm test:e2e:with-env default-pressable",
+		"test:e2e:wpcom": "pnpm test:e2e:with-env default-wpcom",
+		"test:e2e:hpos": "pnpm test:e2e:with-env default-hpos-disabled --project=e2e-hpos-disabled",
+		"test:e2e:gb-stable": "pnpm test:e2e:with-env gutenberg-stable",
+		"test:e2e:gb-nightly": "pnpm test:e2e:with-env gutenberg-nightly",
 		"test:env:start": "pnpm env:test",
 		"test:perf": "./tests/performance/bin/k6 run ./tests/performance/tests/gh-action-pr-requests.js",
 		"test:perf:ci-setup": "pnpm test:perf:install-k6 && pnpm env:perf",
@@ -65,6 +71,7 @@
 		"test:metrics:ci": "../../.github/workflows/scripts/run-metrics.sh",
 		"test:php:env": "wp-env run --env-cwd='wp-content/plugins/woocommerce' tests-cli vendor/bin/phpunit -c phpunit.xml --verbose",
 		"test:php:env:watch": "wp-env run --env-cwd='wp-content/plugins/woocommerce' tests-cli vendor/bin/phpunit-watcher watch --verbose",
+		"test:plugincheck": "wp-env run tests-cli wp plugin check woocommerce",
 		"test:unit": "pnpm test:php",
 		"test:unit:watch": "pnpm test:php:watch",
 		"test:unit:env": "pnpm test:php:env",
@@ -187,6 +194,19 @@
 					]
 				},
 				{
+					"name": "Checks from plugin-check plugin",
+					"command": "test:plugincheck",
+					"optional": true,
+					"changes": [],
+					"testEnv": {
+						"start": "env:test"
+					},
+					"events": [
+						"daily-checks",
+						"release-checks"
+					]
+				},
+				{
 					"name": "Core e2e tests",
 					"testType": "e2e",
 					"command": "test:e2e",
@@ -230,7 +250,7 @@
 				{
 					"name": "Core e2e tests - Gutenberg stable",
 					"testType": "e2e",
-					"command": "test:e2e:with-env gutenberg-stable",
+					"command": "test:e2e:gb-stable",
 					"shardingArguments": [
 						"--shard=1/4",
 						"--shard=2/4",
@@ -255,7 +275,7 @@
 				{
 					"name": "Core e2e tests - Gutenberg nightly",
 					"testType": "e2e",
-					"command": "test:e2e:with-env gutenberg-nightly",
+					"command": "test:e2e:gb-nightly",
 					"shardingArguments": [
 						"--shard=1/4",
 						"--shard=2/4",
@@ -343,17 +363,14 @@
 				{
 					"name": "Core e2e tests - HPOS disabled",
 					"testType": "e2e",
-					"command": "test:e2e:with-env default-hpos-disabled --project=ui",
-					"shardingArguments": [
-						"tests/e2e-pw/**"
-					],
+					"command": "test:e2e:hpos",
+					"shardingArguments": [],
+					"changes": [],
 					"events": [
-						"pull_request",
 						"daily-checks",
 						"release-checks",
 						"core-e2e-hpos-disabled"
 					],
-					"changes": [],
 					"testEnv": {
 						"start": "env:test",
 						"config": {
@@ -491,7 +508,7 @@
 				{
 					"name": "Core API tests - HPOS disabled",
 					"testType": "api",
-					"command": "test:e2e:with-env default-hpos-disabled --project=api",
+					"command": "test:api:hpos",
 					"optional": false,
 					"changes": [
 						"client/admin/config/*.json",
@@ -679,9 +696,9 @@
 					}
 				},
 				{
-					"name": "Core e2e tests - default Pressable site",
+					"name": "Core e2e tests - Pressable site",
 					"testType": "e2e",
-					"command": "test:e2e:with-env default-pressable",
+					"command": "test:e2e:pressable",
 					"shardingArguments": [],
 					"changes": [],
 					"events": [
@@ -695,7 +712,7 @@
 					}
 				},
 				{
-					"name": "Core e2e tests - default WPCOM site",
+					"name": "Core e2e tests - WPCOM site",
 					"testType": "e2e",
 					"command": "test:e2e:with-env default-wpcom",
 					"shardingArguments": [],
@@ -805,8 +822,10 @@
 				"node_modules/@woocommerce/eslint-plugin/rules",
 				"node_modules/@woocommerce/eslint-plugin/index.js",
 				"node_modules/@woocommerce/api/dist/",
+				"node_modules/@woocommerce/classic-assets/build",
 				"node_modules/@woocommerce/block-library/build",
 				"node_modules/@woocommerce/block-library/blocks.ini",
+				"node_modules/@woocommerce/admin-library/build",
 				"package.json",
 				"!node_modules/@woocommerce/api/*.ts.map",
 				"!node_modules/@woocommerce/api/*.tsbuildinfo",
