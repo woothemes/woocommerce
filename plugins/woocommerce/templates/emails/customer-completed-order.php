@@ -12,7 +12,7 @@
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 9.7.0
+ * @version 9.8.0
  */
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
@@ -31,7 +31,12 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <?php echo $email_improvements_enabled ? '<div class="email-introduction">' : ''; ?>
 <?php /* translators: %s: Customer first name */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $order->get_billing_first_name() ) ); ?></p>
-<p><?php esc_html_e( 'We have finished processing your order.', 'woocommerce' ); ?></p>
+<?php if ( $email_improvements_enabled ) : ?>
+	<p><?php esc_html_e( 'We’ve successfully processed your order, and it’s on its way to you.', 'woocommerce' ); ?></p>
+	<p><?php esc_html_e( 'Here’s a reminder of what you’ve ordered:', 'woocommerce' ); ?></p>
+<?php else : ?>
+	<p><?php esc_html_e( 'We have finished processing your order.', 'woocommerce' ); ?></p>
+<?php endif; ?>
 <?php echo $email_improvements_enabled ? '</div>' : ''; ?>
 
 <?php

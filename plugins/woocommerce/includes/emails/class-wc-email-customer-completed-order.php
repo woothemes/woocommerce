@@ -95,7 +95,9 @@ if ( ! class_exists( 'WC_Email_Customer_Completed_Order', false ) ) :
 		 * @return string
 		 */
 		public function get_default_heading() {
-			return __( 'Thanks for shopping with us', 'woocommerce' );
+			return $this->email_improvements_enabled
+				? __( 'Good things are heading your way!', 'woocommerce' )
+				: __( 'Thanks for shopping with us', 'woocommerce' );
 		}
 
 		/**
