@@ -94,7 +94,7 @@ final class BlockTypesController {
 				}
 
 				// Only apply the updated attributes if the block is hooked after a Post Content block.
-				if ( 'woocommerce/accordion-group' === $parsed_anchor_block['blockName'] && $parsed_anchor_block['attributes']['__isProductDetailsChildren'] ) {
+				if ( 'woocommerce/accordion-group' === $parsed_anchor_block['blockName'] && $parsed_anchor_block['attrs']['__isProductDetailsChildren'] ) {
 
 					$markup_html = sprintf(
 						'<!-- wp:woocommerce/accordion-item {"openByDefault": false} --><div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
