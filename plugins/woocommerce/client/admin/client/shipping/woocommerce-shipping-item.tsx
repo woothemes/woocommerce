@@ -29,7 +29,9 @@ const WoocommerceShippingItem: React.FC< {
 			const actions = [];
 			if ( ! isSiteConnectedToJetpack ) {
 				actions.push( {
-					url: getAdminLink( 'plugins.php' ),
+					url: getAdminLink(
+						'admin.php?page=wc-settings&tab=shipping&section=woocommerce-shipping-settings'
+					),
 					label: __(
 						'Finish the setup by connecting your store to WordPress.com.',
 						'woocommerce'
@@ -47,10 +49,10 @@ const WoocommerceShippingItem: React.FC< {
 	};
 
 	return (
-		<div className="woocommerce-list__item-inner woocommerce-services-item">
+		<div className="woocommerce-list__item-inner woocommerce-shipping-plugin-item">
 			<div className="woocommerce-list__item-before">
 				<img
-					className="woocommerce-services-item__logo"
+					className="woocommerce-shipping-plugin-item__logo"
 					src={ WooIcon }
 					alt=""
 				/>
