@@ -26,7 +26,9 @@ class AddToCartWithOptionsGroupedProductSelector extends AbstractBlock {
 	 * @return string Rendered block output.
 	 */
 	protected function render( $attributes, $content, $block ): string {
-		if ( ! isset( $block->context['postId'] ) ) {
+		global $product;
+
+		if ( ! $product->is_type( 'grouped' ) ) {
 			return '';
 		}
 
