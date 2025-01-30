@@ -91,7 +91,7 @@
 		"test:e2e:jest:dev": "echo 'test:e2e:jest is no more. Use test:e2e instead.'",
 		"test:e2e:jest:dev-watch": "echo 'test:e2e:jest is no more. Use test:e2e instead.'",
 		"test:e2e:jest:update": "echo 'test:e2e:jest is no more. Use test:e2e instead.'",
-		"env:start": "pnpm --filter='@woocommerce/block-library' wp-env start --debug && ./tests/e2e/bin/test-env-setup.sh",
+		"env:start": "pnpm --filter='@woocommerce/block-library' wp-env start && ./tests/e2e/bin/test-env-setup.sh",
 		"env:restart": "pnpm run wp-env clean all && pnpm run wp-env start && ./tests/e2e/bin/test-env-setup.sh",
 		"env:stop": "pnpm run wp-env stop",
 		"test:help": "wp-scripts test-unit-js --help",
@@ -256,7 +256,7 @@
 		"webpack": "5.91.0",
 		"webpack-bundle-analyzer": "4.7.0",
 		"webpack-cli": "5.1.4",
-		"wireit": "0.14.3",
+		"wireit": "0.14.10",
 		"wordpress-data-wp-6-7": "npm:@wordpress/data@wp-6.7",
 		"wp-types": "3.63.0"
 	},

@@ -156,6 +156,8 @@ class WC_Emails {
 			WC()->payment_gateways();
 			WC()->shipping();
 
+			// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingSinceComment
+			/** This action is documented in includes/class-wc-emails.php in the send_transactional_email method. */
 			do_action_ref_array( $filter . '_notification', $args );
 		}
 	}
@@ -171,6 +173,17 @@ class WC_Emails {
 		try {
 			$args = func_get_args();
 			self::instance(); // Init self so emails exist.
+
+			/**
+			 * Action hook for email template classes to trigger the sending of an email.
+			 *
+			 * The name of the hook is based on the "parent" hook that is currently firing, that this is attached to.
+			 * See the WC_Emails::init_transactional_emails method for a list of hooks.
+			 *
+			 * @since 3.1.0
+			 *
+			 * @param array $args Args from the parent hook, which may differ depending on the hook.
+			 */
 			do_action_ref_array( current_filter() . '_notification', $args );
 		} catch ( Exception $e ) {
 			$error  = 'Transactional email triggered fatal error for callback ' . current_filter();

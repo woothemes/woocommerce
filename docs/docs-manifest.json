@@ -451,7 +451,7 @@
           "menu_title": "Free shipping customizations",
           "tags": "code-snippets",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/free_shipping_customization.md",
-          "hash": "1711cff54da5c39385d06ff8d8e0a055d3d25f68ee4855d93fefa940c8ffc916",
+          "hash": "3cf4bf7ecf4ea4138591ee6fead8268f48619e28ecb2c3b10a8cf7f6ad68ed09",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/free_shipping_customization.md",
           "id": "cac6f1ccd661588e9a5fa7405643e9c6d4da388e"
         },
@@ -1915,5 +1915,5 @@
       "categories": []
     }
   ],
-  "hash": "ea3cf88b27eb7dc0ec06cc7498ee9e6441ff4e80727a0b6b3b24cbca49dc10b7"
+  "hash": "010c87899f8432c25051b7e14b4262763197d04ffa0dc581be95945454acacb3"
 }

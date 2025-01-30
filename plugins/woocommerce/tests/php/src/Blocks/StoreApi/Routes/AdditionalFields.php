@@ -102,6 +102,7 @@ class AdditionalFields extends MockeryTestCase {
 		$wp_rest_server = null;
 		unset( WC()->countries->locale );
 		WC()->cart->empty_cart();
+		WC()->session->destroy_session();
 		remove_all_filters( 'woocommerce_get_country_locale' );
 		remove_all_actions( 'doing_it_wrong_run' );
 		$this->unregister_fields();
@@ -2353,7 +2354,7 @@ class AdditionalFields extends MockeryTestCase {
 				'required' => true,
 				'rules'    => array(
 					'required' => array(
-						'cart' => array(
+						'customer' => array(
 							'properties' => array(
 								'billing_address' => array(
 									'properties' => array(
