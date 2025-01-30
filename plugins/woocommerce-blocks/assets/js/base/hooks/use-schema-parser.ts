@@ -11,15 +11,16 @@ import {
 	checkoutStore,
 	paymentStore,
 } from '@woocommerce/block-data';
+import type Ajv from 'ajv';
 
-const useDocumentObject = ( formType: string ) => {
-	const currentResults = useRef( {
+const useDocumentObject = ( formType: string ): DocumentObject => {
+	const currentResults = useRef< DocumentObject >( {
 		cart: {},
 		checkout: {},
 		customer: {},
 	} );
 
-	const data = useSelect(
+	const data: DocumentObject = useSelect(
 		( select ) => {
 			const cartDataStore = select( cartStore );
 			const checkoutDataStore = select( checkoutStore );
@@ -32,7 +33,8 @@ const useDocumentObject = ( formType: string ) => {
 				shippingAddress,
 				billingAddress,
 				items,
-				needsPayment,
+				itemsCount,
+				itemsWeight,
 				needsShipping,
 				totals,
 			} = cartData;
@@ -40,18 +42,6 @@ const useDocumentObject = ( formType: string ) => {
 				cart: {
 					coupons: coupons.map( ( coupon ) => coupon.code ),
 					shippingRates: [
-						...new Set(
-							shippingRates
-								.map( ( shippingPackage ) =>
-									shippingPackage.shipping_rates.map(
-										( rate ) => rate.rate_id
-									)
-								)
-								.flat()
-								.filter( Boolean )
-						),
-					],
-					selectedShippingRates: [
 						...new Set(
 							shippingRates
 								.map(
@@ -63,11 +53,6 @@ const useDocumentObject = ( formType: string ) => {
 								.filter( Boolean )
 						),
 					],
-					prefersCollection:
-						typeof checkoutDataStore.prefersCollection() ===
-						'boolean'
-							? checkoutDataStore.prefersCollection()
-							: false,
 					items: items
 						.map( ( item ) =>
 							Array( item.quantity ).fill( item.id )
@@ -76,23 +61,28 @@ const useDocumentObject = ( formType: string ) => {
 					itemsType: [
 						...new Set( items.map( ( item ) => item.type ) ),
 					],
+					itemsCount,
+					itemsWeight,
 					needsShipping,
-					totals: totals.total_price,
+					prefersCollection:
+						typeof checkoutDataStore.prefersCollection() ===
+						'boolean'
+							? checkoutDataStore.prefersCollection()
+							: false,
+					totals: {
+						totalPrice: Number( totals.total_price ),
+						totalTax: Number( totals.total_tax ),
+					},
 					extensions: cartData.extensions,
 				},
 				checkout: {
-					orderId: checkoutDataStore.getOrderId(),
+					createAccount: checkoutDataStore.getShouldCreateAccount(),
 					customerNote: checkoutDataStore.getOrderNotes(),
 					additionalFields: checkoutDataStore.getAdditionalFields(),
 					paymentMethod: paymentDataStore.getActivePaymentMethod(),
-					availableGateways: Object.keys(
-						paymentDataStore.getAvailablePaymentMethods()
-					),
-					needsPayment,
 				},
 				customer: {
 					id: checkoutDataStore.getCustomerId(),
-					guest: checkoutDataStore.getCustomerId() === 0,
 					billingAddress,
 					shippingAddress,
 					...( formType === 'billing' || formType === 'shipping'
@@ -107,9 +97,15 @@ const useDocumentObject = ( formType: string ) => {
 			};
 
 			return {
-				cart: snakeCaseKeys( documentObject.cart ),
-				checkout: snakeCaseKeys( documentObject.checkout ),
-				customer: snakeCaseKeys( documentObject.customer ),
+				cart: snakeCaseKeys(
+					documentObject.cart
+				) as DocumentObject[ 'cart' ],
+				checkout: snakeCaseKeys(
+					documentObject.checkout
+				) as DocumentObject[ 'checkout' ],
+				customer: snakeCaseKeys(
+					documentObject.customer
+				) as DocumentObject[ 'customer' ],
 			};
 		},
 		[ formType ]
@@ -125,7 +121,12 @@ const useDocumentObject = ( formType: string ) => {
 	return currentResults.current;
 };
 
-export const useSchemaParser = ( formType: string ) => {
+export const useSchemaParser = (
+	formType: string
+): {
+	parser: Ajv | null;
+	data: DocumentObject | null;
+} => {
 	const data = useDocumentObject( formType );
 	if ( window.schemaParser ) {
 		return {
@@ -140,30 +141,37 @@ export const useSchemaParser = ( formType: string ) => {
 };
 
 export interface DocumentObject {
-	cart: {
-		coupons: string[];
-		shippingRates: string[];
-		selectedShippingRates: string[];
-		prefersCollection: boolean;
-		items: string[];
-		itemsType: string[];
-		needsShipping: boolean;
-		totals: number;
-		extensions: Record< string, object | object[] >;
-	};
-	checkout: {
-		orderId: number;
-		customerNote: string;
-		additionalFields: AdditionalValues;
-		paymentMethod: string;
-		availableGateways: string[];
-		needsPayment: boolean;
-	};
-	customer: {
-		id: number;
-		guest: boolean;
-		billingAddress: CoreAddress;
-		shippingAddress: CoreAddress;
-		address: CoreAddress;
-	};
+	cart:
+		| {
+				coupons: string[];
+				shipping_rates: string[];
+				prefers_collection: boolean;
+				items: string[];
+				items_type: string[];
+				items_count: number;
+				items_weight: number;
+				needs_shipping: boolean;
+				totals: {
+					total_price: number;
+					total_tax: number;
+				};
+				extensions: Record< string, object | object[] >;
+		  }
+		| Record< string, never >;
+	checkout:
+		| {
+				create_account: boolean;
+				customer_note: string;
+				payment_method: string;
+				additional_fields: AdditionalValues;
+		  }
+		| Record< string, never >;
+	customer:
+		| {
+				id: number;
+				billing_address: CoreAddress;
+				shipping_address: CoreAddress;
+				address: CoreAddress;
+		  }
+		| Record< string, never >;
 }
