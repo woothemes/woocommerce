@@ -205,14 +205,11 @@ const productGallery = {
 				'wc-block-product-gallery-dialog-open'
 			);
 		},
-		onTouchStart: ( event: TouchEvent ) => {
-			console.log( 'onTouchStart' );
+		onDragStart: ( event: DragEvent ) => {
+			console.log( 'onDragStart' );
 		},
-		onTouchMove: ( event: TouchEvent ) => {
-			console.log( 'onTouchMove' );
-		},
-		onTouchEnd: ( event: TouchEvent ) => {
-			console.log( 'onTouchEnd' );
+		onDragEnd: ( event: DragEvent ) => {
+			console.log( 'onDragEnd' );
 		},
 	},
 	callbacks: {

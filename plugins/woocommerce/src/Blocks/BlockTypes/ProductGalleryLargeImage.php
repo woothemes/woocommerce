@@ -122,9 +122,8 @@ class ProductGalleryLargeImage extends AbstractBlock {
 			'data-wc-bind--tabindex' => 'state.thumbnailTabIndex',
 			'data-wc-on--keydown'    => 'actions.onSelectedLargeImageKeyDown',
 			'data-wc-class--wc-block-woocommerce-product-gallery-large-image__image--active-image-slide' => 'state.isSelected',
-			'data-wc-on--touchstart' => 'actions.onTouchStart',
-			'data-wc-on--touchmove'  => 'actions.onTouchMove',
-			'data-wc-on--touchend'   => 'actions.onTouchEnd',
+			'data-wc-on--dragstart'  => 'actions.onDragStart',
+			'data-wc-on--dragend'    => 'actions.onDragEnd',
 		);
 
 		if ( $context['fullScreenOnClick'] ) {
