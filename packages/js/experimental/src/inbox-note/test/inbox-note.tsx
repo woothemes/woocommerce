@@ -65,8 +65,79 @@ describe( 'InboxNoteCard', () => {
 		const { queryByText } = render(
 			<InboxNoteCard key={ note.id } note={ note } />
 		);
+
 		expect( queryByText( 'Connect' ) ).toBeInTheDocument();
 		expect( queryByText( 'Learn More' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render anchor when href is defined', () => {
+		const { queryByRole } = render(
+			<InboxNoteCard key={ note.id } note={ note } />
+		);
+		expect(
+			queryByRole( 'link', {
+				name: 'Connect',
+			} )
+		).toHaveAttribute( 'href', 'http://test.com' );
+
+		expect(
+			queryByRole( 'link', {
+				name: 'Learn More',
+			} )
+		).toHaveAttribute( 'href', 'http://test.com' );
+	} );
+
+	it( 'should render button when href is not defined', () => {
+		const noteWithoutHref = {
+			...note,
+			actions: [
+				{
+					id: 1,
+					name: 'connect',
+					label: 'Connect',
+					query: '',
+					status: 'unactioned',
+					primary: false,
+					url: '',
+				},
+				{
+					id: 2,
+					name: 'learnmore',
+					label: 'Learn More',
+					query: '',
+					status: 'unactioned',
+					primary: false,
+					url: '',
+				},
+			],
+		};
+
+		const { queryByRole } = render(
+			<InboxNoteCard key={ note.id } note={ noteWithoutHref } />
+		);
+		expect(
+			queryByRole( 'link', {
+				name: 'Connect',
+			} )
+		).not.toBeInTheDocument();
+
+		expect(
+			queryByRole( 'link', {
+				name: 'Learn More',
+			} )
+		).not.toBeInTheDocument();
+
+		expect(
+			queryByRole( 'button', {
+				name: 'Connect',
+			} )
+		).toBeInTheDocument();
+
+		expect(
+			queryByRole( 'button', {
+				name: 'Learn More',
+			} )
+		).toBeInTheDocument();
 	} );
 
 	it( 'should render a dismiss button', () => {

@@ -1,0 +1,73 @@
+diff --git a/lib/commands/start.js b/lib/commands/start.js
+index e476fd8c2b67b78ac334f2ba866749719577dfd8..aac937bfc6a4a1b2aeb641283a65ee3d16afbaf8 100644
+--- a/lib/commands/start.js
++++ b/lib/commands/start.js
+@@ -207,28 +207,32 @@ module.exports = async function start( {
+ 	if ( shouldConfigureWp ) {
+ 		spinner.text = 'Configuring WordPress.';
+ 
+-		try {
+-			await checkDatabaseConnection( config );
+-		} catch ( error ) {
+-			// Wait 30 seconds for MySQL to accept connections.
+-			await retry( () => checkDatabaseConnection( config ), {
+-				times: 30,
+-				delay: 1000,
+-			} );
+-
+-			// It takes 3-4 seconds for MySQL to be ready after it starts accepting connections.
+-			await sleep( 4000 );
+-		}
++		const targetEnvironments = {
++			development: 'cli',
++			tests: 'tests-cli',
++		};
++		for ( const environment in targetEnvironments ) {
++			const cliContainer = targetEnvironments[environment];
++			try {
++				await checkDatabaseConnection( cliContainer, config );
++			} catch ( error ) {
++				// Wait 30 seconds for MySQL to accept connections.
++				await retry( () => checkDatabaseConnection( cliContainer, config ), {
++					times: 30,
++					delay: 1000,
++				} );
++
++				// It takes 3-4 seconds for MySQL to be ready after it starts accepting connections.
++				await sleep( 4000 );
++			}
+ 
+-		// Retry WordPress installation in case MySQL *still* wasn't ready.
+-		await Promise.all( [
+-			retry( () => configureWordPress( 'development', config, spinner ), {
+-				times: 2,
+-			} ),
+-			retry( () => configureWordPress( 'tests', config, spinner ), {
+-				times: 2,
+-			} ),
+-		] );
++			// Retry WordPress installation in case MySQL *still* wasn't ready.
++			await Promise.all( [
++				retry( () => configureWordPress( environment, config, spinner ), {
++					times: 2,
++				} ),
++			] );
++		}
+ 
+ 		// Set the cache key once everything has been configured.
+ 		await setCache( CONFIG_CACHE_KEY, configHash, {
+diff --git a/lib/wordpress.js b/lib/wordpress.js
+index bd3c4a23f8ff5d54663f0c3df5bff595f3743f67..f3e8fb0d532a0047d9dab20ef37182dc76a4f3d8 100644
+--- a/lib/wordpress.js
++++ b/lib/wordpress.js
+@@ -57,8 +57,8 @@ function isWPMajorMinorVersionLower( version, compareVersion ) {
+  *
+  * @param {WPConfig} config The wp-env config object.
+  */
+-async function checkDatabaseConnection( { dockerComposeConfigPath, debug } ) {
+-	await dockerCompose.run( 'cli', 'wp db check', {
++async function checkDatabaseConnection( cliContainer, { dockerComposeConfigPath, debug } ) {
++	await dockerCompose.run( cliContainer, 'wp db check', {
+ 		config: dockerComposeConfigPath,
+ 		commandOptions: [ '--rm' ],
+ 		log: debug,

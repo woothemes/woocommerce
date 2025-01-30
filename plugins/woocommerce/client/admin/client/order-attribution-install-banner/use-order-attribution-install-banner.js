@@ -125,13 +125,15 @@ export const useOrderAttributionInstallBanner = () => {
 				select( STORE_KEY );
 
 			return {
-				loadingRecommendations: ! hasFinishedResolution(
-					'getMiscRecommendations'
-				),
-				recommendations: getMiscRecommendations(),
+				loadingRecommendations:
+					! canUserInstallPlugins ||
+					! hasFinishedResolution( 'getMiscRecommendations' ),
+				recommendations: canUserInstallPlugins
+					? getMiscRecommendations()
+					: [],
 			};
 		},
-		[]
+		[ canUserInstallPlugins ]
 	);
 
 	const percentages = useMemo( () => {

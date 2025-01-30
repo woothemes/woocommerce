@@ -82,20 +82,47 @@ export default function MySubscriptions(): JSX.Element {
 			'woocommerce'
 		);
 
+		const handleDisconnectNoticeClose = () => {
+			const data = {
+				notice_id: 'woo-disconnect-notice',
+				dismiss_notice_nonce: wccomSettings?.dismissNoticeNonce || '',
+			};
+			apiFetch( {
+				path: `/wc-admin/notice/dismiss`,
+				method: 'POST',
+				data,
+			} );
+			localStorage.setItem(
+				'wc-marketplaceNoticeClosed-woo-disconnect-notice',
+				'false'
+			);
+		};
+
 		return (
-			<div className="woocommerce-marketplace__my-subscriptions--connect">
-				<InstallModal />
-				<div className="woocommerce-marketplace__my-subscriptions__icon" />
-				<h2 className="woocommerce-marketplace__my-subscriptions__header">
-					{ __( 'Manage your subscriptions', 'woocommerce' ) }
-				</h2>
-				<p className="woocommerce-marketplace__my-subscriptions__description">
-					{ connectMessage }
-				</p>
-				<Button href={ connectUrl() } variant="primary">
-					{ __( 'Connect your store', 'woocommerce' ) }
-				</Button>
-			</div>
+			<>
+				{ wccomSettings?.disconnected_notice && (
+					<Notice
+						id={ 'woo-disconnect-notice' }
+						description={ wccomSettings?.disconnected_notice }
+						isDismissible={ true }
+						variant="info"
+						onClose={ handleDisconnectNoticeClose }
+					/>
+				) }
+				<div className="woocommerce-marketplace__my-subscriptions--connect">
+					<InstallModal />
+					<div className="woocommerce-marketplace__my-subscriptions__icon" />
+					<h2 className="woocommerce-marketplace__my-subscriptions__header">
+						{ __( 'Manage your subscriptions', 'woocommerce' ) }
+					</h2>
+					<p className="woocommerce-marketplace__my-subscriptions__description">
+						{ connectMessage }
+					</p>
+					<Button href={ connectUrl() } variant="primary">
+						{ __( 'Connect your store', 'woocommerce' ) }
+					</Button>
+				</div>
+			</>
 		);
 	}
 
