@@ -15,6 +15,7 @@ type ConnectProps = {
 export const Connect: React.FC< ConnectProps > = ( { onConnect } ) => {
 	return (
 		<ConnectForm
+			from="woocommerce-shipping"
 			onConnect={ () => {
 				recordEvent( 'tasklist_shipping_recommendation_connect_store', {
 					connect: true,
