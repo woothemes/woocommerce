@@ -66,7 +66,7 @@
 		}
 
 		&-image {
-			max-width: 40px;
+			width: 40px;
 			max-height: 40px;
 			border-radius: 4px;
 		}
@@ -88,6 +88,10 @@
 				.woocommerce-status-badge {
 					white-space: nowrap;
 				}
+			}
+
+			.woocommerce-official-extension-badge > .woocommerce-official-extension-badge__container {
+				padding-top: 4px;
 			}
 		}
 

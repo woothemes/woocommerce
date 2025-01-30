@@ -172,7 +172,12 @@
 					line-height: 16px;
 				}
 
-				&__tooltip {
+				&__icon-container {
+					padding: 4px 0;
+					height: 16px;
+				}
+
+				&__icon {
 					color: $gray-700;
 					width: 16px;
 					height: 16px;
@@ -217,7 +222,10 @@
 					gap: 4px;
 
 					&__title {
-						display: block;
+						display: inline-flex;
+						flex-wrap: wrap;
+						gap: 10px;
+						align-items: start;
 						font-size: 14px;
 						font-weight: 600;
 						line-height: 20px;
@@ -309,29 +317,70 @@
 	}
 }
 
-.settings-payment-gateways__header-select-container--indicator-popover {
+.woocommerce-official-extension-badge {
+	display: inline-flex;
+	align-items: center;
+	background: none;
+	border: none;
+	border-radius: 0;
+	padding: 0;
+
+	& > .woocommerce-official-extension-badge__container {
+		padding-top: 3px;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		gap: 1px;
+	}
+}
+
+// Popover styling
+.settings-payments-main__container {
 	.components-popover__content {
 		background: $white;
+		color: $gray-900;
+		padding: $gap-small;
 		border: 1px solid $gray-100;
-		border-radius: 3px;
-		max-width: 255px;
-		padding: $gap-smaller;
 		box-shadow: none;
-		margin-bottom: $gap-smaller;
+		border-radius: 3px;
 
 		a {
 			outline: none;
-			text-decoration: none;
-
-			&:focus {
-				box-shadow: none;
-			}
+			text-decoration: underline;
 		}
 	}
 
-	&-content {
-		width: 236px;
+	.components-popover__content-container {
+		width: 216px;
 		font-size: 13px;
 		line-height: 20px;
+
+		// The first paragraph doesn't have a top margin.
+		p:first-of-type {
+			margin-top: 0;
+		}
+
+		// The last paragraph doesn't have a bottom margin.
+		p:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	.woocommerce-status-badge-popover {
+		.components-popover__content-container {
+			width: 236px;
+		}
+	}
+}
+
+.settings-payment-gateways__header-select-container--indicator-popover {
+	.components-popover__content-container {
+		width: 236px;
+	}
+}
+
+.other-payment-gateways__content__title-popover {
+	.components-popover__content-container {
+		width: 256px;
 	}
 }
