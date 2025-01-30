@@ -156,6 +156,13 @@
 	&.is-info {
 		@extend %info;
 	}
+	&:focus {
+		outline-width: 0;
+	}
+	&:focus-visible {
+		outline-width: 2px;
+		outline-style: solid;
+	}
 }
 
 // To fix notice banner width for all block themes.
