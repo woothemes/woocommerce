@@ -2,6 +2,10 @@
  * External dependencies
  */
 import { defineConfig, devices } from '@playwright/test';
+/**
+ * Internal dependencies
+ */
+import { tags } from './fixtures/fixtures';
 
 require( 'dotenv' ).config( { path: __dirname + '/.env' } );
 
@@ -67,6 +71,32 @@ if ( process.env.CI ) {
 	] );
 }
 
+export const setupProjects = [
+	{
+		name: 'global authentication',
+		testDir: `${ TESTS_ROOT_PATH }/fixtures`,
+		testMatch: 'auth.setup.js',
+	},
+	{
+		name: 'consumer token setup',
+		testDir: `${ TESTS_ROOT_PATH }/fixtures`,
+		testMatch: 'token.setup.js',
+		teardown: 'consumer token teardown',
+		dependencies: [ 'global authentication' ],
+	},
+	{
+		name: 'consumer token teardown',
+		testDir: `${ TESTS_ROOT_PATH }/fixtures`,
+		testMatch: `token.teardown.js`,
+	},
+	{
+		name: 'site setup',
+		testDir: `${ TESTS_ROOT_PATH }/fixtures`,
+		testMatch: `site.setup.js`,
+		dependencies: [ 'consumer token setup' ],
+	},
+];
+
 export default defineConfig( {
 	timeout: DEFAULT_TIMEOUT_OVERRIDE
 		? Number( DEFAULT_TIMEOUT_OVERRIDE )
@@ -95,38 +125,11 @@ export default defineConfig( {
 		...devices[ 'Desktop Chrome' ],
 	},
 	snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}',
+
 	projects: [
+		...setupProjects,
 		{
-			name: 'global authentication',
-			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
-			testMatch: 'auth.setup.js',
-		},
-		{
-			name: 'consumer token setup',
-			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
-			testMatch: 'token.setup.js',
-			teardown: 'consumer token teardown',
-			dependencies: [ 'global authentication' ],
-		},
-		{
-			name: 'consumer token teardown',
-			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
-			testMatch: `token.teardown.js`,
-		},
-		{
-			name: 'site setup',
-			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
-			testMatch: `site.setup.js`,
-			dependencies: [ 'consumer token setup' ],
-		},
-		{
-			name: 'reset',
-			testDir: `${ TESTS_ROOT_PATH }/fixtures`,
-			testMatch: 'reset.setup.js',
-			dependencies: [ 'site setup' ],
-		},
-		{
-			name: 'ui',
+			name: 'e2e',
 			testIgnore: '**/api-tests/**',
 			dependencies: [ 'site setup' ],
 		},
@@ -134,6 +137,10 @@ export default defineConfig( {
 			name: 'api',
 			testMatch: '**/api-tests/**',
 			dependencies: [ 'site setup' ],
+		},
+		{
+			name: 'e2e-hpos-disabled',
+			grep: new RegExp( tags.HPOS ),
 		},
 	],
 } );

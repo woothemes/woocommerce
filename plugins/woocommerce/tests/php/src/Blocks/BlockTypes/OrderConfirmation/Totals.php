@@ -100,6 +100,7 @@ class Totals extends \WP_UnitTestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 		WC()->cart->empty_cart();
+		WC()->session->destroy_session();
 	}
 
 	/**
