@@ -50,8 +50,8 @@ export const useFormFields = (
 					properties: defaultConfig.rules.required,
 				};
 				try {
-					const validation = parser.validate( schema, data );
-					field.required = validation;
+					const result = parser.validate( schema, data );
+					field.required = result;
 				} catch ( error ) {
 					if ( CURRENT_USER_IS_ADMIN ) {
 						// eslint-disable-next-line no-console
