@@ -63,6 +63,57 @@ final class BlockTypesController {
 		add_action( 'woocommerce_login_form_end', array( $this, 'redirect_to_field' ) );
 		add_filter( 'widget_types_to_hide_from_legacy_widget_block', array( $this, 'hide_legacy_widgets_with_block_equivalent' ) );
 		add_action( 'woocommerce_delete_product_transients', array( $this, 'delete_product_transients' ) );
+		add_filter(
+			'hooked_block_types',
+			function ( $hooked_block_types, $relative_position, $anchor_block_type, $context ) {
+				if ( $context instanceof \WP_Block_Template && 'single-product' === $context->slug ) {
+					if ( 'woocommerce/accordion-group' === $anchor_block_type && 'last_child' === $relative_position ) {
+						$hooked_block_types[] = 'woocommerce/accordion-item';
+					}
+				}
+
+				return $hooked_block_types;
+			},
+			50,
+			4
+		);
+
+		add_filter(
+			'hooked_block_woocommerce/accordion-item',
+			function (
+				$parsed_hooked_block,
+				$hooked_block_type,
+				$relative_position,
+				$parsed_anchor_block,
+				$context
+			) {
+
+				// Has the hooked block been suppressed by a previous filter?
+				if ( is_null( $parsed_hooked_block ) ) {
+					return $parsed_hooked_block;
+				}
+
+				// Only apply the updated attributes if the block is hooked after a Post Content block.
+				if ( 'woocommerce/accordion-group' === $parsed_anchor_block['blockName'] && 'last_child' === $relative_position ) {
+
+					$markup_html = sprintf(
+						'<!-- wp:woocommerce/accordion-item {"openByDefault": false} --><div class="wp-block-woocommerce-accordion-item"><!-- wp:woocommerce/accordion-header -->
+					<h3 class="wp-block-woocommerce-accordion-header accordion-item__heading"><button class="accordion-item__toggle"><span>%1$s</span><span class="accordion-item__toggle-icon has-icon-plus" style="width:1.2em;height:1.2em"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z" fill="currentColor"></path></svg></span></button></h3>
+					<!-- /wp:woocommerce/accordion-header -->
+					<!-- wp:woocommerce/accordion-panel -->
+					<div class="wp-block-woocommerce-accordion-panel"><div class="accordion-content__wrapper"><!-- wp:html -->%2$s<!-- /wp:html --></div></div><!-- /wp:woocommerce/accordion-panel --></div><!-- /wp:woocommerce/accordion-item --></div>',
+						'Accordion Item',
+						'Accordion Content'
+					);
+					return parse_blocks( $markup_html )[0];
+
+				}
+
+				return $parsed_hooked_block;
+			},
+			50,
+			5
+		);
 	}
 
 	/**

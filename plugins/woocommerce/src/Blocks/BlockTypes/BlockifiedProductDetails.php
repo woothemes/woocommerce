@@ -13,6 +13,31 @@ class BlockifiedProductDetails extends AbstractBlock {
 	 */
 	protected $block_name = 'blockified-product-details';
 
+	public function add_block_type_metadata( $metadata ) {
+		if ( $metadata['name'] === 'woocommerce/accordion-group' ) {
+			$metadata['attributes']['__isProductDetailsChildren'] = array(
+				'type'    => 'boolean',
+				'default' => false,
+			);
+			return $metadata;
+		}
+		return $metadata;
+	}
+
+	protected function initialize() {
+		add_filter( 'block_type_metadata', array( $this, 'add_block_type_metadata' ), 10, 2 );
+		add_filter( 'pre_render_block', array( $this, 'inject_attribute' ), 10, 3 );
+		parent::initialize();
+	}
+
+	public function inject_attribute( $block_content, $parsed_block, $parent_block ) {
+		if ( isset( $parent_block->parsed_block['blockName'] ) && $parent_block->parsed_block['blockName'] === 'woocommerce/accordion-group' ) {
+			do_action( 'qm/debug', 'inject_attribute' );
+		}
+
+		return $block_content;
+	}
+
 	/**
 	 * Create accordion item block markup
 	 *
@@ -82,7 +107,11 @@ class BlockifiedProductDetails extends AbstractBlock {
 	 */
 	private function is_accordion_item_empty( $accordion_item ) {
 		// the first inner block is the header and the second is the content.
-		$accordion_content = $accordion_item['innerBlocks'][1];
+		$accordion_content = isset( $accordion_item['innerBlocks'][1] ) ? $accordion_item['innerBlocks'][1] : null;
+
+		if ( ! $accordion_content ) {
+			return true;
+		}
 
 		$is_accordion_content_empty = array_reduce(
 			$accordion_content['innerBlocks'],
@@ -123,6 +152,7 @@ class BlockifiedProductDetails extends AbstractBlock {
 	private function update_inner_blocks( &$parsed_block, $parsed_tabs_added_via_hook ) {
 		foreach ( $parsed_block['innerBlocks'] as &$inner_block ) {
 			if ( 'woocommerce/accordion-group' === $inner_block['blockName'] ) {
+					$this->inject_is_product_details_children_attribute( $inner_block );
 					$this->remove_empty_accordion_item( $inner_block );
 				if ( count( $parsed_tabs_added_via_hook ) > 0 ) {
 					$this->add_new_accordion_item( $inner_block, $parsed_tabs_added_via_hook );
@@ -131,6 +161,11 @@ class BlockifiedProductDetails extends AbstractBlock {
 			// We need to invoke the function recursively because the accordion group can be nested.
 			self::update_inner_blocks( $inner_block, $parsed_tabs_added_via_hook );
 		}
+	}
+
+
+	private function inject_is_product_details_children_attribute( &$accordion_group ) {
+		$accordion_group['attrs']['__isProductDetailsChildren'] = true;
 	}
 
 
