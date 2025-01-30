@@ -32,7 +32,10 @@ const AddToCartWithOptionsVariationSelectorEdit = (
 		className,
 	} );
 
-	if ( currentProductType?.slug !== 'variable' ) {
+	const productType =
+		product.id === 0 ? currentProductType?.slug : product.type;
+
+	if ( productType !== 'variable' ) {
 		return null;
 	}
 
