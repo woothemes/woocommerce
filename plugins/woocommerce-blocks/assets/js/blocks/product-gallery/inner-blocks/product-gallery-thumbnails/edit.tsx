@@ -5,7 +5,6 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { WC_BLOCKS_IMAGE_URL } from '@woocommerce/block-settings';
 import type { BlockEditProps } from '@wordpress/blocks';
-import clsx from 'clsx';
 
 /**
  * Internal dependencies
@@ -18,10 +17,7 @@ export const Edit = ( {
 	setAttributes,
 }: BlockEditProps< ProductGalleryThumbnailsBlockAttributes > ) => {
 	const blockProps = useBlockProps( {
-		className: clsx(
-			'wc-block-product-gallery-thumbnails',
-			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.numberOfThumbnails }`
-		),
+		className: `wc-block-product-gallery-thumbnails wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.numberOfThumbnails }`,
 	} );
 
 	return (
