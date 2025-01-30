@@ -57,6 +57,7 @@ export const receiveCart =
 			newCart,
 			cartItemsPendingQuantity: select.getItemsPendingQuantityUpdate(),
 			cartItemsPendingDelete: select.getItemsPendingDelete(),
+			productsPendingAdd: select.getProductsPendingAdd(),
 		} );
 
 		updateCartErrorNotices( newCart.errors, oldCartErrors );
