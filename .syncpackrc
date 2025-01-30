@@ -73,7 +73,8 @@
 				"eslint*",
 				"glob*",
 				"postcss*",
-				"webpack*"
+				"webpack*",
+				"sass*"
 			],
 			"packages": [
 				"@woocommerce/block-library",
