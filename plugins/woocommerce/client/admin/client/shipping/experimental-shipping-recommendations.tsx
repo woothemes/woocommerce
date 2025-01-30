@@ -27,10 +27,8 @@ const ShippingRecommendations: React.FC = () => {
 	} = useSelect( ( select ) => {
 		const settings = select( SETTINGS_STORE_NAME ).getSettings( 'general' );
 
-		const {
-			getActivePlugins,
-			getInstalledPlugins,
-		} = select( PLUGINS_STORE_NAME );
+		const { getActivePlugins, getInstalledPlugins } =
+			select( PLUGINS_STORE_NAME );
 
 		const profileItems = select( ONBOARDING_STORE_NAME ).getProfileItems()
 			.product_types;
