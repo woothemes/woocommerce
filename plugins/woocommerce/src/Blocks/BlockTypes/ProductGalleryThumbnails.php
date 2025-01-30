@@ -150,10 +150,15 @@ class ProductGalleryThumbnails extends AbstractBlock {
 			return '';
 		}
 
-		$html                       = '';
-		$number_of_thumbnails       = isset( $attributes['numberOfThumbnails'] ) && is_numeric( $attributes['numberOfThumbnails'] ) ? $attributes['numberOfThumbnails'] : 3;
-		$number_of_thumbnails_class = 'wc-block-product-gallery-thumbnails--number-of-thumbnails-' . $number_of_thumbnails;
-		$thumbnails_count           = 1;
+		$html                         = '';
+		$default_number_of_thumbnails = 3;
+		$number_of_thumbnails         = isset( $attributes['numberOfThumbnails'] ) && is_numeric( $attributes['numberOfThumbnails'] ) ? $attributes['numberOfThumbnails'] : $default_number_of_thumbnails;
+		$number_of_images             = count( $product_gallery_images );
+		// If the number of thumbnails is greater than the number of images, set the number of thumbnails to the number of images.
+		// But not less than than 3 (default number of thumbnails).
+		$thumbnails_layout            = max( min( $number_of_images, $number_of_thumbnails ), $default_number_of_thumbnails );
+		$number_of_thumbnails_class   = 'wc-block-product-gallery-thumbnails--number-of-thumbnails-' . $thumbnails_layout;
+		$thumbnails_count             = 1;
 
 		foreach ( $product_gallery_images as $product_gallery_image_html ) {
 			// Limit the number of thumbnails only in the standard mode (and not in dialog).
@@ -161,7 +166,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 				break;
 			}
 
-			$remaining_thumbnails_count = count( $product_gallery_images ) - $number_of_thumbnails;
+			$remaining_thumbnails_count = $number_of_images - $number_of_thumbnails;
 
 			// Display view all if this is the last visible thumbnail and there are more images.
 			if ( $this->should_display_view_all( $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) ) {
