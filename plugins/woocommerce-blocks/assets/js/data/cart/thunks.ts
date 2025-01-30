@@ -259,6 +259,18 @@ export function startAddingToCart( productId: number ) {
 }
 
 /**
+ * Removes the metadata of an item ID that was added.
+ */
+export function finishAddingToCart( productId: number, dispatchEvent = true ) {
+	return async ( { dispatch }: CartThunkArgs ) => {
+		if ( dispatchEvent ) {
+			triggerAddedToCartEvent( { preserveCartData: true } );
+		}
+		dispatch.setProductsPendingAdd( productId, false );
+	};
+}
+
+/**
  * Removes specified item from the cart:
  * - Calls API to remove item.
  * - If successful, yields action to remove item from store.
