@@ -79,7 +79,7 @@ class PluginsHelper {
 	/**
 	 * Meta key for dismissing connected notice
 	 */
-	const DISMISS_CONNECTED_NOTICE = 'woo_connected_notice_dismiss';
+	const DISMISS_CONNECT_NOTICE = 'woo_connect_notice_dismiss';
 
 	/**
 	 * Initialize hooks.
@@ -1125,7 +1125,7 @@ class PluginsHelper {
 			return '';
 		}
 
-		if ( ! self::should_show_notice( self::DISMISS_CONNECTED_NOTICE, false ) ) {
+		if ( ! self::should_show_notice( self::DISMISS_CONNECT_NOTICE, false ) ) {
 			return '';
 		}
 

@@ -60,9 +60,9 @@ export default function MySubscriptions(): JSX.Element {
 			! subscription.maxed // no more connections allowed for the subscription so it's no longer "available to use"
 	);
 
-	const handleConnectedNoticeClose = () => {
+	const handleConnectNoticeClose = () => {
 		const data = {
-			notice_id: 'woo-connected-notice',
+			notice_id: 'woo-connect-notice',
 			dismiss_notice_nonce: wccomSettings?.dismissNoticeNonce || '',
 		};
 		apiFetch( {
@@ -71,7 +71,7 @@ export default function MySubscriptions(): JSX.Element {
 			data,
 		} );
 		localStorage.setItem(
-			'wc-marketplaceNoticeClosed-woo-connected-notice',
+			'wc-marketplaceNoticeClosed-woo-connect-notice',
 			'false'
 		);
 	};
@@ -128,13 +128,13 @@ export default function MySubscriptions(): JSX.Element {
 
 	return (
 		<>
-			{ wccomSettings?.connectedNotice && (
+			{ wccomSettings?.connected_notice && (
 				<Notice
-					id={ 'woo-connected-notice' }
+					id={ 'woo-connect-notice' }
 					description={ wccomSettings?.connectedNotice }
 					isDismissible={ true }
 					variant="success"
-					onClose={ handleConnectedNoticeClose }
+					onClose={ handleConnectNoticeClose }
 				/>
 			) }
 			<div className="woocommerce-marketplace__my-subscriptions">
