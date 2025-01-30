@@ -14,8 +14,8 @@ on:
                 description: Pull request number
                 required: true
 concurrency:
-  group: changelog-auto-add-${{ github.event_name }}-${{ github.event.number || inputs.prNumber }}
-  cancel-in-progress: true
+    group: changelog-auto-add-${{ github.event_name }}-${{ github.event.number || inputs.prNumber }}
+    cancel-in-progress: true
 
 jobs:
     add-changelog:
