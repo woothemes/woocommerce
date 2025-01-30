@@ -132,7 +132,10 @@ export const OtherPaymentGateways = ( {
 					}
 
 					return (
-						<div key={ category.id }>
+						<div
+							className="other-payment-gateways__content__category-container"
+							key={ category.id }
+						>
 							<div className="other-payment-gateways__content__title">
 								<h3 className="other-payment-gateways__content__title__h3">
 									{ decodeEntities( category.title ) }
@@ -141,7 +144,7 @@ export const OtherPaymentGateways = ( {
 									text={ decodeEntities(
 										category.description
 									) }
-									position="top right"
+									placement="top-start"
 								>
 									<Gridicon
 										icon="info-outline"
@@ -193,10 +196,16 @@ export const OtherPaymentGateways = ( {
 														!! installingPlugin
 													}
 												>
-													{ __(
-														'Install',
-														'woocommerce'
-													) }
+													{ installingPlugin ===
+													extension.id
+														? __(
+																'Installing',
+																'woocommerce'
+														  )
+														: __(
+																'Install',
+																'woocommerce'
+														  ) }
 												</Button>
 											</div>
 										</div>
