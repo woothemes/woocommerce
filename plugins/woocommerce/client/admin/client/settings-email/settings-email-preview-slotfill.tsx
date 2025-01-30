@@ -103,6 +103,7 @@ const EmailPreviewFill: React.FC< EmailPreviewFillProps > = ( {
 					<EmailPreviewHeader emailType={ emailType } />
 					<EmailPreviewIframe
 						src={ finalPreviewUrl }
+						isLoading={ isLoading }
 						setIsLoading={ setIsLoading }
 						settingsIds={ settingsIds }
 					/>
