@@ -225,7 +225,7 @@ export const addItemToCart =
 	) =>
 	async ( { dispatch }: CartThunkArgs ) => {
 		try {
-			triggerAddingToCartEvent();
+			dispatch.startAddingToCart( productId );
 			const { response } = await apiFetchWithHeaders< {
 				response: CartResponse;
 			} >( {
@@ -240,10 +240,13 @@ export const addItemToCart =
 				cache: 'no-store',
 			} );
 			dispatch.receiveCart( response );
-			triggerAddedToCartEvent( { preserveCartData: true } );
+			dispatch.finishAddingToCart( productId );
 			return response;
 		} catch ( error ) {
 			dispatch.receiveError( isApiErrorResponse( error ) ? error : null );
+
+			// Finish adding to cart, but don't dispatch the added to cart event.
+			dispatch.finishAddingToCart( productId, false );
 			return Promise.reject( error );
 		}
 	};
