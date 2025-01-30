@@ -83,6 +83,7 @@ class WC_Helper_Admin {
 			'wooUpdateCount'             => WC_Helper_Updater::get_updates_count_based_on_site_status(),
 			'woocomConnectNoticeType'    => $woo_connect_notice_type,
 			'dismissNoticeNonce'         => wp_create_nonce( 'dismiss_notice' ),
+			'connected_notice'           => PluginsHelper::get_wccom_connected_notice( $auth_user_email ),
 		);
 
 		if ( WC_Helper::is_site_connected() ) {
