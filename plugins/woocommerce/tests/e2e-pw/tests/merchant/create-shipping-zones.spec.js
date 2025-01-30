@@ -1,7 +1,7 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
-const { setComingSoon } = require( '../../utils/coming-soon' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const maynePostal = 'V0N 2J0';
 const shippingZoneNameUSRegion = 'USA Zone';
 const shippingZoneNameFlatRate = 'Canada with Flat rate';
@@ -12,7 +12,7 @@ test.describe(
 	'WooCommerce Shipping Settings - Add new shipping zone',
 	{ tag: [ tags.SERVICES ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			// Set selling location to all countries.
@@ -442,8 +442,6 @@ test.describe( 'Verifies shipping options from customer perspective', () => {
 	let productId, shippingFreeId, shippingFlatId, shippingLocalId;
 
 	test.beforeAll( async ( { baseURL } ) => {
-		await setComingSoon( { baseURL, enabled: 'no' } );
-
 		// need to add a product to the store so that we can order it and check shipping options
 		const api = new wcApi( {
 			url: baseURL,

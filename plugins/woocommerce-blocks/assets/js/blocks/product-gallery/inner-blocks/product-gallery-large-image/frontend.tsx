@@ -18,7 +18,6 @@ type Context = {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		'transform-origin': string;
 		transform: string;
-		transition: string;
 	};
 } & ProductGalleryContext;
 
