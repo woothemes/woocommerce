@@ -246,7 +246,8 @@
 		"request-promise": "4.2.6",
 		"rimraf": "5.0.5",
 		"rtlcss": "^4.1.1",
-		"sass-loader": "^10.5.0",
+		"sass": "^1.83.4",
+		"sass-loader": "^16.0.4",
 		"storybook": "^7.6.4",
 		"storybook-addon-react-docgen": "1.2.44",
 		"stylelint": "^14.16.1",
@@ -317,6 +318,7 @@
 		"react-dom": "18.3.x"
 	},
 	"optionalDependencies": {
+		"sass-embedded": "^1.83.4",
 		"ndb": "1.1.5"
 	},
 	"lint-staged": {

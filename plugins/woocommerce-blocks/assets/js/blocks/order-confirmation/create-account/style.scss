@@ -100,7 +100,8 @@
 		&.is-loading {
 			pointer-events: none;
 
-			.wc-block-components-spinner + .wc-block-order-confirmation-create-account-button-text {
+			.wc-block-components-spinner
+				+ .wc-block-order-confirmation-create-account-button-text {
 				visibility: hidden;
 			}
 		}

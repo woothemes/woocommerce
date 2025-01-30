@@ -779,8 +779,13 @@ const getStylingConfig = ( options = {} ) => {
 						{
 							loader: 'sass-loader',
 							options: {
+								api: 'modern-compiler',
 								sassOptions: {
-									includePaths: [ 'assets/css/abstracts' ],
+									quietDeps: true,
+									loadPaths: [
+										'assets/css/abstracts',
+										'node_modules',
+									],
 								},
 								additionalData: ( content, loaderContext ) => {
 									const { resourcePath, rootContext } =
@@ -806,10 +811,10 @@ const getStylingConfig = ( options = {} ) => {
 										'@use "sass:string";' +
 										'@use "sass:color";' +
 										'@use "sass:map";' +
-										'@import "_colors"; ' +
-										'@import "_variables"; ' +
-										'@import "_breakpoints"; ' +
-										'@import "_mixins"; ' +
+										'@import "colors"; ' +
+										'@import "variables"; ' +
+										'@import "breakpoints"; ' +
+										'@import "mixins"; ' +
 										content
 									);
 								},
