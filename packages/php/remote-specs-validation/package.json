@@ -1,6 +1,6 @@
 {
 	"name": "@woocommerce/remote-specs-validation",
-	"description": "Remote specs testing suite",
+	"description": "Remote specs testing suite...",
 	"main": "index.js",
 	"scripts": {
 		"changelog": "XDEBUG_MODE=off composer install --quiet && composer exec -- changelogger"
