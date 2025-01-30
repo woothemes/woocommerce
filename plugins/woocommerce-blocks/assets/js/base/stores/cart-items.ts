@@ -26,6 +26,7 @@ export type Store = {
 	};
 	actions: {
 		addCartItem: ( args: { id: number; quantity: number } ) => void;
+		// Todo: Check why if I switch to an async function here the types of the store stop working.
 		refreshCartItems: () => void;
 	};
 };
@@ -49,6 +50,18 @@ function generateError( json: StoreAPIError ) {
 
 let pendingRefresh = false;
 let refreshTimeout = 3000;
+let eventId = 0;
+
+function emmitSyncEvent() {
+	console.log( `Cart sync started on the iAPI store: iapi-${ ++eventId }` );
+
+	window.dispatchEvent(
+		// Question: What are the usual names for WooCommerce events?
+		new CustomEvent( 'woocommerce-cart-sync-required', {
+			detail: { type: 'from_iAPI', id: eventId },
+		} )
+	);
+}
 
 // Todo: Remove the type cast once we import from `@wordpress/interactivity`.
 // Question: disable "used before defined" lint rule?
@@ -98,26 +111,30 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 
 					// Updates the local cart.
 					state.cart.items[ itemIndex ] = json;
+
+					// Dispatches the event to sync the @wordpress/data store.
+					emmitSyncEvent();
 				} catch ( error ) {
 					const message = ( error as Error ).message;
 
 					// Question: can we import this dynamically so it's not loaded on page load?
-					const { actions } = store< StoreNoticesStore >(
-						'woocommerce/store-notices'
-					);
+					const { actions: noticeActions } =
+						store< StoreNoticesStore >(
+							'woocommerce/store-notices'
+						);
 
 					// If the user deleted the hooked store notice block, the
 					// store won't be present and we should not add a notice.
-					if ( 'addNotice' in actions ) {
+					if ( 'addNotice' in noticeActions ) {
 						// The old implementation always overwrites the last
 						// notice, so we remove the last notice before adding a
 						// new one.
 						// Todo: Review this implementation.
 						if ( state.noticeId !== '' ) {
-							actions.removeNotice( state.noticeId );
+							noticeActions.removeNotice( state.noticeId );
 						}
 
-						const noticeId = actions.addNotice( {
+						const noticeId = noticeActions.addNotice( {
 							notice: message,
 							type: 'error',
 							dismissible: true,
@@ -169,5 +186,21 @@ export const { state, actions } = ( store as typeof StoreType )< Store >(
 				}
 			},
 		},
+	}
+);
+
+window.addEventListener(
+	'woocommerce-cart-sync-required',
+	async ( event: Event ) => {
+		const customEvent = event as CustomEvent< {
+			type: string;
+			id: number;
+		} >;
+		if ( customEvent.detail.type === 'from_@wordpress/data' ) {
+			console.log(
+				`Cart sync received on the iAPI store: data-${ customEvent.detail.id }`
+			);
+			actions.refreshCartItems();
+		}
 	}
 );

@@ -41,7 +41,7 @@ export const getCartData =
 					return;
 				}
 
-				receiveCart( cartData );
+				receiveCart( cartData, { sync: false } );
 			} )
 			.catch( () => {
 				const { receiveError } = dispatch;

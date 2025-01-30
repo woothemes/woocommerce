@@ -11,6 +11,7 @@ export { directive, getContext, getElement } from './hooks';
 export { navigate, prefetch } from './router';
 export { h as createElement } from 'preact';
 export { useEffect, useContext, useMemo } from 'preact/hooks';
+export { effect } from '@preact/signals';
 export { deepSignal } from 'deepsignal';
 
 document.addEventListener( 'DOMContentLoaded', async () => {
