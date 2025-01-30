@@ -7,6 +7,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -127,7 +128,10 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 			$show_columns['is_in_stock'] = __( 'Stock', 'woocommerce' );
 		}
 
-		$show_columns['price']       = __( 'Price', 'woocommerce' );
+		$show_columns['price'] = __( 'Price', 'woocommerce' );
+		if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+			$show_columns['cogs_value'] = __( 'Cost', 'woocommerce' );
+		}
 		$show_columns['product_cat'] = __( 'Categories', 'woocommerce' );
 		$show_columns['product_tag'] = __( 'Tags', 'woocommerce' );
 		$show_columns['featured']    = '<span class="wc-featured parent-tips" data-tip="' . esc_attr__( 'Featured', 'woocommerce' ) . '">' . __( 'Featured', 'woocommerce' ) . '</span>';
@@ -178,6 +182,11 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 
 		get_inline_data( $post );
 
+		$cogs_value_html = wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ?
+				'<div class="cogs_value">' . esc_html( $this->object->get_cogs_value() ?? '0' ) . '</div>' :
+				'';
+
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- the COGS value is already escaped.
 		/* Custom inline data for woocommerce. */
 		echo '
 			<div class="hidden" id="woocommerce_inline_' . absint( $this->object->get_id() ) . '">
@@ -200,9 +209,10 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 				<div class="tax_status">' . esc_html( $this->object->get_tax_status() ) . '</div>
 				<div class="tax_class">' . esc_html( $this->object->get_tax_class() ) . '</div>
 				<div class="backorders">' . esc_html( $this->object->get_backorders() ) . '</div>
-				<div class="low_stock_amount">' . esc_html( $this->object->get_low_stock_amount() ) . '</div>
-			</div>
-		';
+				<div class="low_stock_amount">' . esc_html( $this->object->get_low_stock_amount() ) . '</div>'
+				. $cogs_value_html .
+			'</div>';
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -216,7 +226,16 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 	 * Render column: price.
 	 */
 	protected function render_price_column() {
-		echo $this->object->get_price_html() ? wp_kses_post( $this->object->get_price_html() ) : '<span class="na">&ndash;</span>';
+		$html = $this->object->get_price_html();
+		echo $html ? wp_kses_post( $html ) : '<span class="na">&ndash;</span>';
+	}
+
+	/**
+	 * Render column: cost.
+	 */
+	protected function render_cogs_value_column() {
+		$html = $this->object->get_cogs_value_html();
+		echo $html ? wp_kses_post( $html ) : '<span class="na">&ndash;</span>';
 	}
 
 	/**
