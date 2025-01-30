@@ -27,7 +27,7 @@ import fastDeepEqual from 'fast-deep-equal/es6';
  * Internal dependencies
  */
 import { AddressFormProps } from './types';
-import { useFormFields } from './use-form-address';
+import { useFormFields } from './use-form-fields';
 import validateCountry from './validate-country';
 import customValidationHandler from './custom-validation-handler';
 import AddressLineFields from './address-line-fields';
