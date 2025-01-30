@@ -130,7 +130,7 @@ class ProductGallery extends AbstractBlock {
 					array(
 						'selectedImageNumber'    => 1,
 						'isDialogOpen'           => false,
-						'visibleImagesIds'       => ProductGalleryUtils::get_product_gallery_image_ids( $product, $number_of_thumbnails, true ),
+						'visibleImagesIds'       => ProductGalleryUtils::get_product_gallery_image_ids( $product, null, true ),
 						'dialogVisibleImagesIds' => ProductGalleryUtils::get_product_gallery_image_ids( $product, null, false ),
 						'productId'              => $product_id,
 						'elementThatTriggeredDialogOpening' => null,
