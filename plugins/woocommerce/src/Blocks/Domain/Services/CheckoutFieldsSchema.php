@@ -110,64 +110,44 @@ class CheckoutFieldsSchema {
 	}
 
 	/**
-	 * Validate the field options.
+	 * Validate meta schema for field rules.
 	 *
-	 * @param array $options The field options.
-	 * @return bool
+	 * @param array $rules The field rules.
 	 * @throws \Exception If the field options are not valid.
 	 */
-	public function validate_schema( $options ) {
-		if ( ! $this->is_enabled() ) {
-			return true;
-		}
-
+	public function validate_meta_schema( $rules ) {
 		if ( empty( $this->meta_schema_json ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			$this->meta_schema_json = file_get_contents( __DIR__ . '/Schema/json-schema-draft-07.json' );
 		}
-
-		try {
-
-			if ( ! empty( $options['rules'] ) && ! is_array( $options['rules'] ) ) {
-				throw new \Exception( 'The rules must be an array.' );
-			}
-
-			// Validate schemas.
-			$validator    = new Validator();
+		$validator        = new Validator();
 			$test_schemas = [ 'required', 'hidden', 'validation' ];
 
-			foreach ( $test_schemas as $rule ) {
-				if ( empty( $options['rules'][ $rule ] ) ) {
-					continue;
-				}
-				if ( ! is_array( $options['rules'][ $rule ] ) ) {
-					throw new \Exception( sprintf( 'The %s rules must be an array.', $rule ) );
-				}
-				$result = $validator->validate(
-					Helper::toJSON(
-						[
-							'$schema'    => 'http://json-schema.org/draft-07/schema#',
-							'type'       => 'object',
-							'properties' => [
-								'test' => $options['rules'][ $rule ],
-							],
-							'required'   => [ 'test' ],
-						]
-					),
-					$this->meta_schema_json
-				);
-
-				if ( $result->hasError() ) {
-					throw new \Exception( (string) $result->error() );
-				}
+		foreach ( $test_schemas as $rule ) {
+			if ( empty( $rules[ $rule ] ) ) {
+				continue;
 			}
-		} catch ( \Exception $e ) {
-			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $e->getMessage() );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), esc_html( $this->release_version ) );
-			return false;
-		}
+			if ( ! is_array( $rules[ $rule ] ) ) {
+				throw new \Exception( sprintf( 'The %s rules must be an array.', esc_html( $rule ) ) );
+			}
+			$result = $validator->validate(
+				Helper::toJSON(
+					[
+						'$schema'    => 'http://json-schema.org/draft-07/schema#',
+						'type'       => 'object',
+						'properties' => [
+							'test' => $rules[ $rule ],
+						],
+						'required'   => [ 'test' ],
+					]
+				),
+				$this->meta_schema_json
+			);
 
-		return true;
+			if ( $result->hasError() ) {
+				throw new \Exception( esc_html( (string) $result->error() ) );
+			}
+		}
 	}
 
 	/**
