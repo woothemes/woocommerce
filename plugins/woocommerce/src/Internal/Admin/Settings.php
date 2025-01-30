@@ -212,9 +212,9 @@ class Settings {
 		$settings['woocommerceTranslation'] = __( 'WooCommerce', 'woocommerce' );
 		// We may have synced orders with a now-unregistered status.
 		// E.g An extension that added statuses is now inactive or removed.
-		 if(PageController::is_admin_page()){
+		if( PageController::is_admin_page() ){
 			$settings['unregisteredOrderStatuses'] = $this->get_unregistered_order_statuses();
-		 }
+		}
 		
 		// The separator used for attributes found in Variation titles.
 		//phpcs:ignore
