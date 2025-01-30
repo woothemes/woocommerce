@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { FormFields, KeyedFormField } from '@woocommerce/settings';
-import { useCheckoutAddress } from '@woocommerce/base-context';
 import { useSchemaParser } from '@woocommerce/base-hooks';
 import { useRef } from '@wordpress/element';
 import fastDeepEqual from 'fast-deep-equal/es6';
@@ -21,18 +20,12 @@ export const useFormFields = (
 	// Default fields from settings.
 	defaultFields: FormFields,
 	// Form type, can be billing, shipping, contact, additional-information, or calculator.
-	formType: string
+	formType: string,
+	// Address country.
+	addressCountry = ''
 ): KeyedFormField[] => {
 	const currentResults = useRef< KeyedFormField[] >( [] );
-	const { billingAddress, shippingAddress } = useCheckoutAddress();
 	const { parser, data } = useSchemaParser( formType );
-	let addressCountry = '';
-	if ( formType === 'billing' || formType === 'shipping' ) {
-		addressCountry =
-			formType === 'billing'
-				? billingAddress.country
-				: shippingAddress.country;
-	}
 
 	const formFields = prepareFormFields(
 		fieldKeys,

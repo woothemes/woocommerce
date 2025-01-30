@@ -66,7 +66,8 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	const formFields = useFormFields(
 		currentFields,
 		defaultFields,
-		addressType
+		addressType,
+		currentCountry
 	);
 
 	// Store previous fields to track changes.
