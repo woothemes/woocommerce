@@ -23,7 +23,7 @@ class AddToCartWithOptions extends \WP_UnitTestCase {
 	 * Tests that the correct content is rendered for each product type.
 	 */
 	public function test_product_type_add_to_cart_render() {
-		add_filter( 'woocommerce_custom_add_to_cart', array( $this, 'print_custom_product_type_add_to_cart_markup' ) );
+		add_action( 'woocommerce_custom_add_to_cart', array( $this, 'print_custom_product_type_add_to_cart_markup' ) );
 
 		global $product;
 		$product = new \WC_Product_Simple();
@@ -43,12 +43,12 @@ class AddToCartWithOptions extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'wp-block-woocommerce-product-button', $markup, 'The External Product Add to Cart with Options contains the product button block.' );
 		$this->assertStringNotContainsString( 'woocommerce/add-to-cart-with-options-quantity-selector', $markup, 'The External Product Add to Cart with Options does not contain the quantity selector block.' );
 
-		$product    = new \WC_Product_Custom();
+		$product    = new WC_Product_Custom();
 		$product_id = $product->save();
 		$markup     = do_blocks( '<!-- wp:woocommerce/single-product {"productId":' . $product_id . '} --><!-- wp:woocommerce/add-to-cart-with-options /--><!-- /wp:woocommerce/single-product -->' );
 
 		$this->assertStringContainsString( 'Custom Product Type Add to Cart Form', $markup, 'The Custom Product Type Add to Cart with Options contains the custom product type add to cart form.' );
 
-		remove_filter( 'woocommerce_custom_add_to_cart', array( $this, 'print_custom_product_type_add_to_cart_markup' ) );
+		remove_action( 'woocommerce_custom_add_to_cart', array( $this, 'print_custom_product_type_add_to_cart_markup' ) );
 	}
 }
