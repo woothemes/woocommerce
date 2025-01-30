@@ -12,7 +12,7 @@
  *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 9.7.0
+ * @version 9.8.0
  */
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
@@ -34,10 +34,10 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <?php
 if ( $partial_refund ) {
 	/* translators: %s: Site title */
-	printf( esc_html__( 'Your order on %s has been partially refunded. There are more details below for your reference:', 'woocommerce' ), wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) ); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+	printf( esc_html__( 'Your order on %s has been partially refunded. There are more details below for your reference:', 'woocommerce' ), esc_html( $blogname ) );
 } else {
 	/* translators: %s: Site title */
-	printf( esc_html__( 'Your order on %s has been refunded. There are more details below for your reference:', 'woocommerce' ), wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) ); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+	printf( esc_html__( 'Your order on %s has been refunded. There are more details below for your reference:', 'woocommerce' ), esc_html( $blogname ) );
 }
 ?>
 </p>

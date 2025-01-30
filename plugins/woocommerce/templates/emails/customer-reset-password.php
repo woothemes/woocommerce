@@ -31,7 +31,7 @@ $email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improveme
 <?php /* translators: %s: Customer username */ ?>
 <p><?php printf( esc_html__( 'Hi %s,', 'woocommerce' ), esc_html( $user_login ) ); ?></p>
 <?php /* translators: %s: Store name */ ?>
-<p><?php printf( esc_html__( 'Someone has requested a new password for the following account on %s:', 'woocommerce' ), esc_html( wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES ) ) ); ?></p>
+<p><?php printf( esc_html__( 'Someone has requested a new password for the following account on %s:', 'woocommerce' ), esc_html( $blogname ) ); ?></p>
 <?php if ( $email_improvements_enabled ) : ?>
 	<div class="hr hr-top"></div>
 	<?php /* translators: %s: Username */ ?>
