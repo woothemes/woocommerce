@@ -96,6 +96,22 @@ class BlockifiedProductDetails extends \WP_UnitTestCase {
 		$this->assertEquals( $serialized_blocks_without_whitespace, $expected_serialized_blocks_without_whitespace, '' );
 	}
 
+		/**
+		 * Test Product Details render function when there is an accordion item without content: this latter should not be rendered.
+		 * IMPORTANT: The current test doesn't validate the entire HTML, but only the text content inside the HTML.
+		 * This is because some ids are generated dynamically via wp_unique_id that it is not straightforward to mock.
+		 */
+	public function test_product_details_render_with_accordion_without_content() {
+		$template = file_get_contents( __DIR__ . '/test_product_details_render_with_accordion_without_content_template.html' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+		$serialized_blocks = do_blocks( $template );
+
+		$expected_serialized_blocks                    = file_get_contents( __DIR__ . '/test_product_details_render_with_accordion_without_content_expected_result.html' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$serialized_blocks_without_whitespace          = wp_strip_all_tags( $serialized_blocks, true );
+		$expected_serialized_blocks_without_whitespace = wp_strip_all_tags( $expected_serialized_blocks, true );
+		$this->assertEquals( $serialized_blocks_without_whitespace, $expected_serialized_blocks_without_whitespace, '' );
+	}
+
 	/**
 	 * Test Product Details render function when `woocommerce_product_tabs` hook is used.
 	 * IMPORTANT: The current test doesn't validate the entire HTML, but only the text content inside the HTML.
