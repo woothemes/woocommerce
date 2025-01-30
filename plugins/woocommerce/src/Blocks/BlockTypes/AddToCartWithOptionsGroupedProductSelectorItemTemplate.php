@@ -65,15 +65,7 @@ class AddToCartWithOptionsGroupedProductSelectorItemTemplate extends AbstractBlo
 	 * @return string Rendered block output.
 	 */
 	protected function render( $attributes, $content, $block ): string {
-		if ( ! isset( $block->context['postId'] ) ) {
-			return '';
-		}
-
-		$product = wc_get_product( $block->context['postId'] );
-
-		if ( ! $product instanceof \WC_Product || ! $product->is_type( 'grouped' ) ) {
-			return '';
-		}
+		global $product;
 
 		$content = '';
 

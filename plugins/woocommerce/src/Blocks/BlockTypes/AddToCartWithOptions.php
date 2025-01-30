@@ -42,7 +42,7 @@ class AddToCartWithOptions extends AbstractBlock {
 	 *
 	 * @return string | void Rendered block output.
 	 */
-	protected function render( $attributes, $content, $block ) {	
+	protected function render( $attributes, $content, $block ) {
 		global $product;
 
 		$post_id = $block->context['postId'];
