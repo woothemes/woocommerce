@@ -249,6 +249,16 @@ export const addItemToCart =
 	};
 
 /**
+ * Sets the metadata to show an item ID being added.
+ */
+export function startAddingToCart( productId: number ) {
+	return async ( { dispatch }: CartThunkArgs ) => {
+		triggerAddingToCartEvent();
+		dispatch.setProductsPendingAdd( productId, true );
+	};
+}
+
+/**
  * Removes specified item from the cart:
  * - Calls API to remove item.
  * - If successful, yields action to remove item from store.
