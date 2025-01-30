@@ -210,9 +210,20 @@ export const OtherPaymentGateways = ( {
 		);
 	}, [ suggestionsByCategory, installingPlugin, setupPlugin, isFetching ] );
 
-	// Don't render the component if there are no suggestions and not fetching.
+	// If no suggestions are available, return only a link to the WooCommerce.com payment marketplace page.
 	if ( ! isFetching && suggestions.length === 0 ) {
-		return null;
+		return (
+			<div className="more-payment-options">
+				<Button
+					variant={ 'link' }
+					target="_blank"
+					href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/"
+				>
+					<img src={ assetUrl + '/icons/external-link.svg' } alt="" />
+					{ __( 'More payment options', 'woocommerce' ) }
+				</Button>
+			</div>
+		);
 	}
 
 	return (

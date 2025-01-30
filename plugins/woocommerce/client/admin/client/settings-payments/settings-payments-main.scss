@@ -256,6 +256,20 @@
 			padding: $gap-smaller $gap;
 		}
 	}
+
+	.more-payment-options {
+		padding: 25px 54px;
+
+		img {
+			height: 16px;
+			margin-right: 4px;
+		}
+
+		a {
+			padding: 0;
+			text-decoration: none;
+		}
+	}
 }
 
 @media screen and ( max-width: 1024px ) {
@@ -295,6 +309,10 @@
 			.woocommerce-list__item-after {
 				display: none;
 			}
+		}
+
+		.more-payment-options {
+			padding-left: 25px;
 		}
 	}
 }
