@@ -19,6 +19,10 @@ export interface ProductGalleryContext {
 	elementThatTriggeredDialogOpening: HTMLElement | null;
 	disableLeft: boolean;
 	disableRight: boolean;
+	touchStartX: number;
+	touchCurrentX: number;
+	isDragging: boolean;
+	currentTranslateX: number;
 }
 
 const getContext = ( ns?: string ) =>
@@ -99,6 +103,9 @@ const selectImage = (
 	disableArrows( context, newImageNumber );
 };
 
+const SWIPE_THRESHOLD = 50; // Minimum distance to trigger image change
+const SNAP_THRESHOLD = 0.3; // Percentage of image width to trigger snap
+
 const productGallery = {
 	state: {
 		get isSelected() {
@@ -121,6 +128,13 @@ const productGallery = {
 		},
 		get thumbnailTabIndex(): string {
 			return state.isSelected ? '0' : '-1';
+		},
+		get translateX(): number {
+			const context = getContext();
+			if ( ! context.isDragging ) return 0;
+
+			const delta = context.touchCurrentX - context.touchStartX;
+			return context.currentTranslateX + delta;
 		},
 	},
 	actions: {
@@ -204,6 +218,47 @@ const productGallery = {
 			document.body.classList.remove(
 				'wc-block-product-gallery-dialog-open'
 			);
+		},
+		onTouchStart: ( event: TouchEvent ) => {
+			console.log( 'onTouchStart' );
+			const context = getContext();
+			context.touchStartX = event.touches[ 0 ].clientX;
+			context.isDragging = true;
+			context.currentTranslateX = 0;
+		},
+		onTouchMove: ( event: TouchEvent ) => {
+			console.log( 'onTouchMove' );
+			const context = getContext();
+			if ( ! context.isDragging ) return;
+			context.touchCurrentX = event.touches[ 0 ].clientX;
+			event.preventDefault();
+		},
+		onTouchEnd: ( event: TouchEvent ) => {
+			console.log( 'onTouchEnd' );
+			const context = getContext();
+			if ( ! context.isDragging ) return;
+
+			const delta = context.touchCurrentX - context.touchStartX;
+			const element = getElement()?.ref as HTMLElement;
+			const imageWidth = element?.offsetWidth || 0;
+
+			// Determine if we should snap to next/previous image
+			if ( Math.abs( delta ) > imageWidth * SNAP_THRESHOLD ) {
+				if ( delta > 0 && ! context.disableLeft ) {
+					actions.selectPreviousImage();
+				} else if ( delta < 0 && ! context.disableRight ) {
+					actions.selectNextImage();
+				}
+			}
+
+			// Reset touch state
+			context.isDragging = false;
+			context.touchStartX = 0;
+			context.touchCurrentX = 0;
+			context.currentTranslateX = 0;
+		},
+		testClick: () => {
+			console.log( 'testClick' );
 		},
 	},
 	callbacks: {
