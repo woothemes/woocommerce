@@ -17,7 +17,7 @@ store( 'woocommerce/product-filter-removable-chips', {
 
 			return productFilterActiveStore.state.items.map( ( item ) => ( {
 				...item,
-				label: item.label.replace( /\s*\(\d+\)/, '' ),
+				label: item.label.replace( /\s*\(\d+\)$/, '' ),
 			} ) );
 		},
 	},
