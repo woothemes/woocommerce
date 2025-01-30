@@ -163,6 +163,30 @@ MESSAGE;
 		);
 	}
 
+	private function get_mock_exception( string $message, int $code, \Throwable $previous = null ): \Exception {
+		$exception = new \Exception( $message, $code, $previous );
+
+		$ref = new \ReflectionProperty( $exception, 'trace' );
+		$ref->setAccessible( true );
+		$ref->setValue( $exception, array(
+			array(
+				'file' => 'test.trace.php',
+				'line' => 100
+			)
+		));
+
+		$ref = new \ReflectionProperty( $exception, 'file' );
+		$ref->setAccessible( true );
+		$ref->setValue( $exception, 'test.file.php' );
+
+		$ref = new \ReflectionProperty( $exception, 'line' );
+		$ref->setAccessible( true );
+		$ref->setValue( $exception, 100 );
+
+		return $exception;
+	}
+
+
 	/**
 	 * Data provider for test_handle_context_output.
 	 *
@@ -258,38 +282,35 @@ MESSAGE;
 			$context_delineator . '{"ctx":"[resource(stream)]"}',
 		);
 
-		// There's no reliable way to mock exception trace for assertEquals
-		/**
 		yield 'exception' => array(
-			array('ctx' => new \Exception( 'foo', 123 )),
+			array('ctx' => $this->get_mock_exception('foo', 123) ),
 			$context_delineator . wp_json_encode(array('ctx' => array(
 				'class'   => 'Exception',
 				'message' => 'foo',
 				'code'    => 123,
-				'file'    => 'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ - 6),
+				'file'    => 'test.file.php:100',
 				'trace'   => array(
-					'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ + 2),
+					'test.trace.php:100'
 				),
-			))),
+			)), \JSON_UNESCAPED_UNICODE),
 		);
 		yield 'exception with previous' => array(
-			array( 'ctx' => new \Exception( 'foo', 123, new \Exception( 'bar', 456 ) )),
+			array( 'ctx' => $this->get_mock_exception( 'foo', 123, $this->get_mock_exception( 'bar', 456 ) )),
 			$context_delineator . wp_json_encode(array('ctx' => array(
 				'class'    => 'Exception',
 				'message'  => 'foo',
 				'code'     => 123,
-				'file'     => 'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ - 6),
+				'file'    => 'test.file.php:100',
 				'trace'    => array(
-					'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ + 3),
+					'test.trace.php:100'
 				),
 				'previous' => array(
 					'class'   => 'Exception',
 					'message' => 'bar',
 					'code'    => 456,
-					'file'    => 'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ - 12),
+					'file'    => 'test.file.php:100',
 					'trace'   => array(
-						'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ - 10),
-						'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ - 2),
+						'test.trace.php:100'
 					),
 				),
 			))),
@@ -311,7 +332,6 @@ MESSAGE;
 				))),
 			);
 		}
-		*/
 	}
 
 	/**
