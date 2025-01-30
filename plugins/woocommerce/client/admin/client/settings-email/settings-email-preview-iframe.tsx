@@ -13,12 +13,14 @@ import { emailPreviewNonce } from './settings-email-preview-nonce';
 
 type EmailPreviewIframeProps = {
 	src: string;
+	isLoading: boolean;
 	setIsLoading: ( isLoading: boolean ) => void;
 	settingsIds: string[];
 };
 
 export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	src,
+	isLoading,
 	setIsLoading,
 	settingsIds,
 } ) => {
@@ -74,6 +76,7 @@ export const EmailPreviewIframe: React.FC< EmailPreviewIframeProps > = ( {
 	return (
 		<div>
 			<iframe
+				className={ isLoading ? 'iframe-is-loading' : '' }
 				src={ `${ src }&hash=${ counter }` }
 				title={ __( 'Email preview frame', 'woocommerce' ) }
 				onLoad={ () => setIsLoading( false ) }
