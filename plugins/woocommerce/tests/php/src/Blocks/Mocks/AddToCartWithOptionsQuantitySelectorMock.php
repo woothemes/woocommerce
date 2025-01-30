@@ -3,16 +3,16 @@ declare( strict_types = 1 );
 
 namespace Automattic\WooCommerce\Tests\Blocks\Mocks;
 
-use Automattic\WooCommerce\Blocks\BlockTypes\AddToCartWithOptions;
+use Automattic\WooCommerce\Blocks\BlockTypes\AddToCartWithOptionsQuantitySelector;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Assets\Api;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
 use Automattic\WooCommerce\Blocks\Integrations\IntegrationRegistry;
 
 /**
- * AddToCartWithOptionsMock used to test AddToCartWithOptions block functions.
+ * AddToCartWithOptionsQuantitySelectorMock used to test AddToCartWithOptionsQuantitySelector block functions.
  */
-class AddToCartWithOptionsMock extends AddToCartWithOptions {
+class AddToCartWithOptionsQuantitySelectorMock extends AddToCartWithOptionsQuantitySelector {
 	/**
 	 * Initialize our mock class.
 	 */
