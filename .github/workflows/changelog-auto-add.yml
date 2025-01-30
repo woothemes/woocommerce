@@ -2,16 +2,25 @@ name: 'Changelog Auto Add'
 on:
     pull_request_target:
         types: [opened, synchronize, reopened, edited]
+        paths-ignore:
+          - 'docs/**'
+          - '**/changelog/**'
+          - '.husky/**'
+          - '.github/**'
+          - '!.github/workflows/changelog-auto-add.yml'
     workflow_dispatch:
         inputs:
             prNumber:
                 description: Pull request number
                 required: true
+concurrency:
+    group: changelog-auto-add-${{ github.event_name }}-${{ github.event.number || inputs.prNumber }}
+    cancel-in-progress: true
 
 jobs:
     add-changelog:
         name: 'Add changelog to PR'
-        if: ${{ github.event.pull_request.user.login != 'github-actions[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'github-actions[bot]' && ( github.event_name != 'pull_request_target' || contains( github.event.pull_request.body, '[x] Automatically create a changelog' ) ) }}
         runs-on: ubuntu-20.04
         permissions:
             contents: write
@@ -19,12 +28,12 @@ jobs:
             pull-requests: write
         steps:
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
-            - name: Setup WooCommerce Monorepo
-              uses: ./.github/actions/setup-woocommerce-monorepo
+            - name: Setup PNPM
+              uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d
 
             - name: Generate Changelog File
               env:
                   GITHUB_TOKEN: ${{ secrets.PR_CREATE_TOKEN || secrets.GITHUB_TOKEN }}
-              run: pnpm utils changefile ${{github.event.number || inputs.prNumber}} -o ${{ github.repository_owner }}
+              run: pnpm utils changefile ${{ github.event.number || inputs.prNumber }} -o ${{ github.repository_owner }}
