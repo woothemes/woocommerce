@@ -411,7 +411,11 @@ class WC_Brands {
 	public function add_structured_data( $markup ) {
 		global $post;
 
-		if ( array_key_exists( 'brand', $markup ) ) {
+		if ( ! is_array( $markup ) ) {
+			$markup = [];
+		}
+
+		if (array_key_exists( 'brand', $markup ) ) {
 			return $markup;
 		}
 
