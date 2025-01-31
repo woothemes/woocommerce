@@ -1,35 +1,22 @@
 <?php
-
-declare( strict_types = 1);
-
-namespace Automattic\WooCommerce\Admin\Features\Blueprint\Importers;
-
+// phpcs:ignoreFile
 use Automattic\WooCommerce\Admin\Features\Blueprint\Steps\SetWCShipping;
-use Automattic\WooCommerce\Blueprint\StepProcessor;
-use Automattic\WooCommerce\Blueprint\StepProcessorResult;
 use Automattic\WooCommerce\Blueprint\UseWPFunctions;
-use WC_Tax;
 
 /**
  * Class ImportSetWCShipping
- *
- * This class imports WooCommerce shipping settings and implements the StepProcessor interface.
- *
- * @package Automattic\WooCommerce\Admin\Features\Blueprint\Importers
  */
-class ImportSetWCShipping implements StepProcessor {
+class ImportSetWCShipping {
 	use UseWPFunctions;
 
 	/**
-	 * Process the import of WooCommerce shipping settings.
+	 * Import the shipping settings.
 	 *
-	 * @param object $schema The schema object containing import details.
-	 * @return StepProcessorResult
+	 * @return void
 	 */
-	public function process( $schema ): StepProcessorResult {
-		$result = StepProcessorResult::success( SetWCShipping::get_step_name() );
-
-		$fields = array(
+	public function import() {
+		$shipping_data = new \stdClass();
+		$fields        = array(
 			'terms'              => array( 'terms', array( '%d', '%s', '%s', '%d' ) ),
 			'classes'            => array( 'term_taxonomy', array( '%d', '%d', '%s', '%s', '%d', '%d' ) ),
 			'shipping_zones'     => array( 'woocommerce_shipping_zones', array( '%d', '%s', '%d' ) ),
@@ -38,28 +25,26 @@ class ImportSetWCShipping implements StepProcessor {
 		);
 
 		foreach ( $fields as $name => $data ) {
-			if ( isset( $schema->values->{$name} ) ) {
+			if ( isset( $shipping_data->{$name} ) ) {
 				$filter_method = 'filter_' . $name . '_data';
 				if ( method_exists( $this, $filter_method ) ) {
-					$insert_values = $this->$filter_method( $schema->values->{$name} );
+					$insert_values = $this->$filter_method( $shipping_data->{$name} );
 				} else {
-					$insert_values = $schema->values->{$name};
+					$insert_values = $shipping_data->{$name};
 				}
 
 				$this->insert( $data[0], $data[1], $insert_values );
 				// check if function with process_$name exist and call it.
 				$method = 'post_process_' . $name;
 				if ( method_exists( $this, $method ) ) {
-					$this->$method( $schema->values->{$name} );
+					$this->$method( $shipping_data->{$name} );
 				}
 			}
 		}
 
-		if ( isset( $schema->values->local_pickup ) ) {
-			$this->add_local_pickup( $schema->values->local_pickup );
+		if ( isset( $shipping_data->local_pickup ) ) {
+			$this->add_local_pickup( $shipping_data->local_pickup );
 		}
-
-		return $result;
 	}
 
 	/**
@@ -144,3 +129,5 @@ class ImportSetWCShipping implements StepProcessor {
 		return SetWCShipping::class;
 	}
 }
+
+( new ImportSetWCShipping() )->import();

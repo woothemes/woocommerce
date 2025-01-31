@@ -5,7 +5,10 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Admin\Features\Blueprint\Exporters;
 
 use Automattic\WooCommerce\Admin\Features\Blueprint\Steps\SetWCShipping;
+use Automattic\WooCommerce\Blueprint\ClassExtractor;
+use Automattic\WooCommerce\Blueprint\Exporters\HasAlias;
 use Automattic\WooCommerce\Blueprint\Exporters\StepExporter;
+use Automattic\WooCommerce\Blueprint\Steps\RunPHP;
 use Automattic\WooCommerce\Blueprint\Util;
 
 /**
@@ -15,11 +18,11 @@ use Automattic\WooCommerce\Blueprint\Util;
  *
  * @package Automattic\WooCommerce\Admin\Features\Blueprint\Exporters
  */
-class ExportWCShipping implements StepExporter {
+class ExportWCShipping implements StepExporter, HasAlias {
 	/**
 	 * Export WooCommerce shipping settings.
 	 *
-	 * @return SetWCShipping
+	 * @return RunPHP
 	 */
 	public function export() {
 		global $wpdb;
@@ -141,15 +144,23 @@ class ExportWCShipping implements StepExporter {
 			$locations_by_zone_id[ $location->zone_id ][] = $location->location_id;
 		}
 
-		// Create a new SetWCShipping step with the fetched data.
-		$step = new SetWCShipping( $methods, $locations, $zones, $terms, $classes, $local_pickup );
-		$step->set_meta_values(
-			array(
-				'plugin' => 'woocommerce',
+		$class_extractor = new ClassExtractor( __DIR__ . '/../RunPHPTemplates/ImportSetWCShipping.php' );
+		$class_extractor->replace_method_variable(
+			'import',
+			'shipping_data',
+			(object) array(
+				'terms'              => $terms,
+				'classes'            => $classes,
+				'shipping_zones'     => $zones,
+				'shipping_methods'   => $methods,
+				'shipping_locations' => $locations,
+				'local_pickup'       => $local_pickup,
 			)
 		);
 
-		return $step;
+		$code = $class_extractor->with_wp_load()->get_code();
+
+		return new RunPHP( $code );
 	}
 
 	/**
@@ -158,7 +169,7 @@ class ExportWCShipping implements StepExporter {
 	 * @return string
 	 */
 	public function get_step_name() {
-		return SetWCShipping::get_step_name();
+		return RunPHP::get_step_name();
 	}
 
 	/**
@@ -177,5 +188,14 @@ class ExportWCShipping implements StepExporter {
 	 */
 	public function get_description() {
 		return __( 'It includes shipping settings', 'woocommerce' );
+	}
+
+	/**
+	 * Get the alias
+	 *
+	 * @return string
+	 */
+	public function get_alias() {
+		return 'setWCShipping';
 	}
 }
