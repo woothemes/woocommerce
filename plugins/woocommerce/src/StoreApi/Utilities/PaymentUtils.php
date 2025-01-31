@@ -10,15 +10,15 @@ namespace Automattic\WooCommerce\StoreApi\Utilities;
  */
 class PaymentUtils {
 
-		/**
-		 * Callback for woocommerce_payment_methods_list_item filter to add token id
-		 * to the generated list.
-		 *
-		 * @param array     $list_item The current list item for the saved payment method.
-		 * @param \WC_Token $token     The token for the current list item.
-		 *
-		 * @return array The list item with the token id added.
-		 */
+	/**
+	 * Callback for woocommerce_payment_methods_list_item filter to add token id
+	 * to the generated list.
+	 *
+	 * @param array     $list_item The current list item for the saved payment method.
+	 * @param \WC_Token $token     The token for the current list item.
+	 *
+	 * @return array The list item with the token id added.
+	 */
 	public static function include_token_id_with_payment_methods( $list_item, $token ) {
 		$list_item['tokenId'] = $token->get_id();
 		$brand                = ! empty( $list_item['method']['brand'] ) ?
