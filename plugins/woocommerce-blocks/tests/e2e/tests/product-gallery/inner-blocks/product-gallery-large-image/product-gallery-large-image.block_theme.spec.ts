@@ -201,4 +201,62 @@ test.describe( `${ blockData.name }`, () => {
 			imageSourceForLargeImageElementAfterSelectingVariation
 		).toContain( 'hoodie-green-1' );
 	} );
+
+	test.describe( 'Swipe to navigate', () => {
+		test.use( { hasTouch: true } ); // Enable touch support
+
+		test( 'should work on frontend when is enabled', async ( {
+			pageObject,
+			editor,
+			page,
+		} ) => {
+			await pageObject.addProductGalleryBlock( { cleanContent: true } );
+			await editor.saveSiteEditorEntities( {
+				isOnlyCurrentEntityDirty: true,
+			} );
+
+			await page.goto( blockData.productPage );
+
+			const blockFrontend = await pageObject.getMainImageBlock( {
+				page: 'frontend',
+			} );
+
+			await expect( blockFrontend ).toBeVisible();
+
+			const largeImageElement = blockFrontend.locator(
+				'.wc-block-woocommerce-product-gallery-large-image__image--active-image-slide'
+			);
+
+			// Get the element's bounding box
+			const box = await largeImageElement.boundingBox();
+			if ( ! box ) return;
+
+			// Calculate start and end points for the swipe
+			const startX = box.x + box.width / 2; // middle of element
+			const startY = box.y + box.height / 2;
+			const endX = startX - 200; // swipe left by 200px
+			const endY = startY;
+
+			const initialImageSrc = await largeImageElement.getAttribute(
+				'src'
+			);
+
+			// Perform the touch gesture
+			await page.touchscreen.tap( startX, startY );
+			await page.mouse.move( startX, startY );
+			await page.mouse.down();
+			await page.mouse.move( endX, endY );
+			await page.mouse.up();
+
+			// Verify the next image is shown
+			const nextImage = blockFrontend.locator(
+				'.wc-block-woocommerce-product-gallery-large-image__image--active-image-slide'
+			);
+			const nextImageSrc = await nextImage.getAttribute( 'src' );
+
+			// The next image should be visible and have a different src
+			await expect( nextImage ).toBeVisible();
+			expect( nextImageSrc ).not.toEqual( initialImageSrc );
+		} );
+	} );
 } );
