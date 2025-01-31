@@ -243,13 +243,11 @@ const productGallery = {
 			const imageWidth = element?.offsetWidth || 0;
 
 			// Only trigger swipe actions if there was significant movement
-			if ( Math.abs( delta ) > 10 ) {
-				if ( Math.abs( delta ) > imageWidth * SNAP_THRESHOLD ) {
-					if ( delta > 0 && ! context.disableLeft ) {
-						actions.selectPreviousImage();
-					} else if ( delta < 0 && ! context.disableRight ) {
-						actions.selectNextImage();
-					}
+			if ( Math.abs( delta ) > imageWidth * SNAP_THRESHOLD ) {
+				if ( delta > 0 && ! context.disableLeft ) {
+					actions.selectPreviousImage();
+				} else if ( delta < 0 && ! context.disableRight ) {
+					actions.selectNextImage();
 				}
 			}
 
