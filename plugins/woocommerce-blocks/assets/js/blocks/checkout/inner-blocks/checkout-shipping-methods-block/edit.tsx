@@ -60,7 +60,7 @@ export const Edit = ( {
 			attributes={ attributes }
 			setAttributes={ setAttributes }
 			className={ clsx(
-				'wc-block-checkout__shipping-option',
+				'wc-block-checkout__options',
 				attributes?.className
 			) }
 		>

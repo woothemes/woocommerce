@@ -9,7 +9,6 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import { Edit, Save } from './edit';
 import attributes from './attributes';
-import './style.scss';
 
 registerBlockType( 'woocommerce/checkout-shipping-methods-block', {
 	icon: {
