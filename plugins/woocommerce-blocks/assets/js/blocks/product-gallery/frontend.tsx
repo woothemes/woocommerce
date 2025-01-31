@@ -220,6 +220,7 @@ const productGallery = {
 		onTouchStart: ( event: TouchEvent ) => {
 			const context = getContext();
 			context.touchStartX = event.touches[ 0 ].clientX;
+			context.touchCurrentX = event.touches[ 0 ].clientX;
 			context.isDragging = true;
 		},
 		onTouchMove: ( event: TouchEvent ) => {
@@ -241,12 +242,14 @@ const productGallery = {
 			const element = getElement()?.ref as HTMLElement;
 			const imageWidth = element?.offsetWidth || 0;
 
-			// Determine if we should snap to next/previous image
-			if ( Math.abs( delta ) > imageWidth * SNAP_THRESHOLD ) {
-				if ( delta > 0 && ! context.disableLeft ) {
-					actions.selectPreviousImage();
-				} else if ( delta < 0 && ! context.disableRight ) {
-					actions.selectNextImage();
+			// Only trigger swipe actions if there was significant movement
+			if ( Math.abs( delta ) > 10 ) {
+				if ( Math.abs( delta ) > imageWidth * SNAP_THRESHOLD ) {
+					if ( delta > 0 && ! context.disableLeft ) {
+						actions.selectPreviousImage();
+					} else if ( delta < 0 && ! context.disableRight ) {
+						actions.selectNextImage();
+					}
 				}
 			}
 
