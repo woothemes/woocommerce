@@ -4,9 +4,11 @@ namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
-use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
 use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
-use Automattic\WooCommerce\Blocks\Utils\CheckoutFieldRegistrationUtils;
+use Automattic\WooCommerce\Blocks\Utils\{
+	CheckoutFieldsRegistrationUtils,
+	CheckoutFieldsSchema,
+};
 use WC_Customer;
 use WC_Data;
 use WC_Order;
@@ -75,21 +77,12 @@ class CheckoutFields {
 	const OTHER_FIELDS_PREFIX = '_wc_other/';
 
 	/**
-	 * Instance of the checkout fields schema.
-	 *
-	 * @var CheckoutFieldsSchema
-	 */
-	private $schema;
-
-	/**
 	 * Sets up core fields.
 	 *
-	 * @param AssetDataRegistry    $asset_data_registry Instance of the asset data registry.
-	 * @param CheckoutFieldsSchema $schema Instance of the checkout fields schema.
+	 * @param AssetDataRegistry $asset_data_registry Instance of the asset data registry.
 	 */
-	public function __construct( AssetDataRegistry $asset_data_registry, CheckoutFieldsSchema $schema ) {
+	public function __construct( AssetDataRegistry $asset_data_registry ) {
 		$this->asset_data_registry = $asset_data_registry;
-		$this->schema              = $schema;
 		$this->fields_locations    = [
 			// omit email from shipping and billing fields.
 			'address' => array_merge( \array_diff_key( $this->get_core_fields_keys(), array( 'email' ) ) ),
@@ -191,7 +184,7 @@ class CheckoutFields {
 	 */
 	public function register_checkout_field( $options ) {
 		// Check the options and show warnings if they're not supplied. Return early if an error that would prevent registration is encountered.
-		if ( false === CheckoutFieldRegistrationUtils::validate_options( $options ) ) {
+		if ( false === CheckoutFieldsRegistrationUtils::validate_options( $options ) ) {
 			return;
 		}
 
@@ -216,27 +209,25 @@ class CheckoutFields {
 		// The above validate_options function ensures these options are valid. Type might not be supplied but then it defaults to text.
 		$field_data = wp_parse_args(
 			$options,
-			array_merge(
-				[
-					'id'                         => '',
-					'label'                      => '',
-					/* translators: %s Field label. */
-					'optionalLabel'              => sprintf( __( '%s (optional)', 'woocommerce' ), $options['label'] ),
-					'location'                   => '',
-					'type'                       => 'text',
-					'hidden'                     => false,
-					'required'                   => false,
-					'attributes'                 => [],
-					'show_in_order_confirmation' => true,
-					'sanitize_callback'          => array( $this, 'default_sanitize_callback' ),
-					'validate_callback'          => array( $this, 'default_validate_callback' ),
-				],
-				$this->schema->get_schema_properties()
-			)
+			[
+				'id'                         => '',
+				'label'                      => '',
+				/* translators: %s Field label. */
+				'optionalLabel'              => sprintf( __( '%s (optional)', 'woocommerce' ), $options['label'] ),
+				'location'                   => '',
+				'type'                       => 'text',
+				'hidden'                     => false,
+				'required'                   => false,
+				'attributes'                 => [],
+				'show_in_order_confirmation' => true,
+				'sanitize_callback'          => array( $this, 'default_sanitize_callback' ),
+				'validate_callback'          => array( $this, 'default_validate_callback' ),
+				'rules'                      => [],
+			],
 		);
 
-		$field_data['attributes'] = CheckoutFieldRegistrationUtils::sanitize_field_attributes( $field_data['id'], $field_data['attributes'] );
-		$field_data               = CheckoutFieldRegistrationUtils::sanitize_field_type_data( $field_data, $options );
+		$field_data['attributes'] = CheckoutFieldsRegistrationUtils::sanitize_field_attributes( $field_data['id'], $field_data['attributes'] );
+		$field_data               = CheckoutFieldsRegistrationUtils::sanitize_field_type_data( $field_data, $options );
 
 		// $field_data will be false if an error that will prevent the field being registered is encountered.
 		if ( false === $field_data ) {
@@ -808,13 +799,29 @@ class CheckoutFields {
 	 * @param string|null         $context Address context.
 	 * @return bool
 	 */
-	public function is_field_required( $field, $document_object = null, $context = null ) {
+	public function is_required_field( $field, $document_object = null, $context = null ) {
 		if ( $document_object && ! empty( $field['rules']['required'] ) ) {
 			$document_object->set_context( $context );
-			return $this->schema->validate_document_object_rules( $document_object, $field['rules']['required'] );
+			return true === CheckoutFieldsSchema::validate_document_object( $document_object, $field['rules']['required'] );
 		}
-
 		return true === $field['required'];
+	}
+
+	/**
+	 * Validates a field against the given document object and context.
+	 *
+	 * @param array               $field The field.
+	 * @param DocumentObject|null $document_object The document object.
+	 * @param string|null         $context The context.
+	 * @return bool|\WP_Error True if the field is valid, a WP_Error otherwise.
+	 */
+	public function is_valid_field( $field, $document_object = null, $context = null ) {
+		if ( $document_object && ! empty( $field['rules']['validation'] ) ) {
+			$document_object->set_context( $context );
+			$field_schema = CheckoutFieldsSchema::get_field_schema_with_context( $field['id'], $field['rules']['validation'], $context );
+			return CheckoutFieldsSchema::validate_document_object( $document_object, $field_schema );
+		}
+		return true;
 	}
 
 	/**

@@ -228,7 +228,7 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function validate_additional_fields_with_context( $fields, $values, $document_object = null, $context = null ) {
 		foreach ( $fields as $field_key => $field ) {
-			if ( ! isset( $values[ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object, $context ) ) {
+			if ( ! isset( $values[ $field_key ] ) && $this->additional_fields_controller->is_required_field( $field, $document_object, $context ) ) {
 				switch ( $context ) {
 					case 'shipping_address':
 						/* translators: %s: is the field label */
@@ -246,7 +246,7 @@ class Checkout extends AbstractCartRoute {
 				continue;
 			}
 
-			$validate_result = $this->additional_fields_controller->is_field_valid( $field, $document_object, $context );
+			$validate_result = $this->additional_fields_controller->is_valid_field( $field, $document_object, $context );
 
 			if ( is_wp_error( $validate_result ) ) {
 				switch ( $context ) {
