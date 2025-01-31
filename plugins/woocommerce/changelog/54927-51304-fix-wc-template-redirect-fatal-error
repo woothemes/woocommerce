@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Avoid fatal errors when the theme does not have a 404 page template.
