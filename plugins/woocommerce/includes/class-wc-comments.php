@@ -45,8 +45,8 @@ class WC_Comments {
 		add_filter( 'wp_count_comments', array( __CLASS__, 'wp_count_comments' ), 10, 2 );
 
 		// Delete comments count cache whenever there is a new comment or a comment status changes.
-		add_action( 'wp_insert_comment', array( __CLASS__, 'delete_comments_count_cache' ) );
-		add_action( 'wp_set_comment_status', array( __CLASS__, 'delete_comments_count_cache' ) );
+		add_action( 'wp_insert_comment', array( __CLASS__, 'delete_comments_count_cache_on_wp_insert_comment' ), 10, 2 );
+		add_action( 'transition_comment_status', array( __CLASS__, 'delete_comments_count_cache_on_comment_status_change' ), 10, 3 );
 
 		// Support avatars for `review` comment type.
 		add_filter( 'get_avatar_comment_types', array( __CLASS__, 'add_avatar_for_review_comment_type' ) );
@@ -216,6 +216,48 @@ class WC_Comments {
 	}
 
 	/**
+	 * Callback for 'wp_insert_comment' to delete the comment count cache if the comment is included in the count.
+	 *
+	 * @param int        $comment_id The comment ID.
+	 * @param WP_Comment $comment Comment object.
+	 *
+	 * @return void
+	 */
+	public static function delete_comments_count_cache_on_wp_insert_comment( $comment_id, $comment ) {
+		if ( ! self::is_comment_excluded_from_wp_comment_counts( $comment ) ) {
+			self::delete_comments_count_cache();
+		}
+	}
+
+	/**
+	 * Callback for 'comment_status_change' to delete the comment count cache if the comment is included in the count.
+	 *
+	 * @param int|string $new_status The new comment status.
+	 * @param int|string $old_status The old comment status.
+	 * @param WP_Comment $comment    Comment object.
+	 *
+	 * @return void
+	 */
+	public static function delete_comments_count_cache_on_comment_status_change( $new_status, $old_status, $comment ) {
+		if ( ! self::is_comment_excluded_from_wp_comment_counts( $comment ) ) {
+			self::delete_comments_count_cache();
+		}
+	}
+
+	/**
+	 * Determines whether the given comment should be included in the core WP comment counts that are displayed in the
+	 * WordPress admin.
+	 *
+	 * @param WP_Comment $comment Comment object.
+	 *
+	 * @return bool
+	 */
+	private static function is_comment_excluded_from_wp_comment_counts( $comment ) {
+		return in_array( $comment->comment_type, array( 'action_log', 'order_note', 'webhook_delivery' ), true )
+			|| get_post_type( $comment->comment_post_ID ) === 'product';
+	}
+
+	/**
 	 * Delete comments count cache whenever there is
 	 * new comment or the status of a comment changes. Cache
 	 * will be regenerated next time WC_Comments::wp_count_comments()
@@ -239,7 +281,7 @@ class WC_Comments {
 		if ( 0 === $post_id ) {
 			$stats = get_transient( 'wc_count_comments' );
 
-			if ( ! $stats ) {
+			if ( false === $stats ) {
 				$stats = array(
 					'total_comments' => 0,
 					'all'            => 0,
