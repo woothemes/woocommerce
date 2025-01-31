@@ -130,10 +130,6 @@ const blocks = {
 		customDir: 'product-filters/inner-blocks/rating-filter',
 		isExperimental: true,
 	},
-	'product-filter-active': {
-		customDir: 'product-filters/inner-blocks/active-filters',
-		isExperimental: true,
-	},
 	'product-filter-removable-chips': {
 		customDir: 'product-filters/inner-blocks/removable-chips',
 		isExperimental: true,

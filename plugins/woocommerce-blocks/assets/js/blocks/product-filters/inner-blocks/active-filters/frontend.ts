@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { store, getContext, getElement } from '@woocommerce/interactivity';
+import { store, getContext, getElement } from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
@@ -11,6 +11,22 @@ import { ProductFiltersContext, ProductFiltersStore } from '../../frontend';
 type ProductFilterActiveContext = {
 	removeLabelTemplate: string;
 };
+
+type FilterItem = {
+	type: string;
+	value: string;
+};
+
+function isFilterItem(
+	value: string | null | FilterItem
+): value is FilterItem {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		typeof value.type === 'string' &&
+		typeof value.value === 'string'
+	);
+}
 
 const productFilterActiveStore = store( 'woocommerce/product-filter-active', {
 	state: {
@@ -37,23 +53,32 @@ const productFilterActiveStore = store( 'woocommerce/product-filter-active', {
 	},
 	actions: {
 		removeFilter: () => {
-			const { props } = getElement();
-			let filterItem = props[ 'data-filter-item' ];
+			const { ref } = getElement();
+			if ( ! ref ) return;
 
-			if ( typeof filterItem === 'string' )
-				filterItem = JSON.parse( filterItem );
+			try {
+				let filterItem: string | null | FilterItem =
+					ref.getAttribute( 'data-filter-item' );
 
-			const { type, value } = filterItem;
+				filterItem = filterItem
+					? ( JSON.parse( filterItem ) as FilterItem )
+					: null;
 
-			if ( ! type || ! value ) return;
+				// Using a typeguard, makes it much easier to work with the filter item in TS.
+				if ( ! isFilterItem( filterItem ) ) return;
 
-			const productFiltersStore = store< ProductFiltersStore >(
-				'woocommerce/product-filters'
-			);
+				const { type, value } = filterItem;
 
-			productFiltersStore.actions.removeActiveFilter( type, value );
+				const productFiltersStore = store< ProductFiltersStore >(
+					'woocommerce/product-filters'
+				);
 
-			productFiltersStore.actions.navigate();
+				productFiltersStore.actions.removeActiveFilter( type, value );
+				productFiltersStore.actions.navigate();
+			} catch ( error ) {
+				// type and value missing is possible, and we don't throw, so also don't throw if JSON cannot be parsed.
+				// It could be worth a console error in development for either of these cases for troubleshooting.
+			}
 		},
 		clearFilters: () => {
 			const productFiltersContext = getContext< ProductFiltersContext >(

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 /**
@@ -25,6 +27,7 @@ final class ProductFilterActive extends AbstractBlock {
 			return $content;
 		}
 
+		wp_enqueue_script_module( $this->get_full_block_name() );
 		$active_filters = $block->context['activeFilters'];
 
 		$filter_context = array(
@@ -33,11 +36,11 @@ final class ProductFilterActive extends AbstractBlock {
 		);
 
 		$wrapper_attributes = array(
-			'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-key'          => wp_unique_prefixed_id( $this->get_full_block_name() ),
-			'data-wc-bind--hidden' => '!state.hasSelectedFilters',
+			'data-wp-interactive'  => $this->get_full_block_name(),
+			'data-wp-key'          => wp_unique_prefixed_id( $this->get_full_block_name() ),
+			'data-wp-bind--hidden' => '!state.hasSelectedFilters',
 			/* translators:  {{label}} is the label of the active filter item. */
-			'data-wc-context'      => wp_json_encode( array( 'removeLabelTemplate' => __( 'Remove filter: {{label}}', 'woocommerce' ) ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wp-context'      => wp_json_encode( array( 'removeLabelTemplate' => __( 'Remove filter: {{label}}', 'woocommerce' ) ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
 		);
 
 		if ( empty( $active_filters ) ) {
@@ -59,11 +62,22 @@ final class ProductFilterActive extends AbstractBlock {
 	}
 
 	/**
-	 * Get the frontend style handle for this block type.
+	 * Disable the frontend style handle for this block type.
 	 *
 	 * @return null
 	 */
 	protected function get_block_type_style() {
+		return null;
+	}
+
+	/**
+	 * Disable the frontend script handle for this block type. It uses
+	 * script modules.
+	 *
+	 * @param string|null $key The key for the script.
+	 * @return null
+	 */
+	protected function get_block_type_script( $key = null ) {
 		return null;
 	}
 }
