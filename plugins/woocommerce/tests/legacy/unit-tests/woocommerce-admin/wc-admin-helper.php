@@ -13,59 +13,75 @@ use Automattic\WooCommerce\Admin\WCAdminHelper;
  * @package WooCommerce\Admin\Tests\WCAdminHelper
  */
 class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
+
+	/**
+	 * Store original permalink structure for restoration.
+	 *
+	 * @var string
+	 */
+	private static $original_permalink_structure;
+
+	/**
+	 * Store original WooCommerce permalinks for restoration.
+	 *
+	 * @var array
+	 */
+	private static $original_wc_permalinks;
+
+	/**
+	 * Store product ID for cleanup.
+	 *
+	 * @var int
+	 */
+	private static $product_id;
+
 	/**
 	 * Set up before class.
 	 */
 	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 
-		/** Set up for is_current_page_store_page tests */
-
-		// Ensure pages exist.
-		WC_Install::create_pages();
-
 		// Use a block theme so that product post type can be registered with has_archive = `shop`.
 		switch_theme( 'twentytwentyfour' );
-		// Unregister product post type so that it can be registered again in WC_Unit_Test_Case::setUp().
 
+		// Unregister taxonomies and post type so that they can be registered again in WC_Unit_Test_Case::setUp().
 		unregister_taxonomy( 'product_type' );
 		unregister_taxonomy( 'product_cat' );
 		unregister_taxonomy( 'product_tag' );
 		unregister_post_type( 'product' );
 
-		// Set up permalinks.
+		// Store original permalink structure for restoration.
+		self::$original_permalink_structure = get_option( 'permalink_structure' );
+		self::$original_wc_permalinks       = get_option( 'woocommerce_permalinks', array() );
 		global $wp_rewrite;
 		$wp_rewrite->set_permalink_structure( '/%postname%/' );
-		update_option(
-			'woocommerce_permalinks',
-			array(
-				'product_base'           => '/shop/%product_cat%',
-				'category_base'          => 'product-category',
-				'tag_base'               => 'product-tag',
-				'attribute_base'         => 'test',
-				'use_verbose_page_rules' => true,
-			)
-		);
+
+		// Create a product.
+		$product = WC_Helper_Product::create_simple_product();
+		$product->set_status( 'publish' );
+		$product->save();
+		self::$product_id = $product->get_id();
+
 		// Flush rewrite rules.
-		$wp_rewrite->flush_rules();
+		$wp_rewrite->init();
+		$wp_rewrite->flush_rules( true );
 	}
 
 	/**
 	 * Tear down after class.
 	 */
 	public static function tearDownAfterClass(): void {
-		// Delete pages.
-		wp_delete_post( get_option( 'woocommerce_shop_page_id' ), true );
-		wp_delete_post( get_option( 'woocommerce_cart_page_id' ), true );
-		wp_delete_post( get_option( 'woocommerce_checkout_page_id' ), true );
-		wp_delete_post( get_option( 'woocommerce_myaccount_page_id' ), true );
-		wp_delete_post( wc_terms_and_conditions_page_id(), true );
-
+		// Restore original permalink structure.
 		global $wp_rewrite;
+		$wp_rewrite->set_permalink_structure( self::$original_permalink_structure );
+		update_option( 'woocommerce_permalinks', self::$original_wc_permalinks );
 
-		// Reset permalinks.
-		$wp_rewrite->set_permalink_structure( '' );
+		// Clean up product.
+		WC_Helper_Product::delete_product( self::$product_id );
+
+		// Flush rewrite rules one final time.
 		$wp_rewrite->flush_rules();
+		parent::tearDownAfterClass();
 	}
 
 	/**
@@ -239,19 +255,22 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 	 * @return array[] list of store page test data.
 	 */
 	public function get_store_page_test_data() {
+		// Make sure pages are created.
+		WC_Install::create_pages();
+
 		return array(
 			// Should basic store pages return true.
-			array( get_permalink( wc_get_page_id( 'cart' ) ), true ),
-			array( get_permalink( wc_get_page_id( 'shop' ) ), true ),
-			array( get_permalink( wc_get_page_id( 'checkout' ) ), true ),
-			array( get_permalink( wc_get_page_id( 'terms' ) ), true ),
-			array( get_permalink( wc_get_page_id( 'coming_soon' ) ), true ),
+			array( 'cart', get_permalink( wc_get_page_id( 'cart' ) ), true ),
+			array( 'shop', get_permalink( wc_get_page_id( 'shop' ) ), true ),
+			array( 'checkout', get_permalink( wc_get_page_id( 'checkout' ) ), true ),
+			array( 'product archive', get_post_type_archive_link( 'product' ), true ),
+			array( 'product', get_permalink( self::$product_id ), true ),
 			// Should return true if a shop page contains a query param.
-			array( get_permalink( wc_get_page_id( 'shop' ) ) . '?query=test', true ),
+			array( 'shop with query', get_permalink( wc_get_page_id( 'shop' ) ) . '?query=test', true ),
 			// Should non-store pages return false.
-			array( home_url( '/about-us/' ), false ),
-			array( home_url( '/shopping-url/' ), false ),
-			array( home_url( '/test?param1=value1&param2=value2' ), false ),
+			array( 'about-us', home_url( '/about-us/' ), false ),
+			array( 'shopping-url', home_url( '/shopping-url/' ), false ),
+			array( 'page with query', home_url( '/test?param1=value1&param2=value2' ), false ),
 		);
 	}
 
@@ -260,36 +279,19 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 	 * Test is_current_page_store_page function with different URLs for basic store pages.
 	 *
 	 */
-	public function is_current_page_store_page() {
+	public function test_is_current_page_store_page() {
+		global $wp_rewrite;
+		$wp_rewrite->init();
+		$wp_rewrite->flush_rules( true );
+
 		$test_data = $this->get_store_page_test_data();
 
 		foreach ( $test_data as $data ) {
-			list( $url, $expected_result ) = $data;
+			list( $page_name, $url, $expected_result ) = $data;
 			$this->go_to( $url );
 			$result = WCAdminHelper::is_current_page_store_page();
-			$this->assertEquals( $expected_result, $result, 'Test failed for ' . $url );
+			$this->assertEquals( $expected_result, $result, 'Test failed for ' . $page_name . ' with URL: ' . $url );
 		}
-	}
-
-	/**
-	 * Test is_current_page_store_page for product page.
-	 */
-	public function test_is_current_page_store_page_for_product_page() {
-		// Create a product.
-		$product = WC_Helper_Product::create_simple_product();
-		$product->set_status( 'publish' );
-		$product->save();
-
-		flush_rewrite_rules();
-
-		// Test product page.
-		$this->go_to( get_permalink( $product->get_id() ) );
-		global $wp_query;
-
-		$is_store_page = WCAdminHelper::is_current_page_store_page();
-		$this->assertTrue( $is_store_page, 'Failed to identify product as store page' );
-
-		WC_Helper_Product::delete_product( $product->get_id() );
 	}
 
 	/**
@@ -322,12 +324,13 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 		$term_link = get_term_link( $category['term_id'], 'product_cat' );
 		$this->go_to( $term_link );
 		$is_store_page = WCAdminHelper::is_current_page_store_page();
-		$this->assertTrue( $is_store_page, 'Failed to identify product category as store page' );
+		$this->assertTrue( $is_store_page, 'Failed to identify product category as store page ' . $term_link );
 
 		// Test product tag page.
-		$this->go_to( get_term_link( $tag['term_id'], 'product_tag' ) );
+		$tag_link = get_term_link( $tag['term_id'], 'product_tag' );
+		$this->go_to( $tag_link );
 		$is_store_page = WCAdminHelper::is_current_page_store_page();
-		$this->assertTrue( $is_store_page, 'Failed to identify product tag as store page' );
+		$this->assertTrue( $is_store_page, 'Failed to identify product tag as store page ' . $tag_link );
 
 		// Clean up.
 		wp_delete_term( $category['term_id'], 'product_cat' );
@@ -339,19 +342,18 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 	 */
 	public function test_is_current_page_store_page_when_permalink_structure_is_plain() {
 		global $wp_rewrite;
-
-		// Set permalink structure to plain.
+		// Set permalink structure to plain .
 		$wp_rewrite->set_permalink_structure( '' );
 		delete_option( 'woocommerce_permalinks' );
 		$wp_rewrite->flush_rules();
 
-		$this->go_to( get_permalink( wc_get_page_id( 'shop' ) ) );
-		$is_store_page = WCAdminHelper::is_current_page_store_page();
-		$this->assertTrue( $is_store_page, 'Failed to identify shop page as store page when permalink structure is plain' );
-
-		$this->go_to( get_post_type_archive_link( 'product' ) );
-		$is_store_page = WCAdminHelper::is_current_page_store_page();
-		$this->assertTrue( $is_store_page, 'Failed to identify product page as store page when permalink structure is plain' );
+		$test_data = $this->get_store_page_test_data();
+		foreach ( $test_data as $data ) {
+			list( $page_name, $url, $expected_result ) = $data;
+			$this->go_to( $url );
+			$result = WCAdminHelper::is_current_page_store_page();
+			$this->assertEquals( $expected_result, $result, 'Test failed for ' . $page_name . ' with URL: ' . $url );
+		}
 	}
 
 	/**
@@ -362,7 +364,7 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 		add_filter( 'woocommerce_get_shop_page_id', '__return_false' );
 
 		$this->go_to( home_url( '/?post_type=product' ) );
-		$this->assertTrue( WCAdminHelper::is_current_page_store_page() );
+		$this->assertTrue( WCAdminHelper::is_current_page_store_page(), 'Failed to identify product archive as store page' );
 
 		remove_filter( 'woocommerce_get_shop_page_id', '__return_false' );
 	}
@@ -393,14 +395,14 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 
 		// Test if the page is a store page.
 		$is_store_page = WCAdminHelper::is_current_page_store_page();
-		$this->assertFalse( $is_store_page, 'Incorrectly identified regular page as store page' );
+		$this->assertFalse( $is_store_page, 'Incorrectly identified regular page as store page ' . $page_url );
 
 		// Clean up.
 		wp_delete_post( $page_id, true );
 	}
 
 	/**
-	 * Referenced from https://github.com/WordPress/wordpress-develop/blob/126e3bcc2b41c06c92f95d1796c2766bfbb19f86/tests/phpunit/includes/abstract-testcase.php#L1212.
+	 * Copied and modified from https://github.com/WordPress/wordpress-develop/blob/126e3bcc2b41c06c92f95d1796c2766bfbb19f86/tests/phpunit/includes/abstract-testcase.php#L1212.
 	 *
 	 * Sets the global state to as if a given URL has been requested.
 	 *
@@ -462,9 +464,10 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 	}
 
 	/**
+	 * Copied and modified from https://github.com/WordPress/wordpress-develop/blob/126e3bcc2b41c06c92f95d1796c2766bfbb19f86/tests/phpunit/includes/utils.php#L524.
+	 *
 	 * Clean out globals to stop them polluting wp and wp_query.
 	 *
-	 * Referenced from https://github.com/WordPress/wordpress-develop/blob/126e3bcc2b41c06c92f95d1796c2766bfbb19f86/tests/phpunit/includes/utils.php#L524.
 	 */
 	private function cleanup_query_vars() {
 		foreach ( $GLOBALS['wp']->public_query_vars as $v ) {
