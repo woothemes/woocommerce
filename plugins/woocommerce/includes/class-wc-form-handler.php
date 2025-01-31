@@ -360,7 +360,10 @@ class WC_Form_Handler {
 				// These error message are already translated.
 				wc_add_notice( $e->getMessage(), 'error' );
 			} catch ( \Exception $e ) {
-				wc_add_notice( __( 'An error occurred while saving account details.', 'woocommerce' ), 'error' );
+				wc_add_notice(
+					__( 'An error occurred while saving account details: ', 'woocommerce' ) . $e->getMessage(),
+					'error'
+				);
 			}
 
 			/**
@@ -369,7 +372,7 @@ class WC_Form_Handler {
 			 * @since 3.6.0
 			 * @param int $user_id User ID being saved.
 			 */
-			do_action( 'woocommerce_save_account_details', $customer ?? $user->ID );
+			do_action( 'woocommerce_save_account_details', $user->ID );
 
 			// Notices are checked here so that if something created a notice during the save hooks above, the redirect will not happen.
 			if ( 0 === wc_notice_count( 'error' ) ) {

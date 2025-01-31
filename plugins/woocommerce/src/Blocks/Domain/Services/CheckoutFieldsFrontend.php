@@ -185,23 +185,33 @@ class CheckoutFieldsFrontend {
 	 *
 	 * @param integer $user_id User ID.
 	 */
-	public function save_account_form_fields( $user_id ) {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$customer          = new WC_Customer( $user_id );
+	public function save_account_form_fields( int $user_id ) {
+
+		try {
+			$customer = new WC_Customer( $user_id );
+		} catch ( \Exception $e ) {
+			wc_add_notice(
+				__( 'Unable to save customer additional fields: ', 'woocommerce' ) . $e->getMessage(),
+				'notice'
+			);
+			return;
+		}
+
 		$additional_fields = $this->checkout_fields_controller->get_fields_for_location( 'contact' );
-		$field_values      = array();
 
-		foreach ( array_keys( $additional_fields ) as $key ) {
-			$post_key = CheckoutFields::get_group_key( 'other' ) . $key;
-			if ( ! isset( $_POST[ $post_key ] ) ) {
-				continue;
-			}
+		$field_values = array();
 
-			$field_value = $this->checkout_fields_controller->sanitize_field( $key, wc_clean( wp_unslash( $_POST[ $post_key ] ) ) );
+		foreach ( $additional_fields as $key => $field_data ) {
+
+			$field_value = $_POST[ $key ] ?? ''; // We can't skip, field might be required.
+
+			$field_value = $this->checkout_fields_controller->sanitize_field( $key, wc_clean( wp_unslash( $field_value ) ) );
 			$validation  = $this->checkout_fields_controller->validate_field( $key, $field_value );
 
 			if ( is_wp_error( $validation ) && $validation->has_errors() ) {
-				wc_add_notice( $validation->get_error_message(), 'error' );
+				foreach ( $validation->get_error_messages() as $error_message ) {
+					wc_add_notice( $error_message, 'error' );
+				}
 				continue;
 			}
 
@@ -217,10 +227,11 @@ class CheckoutFieldsFrontend {
 		$location_validation = $this->checkout_fields_controller->validate_fields_for_location( $field_values, 'contact', 'other' );
 
 		if ( is_wp_error( $location_validation ) && $location_validation->has_errors() ) {
-			wc_add_notice( $location_validation->get_error_message(), 'error' );
+			foreach ( $location_validation->get_error_messages() as $error_message ) {
+				wc_add_notice( $error_message, 'error' );
+			}
 		}
 
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		$customer->save();
 	}
 
