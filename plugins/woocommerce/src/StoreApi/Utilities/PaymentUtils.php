@@ -24,7 +24,6 @@ class PaymentUtils {
 		$brand                = ! empty( $list_item['method']['brand'] ) ?
 			strtolower( $list_item['method']['brand'] ) :
 			'';
-		// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- need to match on translated value from core.
 		if ( ! empty( $brand ) && esc_html__( 'Credit card', 'woocommerce' ) !== $brand ) {
 			$list_item['method']['brand'] = wc_get_credit_card_type_label( $brand );
 		}
