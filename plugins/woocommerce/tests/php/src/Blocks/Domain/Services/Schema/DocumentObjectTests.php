@@ -25,6 +25,7 @@ class DocumentObjectTests extends TestCase {
 				'coupons'            => [],
 				'shipping_rates'     => [],
 				'items'              => [],
+				'items_type'         => [],
 				'items_count'        => 0,
 				'items_weight'       => 0,
 				'needs_shipping'     => false,

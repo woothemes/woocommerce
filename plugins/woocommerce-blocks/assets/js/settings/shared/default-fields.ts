@@ -2,6 +2,8 @@
  * External dependencies
  */
 import type { AllHTMLAttributes, AriaAttributes } from 'react';
+import type { JSONSchemaType } from 'ajv';
+import type { DocumentSchema } from '@woocommerce/base-hooks';
 
 /**
  * Internal dependencies
@@ -44,6 +46,12 @@ export interface FormField {
 	placeholder?: string;
 	// Additional attributes added when registering a field. String in key is required for data attributes.
 	attributes?: Record< keyof CustomFieldAttributes, string >;
+	// The rules for the field.
+	rules?: {
+		required?: JSONSchemaType< DocumentSchema >;
+		validation?: JSONSchemaType< DocumentSchema >;
+		hidden?: JSONSchemaType< DocumentSchema >;
+	};
 }
 
 export interface LocaleSpecificFormField extends Partial< FormField > {
@@ -61,14 +69,16 @@ export interface CoreAddressForm {
 	state: FormField;
 	postcode: FormField;
 	phone: FormField;
+	[ x: `${ string }/${ string }` ]: FormField; // Additional fields are named like: namespace/field_name
 }
 
 export interface CoreContactForm {
 	email: FormField;
+	[ x: `${ string }/${ string }` ]: FormField; // Additional fields are named like: namespace/field_name
 }
 
-export type AddressForm = CoreAddressForm & Record< string, FormField >;
-export type ContactForm = CoreContactForm & Record< string, FormField >;
+export type AddressForm = CoreAddressForm;
+export type ContactForm = CoreContactForm;
 export type FormFields = AddressForm & ContactForm;
 export type AddressFormValues = Omit< ShippingAddress, 'email' >;
 export type ContactFormValues = { email: string };
@@ -90,10 +100,11 @@ export interface CoreAddress {
 	state: string;
 	postcode: string;
 	phone: string;
+	[ x: `${ string }/${ string }` ]: string | boolean; // Additional fields are named like: namespace/field_name
 }
 
 export type AdditionalValues = Record<
-	Exclude< string, keyof CoreAddress >,
+	`${ string }/${ string }`,
 	string | boolean
 >;
 

@@ -334,68 +334,6 @@ test.describe( `${ blockData.name }`, () => {
 				} );
 
 			expect( popUpSelectedImageId ).toBe( nextImageId );
-		} );
-
-		test( 'if available, should display the same image when pop-up is closed', async ( {
-			page,
-			editor,
-			pageObject,
-		} ) => {
-			await pageObject.addProductGalleryBlock( { cleanContent: true } );
-
-			await editor.saveSiteEditorEntities( {
-				isOnlyCurrentEntityDirty: true,
-			} );
-
-			await page.goto( blockData.productPage );
-
-			const largeImageBlock = await pageObject.getMainImageBlock( {
-				page: 'frontend',
-			} );
-			const initialVisibleLargeImageId = await getVisibleLargeImageId(
-				largeImageBlock
-			);
-
-			const secondImageThumbnailId = await getThumbnailImageIdByNth(
-				1,
-				await pageObject.getThumbnailsBlock( {
-					page: 'frontend',
-				} )
-			);
-
-			expect( initialVisibleLargeImageId ).not.toBe(
-				secondImageThumbnailId
-			);
-
-			const nextButton = page
-				.locator(
-					'.wc-block-product-gallery-large-image-next-previous--button'
-				)
-				.nth( 1 );
-			await nextButton.click();
-
-			const imageAfterClickingNextButton = await getVisibleLargeImageId(
-				largeImageBlock
-			);
-
-			expect( imageAfterClickingNextButton ).toBe(
-				secondImageThumbnailId
-			);
-
-			await largeImageBlock.click();
-
-			const popUpInitialSelectedImageId =
-				await pageObject.getActiveElementImageId( {
-					page,
-				} );
-
-			await page.keyboard.press( 'Tab' );
-
-			const popUpNextImageId = await pageObject.getActiveElementImageId( {
-				page,
-			} );
-
-			expect( popUpInitialSelectedImageId ).not.toBe( popUpNextImageId );
 
 			const closePopUpButton = page.locator(
 				'.wc-block-product-gallery-dialog__close-button'
@@ -406,7 +344,7 @@ test.describe( `${ blockData.name }`, () => {
 				largeImageBlock
 			);
 
-			expect( singleProductImageId ).toBe( popUpNextImageId );
+			expect( singleProductImageId ).toBe( nextImageId );
 		} );
 	} );
 

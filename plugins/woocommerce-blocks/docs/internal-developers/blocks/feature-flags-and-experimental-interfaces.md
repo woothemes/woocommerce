@@ -351,7 +351,7 @@ This action has no arguments.
 
 ```js
 wp.hooks.addAction(
-	'experimental__woocommerce_blocks-cart-set-shipping-address',
+	'experimental__woocommerce_blocks-checkout-set-shipping-address',
 	'plugin/namespace',
 	() => {
 		console.log( 'The shipping address was changed.' );
@@ -371,7 +371,7 @@ This action has no arguments.
 
 ```js
 wp.hooks.addAction(
-	'experimental__woocommerce_blocks-cart-set-billing-address',
+	'experimental__woocommerce_blocks-checkout-set-billing-address',
 	'plugin/namespace',
 	() => {
 		console.log( 'The billing address was changed.' );
