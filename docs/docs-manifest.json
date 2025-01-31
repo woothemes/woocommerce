@@ -195,7 +195,7 @@
           "menu_title": "Additional Checkout Fields",
           "tags": "reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
-          "hash": "aa38325787bc1a130bfa301209fbdd27544d9ed474c85bbbe761bf2106bf9e97",
+          "hash": "8336fc88a08df2b41ec20234f7475ddc94b8605fdd7db9577e96c93dad716fee",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/cart-and-checkout-blocks/additional-checkout-fields.md",
           "id": "cb5dd8d59043a4e53929121b45da7b33b1661ab8"
         }
@@ -451,7 +451,7 @@
           "menu_title": "Free shipping customizations",
           "tags": "code-snippets",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/free_shipping_customization.md",
-          "hash": "3cf4bf7ecf4ea4138591ee6fead8268f48619e28ecb2c3b10a8cf7f6ad68ed09",
+          "hash": "0f5793a00b7e2db6d0862ff4130951ebdd1845bd77237d8e94dc4e63f4fe70e9",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/free_shipping_customization.md",
           "id": "cac6f1ccd661588e9a5fa7405643e9c6d4da388e"
         },
@@ -1915,5 +1915,5 @@
       "categories": []
     }
   ],
-  "hash": "010c87899f8432c25051b7e14b4262763197d04ffa0dc581be95945454acacb3"
+  "hash": "b888921c84dea6153dc02fa512c4b0af53137bc2c603dce0201d59d191135568"
 }

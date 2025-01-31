@@ -71,6 +71,44 @@ test.describe( 'Shopper → Additional Checkout Fields', () => {
 
 			await checkoutPageObject.placeOrder( false );
 
+			// Test that the required checkbox warning shows up after submitting without interacting.
+			await expect(
+				checkoutPageObject.page.getByText(
+					'Please check the box or you will be unable to order'
+				)
+			).toBeVisible();
+
+			await checkoutPageObject.page
+				.getByLabel( 'Test required checkbox' )
+				.check();
+
+			await expect(
+				checkoutPageObject.page.getByText(
+					'Please check the box or you will be unable to order'
+				)
+			).toBeHidden();
+
+			// Test that unchecking shows and checking again hides the message.
+			await checkoutPageObject.page
+				.getByLabel( 'Test required checkbox' )
+				.uncheck();
+
+			await expect(
+				checkoutPageObject.page.getByText(
+					'Please check the box or you will be unable to order'
+				)
+			).toBeVisible();
+
+			await checkoutPageObject.page
+				.getByLabel( 'Test required checkbox' )
+				.check();
+
+			await expect(
+				checkoutPageObject.page.getByText(
+					'Please check the box or you will be unable to order'
+				)
+			).toBeHidden();
+
 			await expect(
 				checkoutPageObject.page.getByText(
 					'Please enter a valid government id'
@@ -143,6 +181,10 @@ test.describe( 'Shopper → Additional Checkout Fields', () => {
 			await checkoutPageObject.waitForCustomerDataUpdate();
 
 			await checkoutPageObject.waitForCheckoutToFinishUpdating();
+
+			await checkoutPageObject.page
+				.getByLabel( 'Test required checkbox' )
+				.check();
 
 			await checkoutPageObject.placeOrder();
 
