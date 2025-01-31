@@ -62,9 +62,7 @@ test.describe( 'Shopper → Shipping', () => {
 		// Note that the default customer location is set to the shop country/region, which
 		// is why this label is pre-populated with the shop country/region.
 		await expect(
-			userPage.getByText(
-				'No delivery options available for CALIFORNIA, UNITED STATES (US)'
-			)
+			userPage.getByText( 'Enter address to check delivery options' )
 		).toBeVisible();
 	} );
 

@@ -603,6 +603,7 @@ class Checkout extends MockeryTestCase {
 			}
 		);
 
+		unset( WC()->countries->locale );
 		$request = new \WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
 		$request->set_header( 'Nonce', wp_create_nonce( 'wc_store_api' ) );
 

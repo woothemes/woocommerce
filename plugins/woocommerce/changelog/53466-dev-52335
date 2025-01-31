@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Improve how we show/hide shipping address at cart and checkout based on options.

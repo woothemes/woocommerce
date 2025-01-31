@@ -4,8 +4,9 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ExternalLink } from '@wordpress/components';
-import { ADMIN_URL, getSetting } from '@woocommerce/settings';
+import { ADMIN_URL } from '@woocommerce/settings';
 import Noninteractive from '@woocommerce/base-components/noninteractive';
+import { SHIPPING_ENABLED } from '@woocommerce/block-settings';
 
 /**
  * Internal dependencies
@@ -24,13 +25,12 @@ export const Edit = ( {
 	};
 } ): JSX.Element => {
 	const { className } = attributes;
-	const shippingEnabled = getSetting( 'shippingEnabled', true );
 	const blockProps = useBlockProps();
 
 	return (
 		<div { ...blockProps }>
 			<InspectorControls>
-				{ !! shippingEnabled && (
+				{ !! SHIPPING_ENABLED && (
 					<PanelBody
 						title={ __( 'Shipping Calculations', 'woocommerce' ) }
 					>
