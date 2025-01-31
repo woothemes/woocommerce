@@ -456,7 +456,7 @@ class WC_Admin_Tests_Admin_Helper extends WC_Unit_Test_Case {
 		$GLOBALS['wp']->private_query_vars = $private_query_vars;
 
 		$this->cleanup_query_vars();
-		wp_reset_query();
+		wp_reset_query(); // phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query
 
 		$GLOBALS['wp']->main( $parts['query'] );
 	}
