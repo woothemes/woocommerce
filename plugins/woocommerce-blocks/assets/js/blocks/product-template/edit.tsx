@@ -131,6 +131,46 @@ const ProductContent = withProduct(
 	}
 );
 
+const getOrderPropertiesForDefaultQuery = ( defaultSetting: string ) => {
+	switch ( defaultSetting ) {
+		case 'title':
+			return {
+				orderby: 'title',
+				order: 'asc',
+			};
+		case 'price':
+			return {
+				orderby: 'price',
+				order: 'asc',
+			};
+		case 'price-desc':
+			return {
+				orderby: 'price',
+				order: 'desc',
+			};
+		case 'popularity':
+			return {
+				orderby: 'popularity',
+				order: 'desc',
+			};
+		case 'rating':
+			return {
+				orderby: 'rating',
+				order: 'desc',
+			};
+		case 'date':
+			return {
+				orderby: 'date',
+				order: 'desc',
+			};
+	}
+
+	return {
+		orderby: 'menu_order',
+		order: 'asc',
+	};
+};
+
 const ProductTemplateEdit = (
 	props: BlockEditProps< {
 		clientId: string;
@@ -192,7 +232,8 @@ const ProductTemplateEdit = (
 
 	const { products, blocks } = useSelect(
 		( select ) => {
-			const { getEntityRecords, getTaxonomies } = select( coreStore );
+			const { getEntityRecords, getEditedEntityRecord, getTaxonomies } =
+				select( coreStore );
 			const { getBlocks } = select( blockEditorStore );
 			const taxonomies = getTaxonomies( {
 				type: postType,
@@ -261,6 +302,18 @@ const ProductTemplateEdit = (
 					}
 				}
 				query.per_page = loopShopPerPage;
+
+				const settings = getEditedEntityRecord(
+					'root',
+					'site',
+					undefined
+				) as unknown as Record< string, string >;
+
+				const orderProperties = getOrderPropertiesForDefaultQuery(
+					settings.woocommerce_default_catalog_orderby
+				);
+				query.orderby = orderProperties.orderby;
+				query.order = orderProperties.order;
 			}
 			return {
 				products: getEntityRecords( 'postType', postType, {

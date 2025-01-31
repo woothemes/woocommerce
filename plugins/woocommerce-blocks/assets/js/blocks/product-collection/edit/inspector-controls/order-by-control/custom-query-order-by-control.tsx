@@ -2,12 +2,6 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import {
-	SelectControl,
-	// @ts-expect-error Using experimental features
-	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-	__experimentalToolsPanelItem as ToolsPanelItem,
-} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,8 +11,9 @@ import {
 	TProductCollectionOrderBy,
 	QueryControlProps,
 	CoreFilterNames,
-} from '../../types';
-import { DEFAULT_QUERY } from '../../constants';
+} from '../../../types';
+import { DEFAULT_QUERY } from '../../../constants';
+import OrderByControl from './order-by-control';
 
 const orderOptions = [
 	{
@@ -73,7 +68,7 @@ const orderOptions = [
 	},
 ];
 
-const OrderByControl = ( props: QueryControlProps ) => {
+const CustomQueryOrderByControl = ( props: QueryControlProps ) => {
 	const { query, trackInteraction, setQueryAttribute } = props;
 	const { order, orderBy } = query;
 
@@ -90,33 +85,28 @@ const OrderByControl = ( props: QueryControlProps ) => {
 	}
 
 	return (
-		<ToolsPanelItem
-			label={ __( 'Order by', 'woocommerce' ) }
+		<OrderByControl
+			selectedValue={ orderValue }
 			hasValue={ () =>
 				order !== DEFAULT_QUERY.order ||
 				orderBy !== DEFAULT_QUERY.orderBy
 			}
-			isShownByDefault
+			orderOptions={ orderOptions }
+			onChange={ ( value: string ) => {
+				const [ newOrderBy, newOrder ] = value.split( '/' );
+				setQueryAttribute( {
+					orderBy: newOrderBy as TProductCollectionOrderBy,
+					order: ( newOrder as TProductCollectionOrder ) || undefined,
+				} );
+				trackInteraction( CoreFilterNames.ORDER );
+			} }
 			onDeselect={ deselectCallback }
-			resetAllFilter={ deselectCallback }
-		>
-			<SelectControl
-				value={ orderValue }
-				options={ orderOptions }
-				label={ __( 'Order by', 'woocommerce' ) }
-				onChange={ ( value ) => {
-					const [ newOrderBy, newOrder ] = value.split( '/' );
-					setQueryAttribute( {
-						orderBy: newOrderBy as TProductCollectionOrderBy,
-						order:
-							( newOrder as TProductCollectionOrder ) ||
-							undefined,
-					} );
-					trackInteraction( CoreFilterNames.ORDER );
-				} }
-			/>
-		</ToolsPanelItem>
+			help={ __(
+				'Set the products order in this collection.',
+				'woocommerce'
+			) }
+		/>
 	);
 };
 
-export default OrderByControl;
+export default CustomQueryOrderByControl;
