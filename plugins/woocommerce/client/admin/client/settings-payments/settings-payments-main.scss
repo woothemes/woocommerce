@@ -16,12 +16,11 @@
 			padding: $gap-smaller 48px $gap-large;
 			align-items: center;
 
-			@media screen and ( max-width: 1024px ) {
+			@media screen and ( max-width: $break-xlarge ) {
 				padding: $gap-smaller $gap-large $gap-large;
 			}
 
-			@media screen and ( max-width: 782px ) {
-				display: block;
+			@media screen and ( max-width: $break-medium ) {
 				padding: $gap-smaller $gap $gap-large;
 			}
 		}
@@ -87,7 +86,7 @@
 				}
 			}
 
-			@media screen and ( max-width: 782px ) {
+			@media screen and ( max-width: $break-mobile ) {
 				margin-top: $gap;
 			}
 		}
@@ -128,7 +127,7 @@
 					border-radius: 2px;
 				}
 
-				@media screen and ( max-width: 782px ) {
+				@media screen and ( max-width: $break-medium ) {
 					font-weight: 500;
 				}
 			}
@@ -274,18 +273,18 @@
 			}
 		}
 
-		@media screen and (max-width: 1024px) {
+		@media screen and ( max-width: $break-xlarge ) {
 			margin: 32px $gap-large 0 $gap-large;
 		}
 
-		@media screen and ( max-width: 782px ) {
+		@media screen and ( max-width: $break-medium ) {
 			margin: 32px $gap 0 $gap;
 			padding: $gap-smaller $gap;
 		}
 	}
 }
 
-@media screen and ( max-width: 1024px ) {
+@media screen and ( max-width: $break-xlarge ) {
 	.settings-payments-main__container {
 		.woocommerce-item__payment-gateway-placeholder {
 			padding: 0 $gap-large;
@@ -293,7 +292,7 @@
 	}
 }
 
-@media screen and ( max-width: 782px ) {
+@media screen and ( max-width: $break-medium ) {
 	.settings-payments-main__container {
 		.woocommerce-item__payment-gateway-placeholder {
 			padding: 0 $gap;

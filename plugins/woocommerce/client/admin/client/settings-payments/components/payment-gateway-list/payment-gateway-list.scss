@@ -36,7 +36,7 @@
 			padding: $gap-large 0;
 			align-items: flex-start;
 
-			@media screen and ( max-width: 782px ) {
+			@media screen and ( max-width: $break-medium ) {
 				display: grid;
 				// Configuring the grid layout to three columns, resulting in the buttons shifting to a new row.
 				grid-template-columns: 30px minmax(200px, 1fr) 40px;
@@ -55,7 +55,7 @@
 				min-height: 40px;
 			}
 
-			@media screen and ( max-width: 782px ) {
+			@media screen and ( max-width: $break-medium ) {
 				margin-right: 0;
 
 				.drag-handle {
@@ -81,7 +81,7 @@
 			gap: 10px;
 			align-items: start;
 
-			@media screen and ( max-width: 782px ) {
+			@media screen and ( max-width: $break-medium ) {
 				font-size: 15px;
 				font-weight: 500;
 
@@ -110,7 +110,7 @@
 				padding: $gap-small 0 0 0; /* Top, Right, Bottom, Left */
 			}
 
-			@media screen and ( max-width: 782px ) {
+			@media screen and ( max-width: $break-medium ) {
 				margin-top: $gap-small;
 			}
 		}
@@ -120,7 +120,7 @@
 			margin-left: auto;
 			min-height: 48px;
 
-			@media screen and ( max-width: 782px ) {
+			@media screen and ( max-width: $break-medium ) {
 				order: 4; /* Position the column in the 4th spot to ensure the buttons appear on a new row */
 				grid-column: 2; /* Start below the 2nd column */
 				grid-row: 2; /* Move to the second row */
@@ -133,7 +133,7 @@
 				gap: $gap;
 				align-self: center;
 
-				@media screen and ( min-width: 782px ) and ( max-width: 1024px ) {
+				@media screen and ( min-width: $break-medium ) and ( max-width: $break-xlarge ) {
 					flex-wrap: wrap;
 					justify-content: flex-end;
 				}
@@ -148,7 +148,7 @@
 			margin-left: $gap;
 			min-height: 48px;
 
-			@media screen and ( max-width: 782px ) {
+			@media screen and ( max-width: $break-medium ) {
 				order: 3; /* Position the column in the 3rd spot to ensure the dots appear on the first row */
 			}
 
@@ -172,7 +172,7 @@
 	}
 }
 
-@media screen and ( max-width: 1024px ) {
+@media screen and ( max-width: $break-xlarge ) {
 	.settings-payment-gateways__list {
 		.woocommerce-list__item {
 			padding: 0 $gap-large;
@@ -180,7 +180,7 @@
 	}
 }
 
-@media screen and ( max-width: 782px ) {
+@media screen and ( max-width: $break-medium ) {
 	.settings-payment-gateways__list {
 		.woocommerce-list__item {
 			padding: 0 $gap;
