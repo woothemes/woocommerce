@@ -196,24 +196,6 @@ class CheckoutFields {
 			return;
 		}
 
-		// At this point, the essentials fields and its location should be set and valid.
-		$location = $options['location'];
-		$id       = $options['id'];
-
-		// Check to see if the location is valid.
-		if ( ! in_array( $options['location'], array_keys( $this->fields_locations ), true ) ) {
-			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], 'The field location is invalid.' );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '8.6.0' );
-			return false;
-		}
-
-		// Check to see if field is already in the array.
-		if ( ! empty( $this->additional_fields[ $id ] ) || in_array( $id, $this->fields_locations[ $location ], true ) ) {
-			$message = sprintf( 'Unable to register field with id: "%s". %s', $id, 'The field is already registered.' );
-			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '8.6.0' );
-			return false;
-		}
-
 		// The above validate_options function ensures these options are valid. Type might not be supplied but then it defaults to text.
 		$field_data = wp_parse_args(
 			$options,
@@ -335,6 +317,23 @@ class CheckoutFields {
 		if ( 'additional' === $options['location'] ) {
 			wc_deprecated_argument( 'location', '8.9.0', 'The "additional" location is deprecated. Use "order" instead.' );
 			$options['location'] = 'order';
+		}
+
+		if ( ! in_array( $options['location'], array_keys( $this->fields_locations ), true ) ) {
+			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], 'The field location is invalid.' );
+			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '8.6.0' );
+			return false;
+		}
+
+		// At this point, the essentials fields and its location should be set and valid.
+		$location = $options['location'];
+		$id       = $options['id'];
+
+		// Check to see if field is already in the array.
+		if ( ! empty( $this->additional_fields[ $id ] ) || in_array( $id, $this->fields_locations[ $location ], true ) ) {
+			$message = sprintf( 'Unable to register field with id: "%s". %s', $id, 'The field is already registered.' );
+			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '8.6.0' );
+			return false;
 		}
 
 		if ( ! empty( $options['type'] ) ) {
