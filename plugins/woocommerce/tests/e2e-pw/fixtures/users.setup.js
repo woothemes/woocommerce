@@ -8,7 +8,7 @@ import { admin, customer } from '../test-data/data';
 setup.use( { storageState: ADMIN_STATE_PATH } );
 
 setup( 'save user id of test users', async ( { wpApi } ) => {
-	const response = await wpApi.get( 'wp-json/wp/v2/users', {
+	const response = await wpApi.get( './wp-json/wp/v2/users', {
 		data: { _fields: [ 'id', 'slug' ] },
 		failOnStatusCode: true,
 	} );
