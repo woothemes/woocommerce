@@ -39,7 +39,7 @@ class ComingSoonRequestHandler {
 		add_filter( 'template_include', array( $this, 'handle_template_include' ) );
 		add_filter( 'wp_theme_json_data_theme', array( $this, 'experimental_filter_theme_json_theme' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-		add_action( 'after_setup_theme', array( $this, 'possibly_init_block_templates' ) );
+		add_action( 'after_setup_theme', array( $this, 'possibly_init_block_templates' ), 999 );
 	}
 
 
