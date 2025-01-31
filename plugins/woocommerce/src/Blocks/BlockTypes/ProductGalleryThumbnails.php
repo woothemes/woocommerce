@@ -39,7 +39,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 	 * @return string[]
 	 */
 	protected function get_block_type_uses_context() {
-		return [ 'productGalleryClientId', 'postId', 'thumbnailsNumberOfThumbnails', 'thumbnailsPosition', 'mode', 'cropImages' ];
+		return [ 'postId', 'mode', 'cropImages' ];
 	}
 
 	/**
@@ -120,7 +120,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 	 * @return string Rendered block type output.
 	 */
 	protected function render( $attributes, $content, $block ) {
-		if ( ! isset( $block->context ) || ! isset( $block->context['thumbnailsPosition'] ) || '' === $block->context['thumbnailsPosition'] ) {
+		if ( ! isset( $block->context ) ) {
 			return '';
 		}
 
@@ -146,57 +146,66 @@ class ProductGalleryThumbnails extends AbstractBlock {
 		$crop_images            = $block->context['cropImages'] ?? false;
 		$product_gallery_images = ProductGalleryUtils::get_product_gallery_images( $post_id, 'full', array(), 'wc-block-product-gallery-thumbnails__thumbnail', $crop_images );
 
-		if ( $product_gallery_images && count( $product_gallery_images ) > 1 ) {
-			$html                 = '';
-			$number_of_thumbnails = isset( $block->context['thumbnailsNumberOfThumbnails'] ) && is_numeric( $block->context['thumbnailsNumberOfThumbnails'] ) ? $block->context['thumbnailsNumberOfThumbnails'] : 3;
-			$thumbnails_count     = 1;
+		if ( ! $product_gallery_images || count( $product_gallery_images ) <= 1 ) {
+			return '';
+		}
 
-			foreach ( $product_gallery_images as $product_gallery_image_html ) {
-				// Limit the number of thumbnails only in the standard mode (and not in dialog).
-				if ( $this->limit_thumbnails( $thumbnails_count, $number_of_thumbnails ) ) {
-					break;
-				}
+		$html                         = '';
+		$default_number_of_thumbnails = 3;
+		$number_of_thumbnails         = isset( $attributes['numberOfThumbnails'] ) && is_numeric( $attributes['numberOfThumbnails'] ) ? $attributes['numberOfThumbnails'] : $default_number_of_thumbnails;
+		$number_of_images             = count( $product_gallery_images );
+		// If the number of thumbnails is greater than the number of images, set the number of thumbnails to the number of images.
+		// But not less than than 3 (default number of thumbnails).
+		$thumbnails_layout          = max( min( $number_of_images, $number_of_thumbnails ), $default_number_of_thumbnails );
+		$number_of_thumbnails_class = 'wc-block-product-gallery-thumbnails--number-of-thumbnails-' . $thumbnails_layout;
+		$thumbnails_count           = 1;
 
-				$remaining_thumbnails_count = count( $product_gallery_images ) - $number_of_thumbnails;
-
-				// Display view all if this is the last visible thumbnail and there are more images.
-				if ( $this->should_display_view_all( $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) ) {
-					$product_gallery_image_html = $this->inject_view_all( $product_gallery_image_html, $this->generate_view_all_html( $remaining_thumbnails_count ) );
-				}
-
-				$processor = new \WP_HTML_Tag_Processor( $product_gallery_image_html );
-
-				if ( $processor->next_tag( 'img' ) ) {
-					$processor->set_attribute( 'data-wc-on--keydown', 'actions.onThumbnailKeyDown' );
-					$processor->set_attribute( 'tabindex', '0' );
-					$processor->set_attribute(
-						'data-wc-on--click',
-						'actions.selectImage'
-					);
-
-					$html .= $processor->get_updated_html();
-				} else {
-					$html .= $product_gallery_image_html;
-				}
-
-				++$thumbnails_count;
+		foreach ( $product_gallery_images as $product_gallery_image_html ) {
+			// Limit the number of thumbnails only in the standard mode (and not in dialog).
+			if ( $this->limit_thumbnails( $thumbnails_count, $number_of_thumbnails ) ) {
+				break;
 			}
 
-			$allowed_html                    = wp_kses_allowed_html( 'post' );
-			$allowed_html['img']['tabindex'] = true;
+			$remaining_thumbnails_count = $number_of_images - $number_of_thumbnails;
 
-			return sprintf(
-				'<div class="wc-block-product-gallery-thumbnails wp-block-woocommerce-product-gallery-thumbnails %1$s" style="%2$s" data-wc-interactive=\'%4$s\'>
-					%3$s
-				</div>',
-				esc_attr( $classes_and_styles['classes'] ),
-				esc_attr( $classes_and_styles['styles'] ),
-				wp_kses(
-					$html,
-					$allowed_html
-				),
-				wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
-			);
+			// Display view all if this is the last visible thumbnail and there are more images.
+			if ( $this->should_display_view_all( $thumbnails_count, $product_gallery_images, $number_of_thumbnails ) ) {
+				$product_gallery_image_html = $this->inject_view_all( $product_gallery_image_html, $this->generate_view_all_html( $remaining_thumbnails_count ) );
+			}
+
+			$processor = new \WP_HTML_Tag_Processor( $product_gallery_image_html );
+
+			if ( $processor->next_tag( 'img' ) ) {
+				$processor->add_class( 'wc-block-product-gallery-thumbnails__image' );
+				$processor->set_attribute( 'data-wc-on--keydown', 'actions.onThumbnailKeyDown' );
+				$processor->set_attribute( 'tabindex', '0' );
+				$processor->set_attribute(
+					'data-wc-on--click',
+					'actions.selectImage'
+				);
+
+				$html .= $processor->get_updated_html();
+			} else {
+				$html .= $product_gallery_image_html;
+			}
+
+			++$thumbnails_count;
 		}
+
+		$allowed_html                    = wp_kses_allowed_html( 'post' );
+		$allowed_html['img']['tabindex'] = true;
+
+		return sprintf(
+			'<div class="wc-block-product-gallery-thumbnails wp-block-woocommerce-product-gallery-thumbnails %1$s" style="%2$s" data-wc-interactive=\'%4$s\'>
+				%3$s
+			</div>',
+			esc_attr( $classes_and_styles['classes'] . ' ' . $number_of_thumbnails_class ),
+			esc_attr( $classes_and_styles['styles'] ),
+			wp_kses(
+				$html,
+				$allowed_html
+			),
+			wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP )
+		);
 	}
 }

@@ -12,6 +12,7 @@ use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Automattic\WooCommerce\Internal\DownloadPermissionsAdjuster;
 use Automattic\WooCommerce\Utilities\NumberUtil;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -939,8 +940,8 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 				$terms[] = 'featured';
 			}
 
-			if ( 'outofstock' === $product->get_stock_status() ) {
-				$terms[] = 'outofstock';
+			if ( ProductStockStatus::OUT_OF_STOCK === $product->get_stock_status() ) {
+				$terms[] = ProductStockStatus::OUT_OF_STOCK;
 			}
 
 			$rating = min( 5, NumberUtil::round( $product->get_average_rating(), 0 ) );
@@ -1109,8 +1110,8 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 		$non_published_where         = '';
 		$product_visibility_term_ids = wc_get_product_visibility_term_ids();
 
-		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) && $product_visibility_term_ids['outofstock'] ) {
-			$exclude_term_ids[] = $product_visibility_term_ids['outofstock'];
+		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) && $product_visibility_term_ids[ ProductStockStatus::OUT_OF_STOCK ] ) {
+			$exclude_term_ids[] = $product_visibility_term_ids[ ProductStockStatus::OUT_OF_STOCK ];
 		}
 
 		if ( count( $exclude_term_ids ) ) {
@@ -1585,8 +1586,8 @@ class WC_Product_Data_Store_CPT extends WC_Data_Store_WP implements WC_Object_Da
 			$exclude_term_ids[] = $product_visibility_term_ids['exclude-from-catalog'];
 		}
 
-		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) && $product_visibility_term_ids['outofstock'] ) {
-			$exclude_term_ids[] = $product_visibility_term_ids['outofstock'];
+		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) && $product_visibility_term_ids[ ProductStockStatus::OUT_OF_STOCK ] ) {
+			$exclude_term_ids[] = $product_visibility_term_ids[ ProductStockStatus::OUT_OF_STOCK ];
 		}
 
 		$query = array(

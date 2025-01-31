@@ -8,14 +8,12 @@ import {
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import { BlockEditProps, InnerBlockTemplate } from '@wordpress/blocks';
-import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { ProductGalleryBlockSettings } from './block-settings/index';
-import type { ProductGalleryAttributes } from './types';
-import { moveInnerBlocksToPosition } from './utils';
+import type { ProductGalleryBlockAttributes } from './types';
 
 const TEMPLATE: InnerBlockTemplate[] = [
 	[
@@ -88,20 +86,10 @@ const TEMPLATE: InnerBlockTemplate[] = [
 ];
 
 export const Edit = ( {
-	clientId,
 	attributes,
 	setAttributes,
-}: BlockEditProps< ProductGalleryAttributes > ) => {
+}: BlockEditProps< ProductGalleryBlockAttributes > ) => {
 	const blockProps = useBlockProps();
-
-	useEffect( () => {
-		setAttributes( {
-			...attributes,
-			productGalleryClientId: clientId,
-		} );
-		// Move the Thumbnails block to the correct above or below the Large Image based on the thumbnailsPosition attribute.
-		moveInnerBlocksToPosition( attributes, clientId );
-	}, [ setAttributes, attributes, clientId ] );
 
 	return (
 		<div { ...blockProps }>
@@ -109,12 +97,6 @@ export const Edit = ( {
 				<ProductGalleryBlockSettings
 					attributes={ attributes }
 					setAttributes={ setAttributes }
-					context={ {
-						productGalleryClientId: clientId,
-						thumbnailsPosition: attributes.thumbnailsPosition,
-						thumbnailsNumberOfThumbnails:
-							attributes.thumbnailsNumberOfThumbnails,
-					} }
 				/>
 			</InspectorControls>
 			<InnerBlocks

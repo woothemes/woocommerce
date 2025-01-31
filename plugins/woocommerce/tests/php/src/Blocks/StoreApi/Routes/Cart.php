@@ -10,6 +10,7 @@ use Automattic\WooCommerce\Tests\Blocks\Helpers\ValidateSchema;
 use Automattic\WooCommerce\StoreApi\SessionHandler;
 use Automattic\WooCommerce\StoreApi\Utilities\JsonWebToken;
 use Spy_REST_Server;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Cart Controller Tests.
@@ -30,7 +31,7 @@ class Cart extends ControllerTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 1',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 				)
@@ -38,7 +39,7 @@ class Cart extends ControllerTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 2',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 				)
@@ -46,7 +47,7 @@ class Cart extends ControllerTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 3',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 				)
@@ -54,7 +55,7 @@ class Cart extends ControllerTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 4',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 					'virtual'       => true,
@@ -622,7 +623,7 @@ class Cart extends ControllerTestCase {
 		$variable_product = $fixtures->get_variable_product(
 			array(
 				'name'          => 'Test Variable Product 4',
-				'stock_status'  => 'instock',
+				'stock_status'  => ProductStockStatus::IN_STOCK,
 				'regular_price' => 10,
 				'weight'        => 10,
 			),

@@ -9,6 +9,7 @@ use Automattic\WooCommerce\Blocks\BlockTypes\RatingFilter;
 use Automattic\WooCommerce\Blocks\BlockTypes\StockFilter;
 use WP_Query;
 use WC_Tax;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * QueryBuilder class.
@@ -347,7 +348,7 @@ class QueryBuilder {
 		 * @see get_product_visibility_query()
 		 */
 		$diff = array_diff( $stock_status_options, $stock_statuses );
-		if ( count( $diff ) === 1 && in_array( 'outofstock', $diff, true ) ) {
+		if ( count( $diff ) === 1 && in_array( ProductStockStatus::OUT_OF_STOCK, $diff, true ) ) {
 			return array();
 		}
 
@@ -741,8 +742,8 @@ class QueryBuilder {
 		$product_visibility_not_in = array( is_search() ? $product_visibility_terms['exclude-from-search'] : $product_visibility_terms['exclude-from-catalog'] );
 
 		// Hide out of stock products.
-		if ( empty( $stock_query ) && ! in_array( 'outofstock', $stock_status, true ) ) {
-			$product_visibility_not_in[] = $product_visibility_terms['outofstock'];
+		if ( empty( $stock_query ) && ! in_array( ProductStockStatus::OUT_OF_STOCK, $stock_status, true ) ) {
+			$product_visibility_not_in[] = $product_visibility_terms[ ProductStockStatus::OUT_OF_STOCK ];
 		}
 
 		return array(

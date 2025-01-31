@@ -72,74 +72,14 @@ test.describe( 'Product Gallery Thumbnails block', () => {
 	} );
 
 	test.describe( 'settings', () => {
-		for ( const position of [ 'left', 'bottom', 'right' ] ) {
-			test( `positions thumbnails to the ${ position }`, async ( {
-				page,
-				editor,
-			} ) => {
-				const layoutClass = {
-					left: 'left-of',
-					bottom: 'below',
-					right: 'right-of',
-				}[ position ];
-
-				await test.step( 'in editor', async () => {
-					const productGalleryBlock = editor.canvas.locator(
-						'[data-type="woocommerce/product-gallery"]'
-					);
-
-					await editor.selectBlocks( productGalleryBlock );
-					await editor.openDocumentSettingsSidebar();
-					await page
-						.getByLabel( 'Editor settings' )
-						.locator( `button[data-value="${ position }"]` )
-						.click();
-
-					await expect(
-						productGalleryBlock.locator(
-							`[data-type="woocommerce/product-gallery-thumbnails"]:${ layoutClass }(
-								[data-type="woocommerce/product-gallery-large-image"]
-							)`
-						)
-					).toBeVisible();
-
-					await editor.saveSiteEditorEntities( {
-						isOnlyCurrentEntityDirty: true,
-					} );
-				} );
-
-				await test.step( 'in frontend', async () => {
-					await page.goto( '/product/v-neck-t-shirt/' );
-					const productGalleryBlock = page.locator(
-						'[data-block-name="woocommerce/product-gallery"]'
-					);
-
-					await expect(
-						productGalleryBlock.locator(
-							'[data-block-name="woocommerce/product-gallery-thumbnails"]'
-						)
-					).toBeVisible();
-
-					await expect(
-						productGalleryBlock.locator(
-							`[data-block-name="woocommerce/product-gallery-thumbnails"]:${ layoutClass }(
-								[data-block-name="woocommerce/product-gallery-large-image"]
-							)`
-						)
-					).toBeVisible();
-				} );
-			} );
-		}
-
 		test( 'rounds the number of thumbnails to integer', async ( {
 			page,
 			editor,
 		} ) => {
-			const productGalleryBlock = editor.canvas.locator(
-				'[data-type="woocommerce/product-gallery"]'
-			);
+			const thumbnailsBlock =
+				editor.canvas.getByLabel( 'Block: Thumbnails' );
 
-			await editor.selectBlocks( productGalleryBlock );
+			await editor.selectBlocks( thumbnailsBlock );
 
 			await editor.openDocumentSettingsSidebar();
 			const numberOfThumbnailInput = page
@@ -151,7 +91,7 @@ test.describe( 'Product Gallery Thumbnails block', () => {
 			await numberOfThumbnailInput.fill( '4.2' );
 			await page.keyboard.press( 'Enter' );
 
-			const numberOfThumbnailsOnScreen = productGalleryBlock.locator(
+			const numberOfThumbnailsOnScreen = thumbnailsBlock.locator(
 				'.wc-block-product-gallery-thumbnails__thumbnail'
 			);
 

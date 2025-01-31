@@ -4,6 +4,7 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 use Automattic\WooCommerce\Enums\ProductStatus;
 use WP_Query;
 use Automattic\WooCommerce\Blocks\Utils\Utils;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 // phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 // phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_query
@@ -454,7 +455,7 @@ class ProductQuery extends AbstractBlock {
 		 * @see get_product_visibility_query()
 		 */
 		$diff = array_diff( $stock_status_options, $stock_statii );
-		if ( count( $diff ) === 1 && in_array( 'outofstock', $diff, true ) ) {
+		if ( count( $diff ) === 1 && in_array( ProductStockStatus::OUT_OF_STOCK, $diff, true ) ) {
 			return array();
 		}
 
@@ -482,7 +483,7 @@ class ProductQuery extends AbstractBlock {
 
 		// Hide out of stock products.
 		if ( empty( $stock_query ) && 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
-			$product_visibility_not_in[] = $product_visibility_terms['outofstock'];
+			$product_visibility_not_in[] = $product_visibility_terms[ ProductStockStatus::OUT_OF_STOCK ];
 		}
 
 		return array(
