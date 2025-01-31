@@ -468,7 +468,7 @@ class WC_Brands {
 
 		$brands = wp_get_post_terms( $args['post_id'], 'product_brand', array( 'fields' => 'ids' ) );
 
-		if( is_wp_error( $brands ) ) {
+		if ( is_wp_error( $brands ) ) {
 			return '';
 		}
 
