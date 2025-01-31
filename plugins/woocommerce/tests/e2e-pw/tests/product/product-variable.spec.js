@@ -317,6 +317,8 @@ test.describe(
 
 			await page.locator( '#colour' ).selectOption( 'Red' );
 
+			await page.waitForTimeout( 300 );
+
 			// handling assertion this way because taxes may or may not be enabled
 			let totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
@@ -373,6 +375,8 @@ test.describe(
 
 			await page.locator( '#size' ).selectOption( 'Small' );
 
+			await page.waitForTimeout( 300 );
+
 			let totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
 				.last()
@@ -396,6 +400,8 @@ test.describe(
 			).toContainText( '5 × 10 × 10 in' );
 
 			await page.locator( '#size' ).selectOption( 'XLarge' );
+
+			await page.waitForTimeout( 300 );
 
 			totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
@@ -429,6 +435,8 @@ test.describe(
 
 			await page.locator( '#size' ).selectOption( 'Small' );
 
+			await page.waitForTimeout( 300 );
+
 			let totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
 				.last()
@@ -443,6 +451,8 @@ test.describe(
 			);
 
 			await page.locator( '#size' ).selectOption( 'Medium' );
+
+			await page.waitForTimeout( 300 );
 
 			totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
@@ -459,6 +469,8 @@ test.describe(
 
 			await page.locator( '#size' ).selectOption( 'Large' );
 
+			await page.waitForTimeout( 300 );
+
 			totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
 				.last()
@@ -473,6 +485,8 @@ test.describe(
 			);
 
 			await page.locator( '#size' ).selectOption( 'XLarge' );
+
+			await page.waitForTimeout( 300 );
 
 			totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
@@ -494,6 +508,8 @@ test.describe(
 			await page.locator( '#colour' ).selectOption( 'Red' );
 
 			await page.locator( '#size' ).selectOption( 'Small' );
+
+			await page.waitForTimeout( 300 );
 
 			let totalPrice = await page
 				.locator( '.woocommerce-variation-price' )
