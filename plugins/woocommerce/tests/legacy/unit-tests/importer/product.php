@@ -6,6 +6,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Enums\CatalogVisibility;
 
@@ -348,7 +349,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'date_on_sale_to'       => '2030-01-01 0:00:00',
 				'tax_status'            => 'taxable',
 				'tax_class'             => 'standard',
-				'stock_status'          => 'instock',
+				'stock_status'          => ProductStockStatus::IN_STOCK,
 				'stock_quantity'        => 5,
 				'backorders'            => 'notify',
 				'sold_individually'     => true,
@@ -392,7 +393,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'date_on_sale_to'       => '2023-07-13T09:10:00Z',
 				'tax_status'            => 'taxable',
 				'tax_class'             => 'standard',
-				'stock_status'          => 'instock',
+				'stock_status'          => ProductStockStatus::IN_STOCK,
 				'stock_quantity'        => '',
 				'backorders'            => 'no',
 				'sold_individually'     => '',
@@ -445,7 +446,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'date_on_sale_to'    => '2023/07/13',
 				'tax_status'         => 'taxable',
 				'tax_class'          => 'standard',
-				'stock_status'       => 'instock',
+				'stock_status'       => ProductStockStatus::IN_STOCK,
 				'stock_quantity'     => '',
 				'backorders'         => 'no',
 				'sold_individually'  => '',
@@ -481,7 +482,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'date_on_sale_to'       => null,
 				'tax_status'            => '',
 				'tax_class'             => '',
-				'stock_status'          => 'outofstock',
+				'stock_status'          => ProductStockStatus::OUT_OF_STOCK,
 				'stock_quantity'        => '',
 				'backorders'            => 'no',
 				'sold_individually'     => '',
@@ -533,7 +534,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'date_on_sale_to'    => null,
 				'tax_status'         => 'taxable',
 				'tax_class'          => 'standard',
-				'stock_status'       => 'instock',
+				'stock_status'       => ProductStockStatus::IN_STOCK,
 				'stock_quantity'     => 6,
 				'backorders'         => 'no',
 				'sold_individually'  => '',
@@ -578,7 +579,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'date_on_sale_to'    => null,
 				'tax_status'         => 'taxable',
 				'tax_class'          => 'standard',
-				'stock_status'       => 'instock',
+				'stock_status'       => ProductStockStatus::IN_STOCK,
 				'stock_quantity'     => 10,
 				'backorders'         => 'yes',
 				'sold_individually'  => '',
@@ -623,7 +624,7 @@ class WC_Tests_Product_CSV_Importer extends WC_Unit_Test_Case {
 				'date_on_sale_to'       => null,
 				'tax_status'            => '',
 				'tax_class'             => '',
-				'stock_status'          => 'instock',
+				'stock_status'          => ProductStockStatus::IN_STOCK,
 				'stock_quantity'        => '',
 				'backorders'            => 'no',
 				'sold_individually'     => '',

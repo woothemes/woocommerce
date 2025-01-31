@@ -14,6 +14,7 @@ use Automattic\WooCommerce\StoreApi\Schemas\V1\CheckoutSchema;
 use Automattic\WooCommerce\Tests\Blocks\Helpers\FixtureData;
 use Automattic\WooCommerce\StoreApi\Routes\V1\Checkout as CheckoutRoute;
 use Automattic\WooCommerce\StoreApi\SchemaController;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 use Automattic\WooCommerce\Tests\Blocks\StoreApi\MockSessionHandler;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -86,7 +87,7 @@ class Checkout extends MockeryTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 1',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 				)
@@ -94,7 +95,7 @@ class Checkout extends MockeryTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 2',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 				)
@@ -102,7 +103,7 @@ class Checkout extends MockeryTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Virtual Test Product 2',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 					'virtual'       => true,
@@ -267,7 +268,7 @@ class Checkout extends MockeryTestCase {
 		$request = new \WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
 		$request->set_header( 'Nonce', wp_create_nonce( 'wc_store_api' ) );
 		$product = wc_get_product( $this->products[0]->get_id() );
-		$product->set_stock_status( 'outofstock' );
+		$product->set_stock_status( ProductStockStatus::OUT_OF_STOCK );
 		$product->save();
 
 		$request->set_body_params(
