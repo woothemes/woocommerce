@@ -14,27 +14,12 @@
 	"textdomain": "woocommerce",
 	"usesContext": [ "postId" ],
 	"providesContext": {
-		"thumbnailsPosition": "thumbnailsPosition",
-		"thumbnailsNumberOfThumbnails": "thumbnailsNumberOfThumbnails",
-		"productGalleryClientId": "productGalleryClientId",
 		"hoverZoom": "hoverZoom",
 		"fullScreenOnClick": "fullScreenOnClick",
 		"cropImages": "cropImages"
 	},
 	"ancestor": [ "woocommerce/single-product" ],
 	"attributes": {
-		"thumbnailsPosition": {
-			"type": "string",
-			"default": "left"
-		},
-		"thumbnailsNumberOfThumbnails": {
-			"type": "number",
-			"default": 3
-		},
-		"productGalleryClientId": {
-			"type": "string",
-			"default": ""
-		},
 		"cropImages": {
 			"type": "boolean",
 			"default": false
