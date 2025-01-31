@@ -131,7 +131,7 @@ export const StatusBadge = ( {
 				>
 					<Icon
 						className="woocommerce-status-badge-icon"
-						size={ 14 }
+						size={ 16 }
 						icon={ info }
 					/>
 					{ isPopoverVisible && (
