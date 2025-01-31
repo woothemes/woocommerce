@@ -95,6 +95,16 @@ describe( 'notifyQuantityChanges', () => {
 		} );
 		expect( mockedCreateInfoNotice ).not.toHaveBeenCalled();
 	} );
+	it( 'does not show notices when the item is being added', () => {
+		const { oldCart, newCart } = getFreshCarts();
+		notifyQuantityChanges( {
+			oldCart,
+			newCart,
+			cartItemsPendingQuantity: [],
+			productsPendingAdd: [ 1 ],
+		} );
+		expect( mockedCreateInfoNotice ).not.toHaveBeenCalled();
+	} );
 	it( 'does not show notices when a deleted item is the one being removed', () => {
 		const { oldCart, newCart } = getFreshCarts();
 
