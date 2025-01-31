@@ -180,7 +180,7 @@
 		"@wordpress/e2e-tests": "^4.9.2",
 		"@wordpress/editor": "wp-6.7",
 		"@wordpress/element": "5.22.0",
-		"@wordpress/env": "10.14.0",
+		"@wordpress/env": "10.17.0",
 		"@wordpress/hooks": "wp-6.6",
 		"@wordpress/html-entities": "3.24.0",
 		"@wordpress/i18n": "4.45.0",
