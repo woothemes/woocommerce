@@ -11,7 +11,6 @@ import {
 	fillBillingCheckoutBlocks,
 } from '@woocommerce/e2e-utils-playwright';
 import { request } from '@playwright/test';
-import wcApi from '@woocommerce/woocommerce-rest-api';
 
 /**
  * Internal dependencies
@@ -66,14 +65,7 @@ test.describe(
 	'Checkout Block page',
 	{ tag: [ tags.PAYMENTS, tags.SERVICES, tags.HPOS ] },
 	() => {
-		test.beforeAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-
+		test.beforeAll( async ( { baseURL, api } ) => {
 			await test.step( 'Set field visibility options', async () => {
 				await setOption(
 					request,
@@ -209,13 +201,7 @@ test.describe(
 			} );
 		} );
 
-		test.afterAll( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
+		test.afterAll( async ( { api } ) => {
 			await api.delete( `products/${ productId }`, {
 				force: true,
 			} );
@@ -287,14 +273,7 @@ test.describe(
 			} );
 		} );
 
-		test.beforeEach( async ( { baseURL } ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
-
+		test.beforeEach( async ( { api } ) => {
 			await test.step( 'Ensure the store address is always in the US', async () => {
 				await api.post( 'settings/general/batch', {
 					update: [
@@ -988,14 +967,8 @@ test.describe(
 		test( 'can create an account during checkout with custom password', async ( {
 			page,
 			testPage,
-			baseURL,
+			api,
 		} ) => {
-			const api = new wcApi( {
-				url: baseURL,
-				consumerKey: process.env.CONSUMER_KEY,
-				consumerSecret: process.env.CONSUMER_SECRET,
-				version: 'wc/v3',
-			} );
 			// Password generation off
 			await api.put(
 				'settings/account/woocommerce_registration_generate_password',
