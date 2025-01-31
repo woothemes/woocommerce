@@ -120,10 +120,34 @@ class Checkout extends AbstractCartRoute {
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 *
+	 * @throws RouteException If the nonce is invalid, which is caught later on.
 	 * @return \WP_REST_Response
 	 */
 	public function get_response( \WP_REST_Request $request ) {
-		$this->load_cart_session( $request );
+		$response = null;
+		try {
+			$this->load_cart_session( $request );
+
+			$nonce_check = $this->requires_nonce( $request ) ? $this->check_nonce( $request ) : null;
+
+			if ( is_wp_error( $nonce_check ) ) {
+				throw new RouteException(
+					$nonce_check->get_error_message(),
+					$nonce_check->get_error_code(),
+					$nonce_check->get_error_data()['status'],
+					$nonce_check->get_error_data()
+				);
+			}
+
+			$response = $this->get_response_by_request_method( $request );
+
+		} catch ( InvalidCartException $error ) {
+			$response = $this->get_route_error_response_from_object( $error->getError(), $error->getCode(), $error->getAdditionalData() );
+		} catch ( RouteException $error ) {
+			$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
+		} catch ( \Exception $error ) {
+			$response = $this->get_route_error_response( 'woocommerce_rest_unknown_server_error', $error->getMessage(), 500 );
+		}
 
 		$response    = null;
 		$nonce_check = $this->requires_nonce( $request ) ? $this->check_nonce( $request ) : null;
@@ -367,7 +391,6 @@ class Checkout extends AbstractCartRoute {
 		 *
 		 * @see https://github.com/woocommerce/woocommerce-gutenberg-products-block/pull/3238
 		 * @example See docs/examples/checkout-order-processed.md
-
 		 * @param \WC_Order $order Order object.
 		 */
 		do_action( 'woocommerce_store_api_checkout_order_processed', $this->order );
@@ -599,7 +622,7 @@ class Checkout extends AbstractCartRoute {
 			throw new RouteException(
 				'woocommerce_rest_checkout_payment_method_disabled',
 				sprintf(
-					// Translators: %s Payment method ID.
+				// Translators: %s Payment method ID.
 					__( '%s is not available for this order—please choose a different payment method', 'woocommerce' ),
 					esc_html( $gateway_title )
 				),
