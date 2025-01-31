@@ -5,24 +5,29 @@ const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 test.describe( 'Marketing page', () => {
 	test.use( { storageState: ADMIN_STATE_PATH } );
 
-	test(
-		'Marketing Overview page have relevant content',
-		{ tag: tags.SKIP_ON_WPCOM },
-		async ( { page } ) => {
-			// Go to the Marketing page.
-			await page.goto(
-				'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing'
-			);
+	test( 'Marketing Overview page have relevant content', async ( {
+		page,
+	} ) => {
+		// See if this is a WPCOM site.
+		const is_wpcom_site =
+			process.env.IS_WPCOM &&
+			process.env.IS_WPCOM.toLowerCase() === 'true';
 
-			// Heading should be overview
-			await expect(
-				page.getByRole( 'heading', { name: 'Overview' } )
-			).toBeVisible();
+		// Go to the Marketing page.
+		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing' );
 
-			// Sections present
-			await expect(
-				page.getByText( 'Channels', { exact: true } )
-			).toBeVisible();
+		// Heading should be overview
+		await expect(
+			page.getByRole( 'heading', { name: 'Overview' } )
+		).toBeVisible();
+
+		// Sections present
+		await expect(
+			page.getByText( 'Channels', { exact: true } )
+		).toBeVisible();
+
+		// Check the 'Discover more marketing tools' and 'Learn about marketing a store' cards only on non-WPCOM sites.
+		if ( ! is_wpcom_site ) {
 			await expect(
 				page.getByText( 'Discover more marketing tools' )
 			).toBeVisible();
@@ -42,7 +47,7 @@ test.describe( 'Marketing page', () => {
 				page.getByText( 'Learn about marketing a store' )
 			).toBeVisible();
 		}
-	);
+	} );
 
 	test(
 		'Introduction can be dismissed',

@@ -1,6 +1,8 @@
 let config = require( '../../playwright.config.js' );
 const { tags } = require( '../../fixtures/fixtures' );
 
+process.env.IS_WPCOM = 'true';
+
 const grepInvert = new RegExp(
 	`${ tags.SKIP_ON_WPCOM }|${ tags.SKIP_ON_EXTERNAL_ENV }|${ tags.COULD_BE_LOWER_LEVEL_TEST }|${ tags.NON_CRITICAL }|${ tags.TO_BE_REMOVED }`
 );
