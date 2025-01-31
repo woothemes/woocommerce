@@ -468,6 +468,10 @@ class WC_Brands {
 
 		$brands = wp_get_post_terms( $args['post_id'], 'product_brand', array( 'fields' => 'ids' ) );
 
+		if( is_wp_error( $brands ) ) {
+			return '';
+		}
+
 		// Bail early if we don't have any brands registered.
 		if ( 0 === count( $brands ) ) {
 			return '';
