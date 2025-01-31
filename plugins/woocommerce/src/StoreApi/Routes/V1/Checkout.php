@@ -10,6 +10,7 @@ use Automattic\WooCommerce\Checkout\Helpers\ReserveStockException;
 use Automattic\WooCommerce\StoreApi\Utilities\CheckoutTrait;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema\DocumentObject;
 use Automattic\WooCommerce\Admin\Features\Features;
+
 /**
  * Checkout class.
  */
@@ -203,18 +204,14 @@ class Checkout extends AbstractCartRoute {
 		}
 
 		$address_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
+		$other_fields   = $this->additional_fields_controller->get_fields_for_group( 'other' );
 
 		if ( WC()->cart->needs_shipping() ) {
 			$this->validate_additional_fields_with_context( $address_fields, $request['shipping_address'], $document_object, 'shipping_address' );
 		}
 
 		$this->validate_additional_fields_with_context( $address_fields, $request['billing_address'], $document_object, 'billing_address' );
-
-		$this->validate_additional_fields_with_context(
-			$this->additional_fields_controller->get_fields_for_group( 'other' ),
-			$request['additional_fields'],
-			$document_object
-		);
+		$this->validate_additional_fields_with_context( $other_fields, $request['additional_fields'], $document_object );
 	}
 
 	/**
@@ -228,38 +225,35 @@ class Checkout extends AbstractCartRoute {
 	 */
 	protected function validate_additional_fields_with_context( $fields, $values, $document_object = null, $context = null ) {
 		foreach ( $fields as $field_key => $field ) {
-			if ( ! isset( $values[ $field_key ] ) && $this->additional_fields_controller->is_required_field( $field, $document_object, $context ) ) {
-				switch ( $context ) {
-					case 'shipping_address':
-						/* translators: %s: is the field label */
-						throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided shipping address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
-					case 'billing_address':
-						/* translators: %s: is the field label */
-						throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided billing address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
-					default:
-						/* translators: %s: is the field label */
-						throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided field: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
-				}
+			$validation_result = $this->additional_fields_controller->validate_field( $field_key, $values[ $field_key ], $document_object, $context );
+
+			if ( is_wp_error( $validation_result ) && $validation_result->has_errors() ) {
+				throw new RouteException( 'woocommerce_rest_checkout_invalid_field', esc_html( $validation_result->get_error_message() ), 400 );
 			}
+		}
 
-			if ( empty( $document_object ) ) {
-				continue;
-			}
+		// Validate groups of properties per registered location.
+		switch ( $context ) {
+			case 'shipping_address':
+				$locations = [ 'address' ];
+				$group     = 'shipping';
+				break;
+			case 'billing_address':
+				$locations = [ 'address' ];
+				$group     = 'billing';
+				break;
+			default:
+				$locations = [ 'contact', 'order' ];
+				$group     = 'other';
+				break;
+		}
 
-			$validate_result = $this->additional_fields_controller->is_valid_field( $field, $document_object, $context );
+		foreach ( $locations as $location ) {
+			$location_fields = $this->additional_fields_controller->filter_fields_for_location( $fields, $location );
+			$result          = $this->additional_fields_controller->validate_fields_for_location( $fields, $location, $group );
 
-			if ( is_wp_error( $validate_result ) ) {
-				switch ( $context ) {
-					case 'shipping_address':
-						/* translators: %1$s: is the field label, %2$s: is the error message */
-						throw new RouteException( 'woocommerce_rest_checkout_invalid_field', esc_html( sprintf( __( 'There was a problem with the provided shipping address %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) ), 400 );
-					case 'billing_address':
-						/* translators: %1$s: is the field label, %2$s: is the error message */
-						throw new RouteException( 'woocommerce_rest_checkout_invalid_field', esc_html( sprintf( __( 'There was a problem with the provided billing address %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) ), 400 );
-					default:
-						/* translators: %1$s: is the field label, %2$s: is the error message */
-						throw new RouteException( 'woocommerce_rest_checkout_invalid_field', esc_html( sprintf( __( 'There was a problem with the provided %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) ), 400 );
-				}
+			if ( is_wp_error( $result ) && $result->has_errors() ) {
+				throw new RouteException( 'woocommerce_rest_checkout_invalid_field', esc_html( $result->get_error_message() ), 400 );
 			}
 		}
 	}

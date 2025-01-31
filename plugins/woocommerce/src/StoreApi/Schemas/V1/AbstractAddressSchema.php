@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1);
 namespace Automattic\WooCommerce\StoreApi\Schemas\V1;
 
 use Automattic\WooCommerce\StoreApi\Utilities\SanitizationUtils;
@@ -173,7 +174,6 @@ abstract class AbstractAddressSchema extends AbstractSchema {
 		// correct format, and finally the second validation step is to ensure the correctly-formatted values
 		// match what we expect (postcode etc.).
 		foreach ( $address as $key => $value ) {
-
 			// Only run specific validation on properties that are defined in the schema and present in the address.
 			// This is for partial address pushes when only part of a customer address is sent.
 			// Full schema address validation still happens later, so empty, required values are disallowed.
@@ -255,26 +255,13 @@ abstract class AbstractAddressSchema extends AbstractSchema {
 				continue;
 			}
 
-			$field_schema        = $schema[ $key ];
-			$is_additional_field = in_array( $key, $additional_keys, true );
-			$field_value         = isset( $address[ $key ] ) ? $address[ $key ] : null;
-			$result              = rest_validate_value_from_schema( $field_value, $field_schema, $key );
-
-			// Check if a field is in the list of additional fields then validate the value against the custom validation rules defined for it.
-			// Skip additional validation if the schema validation failed.
-			if ( true === $result && $is_additional_field ) {
-				$result = $this->additional_fields_controller->validate_field( $key, $field_value );
-			}
+			$field_schema = $schema[ $key ];
+			$field_value  = isset( $address[ $key ] ) ? $address[ $key ] : null;
+			$result       = rest_validate_value_from_schema( $field_value, $field_schema, $key );
 
 			if ( is_wp_error( $result ) && $result->has_errors() ) {
 				$errors->merge_from( $result );
 			}
-		}
-
-		$result = $this->additional_fields_controller->validate_fields_for_location( $address, 'address', 'billing_address' === $this->title ? 'billing' : 'shipping' );
-
-		if ( is_wp_error( $result ) && $result->has_errors() ) {
-			$errors->merge_from( $result );
 		}
 
 		return $errors->has_errors( $errors ) ? $errors : true;

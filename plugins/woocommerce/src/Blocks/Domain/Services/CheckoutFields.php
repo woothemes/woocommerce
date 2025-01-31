@@ -516,33 +516,71 @@ class CheckoutFields {
 	 *
 	 * @param string $field_key    The key of the field.
 	 * @param mixed  $field_value  The value of the field.
+	 * @param array  $document_object The document object.
+	 * @param string $document_object_context The context for the document object (shipping_address|billing_address|other).
 	 * @return WP_Error
 	 */
-	public function validate_field( $field_key, $field_value ) {
+	public function validate_field( $field_key, $field_value, $document_object = null, $document_object_context = null ) {
 		$errors = new WP_Error();
 
 		try {
 			$field = $this->additional_fields[ $field_key ] ?? null;
 
-			if ( $field ) {
-				$validation = call_user_func( $field['validate_callback'], $field_value, $field );
-
-				if ( is_wp_error( $validation ) ) {
-					$errors->merge_from( $validation );
-				}
+			if ( ! $field ) {
+				return $errors;
 			}
 
-			/**
-			 * Pass an error object to allow validation of an additional field.
-			 *
-			 * @param WP_Error $errors      A WP_Error object that extensions may add errors to.
-			 * @param string   $field_key   Key of the field being sanitized.
-			 * @param mixed    $field_value The value of the field being validated.
-			 *
-			 * @since 8.6.0
-			 * @deprecated 8.7.0 Use woocommerce_validate_additional_field instead.
-			 */
-			wc_do_deprecated_action( '__experimental_woocommerce_blocks_validate_additional_field', array( $errors, $field_key, $field_value ), '8.7.0', 'woocommerce_validate_additional_field', 'This action has been graduated, use woocommerce_validate_additional_field instead.' );
+			// Validate required fields.
+			$is_required = $this->is_required_field( $field, $document_object, $document_object_context );
+
+			if ( ( '' === $field_value || is_null( $field_value ) ) && $is_required ) {
+				switch ( $document_object_context ) {
+					case 'shipping_address':
+						/* translators: %s: is the field label */
+						$errors->add( 'woocommerce_required_checkout_field', sprintf( __( 'There was a problem with the provided shipping address: %s is required', 'woocommerce' ), $field['label'] ) );
+						break;
+					case 'billing_address':
+						/* translators: %s: is the field label */
+						$errors->add( 'woocommerce_required_checkout_field', sprintf( __( 'There was a problem with the provided billing address: %s is required', 'woocommerce' ), $field['label'] ) );
+						break;
+					default:
+						/* translators: %s: is the field label */
+						$errors->add( 'woocommerce_required_checkout_field', sprintf( __( 'There was a problem with the provided field: %s is required', 'woocommerce' ), $field['label'] ) );
+				}
+				return $errors;
+			}
+
+			// Evaluate custom validation schema rules on the field.
+			$validate_result = $this->is_valid_field( $field, $document_object, $document_object_context );
+
+			if ( is_wp_error( $validate_result ) ) {
+				switch ( $document_object_context ) {
+					case 'shipping_address':
+						/* translators: %1$s: is the field label, %2$s: is the error message */
+						$errors->add( 'woocommerce_invalid_checkout_field', sprintf( __( 'There was a problem with the provided shipping address %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) );
+						break;
+					case 'billing_address':
+						/* translators: %1$s: is the field label, %2$s: is the error message */
+						$errors->add( 'woocommerce_invalid_checkout_field', sprintf( __( 'There was a problem with the provided billing address %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) );
+						break;
+					default:
+						/* translators: %1$s: is the field label, %2$s: is the error message */
+						$errors->add( 'woocommerce_invalid_checkout_field', sprintf( __( 'There was a problem with the provided %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) );
+				}
+				return $errors;
+			}
+
+			// Run custom validation callbacks.
+			if ( ! empty( $field['validate_callback'] ) ) {
+				$validate_callback_result = call_user_func( $field['validate_callback'], $field_value, $field );
+
+				if ( is_wp_error( $validate_callback_result ) ) {
+					$errors->merge_from( $validate_callback_result );
+				}
+
+				return $errors;
+			}
+
 			/**
 			 * Pass an error object to allow validation of an additional field.
 			 *
@@ -553,6 +591,7 @@ class CheckoutFields {
 			 * @since 8.7.0
 			 */
 			do_action( 'woocommerce_validate_additional_field', $errors, $field_key, $field_value );
+			wc_do_deprecated_action( '__experimental_woocommerce_blocks_validate_additional_field', array( $errors, $field_key, $field_value ), '8.7.0', 'woocommerce_validate_additional_field', 'This action has been graduated, use woocommerce_validate_additional_field instead.' );
 
 		} catch ( \Throwable $e ) {
 
@@ -1040,6 +1079,7 @@ class CheckoutFields {
 			}
 		}
 	}
+
 	/**
 	 * From a set of fields, returns only the ones for a given location.
 	 *
@@ -1272,6 +1312,10 @@ class CheckoutFields {
 			$field_data = $this->sanitize_checkbox_field_options( $field_data, $options );
 		} elseif ( 'select' === $field_data['type'] ) {
 			$field_data = $this->sanitize_select_field_options( $field_data, $options );
+		}
+		// If the field has conditional required rules, we need to set the required property to false so it can be evaluated.
+		if ( Features::is_enabled( 'experimental-blocks' ) && ! empty( $field_data['rules']['required'] ) ) {
+			$field_data['required'] = false;
 		}
 		return $field_data;
 	}
