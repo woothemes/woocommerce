@@ -215,6 +215,7 @@ export const OtherPaymentGateways = ( {
 			variant={ 'link' }
 			target="_blank"
 			href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/"
+			className="more-payment-options-link"
 		>
 			<img src={ assetUrl + '/icons/external-link.svg' } alt="" />
 			{ __( 'More payment options', 'woocommerce' ) }

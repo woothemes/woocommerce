@@ -234,16 +234,6 @@
 
 			&__external-icon {
 				padding: 8px 0;
-
-				img {
-					height: 16px;
-					margin-right: 4px;
-				}
-
-				a {
-					padding: 0;
-					text-decoration: none;
-				}
 			}
 		}
 
@@ -257,18 +247,18 @@
 		}
 	}
 
-	.more-payment-options {
-		padding: 25px 54px;
+	.more-payment-options-link {
+		padding: 0;
+		text-decoration: none;
 
 		img {
 			height: 16px;
 			margin-right: 4px;
 		}
+	}
 
-		a {
-			padding: 0;
-			text-decoration: none;
-		}
+	.more-payment-options {
+		padding: 25px 54px;
 	}
 }
 
