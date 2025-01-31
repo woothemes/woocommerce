@@ -381,31 +381,6 @@ class WC_Form_Handler {
 	}
 
 	/**
-	 * @throws Exception
-	 */
-	private static function save_contact_additional_fields() {
-		$checkout_fields   = Package::container()->get( CheckoutFields::class );
-		$additional_fields = $checkout_fields->get_fields_for_location( 'contact' );
-
-		foreach ( $additional_fields as $field => $field_data ) {
-			$value = $_POST[ $field ] ?? '';
-
-			$validation = $checkout_fields->validate_field( $field, $value );
-
-			if ( $validation->has_errors() ) {
-				foreach ( $validation->get_error_messages() as $error_message ) {
-					wc_add_notice( __( $error_message, 'woocommerce' ), 'error' );
-				}
-				continue;
-			}
-
-			$sanitize = $checkout_fields->sanitize_field( $field, $value );
-		}
-		var_dump( $additional_fields, $checkout_fields->get_contact_fields_keys() );
-		die;
-	}
-
-	/**
 	 * Process the checkout form.
 	 */
 	public static function checkout_action() {
