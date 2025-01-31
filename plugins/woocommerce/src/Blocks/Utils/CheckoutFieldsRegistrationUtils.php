@@ -2,15 +2,13 @@
 declare( strict_types = 1);
 namespace Automattic\WooCommerce\Blocks\Utils;
 
-use Automattic\WooCommerce\Blocks\Package;
-use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
 use Automattic\WooCommerce\Admin\Features\Features;
-use WP_Error;
+use Automattic\WooCommerce\Blocks\Utils\CheckoutFieldsSchema;
 
 /**
  * Utility class for validating options for checkout field registration.
  */
-class CheckoutFieldRegistrationUtils {
+class CheckoutFieldsRegistrationUtils {
 
 	/**
 	 * Supported field types
@@ -123,12 +121,10 @@ class CheckoutFieldRegistrationUtils {
 			return false;
 		}
 
-		$checkout_schema = Package::container()->get( CheckoutFieldsSchema::class );
+		$valid = CheckoutFieldsSchema::is_valid_schema( $options['rules'] );
 
-		try {
-			$checkout_schema->validate_meta_schema( $options['rules'] );
-		} catch ( \Exception $e ) {
-			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $e->getMessage() );
+		if ( is_wp_error( $valid ) ) {
+			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $valid->get_error_message() );
 			_doing_it_wrong( 'woocommerce_register_additional_checkout_field', esc_html( $message ), '8.6.0' );
 			return false;
 		}
