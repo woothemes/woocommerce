@@ -265,6 +265,7 @@ WooCommerce comes with some sample data you can use to see how products look; im
 * Update - Update WC Blocks to use the StoreDescriptor when accessing the validation data store. The documentation for the validation data store is also updated. [#54468](https://github.com/woocommerce/woocommerce/pull/54468)
 * Update - Validate transient data before setting it [#54640](https://github.com/woocommerce/woocommerce/pull/54640)
 * Update - Widget area: change the block registration strategy from opt-out to opt-in [#54086](https://github.com/woocommerce/woocommerce/pull/54086)
+* Dev - Add tracking events for the WooPayments payment methods selection flow. [#54733](https://github.com/woocommerce/woocommerce/pull/54733)
 * Dev - Add an ESLint rule comment [#54084](https://github.com/woocommerce/woocommerce/pull/54084)
 * Dev - Add code comments for Payment Settings (NOX) client code. [#54263](https://github.com/woocommerce/woocommerce/pull/54263)
 * Dev - Add dangerouslySetInnerHTML ESLint comments to settings-payments components. [#54191](https://github.com/woocommerce/woocommerce/pull/54191)
