@@ -248,6 +248,10 @@ test.describe( `${ blockData.name }`, () => {
 			await page.mouse.move( endX, endY );
 			await page.mouse.up();
 
+			// Timeout is needed to allow the image animation to finish.
+			// eslint-disable-next-line playwright/no-wait-for-timeout, no-restricted-syntax
+			await page.waitForTimeout( 1000 );
+
 			// Verify the next image is shown
 			const nextImage = blockFrontend.locator(
 				'.wc-block-woocommerce-product-gallery-large-image__image--active-image-slide'
