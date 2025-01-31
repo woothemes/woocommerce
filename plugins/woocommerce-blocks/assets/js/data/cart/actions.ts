@@ -156,3 +156,10 @@ export function setShippingAddress(
 ) {
 	return { type: types.SET_SHIPPING_ADDRESS, shippingAddress };
 }
+
+/**
+ * Sets the metadata to show product IDs pending being added to the cart.
+ */
+export function setProductsPendingAdd( productId: number, isAdding: boolean ) {
+	return { type: types.PRODUCT_PENDING_ADD, productId, isAdding };
+}

@@ -29,10 +29,12 @@ import {
 
 const EMPTY_PENDING_QUANTITY: [] = [];
 const EMPTY_PENDING_DELETE: [] = [];
+const EMPTY_PENDING_ADD: [] = [];
 
 export interface CartState {
 	cartItemsPendingQuantity: string[];
 	cartItemsPendingDelete: string[];
+	productsPendingAdd: number[];
 	cartData: Cart;
 	metaData: CartMeta;
 	errors: ApiErrorResponse[];
@@ -57,6 +59,7 @@ Object.keys( defaultFields ).forEach( ( key ) => {
 export const defaultCartState: CartState = {
 	cartItemsPendingQuantity: EMPTY_PENDING_QUANTITY,
 	cartItemsPendingDelete: EMPTY_PENDING_DELETE,
+	productsPendingAdd: EMPTY_PENDING_ADD,
 	cartData: {
 		coupons: EMPTY_CART_COUPONS,
 		shippingRates: EMPTY_SHIPPING_RATES,
