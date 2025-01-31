@@ -131,6 +131,7 @@ class DocumentObject {
 						$cart_data['items']
 					)
 				),
+				'items_type'         => array_unique( array_values( wc_list_pluck( $cart_data['items'], 'type' ) ) ),
 				'items_count'        => $cart_data['items_count'],
 				'items_weight'       => $cart_data['items_weight'],
 				'needs_shipping'     => $cart_data['needs_shipping'],

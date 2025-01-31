@@ -7,6 +7,7 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
@@ -488,7 +489,7 @@ class WC_Admin_Post_Types {
 		if ( ! empty( $request_data['_stock_status'] ) ) {
 			$stock_status = wc_clean( $request_data['_stock_status'] );
 		} else {
-			$stock_status = $product->is_type( ProductType::VARIABLE ) ? null : 'instock';
+			$stock_status = $product->is_type( ProductType::VARIABLE ) ? null : ProductStockStatus::IN_STOCK;
 		}
 		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
@@ -867,7 +868,7 @@ class WC_Admin_Post_Types {
 	private function maybe_update_stock_status( $product, $stock_status ) {
 		if ( $product->is_type( ProductType::EXTERNAL ) ) {
 			// External products are always in stock.
-			$product->set_stock_status( 'instock' );
+			$product->set_stock_status( ProductStockStatus::IN_STOCK );
 		} elseif ( isset( $stock_status ) ) {
 			if ( $product->is_type( ProductType::VARIABLE ) && ! $product->get_manage_stock() ) {
 				// Stock status is determined by children.

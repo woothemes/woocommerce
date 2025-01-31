@@ -222,3 +222,10 @@ export const getItemsPendingQuantityUpdate = ( state: CartState ): string[] => {
 export const getItemsPendingDelete = ( state: CartState ): string[] => {
 	return state.cartItemsPendingDelete;
 };
+/**
+ * Retrieves the item keys for products that are currently being added. Note we use product ID here instead of key as
+ * the item has not been given a cartItemKey yet.
+ */
+export const getProductsPendingAdd = ( state: CartState ): number[] => {
+	return state.productsPendingAdd;
+};

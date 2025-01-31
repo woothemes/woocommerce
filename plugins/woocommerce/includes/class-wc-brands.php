@@ -171,6 +171,10 @@ class WC_Brands {
 			return $permalink;
 		}
 
+		if ( empty( $permalink ) ) {
+			return $permalink;
+		}
+
 		// Abort early if the placeholder rewrite tag isn't in the generated URL.
 		if ( false === strpos( $permalink, '%' ) ) {
 			return $permalink;
@@ -410,6 +414,10 @@ class WC_Brands {
 	 */
 	public function add_structured_data( $markup ) {
 		global $post;
+
+		if ( ! is_array( $markup ) ) {
+			$markup = array();
+		}
 
 		if ( array_key_exists( 'brand', $markup ) ) {
 			return $markup;

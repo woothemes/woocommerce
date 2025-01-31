@@ -6,10 +6,12 @@ The enum classes make it easier to reference string values and avoid typos. They
 
 ## Available Enumerators
 
-- [OrderStatus](./OrderStatus.php) - Enumerates the possible statuses of an order.
+- [CatalogVisibility](./CatalogVisibility.php) - Enumerates the possible catalog visibility options for a product.
 - [OrderInternalStatus](./OrderInternalStatus.php) - Enumerates the possible internal statuses of an order (when stored in the database).
-- [ProductType](./ProductType.php) - Enumerates the possible types of a product.
+- [OrderStatus](./OrderStatus.php) - Enumerates the possible statuses of an order.
 - [ProductStatus](./ProductStatus.php) - Enumerates the possible statuses of a product.
+- [ProductStockStatus](./ProductStockStatus.php) - Enumerates the possible stock statuses of a product.
+- [ProductType](./ProductType.php) - Enumerates the possible types of a product.
 
 ## Contributing
 

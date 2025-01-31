@@ -6,6 +6,7 @@ use Automattic\WooCommerce\StoreApi\SchemaController;
 use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\StoreApi\Utilities\QuantityLimits;
 use Automattic\WooCommerce\Blocks\Utils\ProductAvailabilityUtils;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * ProductSchema class.
@@ -498,7 +499,7 @@ class ProductSchema extends AbstractSchema {
 			'has_options'         => $product->has_options(),
 			'is_purchasable'      => $product->is_purchasable(),
 			'is_in_stock'         => $product->is_in_stock(),
-			'is_on_backorder'     => 'onbackorder' === $product->get_stock_status(),
+			'is_on_backorder'     => ProductStockStatus::ON_BACKORDER === $product->get_stock_status(),
 			'low_stock_remaining' => $this->get_low_stock_remaining( $product ),
 			'stock_availability'  => (object) array(
 				'text'  => $availability['availability'] ?? '',
