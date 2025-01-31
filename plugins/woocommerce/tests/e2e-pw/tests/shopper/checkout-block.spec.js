@@ -74,10 +74,6 @@ test.describe(
 				version: 'wc/v3',
 			} );
 
-			await test.step( 'Disable Coming Soon option.', async () => {
-				await setComingSoon( { baseURL, enabled: 'no' } );
-			} );
-
 			await test.step( 'Set field visibility options', async () => {
 				await setOption(
 					request,
