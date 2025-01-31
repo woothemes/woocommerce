@@ -71,6 +71,52 @@ class FixtureData {
 	}
 
 	/**
+	 * Create a grouped product and return the result.
+	 *
+	 * @param array $props Product props.
+	 * @return \WC_Product
+	 */
+	public function get_grouped_product( $props ) {
+		$product = new \WC_Product_Grouped();
+		$product->set_props(
+			wp_parse_args(
+				$props,
+				array(
+					'name' => 'Grouped Product',
+				)
+			)
+		);
+
+		$children = [];
+		$children[] = $this->get_simple_product(
+			array(
+				'name'              => 'Child Product 1',
+				'stock_status'      => 'instock',
+				'regular_price'     => 10,
+			)
+		)->get_id();
+		$children[] = $this->get_simple_product(
+			array(
+				'name'              => 'Child Product 2',
+				'stock_status'      => 'instock',
+				'regular_price'     => 9,
+			)
+		)->get_id();
+		$children[] = $this->get_simple_product(
+			array(
+				'name'              => 'Child Product 3',
+				'stock_status'      => 'instock',
+				'regular_price'     => 10,
+			)
+		)->get_id();
+
+		$product->set_children( $children );
+		$product->save();
+
+		return wc_get_product( $product->get_id() );
+	}
+
+	/**
 	 * Create and return a variation of a product.
 	 *
 	 * @param integer $parent_id Parent product ID.
