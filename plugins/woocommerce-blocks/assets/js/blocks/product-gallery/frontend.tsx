@@ -237,7 +237,7 @@ const productGallery = {
 				return;
 			}
 
-			const SNAP_THRESHOLD = 0.3;
+			const SNAP_THRESHOLD = 0.2;
 			const delta = context.touchCurrentX - context.touchStartX;
 			const element = getElement()?.ref as HTMLElement;
 			const imageWidth = element?.offsetWidth || 0;
