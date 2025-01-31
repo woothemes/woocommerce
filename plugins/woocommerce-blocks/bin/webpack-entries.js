@@ -67,7 +67,6 @@ const blocks = {
 		customDir: 'classic-template',
 	},
 	'classic-shortcode': {},
-	'store-notices': {},
 	'page-content-wrapper': {},
 	'price-filter': {},
 	'product-best-sellers': {},
@@ -264,6 +263,10 @@ const entries = {
 			'./assets/js/atomic/blocks/product-elements/product-reviews/index.tsx',
 		'product-details':
 			'./assets/js/atomic/blocks/product-elements/product-details/index.tsx',
+
+		// Just build the store notices styles here. Store notices is built as part of a script modules build.
+		'store-notices': './assets/js/blocks/store-notices/frontend.ts',
+
 		...getBlockEntries( '{index,block,frontend}.{t,j}s{,x}', {
 			...blocks,
 			...genericBlocks,

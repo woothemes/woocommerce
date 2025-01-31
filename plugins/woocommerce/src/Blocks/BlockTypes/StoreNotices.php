@@ -37,6 +37,8 @@ class StoreNotices extends AbstractBlock {
 			return $content;
 		}
 
+		wp_enqueue_script_module( 'woocommerce/store-notices' );
+
 		ob_start();
 		woocommerce_output_all_notices();
 		$notices = ob_get_clean();
@@ -64,9 +66,7 @@ class StoreNotices extends AbstractBlock {
 	 * can be added client-side.
 	 */
 	protected function render_interactivity_notices_region() {
-		$namespace = wp_json_encode( array( 'namespace' => 'woocommerce/store-notices' ), JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
-
-		wc_initial_state(
+		wp_interactivity_state(
 			'woocommerce/store-notices',
 			array(
 				'notices' => array(),
@@ -75,30 +75,30 @@ class StoreNotices extends AbstractBlock {
 
 		ob_start();
 		?>
-		<div data-wc-interactive="<?php echo esc_attr( $namespace ); ?>" class="woocommerce-notices-wrapper">
+		<div data-wp-interactive="woocommerce/store-notices" class="woocommerce-notices-wrapper">
 			<template
-				data-wc-each--notice="state.notices"
-				data-wc-each-key="context.notice.id"
+				data-wp-each--notice="state.notices"
+				data-wp-each-key="context.notice.id"
 			>
 				<div
 					class="wc-block-components-notice-banner"
-					data-wc-init="callbacks.scrollIntoView"
-					data-wc-class--is-error="state.isError"
-					data-wc-class--is-success ="state.isSuccess"
-					data-wc-class--is-info="state.isInfo"
-					data-wc-bind--role="state.role"
+					data-wp-init="callbacks.scrollIntoView"
+					data-wp-class--is-error="state.isError"
+					data-wp-class--is-success ="state.isSuccess"
+					data-wp-class--is-info="state.isInfo"
+					data-wp-bind--role="state.role"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-						<path data-wc-bind--d="state.iconPath"></path>
+						<path data-wp-bind--d="state.iconPath"></path>
 					</svg>
 					<div class="wc-block-components-notice-banner__content">
-						<span data-wc-init="callbacks.renderNoticeContent"></span>
+						<span data-wp-init="callbacks.renderNoticeContent"></span>
 					</div>
 					<button
-						data-wc-bind--hidden="!context.notice.dismissible"
+						data-wp-bind--hidden="!context.notice.dismissible"
 						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
 						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
-						data-wc-on--click="actions.removeNotice"
+						data-wp-on--click="actions.removeNotice"
 						hidden
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -110,5 +110,15 @@ class StoreNotices extends AbstractBlock {
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Disable frontend script for this block type, it's a script module.
+	 *
+	 * @param string $key Data to get, or default to everything.
+	 * @return array|string|null
+	 */
+	protected function get_block_type_script( $key = null ) {
+		return null;
 	}
 }

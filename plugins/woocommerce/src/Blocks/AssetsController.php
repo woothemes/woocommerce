@@ -35,6 +35,7 @@ final class AssetsController {
 	 */
 	protected function init() { // phpcs:ignore WooCommerce.Functions.InternalInjectionMethod.MissingPublic
 		add_action( 'init', array( $this, 'register_assets' ) );
+		add_action( 'init', array( $this, 'register_script_modules' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'register_and_enqueue_site_editor_assets' ) );
 		add_filter( 'wp_resource_hints', array( $this, 'add_resource_hints' ), 10, 2 );
 		add_action( 'body_class', array( $this, 'add_theme_body_class' ), 1 );
@@ -43,6 +44,23 @@ final class AssetsController {
 		add_action( 'wp_enqueue_scripts', array( $this, 'update_block_settings_dependencies' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'update_block_settings_dependencies' ), 100 );
 		add_filter( 'js_do_concat', array( $this, 'skip_boost_minification_for_cart_checkout' ), 10, 2 );
+	}
+
+	/**
+	 * Register script modules.
+	 */
+	public function register_script_modules() {
+		// Right now we only have one script modules build for supported interactivity API powered block front-ends.
+		// We generate a combined asset file for that via DependencyExtractionWebpackPlugin to make registration more
+		// efficient.
+		$asset_data = $this->api->get_asset_data(
+			$this->api->get_block_asset_build_path( 'interactivity-blocks-frontend-assets', 'php' )
+		);
+
+		foreach ( $asset_data as $handle => $data ) {
+			$handle_without_js = str_replace( '.js', '', $handle );
+			wp_register_script_module( $handle_without_js, plugins_url( $this->api->get_block_asset_build_path( $handle_without_js ), dirname( __DIR__ ) ), $data['dependencies'], $data['version'] );
+		}
 	}
 
 	/**

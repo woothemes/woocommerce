@@ -5,8 +5,7 @@ import {
 	getContext as getContextFn,
 	getElement,
 	store,
-} from '@woocommerce/interactivity';
-import type { store as StoreType } from '@wordpress/interactivity';
+} from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
@@ -64,76 +63,78 @@ const generateNoticeId = () => {
 		.substring( 2, 15 ) }`;
 };
 
-const { state, actions } = ( store as typeof StoreType )< StoreNoticesStore >(
-	'woocommerce/store-notices',
-	{
-		state: {
-			get role() {
-				const context = getContext();
-				if (
-					context.notice.type === 'error' ||
-					context.notice.type === 'success'
-				) {
-					return 'alert';
-				}
+const { state } = store< StoreNoticesStore >( 'woocommerce/store-notices', {
+	state: {
+		get role() {
+			const context = getContext();
+			if (
+				context.notice.type === 'error' ||
+				context.notice.type === 'success'
+			) {
+				return 'alert';
+			}
 
-				return 'status';
-			},
-			get iconPath() {
-				const context = getContext();
-				const noticeType = context.notice.type;
-				return ICON_PATHS[ noticeType ];
-			},
-			get isError() {
-				const { notice } = getContext();
-				return notice.type === 'error';
-			},
-			get isSuccess() {
-				const { notice } = getContext();
-				return notice.type === 'success';
-			},
-			get isInfo() {
-				const { notice } = getContext();
-				return notice.type === 'notice';
-			},
+			return 'status';
 		},
-		actions: {
-			addNotice: ( notice: Notice ) => {
-				const noticeId = generateNoticeId();
-				const noticeWithId = {
-					...notice,
-					id: noticeId,
-				};
-				state.notices.push( noticeWithId );
-
-				return noticeId;
-			},
-
-			removeNotice: ( noticeId: string | PointerEvent ) => {
-				noticeId =
-					typeof noticeId === 'string'
-						? noticeId
-						: getContext().notice.id;
-				const index = state.notices.findIndex(
-					( { id } ) => id === noticeId
-				);
-				if ( index !== -1 ) {
-					state.notices.splice( index, 1 );
-				}
-			},
+		get iconPath() {
+			const context = getContext();
+			const noticeType = context.notice.type;
+			return ICON_PATHS[ noticeType ];
 		},
-		callbacks: {
-			renderNoticeContent: () => {
-				const context = getContext();
-				const { ref } = getElement();
+		get isError() {
+			const { notice } = getContext();
+			return notice.type === 'error';
+		},
+		get isSuccess() {
+			const { notice } = getContext();
+			return notice.type === 'success';
+		},
+		get isInfo() {
+			const { notice } = getContext();
+			return notice.type === 'notice';
+		},
+	},
+	actions: {
+		addNotice: ( notice: Notice ) => {
+			const noticeId = generateNoticeId();
+			const noticeWithId = {
+				...notice,
+				id: noticeId,
+			};
+			state.notices.push( noticeWithId );
 
+			return noticeId;
+		},
+
+		removeNotice: ( noticeId: string | PointerEvent ) => {
+			noticeId =
+				typeof noticeId === 'string'
+					? noticeId
+					: getContext().notice.id;
+			const index = state.notices.findIndex(
+				( { id } ) => id === noticeId
+			);
+			if ( index !== -1 ) {
+				state.notices.splice( index, 1 );
+			}
+		},
+	},
+	callbacks: {
+		renderNoticeContent: () => {
+			const context = getContext();
+			const { ref } = getElement();
+
+			if ( ref ) {
 				ref.innerHTML = context.notice.notice;
-			},
-
-			scrollIntoView: () => {
-				const { ref } = getElement();
-				ref.scrollIntoView( { behavior: 'smooth' } );
-			},
+			}
 		},
-	}
-);
+
+		scrollIntoView: () => {
+			const { ref } = getElement();
+
+			if ( ref ) {
+				ref.scrollIntoView( { behavior: 'smooth' } );
+			}
+		},
+	},
+} );
