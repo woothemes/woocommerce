@@ -91,15 +91,21 @@ class ProductTemplate extends AbstractBlock {
 			// This ensures that for the inner instances of the Post Template block, we do not render any block supports.
 			$block_instance['blockName'] = 'core/null';
 
+			// Relay the block context to the inner blocks.
+			$available_context = array_merge(
+				(array) $block->context,
+				array(
+					'postType' => get_post_type(),
+					'postId'   => $product_id,
+				)
+			);
+
 			// Render the inner blocks of the Post Template block with `dynamic` set to `false` to prevent calling
 			// `render_callback` and ensure that no wrapper markup is included.
 			$block_content = (
 				new WP_Block(
 					$block_instance,
-					array(
-						'postType' => get_post_type(),
-						'postId'   => $product_id,
-					)
+					$block_context
 				)
 			)->render( array( 'dynamic' => false ) );
 
