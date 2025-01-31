@@ -24,3 +24,7 @@ $blue: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 		}
 	}
 }
+
+.wc-block-product-filters__overlay {
+	width: 100%;
+}
