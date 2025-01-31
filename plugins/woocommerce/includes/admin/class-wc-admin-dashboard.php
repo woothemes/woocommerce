@@ -587,6 +587,10 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 			$sparkline_data = array();
 			$total          = 0;
 			foreach ( $data as $d ) {
+				if ( ! isset( $d['subtotals']->$meta_key ) ) {
+					continue;
+                }
+				
 				$total += $d['subtotals']->$meta_key;
 				array_push( $sparkline_data, array( strval( strtotime( $d['interval'] ) * 1000 ), $d['subtotals']->$meta_key ) );
 			}
