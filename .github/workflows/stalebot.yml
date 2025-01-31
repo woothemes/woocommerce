@@ -77,33 +77,38 @@ jobs:
                         
                         // Find the latest approval date for this PR
                         let latestApproval = null;
-                        let latestApprovalReview = null;
+                        const approvalReviews = [];
                         
                         for (const review of reviews) {
                           if (review.state === 'APPROVED') {
                             const reviewDate = new Date(review.submitted_at);
+                            approvalReviews.push(review);
                             if (!latestApproval || reviewDate > latestApproval) {
                               latestApproval = reviewDate;
-                              latestApprovalReview = review;
                             }
                           }
                         }
                         
-                        // Process only if we found an approval
+                        // Process only if we found any approvals
                         if (latestApproval) {
-                          console.log(`PR #${pr.number} latest approval from ${latestApprovalReview.user.login} on ${latestApproval.toISOString()}`);
+                          console.log(`PR #${pr.number} latest approval on ${latestApproval.toISOString()}`);
                           
                           if (latestApproval < thirtyDaysAgo) {
-                            console.log(`Dismissing stale approval on PR #${pr.number} from ${latestApprovalReview.user.login} (approved on ${latestApproval.toISOString()})`);
-                            await github.rest.pulls.dismissReview({
-                              owner: context.repo.owner,
-                              repo: context.repo.repo,
-                              pull_number: pr.number,
-                              review_id: latestApprovalReview.id,
-                              message: 'This approval has been dismissed due to being stale (30+ days old). Please request a new review.'
-                            });
+                            console.log(`Found ${approvalReviews.length} approvals to dismiss on PR #${pr.number} (latest approval was on ${latestApproval.toISOString()})`);
+                            
+                            // Dismiss all approvals
+                            for (const review of approvalReviews) {
+                              console.log(`Dismissing approval from ${review.user.login}`);
+                              await github.rest.pulls.dismissReview({
+                                owner: context.repo.owner,
+                                repo: context.repo.repo,
+                                pull_number: pr.number,
+                                review_id: review.id,
+                                message: 'This approval has been dismissed due to being stale (latest PR approval was 30+ days old). Please request a new review.'
+                              });
+                            }
                           } else {
-                            console.log(`Keeping recent approval on PR #${pr.number} from ${latestApprovalReview.user.login} (approved on ${latestApproval.toISOString()})`);
+                            console.log(`Keeping approvals on PR #${pr.number} (latest approval on ${latestApproval.toISOString()})`);
                           }
                         }
                       }
