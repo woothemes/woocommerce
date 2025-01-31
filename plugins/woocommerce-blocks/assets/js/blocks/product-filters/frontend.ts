@@ -67,9 +67,11 @@ function navigate( href: string, options = {} ) {
 	return navigateFn( href, options );
 }
 
+export type ActiveFilterType = 'attribute' | 'price' | 'rating' | 'status';
+
 export type ActiveFilter = {
 	label: string;
-	type: 'attribute' | 'price' | 'rating' | 'status';
+	type: ActiveFilterType;
 	value: string | null;
 	attribute?: {
 		slug: string;
@@ -194,7 +196,7 @@ const productFiltersStore = store( 'woocommerce/product-filters', {
 			);
 		},
 		removeActiveFilter: (
-			type: ActiveFilter[ 'type' ],
+			type: ActiveFilterType,
 			value: ActiveFilter[ 'value' ]
 		) => {
 			productFiltersStore.actions.removeActiveFiltersBy(

@@ -7,26 +7,11 @@ import { store, getContext, getElement } from '@wordpress/interactivity';
  * Internal dependencies
  */
 import { ProductFiltersContext, ProductFiltersStore } from '../../frontend';
+import { FilterOptionItem, isFilterOptionItem } from '../../types';
 
 type ProductFilterActiveContext = {
 	removeLabelTemplate: string;
 };
-
-type FilterItem = {
-	type: string;
-	value: string;
-};
-
-function isFilterItem(
-	value: string | null | FilterItem
-): value is FilterItem {
-	return (
-		typeof value === 'object' &&
-		value !== null &&
-		typeof value.type === 'string' &&
-		typeof value.value === 'string'
-	);
-}
 
 const productFilterActiveStore = store( 'woocommerce/product-filter-active', {
 	state: {
@@ -57,15 +42,15 @@ const productFilterActiveStore = store( 'woocommerce/product-filter-active', {
 			if ( ! ref ) return;
 
 			try {
-				let filterItem: string | null | FilterItem =
+				let filterItem: string | null | FilterOptionItem =
 					ref.getAttribute( 'data-filter-item' );
 
 				filterItem = filterItem
-					? ( JSON.parse( filterItem ) as FilterItem )
+					? ( JSON.parse( filterItem ) as FilterOptionItem )
 					: null;
 
-				// Using a typeguard, makes it much easier to work with the filter item in TS.
-				if ( ! isFilterItem( filterItem ) ) return;
+				// Using a typeguard makes it much easier to work with the filter item in TS.
+				if ( ! isFilterOptionItem( filterItem ) ) return;
 
 				const { type, value } = filterItem;
 
@@ -76,7 +61,7 @@ const productFilterActiveStore = store( 'woocommerce/product-filter-active', {
 				productFiltersStore.actions.removeActiveFilter( type, value );
 				productFiltersStore.actions.navigate();
 			} catch ( error ) {
-				// type and value missing is possible, and we don't throw, so also don't throw if JSON cannot be parsed.
+				// data-filter-item is possible, and we don't throw, so also don't throw if JSON cannot be parsed.
 				// It could be worth a console error in development for either of these cases for troubleshooting.
 			}
 		},

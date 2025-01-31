@@ -3,6 +3,11 @@
  */
 import { BlockEditProps } from '@wordpress/blocks';
 
+/**
+ * Internal dependencies
+ */
+import { ActiveFilterType } from './frontend';
+
 export type BlockAttributes = {
 	productId?: string;
 	overlayIcon:
@@ -21,7 +26,7 @@ export type FilterOptionItem = {
 	ariaLabel: string;
 	value: string;
 	selected?: boolean;
-	type: string;
+	type: ActiveFilterType;
 	data?: Record< string, unknown >;
 };
 
@@ -44,3 +49,16 @@ export type Color = {
 	name?: string;
 	color: string;
 };
+
+export function isFilterOptionItem(
+	value: string | null | FilterOptionItem
+): value is FilterOptionItem {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		typeof value.type === 'string' &&
+		typeof value.value === 'string' &&
+		typeof value.label === 'string' &&
+		typeof value.ariaLabel === 'string'
+	);
+}

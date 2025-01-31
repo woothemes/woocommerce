@@ -15,6 +15,8 @@ const blockEntries = {
 		'./assets/js/atomic/blocks/product-elements/button/frontend.tsx',
 	'woocommerce/product-filter-active':
 		'./assets/js/blocks/product-filters/inner-blocks/active-filters/frontend.ts',
+	'woocommerce/product-filter-attribute':
+		'./assets/js/blocks/product-filters/inner-blocks/attribute-filter/frontend.ts',
 };
 
 module.exports = {

@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { store, getContext, getElement } from '@woocommerce/interactivity';
+import { store, getContext, getElement } from '@wordpress/interactivity';
 
 /**
  * Internal dependencies
  */
 import { ProductFiltersStore } from '../../frontend';
+import { FilterOptionItem, isFilterOptionItem } from '../../types';
 
 type ProductFilterAttributeContext = {
 	attributeSlug: string;
@@ -50,41 +51,51 @@ const { state, actions } = store( 'woocommerce/product-filter-attribute', {
 			return activeLabelTemplate.replace( '{{label}}', label );
 		},
 		toggleFilter: () => {
-			const { props } = getElement();
-			let filterItem = props[ 'data-filter-item' ];
+			const { ref } = getElement();
+			if ( ! ref ) return;
 
-			if ( typeof filterItem === 'string' )
-				filterItem = JSON.parse( filterItem );
+			let filterItem: string | null | FilterOptionItem =
+				ref.getAttribute( 'data-filter-item' );
 
-			const { ariaLabel, value } = filterItem;
+			try {
+				filterItem = filterItem
+					? ( JSON.parse( filterItem ) as FilterOptionItem )
+					: null;
 
-			if ( ! value || ! ariaLabel ) return;
+				// Using a typeguard makes it much easier to work with the filter item in TS.
+				if ( ! isFilterOptionItem( filterItem ) ) return;
 
-			const context = getContext< ProductFilterAttributeContext >();
-			const productFiltersStore = store< ProductFiltersStore >(
-				'woocommerce/product-filters'
-			);
+				const { ariaLabel, value } = filterItem;
 
-			if ( state.selectedFilters.includes( value ) ) {
-				productFiltersStore.actions.removeActiveFiltersBy(
-					( item ) =>
-						item.value === value &&
-						item.type === 'attribute' &&
-						item.attribute?.slug === context.attributeSlug
+				const context = getContext< ProductFilterAttributeContext >();
+				const productFiltersStore = store< ProductFiltersStore >(
+					'woocommerce/product-filters'
 				);
-			} else {
-				productFiltersStore.actions.setActiveFilter( {
-					type: 'attribute',
-					value,
-					label: actions.getActiveLabel( ariaLabel ),
-					attribute: {
-						slug: context.attributeSlug,
-						queryType: 'or',
-					},
-				} );
-			}
 
-			productFiltersStore.actions.navigate();
+				if ( state.selectedFilters.includes( value ) ) {
+					productFiltersStore.actions.removeActiveFiltersBy(
+						( item ) =>
+							item.value === value &&
+							item.type === 'attribute' &&
+							item.attribute?.slug === context.attributeSlug
+					);
+				} else {
+					productFiltersStore.actions.setActiveFilter( {
+						type: 'attribute',
+						value,
+						label: actions.getActiveLabel( ariaLabel ),
+						attribute: {
+							slug: context.attributeSlug,
+							queryType: 'or',
+						},
+					} );
+				}
+
+				productFiltersStore.actions.navigate();
+			} catch ( error ) {
+				// data-filter-item missing is possible, and we don't throw, so also don't throw if JSON cannot be parsed.
+				// It could be worth a console error in development for either of these cases for troubleshooting.
+			}
 		},
 
 		clearFilters: () => {

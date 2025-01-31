@@ -161,6 +161,8 @@ final class ProductFilterAttribute extends AbstractBlock {
 			return '';
 		}
 
+		wp_enqueue_script_module( $this->get_full_block_name() );
+
 		$product_attribute = wc_get_attribute( $block_attributes['attributeId'] );
 		$attribute_counts  = $this->get_attribute_counts( $block, $product_attribute->slug, $block_attributes['queryType'] );
 		$hide_empty        = $block_attributes['hideEmpty'] ?? true;
@@ -224,10 +226,10 @@ final class ProductFilterAttribute extends AbstractBlock {
 		);
 
 		$wrapper_attributes = array(
-			'data-wc-interactive'  => wp_json_encode( array( 'namespace' => $this->get_full_block_name() ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-key'          => 'product-filter-attribute-' . md5( wp_json_encode( $block_attributes ) ),
-			'data-wc-context'      => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-bind--hidden' => '!context.hasFilterOptions',
+			'data-wp-interactive'  => $this->get_full_block_name(),
+			'data-wp-key'          => 'product-filter-attribute-' . md5( wp_json_encode( $block_attributes ) ),
+			'data-wp-context'      => wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wp-bind--hidden' => '!context.hasFilterOptions',
 		);
 
 		if ( empty( $filter_context ) ) {
@@ -419,5 +421,15 @@ final class ProductFilterAttribute extends AbstractBlock {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Disable the block type script, this is built as a script module.
+	 *
+	 * @param string|null $key The key of the script.
+	 * @return null
+	 */
+	protected function get_block_type_script( $key = null ) {
+		return null;
 	}
 }
