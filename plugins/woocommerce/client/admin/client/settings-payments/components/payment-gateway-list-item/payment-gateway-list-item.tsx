@@ -169,10 +169,11 @@ export const PaymentGatewayListItem = ( {
 
 						{ ! gatewayNeedsOnboarding && (
 							<SettingsButton
+								gatewayId={ gateway.id }
 								settingsHref={
 									gateway.management._links.settings.href
 								}
-								installingPlugin={ installingPlugin }
+								isInstallingPlugin={ !! installingPlugin }
 							/>
 						) }
 

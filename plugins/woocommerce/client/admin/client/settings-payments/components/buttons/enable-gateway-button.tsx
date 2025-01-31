@@ -48,7 +48,7 @@ interface EnableGatewayButtonProps {
 	/**
 	 * ID of the plugin that is being installed.
 	 */
-	installingPlugin: string | null;
+	installingPlugin?: string | null;
 	/**
 	 * The text of the button.
 	 */
