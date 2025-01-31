@@ -412,10 +412,10 @@ class WC_Brands {
 		global $post;
 
 		if ( ! is_array( $markup ) ) {
-			$markup = [];
+			$markup = array();
 		}
 
-		if (array_key_exists( 'brand', $markup ) ) {
+		if ( array_key_exists( 'brand', $markup ) ) {
 			return $markup;
 		}
 
