@@ -1,9 +1,9 @@
 <?php
 declare( strict_types = 1 );
 
-namespace Automattic\WooCommerce\Tests\Blocks\Domain\Services\Schema;
+namespace Automattic\WooCommerce\Tests\Blocks\Domain\Services\CheckoutFieldsSchema;
 
-use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema\DocumentObject;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 use WC_Customer;
 

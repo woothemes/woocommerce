@@ -4,8 +4,11 @@ namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
 use Automattic\WooCommerce\Blocks\Assets\AssetDataRegistry;
-use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
-use Automattic\WooCommerce\Blocks\Utils\CheckoutFieldsSchema;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema\{
+	DocumentObject,
+	Validation
+};
+use Automattic\WooCommerce\Admin\Features\Features;
 use WC_Customer;
 use WC_Data;
 use WC_Order;
@@ -806,7 +809,7 @@ class CheckoutFields {
 	public function is_required_field( $field, $document_object = null, $context = null ) {
 		if ( $document_object && ! empty( $field['rules']['required'] ) ) {
 			$document_object->set_context( $context );
-			return true === CheckoutFieldsSchema::validate_document_object( $document_object, $field['rules']['required'] );
+			return true === Validation::validate_document_object( $document_object, $field['rules']['required'] );
 		}
 		return true === $field['required'];
 	}
@@ -822,8 +825,8 @@ class CheckoutFields {
 	public function is_valid_field( $field, $document_object = null, $context = null ) {
 		if ( $document_object && ! empty( $field['rules']['validation'] ) ) {
 			$document_object->set_context( $context );
-			$field_schema = CheckoutFieldsSchema::get_field_schema_with_context( $field['id'], $field['rules']['validation'], $context );
-			return CheckoutFieldsSchema::validate_document_object( $document_object, $field_schema );
+			$field_schema = Validation::get_field_schema_with_context( $field['id'], $field['rules']['validation'], $context );
+			return Validation::validate_document_object( $document_object, $field_schema );
 		}
 		return true;
 	}
@@ -1290,7 +1293,7 @@ class CheckoutFields {
 			return false;
 		}
 
-		$valid = CheckoutFieldsSchema::is_valid_schema( $options['rules'] );
+		$valid = Validation::is_valid_schema( $options['rules'] );
 
 		if ( is_wp_error( $valid ) ) {
 			$message = sprintf( 'Unable to register field with id: "%s". %s', $options['id'], $valid->get_error_message() );

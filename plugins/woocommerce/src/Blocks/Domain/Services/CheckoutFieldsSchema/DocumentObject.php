@@ -1,7 +1,7 @@
 <?php
 declare( strict_types = 1);
 
-namespace Automattic\WooCommerce\Blocks\Domain\Services\Schema;
+namespace Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
 
 use WC_Cart;
 use WC_Customer;
