@@ -9,6 +9,7 @@ const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extrac
  */
 const { sharedOptimizationConfig } = require( './webpack-shared-config' );
 
+// TODO: Implement support for block.json viewScriptModule.
 const blockEntries = {
 	'woocommerce/store-notices': './assets/js/blocks/store-notices/frontend.ts',
 	'woocommerce/product-button':
@@ -17,6 +18,8 @@ const blockEntries = {
 		'./assets/js/blocks/product-filters/inner-blocks/active-filters/frontend.ts',
 	'woocommerce/product-filter-attribute':
 		'./assets/js/blocks/product-filters/inner-blocks/attribute-filter/frontend.ts',
+	'woocommerce/product-filter-checkbox-list':
+		'./assets/js/blocks/product-filters/inner-blocks/checkbox-list/frontend.ts',
 };
 
 module.exports = {
