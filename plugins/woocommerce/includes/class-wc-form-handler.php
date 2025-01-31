@@ -5,6 +5,8 @@
  * @package WooCommerce\Classes\
  */
 
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
@@ -337,9 +339,9 @@ class WC_Form_Handler {
 			wp_update_user( $user );
 
 			// Update customer object to keep data in sync.
-			$customer = new WC_Customer( $user->ID );
+			try {
+				$customer = new WC_Customer( $user->ID );
 
-			if ( $customer ) {
 				// Keep billing data in sync if data changed.
 				if ( isset( $user->user_email ) && is_email( $user->user_email ) && $current_email !== $user->user_email ) {
 					$customer->set_billing_email( $user->user_email );
@@ -354,6 +356,11 @@ class WC_Form_Handler {
 				}
 
 				$customer->save();
+			} catch ( WC_Data_Exception $e ) {
+				// These error message are already translated.
+				wc_add_notice( $e->getMessage(), 'error' );
+			} catch ( \Exception $e ) {
+				wc_add_notice( __( 'An error occurred while saving account details.', 'woocommerce' ), 'error' );
 			}
 
 			/**
@@ -362,7 +369,7 @@ class WC_Form_Handler {
 			 * @since 3.6.0
 			 * @param int $user_id User ID being saved.
 			 */
-			do_action( 'woocommerce_save_account_details', $user->ID );
+			do_action( 'woocommerce_save_account_details', $customer ?? $user->ID );
 
 			// Notices are checked here so that if something created a notice during the save hooks above, the redirect will not happen.
 			if ( 0 === wc_notice_count( 'error' ) ) {
@@ -371,6 +378,31 @@ class WC_Form_Handler {
 				exit;
 			}
 		}
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	private static function save_contact_additional_fields() {
+		$checkout_fields   = Package::container()->get( CheckoutFields::class );
+		$additional_fields = $checkout_fields->get_fields_for_location( 'contact' );
+
+		foreach ( $additional_fields as $field => $field_data ) {
+			$value = $_POST[ $field ] ?? '';
+
+			$validation = $checkout_fields->validate_field( $field, $value );
+
+			if ( $validation->has_errors() ) {
+				foreach ( $validation->get_error_messages() as $error_message ) {
+					wc_add_notice( __( $error_message, 'woocommerce' ), 'error' );
+				}
+				continue;
+			}
+
+			$sanitize = $checkout_fields->sanitize_field( $field, $value );
+		}
+		var_dump( $additional_fields, $checkout_fields->get_contact_fields_keys() );
+		die;
 	}
 
 	/**
