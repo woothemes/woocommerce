@@ -4,6 +4,7 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Blocks\Domain\Services\Schema\DocumentObject;
 use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\Validator;
 
@@ -86,6 +87,29 @@ class CheckoutFieldsSchema {
 	}
 
 	/**
+	 * Validate the field rules.
+	 *
+	 * @param DocumentObject $document_object The document object to validate.
+	 * @param array          $rules The rules to validate against.
+	 * @return bool
+	 */
+	public function validate_document_object_rules( DocumentObject $document_object, $rules ) {
+		$validator = new Validator();
+		$result    = $validator->validate(
+			Helper::toJSON( $document_object->get_data() ),
+			Helper::toJSON(
+				[
+					'$schema'    => 'http://json-schema.org/draft-07/schema#',
+					'type'       => 'object',
+					'properties' => $rules,
+				]
+			)
+		);
+
+		return ! $result->hasError();
+	}
+
+	/**
 	 * Validate the field options.
 	 *
 	 * @param array $options The field options.
@@ -144,5 +168,31 @@ class CheckoutFieldsSchema {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check if the fields have a valid schema.
+	 *
+	 * @param array $fields The fields.
+	 * @return bool
+	 */
+	public function has_valid_schema( $fields ) {
+		$has_valid_schema = false;
+
+		foreach ( $fields as $field ) {
+			if (
+				isset( $field['rules'] ) &&
+				(
+					! empty( $field['rules']['required'] ) ||
+					! empty( $field['rules']['hidden'] ) ||
+					! empty( $field['rules']['validation'] )
+				)
+			) {
+				$has_valid_schema = true;
+				break;
+			}
+		}
+
+		return $has_valid_schema;
 	}
 }

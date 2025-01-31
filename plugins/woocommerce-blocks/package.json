@@ -256,7 +256,7 @@
 		"webpack": "5.91.0",
 		"webpack-bundle-analyzer": "4.7.0",
 		"webpack-cli": "5.1.4",
-		"wireit": "0.14.3",
+		"wireit": "0.14.10",
 		"wordpress-data-wp-6-7": "npm:@wordpress/data@wp-6.7",
 		"wp-types": "3.63.0"
 	},
@@ -283,6 +283,9 @@
 		"@wordpress/style-engine": "^1.30.0",
 		"@wordpress/url": "3.13.0",
 		"@wordpress/wordcount": "3.47.0",
+		"ajv": "^8.17.1",
+		"ajv-errors": "^3.0.0",
+		"ajv-formats": "^3.0.1",
 		"change-case": "^4.1.2",
 		"check-password-strength": "^2.0.10",
 		"clsx": "^2.1.1",

@@ -12,7 +12,7 @@
  *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
- * @version 9.7.0
+ * @version 9.8.0
  */
 
 use Automattic\WooCommerce\Internal\Email\EmailFont;
@@ -31,6 +31,7 @@ $base             = get_option( 'woocommerce_email_base_color' );
 $text             = get_option( 'woocommerce_email_text_color' );
 $footer_text      = get_option( 'woocommerce_email_footer_text_color' );
 $header_alignment = get_option( 'woocommerce_email_header_alignment', $email_improvements_enabled ? 'left' : false );
+$logo_image_width = get_option( 'woocommerce_email_header_image_width', '120' );
 $default_font     = 'Helvetica';
 $font_family      = $email_improvements_enabled ? get_option( 'woocommerce_email_font_family', $default_font ) : $default_font;
 
@@ -49,6 +50,7 @@ if ( $is_email_preview ) {
 	$text_transient             = get_transient( 'woocommerce_email_text_color' );
 	$footer_text_transient      = get_transient( 'woocommerce_email_footer_text_color' );
 	$header_alignment_transient = get_transient( 'woocommerce_email_header_alignment' );
+	$logo_image_width_transient = get_transient( 'woocommerce_email_header_image_width' );
 	$font_family_transient      = get_transient( 'woocommerce_email_font_family' );
 
 	$bg               = $bg_transient ? $bg_transient : $bg;
@@ -57,6 +59,7 @@ if ( $is_email_preview ) {
 	$text             = $text_transient ? $text_transient : $text;
 	$footer_text      = $footer_text_transient ? $footer_text_transient : $footer_text;
 	$header_alignment = $header_alignment_transient ? $header_alignment_transient : $header_alignment;
+	$logo_image_width = $logo_image_width_transient ? $logo_image_width_transient : $logo_image_width;
 	$font_family      = $font_family_transient ? $font_family_transient : $font_family;
 }
 
@@ -142,7 +145,7 @@ body {
 }
 
 #template_header_image img {
-	width: 120px
+	width: <?php echo esc_attr( $logo_image_width ); ?>px;
 }
 
 .email-logo-text {

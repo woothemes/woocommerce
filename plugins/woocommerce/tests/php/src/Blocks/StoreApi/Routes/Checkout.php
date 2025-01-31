@@ -131,6 +131,9 @@ class Checkout extends MockeryTestCase {
 		$coupon_to_delete = new \WC_Coupon( self::TEST_COUPON_CODE );
 		$coupon_to_delete->delete( true );
 
+		WC()->cart->empty_cart();
+		WC()->session->destroy_session();
+
 		global $wp_rest_server;
 		$wp_rest_server = null;
 	}
