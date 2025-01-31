@@ -177,13 +177,12 @@ class Checkout extends AbstractCartRoute {
 	}
 
 	/**
-	 * Validate required additional fields on request.
+	 * Validate additional fields on request.
 	 *
 	 * @param \WP_REST_Request $request Request object.
-	 *
 	 * @throws RouteException When a required additional field is missing.
 	 */
-	public function validate_required_additional_fields( \WP_REST_Request $request ) {
+	protected function validate_additional_fields( \WP_REST_Request $request ) {
 		$document_object = null;
 
 		if ( Features::is_enabled( 'experimental-blocks' ) ) {
@@ -206,27 +205,61 @@ class Checkout extends AbstractCartRoute {
 		$address_fields = $this->additional_fields_controller->get_fields_for_location( 'address' );
 
 		if ( WC()->cart->needs_shipping() ) {
-			foreach ( $address_fields as $field_key => $field ) {
-				if ( ! isset( $request['shipping_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object, 'shipping_address' ) ) {
-					/* translators: %s: is the field label */
-					throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided shipping address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
+			$this->validate_additional_fields_with_context( $address_fields, $request['shipping_address'], $document_object, 'shipping_address' );
+		}
+
+		$this->validate_additional_fields_with_context( $address_fields, $request['billing_address'], $document_object, 'billing_address' );
+
+		$this->validate_additional_fields_with_context(
+			$this->additional_fields_controller->get_fields_for_group( 'other' ),
+			$request['additional_fields'],
+			$document_object
+		);
+	}
+
+	/**
+	 * Validate additional fields with context.
+	 *
+	 * @param array          $fields The fields within this context to validate.
+	 * @param array          $values The values within this context to validate.
+	 * @param DocumentObject $document_object The document object if applicable.
+	 * @param string         $context The context.
+	 * @throws RouteException When a required additional field is missing.
+	 */
+	protected function validate_additional_fields_with_context( $fields, $values, $document_object = null, $context = null ) {
+		foreach ( $fields as $field_key => $field ) {
+			if ( ! isset( $values[ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object, $context ) ) {
+				switch ( $context ) {
+					case 'shipping_address':
+						/* translators: %s: is the field label */
+						throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided shipping address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
+					case 'billing_address':
+						/* translators: %s: is the field label */
+						throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided billing address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
+					default:
+						/* translators: %s: is the field label */
+						throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided field: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
 				}
 			}
-		}
 
-		foreach ( $address_fields as $field_key => $field ) {
-			if ( ! isset( $request['billing_address'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object, 'billing_address' ) ) {
-				/* translators: %s: is the field label */
-				throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided billing address: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
+			if ( empty( $document_object ) ) {
+				continue;
 			}
-		}
 
-		$other_fields = $this->additional_fields_controller->get_fields_for_group( 'other' );
+			$validate_result = $this->additional_fields_controller->is_field_valid( $field, $document_object, $context );
 
-		foreach ( $other_fields as $field_key => $field ) {
-			if ( ! isset( $request['additional_fields'][ $field_key ] ) && $this->additional_fields_controller->is_field_required( $field, $document_object ) ) {
-				/* translators: %s: is the field label */
-				throw new RouteException( 'woocommerce_rest_checkout_missing_required_field', esc_html( sprintf( __( 'There was a problem with the provided additional fields: %s is required', 'woocommerce' ), $field['label'] ) ), 400 );
+			if ( is_wp_error( $validate_result ) ) {
+				switch ( $context ) {
+					case 'shipping_address':
+						/* translators: %1$s: is the field label, %2$s: is the error message */
+						throw new RouteException( 'woocommerce_rest_checkout_invalid_field', esc_html( sprintf( __( 'There was a problem with the provided shipping address %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) ), 400 );
+					case 'billing_address':
+						/* translators: %1$s: is the field label, %2$s: is the error message */
+						throw new RouteException( 'woocommerce_rest_checkout_invalid_field', esc_html( sprintf( __( 'There was a problem with the provided billing address %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) ), 400 );
+					default:
+						/* translators: %1$s: is the field label, %2$s: is the error message */
+						throw new RouteException( 'woocommerce_rest_checkout_invalid_field', esc_html( sprintf( __( 'There was a problem with the provided %1$s: %2$s', 'woocommerce' ), $field['label'], $validate_result->get_error_message() ) ), 400 );
+				}
 			}
 		}
 	}
@@ -271,7 +304,7 @@ class Checkout extends AbstractCartRoute {
 		/**
 		 * Validate additional fields on request.
 		 */
-		$this->validate_required_additional_fields( $request );
+		$this->validate_additional_fields( $request );
 
 		/**
 		 * Persist customer session data from the request first so that OrderController::update_addresses_from_cart
