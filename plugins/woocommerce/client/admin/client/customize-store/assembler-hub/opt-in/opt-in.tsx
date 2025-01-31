@@ -82,19 +82,18 @@ async function installFonts(
 		...( custom ? custom.map( ( font ) => font.slug ) : [] ),
 	];
 
-	const fontFamiliesToEnable = parsedInstalledFontFamilies.reduce(
-		( acc, font ) => {
-			if (
-				enabledFontSlugs.includes( font.slug ) ||
-				FONT_FAMILIES_TO_INSTALL[ font.slug ] === undefined
-			) {
-				return acc;
-			}
-
-			return [ ...acc, { ...font } ];
-		},
-		[] as Array< FontFamily >
-	);
+	const fontFamiliesToEnable = parsedInstalledFontFamilies
+	.map((font) => {
+	  if (
+		enabledFontSlugs.includes(font.slug) || 
+		FONT_FAMILIES_TO_INSTALL[font.slug] === undefined
+	  ) {
+		return null;
+	  }
+	  return { ...font };
+	})
+	.filter((font): font is FontFamily => font !== null);
+  
 
 	const { __experimentalSaveSpecifiedEntityEdits: saveSpecifiedEntityEdits } =
 		dispatch( coreStore );
