@@ -84,6 +84,17 @@ class StepProcessorResult {
 	}
 
 	/**
+	 * Merge messages from another StepProcessorResult instance.
+	 *
+	 * @param StepProcessorResult $other The other StepProcessorResult instance.
+	 *
+	 * @return void
+	 */
+	public function merge_messages( StepProcessorResult $other ) {
+		$this->messages = array_merge( $this->messages, $other->get_messages() );
+	}
+
+	/**
 	 * Add a new error message.
 	 *
 	 * @param string $message message.
