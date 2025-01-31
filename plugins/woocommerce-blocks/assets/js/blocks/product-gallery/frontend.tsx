@@ -219,8 +219,9 @@ const productGallery = {
 		},
 		onTouchStart: ( event: TouchEvent ) => {
 			const context = getContext();
-			context.touchStartX = event.touches[ 0 ].clientX;
-			context.touchCurrentX = event.touches[ 0 ].clientX;
+			const { clientX } = event.touches[ 0 ];
+			context.touchStartX = clientX;
+			context.touchCurrentX = clientX;
 			context.isDragging = true;
 		},
 		onTouchMove: ( event: TouchEvent ) => {
@@ -228,7 +229,8 @@ const productGallery = {
 			if ( ! context.isDragging ) {
 				return;
 			}
-			context.touchCurrentX = event.touches[ 0 ].clientX;
+			const { clientX } = event.touches[ 0 ];
+			context.touchCurrentX = clientX;
 			event.preventDefault();
 		},
 		onTouchEnd: () => {
