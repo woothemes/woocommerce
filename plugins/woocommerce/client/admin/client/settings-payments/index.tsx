@@ -101,8 +101,6 @@ const SettingsPaymentsMain = () => {
 	useEffect( () => {
 		if ( location.pathname === '' ) {
 			hideWooCommerceNavTab( 'block' );
-			// Record the page view event
-			recordEvent( 'settings_payments_pageview' );
 		}
 	}, [ location ] );
 	return (

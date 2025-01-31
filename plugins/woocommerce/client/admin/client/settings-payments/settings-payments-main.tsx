@@ -64,8 +64,11 @@ export const SettingsPaymentsMain = () => {
 			?.business_country_code || null
 	);
 
-	// Effect for handling URL parameters and displaying messages or modals.
 	useEffect( () => {
+		// Record the page view event
+		recordEvent( 'settings_payments_pageview' );
+
+		// Handle URL parameters and display messages or modals.
 		const urlParams = new URLSearchParams( window.location.search );
 		const isAccountTestDriveError =
 			urlParams.get( 'test_drive_error' ) === 'true';
