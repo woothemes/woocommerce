@@ -116,7 +116,9 @@
 		}
 
 		&-buttons {
+			display: inline-flex;
 			margin-left: auto;
+			min-height: 48px;
 
 			@media screen and ( max-width: 782px ) {
 				order: 4; /* Position the column in the 4th spot to ensure the buttons appear on a new row */
@@ -129,6 +131,7 @@
 			&__actions {
 				display: flex;
 				gap: $gap;
+				align-self: center;
 
 				@media screen and ( min-width: 782px ) and ( max-width: 1024px ) {
 					flex-wrap: wrap;
@@ -143,6 +146,7 @@
 
 		&-after {
 			margin-left: $gap;
+			min-height: 48px;
 
 			@media screen and ( max-width: 782px ) {
 				order: 3; /* Position the column in the 3rd spot to ensure the dots appear on the first row */
@@ -155,6 +159,10 @@
 			&__actions {
 				display: flex;
 				gap: $gap;
+
+				.woocommerce-ellipsis-menu {
+					width: 32px;
+				}
 			}
 		}
 
