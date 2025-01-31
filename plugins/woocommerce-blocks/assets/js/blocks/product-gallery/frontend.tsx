@@ -11,7 +11,6 @@ import { StorePart } from '@woocommerce/utils';
 export interface ProductGalleryContext {
 	// It's an actual image number, not an index, hence one-based!
 	selectedImageNumber: number;
-	firstMainImageId: string;
 	imageId: string;
 	visibleImagesIds: string[];
 	dialogVisibleImagesIds: string[];
