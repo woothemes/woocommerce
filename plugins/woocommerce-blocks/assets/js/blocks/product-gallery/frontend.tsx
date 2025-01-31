@@ -12,11 +12,9 @@ export interface ProductGalleryContext {
 	// It's an actual image number, not an index, hence one-based!
 	selectedImageNumber: number;
 	imageId: string;
-	visibleImagesIds: string[];
-	dialogVisibleImagesIds: string[];
+	imageIds: string[];
 	isDialogOpen: boolean;
 	productId: string;
-	elementThatTriggeredDialogOpening: HTMLElement | null;
 	disableLeft: boolean;
 	disableRight: boolean;
 }
@@ -27,50 +25,30 @@ const getContext = ( ns?: string ) =>
 type Store = typeof productGallery & StorePart< ProductGallery >;
 const { state, actions } = store< Store >( 'woocommerce/product-gallery' );
 
-/**
- * Product Gallery supports two contexts:
- * - on-page gallery - may display subset of images.
- * - dialog gallery - displays all of the images.
- * Function returns images per current context.
- */
-const getCurrentImages = ( context: ProductGalleryContext ) => {
-	const { isDialogOpen } = context;
-	return context[
-		isDialogOpen ? 'dialogVisibleImagesIds' : 'visibleImagesIds'
-	];
-};
-
-const getImageIndex = ( context: ProductGalleryContext, imageId: string ) => {
-	const imagesIds = getCurrentImages( context );
-	return imagesIds.indexOf( imageId );
+const getImageIndex = (): number => {
+	return state.imageIds.indexOf( state.imageId );
 };
 
 const disableArrows = (
 	context: ProductGalleryContext,
 	newImageNumber: number
 ) => {
-	const imagesIds = getCurrentImages( context );
 	// One-based index so it ranges from 1 to imagesIds.length.
 	context.disableLeft = newImageNumber === 1;
-	context.disableRight = newImageNumber === imagesIds.length;
+	context.disableRight = newImageNumber === state.imageIds.length;
 };
 
 const selectImage = (
 	context: ProductGalleryContext,
-	type: 'prev' | 'next' | 'current' | 'first' | 'closeDialog'
+	type: 'prev' | 'next' | 'current' | 'first'
 ) => {
-	const {
-		selectedImageNumber,
-		imageId,
-		dialogVisibleImagesIds,
-		visibleImagesIds,
-	} = context;
+	const { selectedImageNumber, imageIds } = state;
 	// Default to the first image.
 	let newImageNumber = 1;
 
 	// Current means the image that has been clicked.
 	if ( type === 'current' ) {
-		newImageNumber = getImageIndex( context, imageId ) + 1;
+		newImageNumber = getImageIndex() + 1;
 	}
 
 	if ( type === 'prev' ) {
@@ -78,21 +56,7 @@ const selectImage = (
 	}
 
 	if ( type === 'next' ) {
-		newImageNumber = Math.min(
-			dialogVisibleImagesIds.length,
-			selectedImageNumber + 1
-		);
-	}
-
-	// Close dialog is a temporary case that will be removed.
-	// Currently, the number of images in the dialog may differ from the number of
-	// images in the gallery, so we're falling back to the first image if
-	// current one is unavailable in regular gallery.
-	if ( type === 'closeDialog' ) {
-		newImageNumber =
-			selectedImageNumber > visibleImagesIds.length
-				? 1
-				: selectedImageNumber;
+		newImageNumber = Math.min( imageIds.length, selectedImageNumber + 1 );
 	}
 
 	context.selectedImageNumber = newImageNumber;
@@ -102,16 +66,27 @@ const selectImage = (
 const productGallery = {
 	state: {
 		get isSelected() {
-			const context = getContext();
-			const { selectedImageNumber, imageId } = context;
-			const imageIndex = getImageIndex( context, imageId );
+			const { selectedImageNumber } = getContext();
+			const imageIndex = getImageIndex();
 			return selectedImageNumber === imageIndex + 1;
+		},
+		get isDialogOpen() {
+			return getContext().isDialogOpen;
 		},
 		get disableLeft() {
 			return getContext().disableLeft;
 		},
 		get disableRight() {
 			return getContext().disableRight;
+		},
+		get imageId() {
+			return getContext().imageId;
+		},
+		get imageIds() {
+			return getContext().imageIds;
+		},
+		get selectedImageNumber() {
+			return getContext().selectedImageNumber;
 		},
 		get pagerDotFillOpacity(): number {
 			return state.isSelected ? 1 : 0.2;
@@ -149,9 +124,6 @@ const productGallery = {
 					event.preventDefault();
 				}
 				actions.openDialog();
-				const largeImageElement = getElement()?.ref as HTMLElement;
-				const context = getContext();
-				context.elementThatTriggeredDialogOpening = largeImageElement;
 			}
 		},
 		onViewAllImagesKeyDown: ( event: KeyboardEvent ) => {
@@ -164,10 +136,6 @@ const productGallery = {
 					event.preventDefault();
 				}
 				actions.openDialog();
-				const viewAllImagesElement = getElement()?.ref as HTMLElement;
-				const context = getContext();
-				context.elementThatTriggeredDialogOpening =
-					viewAllImagesElement;
 			}
 		},
 		onThumbnailKeyDown: ( event: KeyboardEvent ) => {
@@ -190,10 +158,6 @@ const productGallery = {
 		openDialog: () => {
 			const context = getContext();
 			context.isDialogOpen = true;
-			const triggerElement = getElement()?.ref;
-			if ( triggerElement ) {
-				context.elementThatTriggeredDialogOpening = triggerElement;
-			}
 			document.body.classList.add(
 				'wc-block-product-gallery-dialog-open'
 			);
@@ -226,14 +190,9 @@ const productGallery = {
 					if (
 						mutation.type === 'attributes' &&
 						currentImageAttribute &&
-						context.visibleImagesIds.includes(
-							currentImageAttribute
-						)
+						state.imageIds.includes( currentImageAttribute )
 					) {
-						const nextImageIndex = getImageIndex(
-							context,
-							currentImageAttribute
-						);
+						const nextImageIndex = getImageIndex();
 						context.selectedImageNumber = nextImageIndex + 1;
 					}
 				}
@@ -264,13 +223,13 @@ const productGallery = {
 			};
 		},
 		dialogStateChange: () => {
-			const context = getContext();
+			const { isDialogOpen, selectedImageNumber } = state;
 			const { ref: dialogRef } = getElement() || {};
 
-			if ( context.isDialogOpen && dialogRef instanceof HTMLElement ) {
+			if ( isDialogOpen && dialogRef instanceof HTMLElement ) {
 				dialogRef.focus();
 				const selectedImage = dialogRef.querySelector(
-					`[data-image-index="${ context.selectedImageNumber }"]`
+					`[data-image-index="${ selectedImageNumber }"]`
 				);
 
 				if ( selectedImage instanceof HTMLElement ) {
@@ -280,9 +239,6 @@ const productGallery = {
 					} );
 					selectedImage.focus();
 				}
-			} else if ( context.elementThatTriggeredDialogOpening ) {
-				context.elementThatTriggeredDialogOpening.focus();
-				context.elementThatTriggeredDialogOpening = null;
 			}
 		},
 	},

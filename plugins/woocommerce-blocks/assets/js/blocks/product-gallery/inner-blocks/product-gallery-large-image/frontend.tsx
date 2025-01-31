@@ -26,8 +26,6 @@ const getContext = ( ns?: string ) => getContextFn< Context >( ns );
 type Store = typeof productGalleryLargeImage & StorePart< ProductGallery >;
 const { state, actions } = store< Store >( 'woocommerce/product-gallery' );
 
-let isDialogStatusChanged = false;
-
 const productGalleryLargeImage = {
 	state: {
 		get styles() {
@@ -78,41 +76,13 @@ const productGalleryLargeImage = {
 				return;
 			}
 
-			const { isDialogOpen } = getContext();
 			const { ref } = getElement();
 			// Scroll to the selected image with a smooth animation.
-			if ( isDialogOpen === isDialogStatusChanged ) {
-				ref.scrollIntoView( {
-					behavior: 'smooth',
-					block: 'nearest',
-					inline: 'center',
-				} );
-			}
-
-			// Scroll to the selected image when the dialog is being opened without an animation.
-			if (
-				isDialogOpen &&
-				isDialogOpen !== isDialogStatusChanged &&
-				ref.closest( 'dialog' )
-			) {
-				ref.scrollIntoView( {
-					behavior: 'instant',
-					block: 'nearest',
-					inline: 'center',
-				} );
-
-				isDialogStatusChanged = isDialogOpen;
-			}
-
-			// Scroll to the selected image when the dialog is being closed without an animation.
-			if ( ! isDialogOpen && isDialogOpen !== isDialogStatusChanged ) {
-				ref.scrollIntoView( {
-					behavior: 'instant',
-					block: 'nearest',
-					inline: 'center',
-				} );
-				isDialogStatusChanged = isDialogOpen;
-			}
+			ref.scrollIntoView( {
+				behavior: 'smooth',
+				block: 'nearest',
+				inline: 'center',
+			} );
 		},
 	},
 };
