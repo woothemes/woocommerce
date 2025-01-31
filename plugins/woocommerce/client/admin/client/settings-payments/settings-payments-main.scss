@@ -149,6 +149,15 @@
 			flex-direction: column;
 			gap: 16px;
 
+			&__category-container {
+				border-bottom: 1px solid $gray-100;
+
+				// The last element with this class should not have a border.
+				&:nth-last-child(1 of .other-payment-gateways__content__category-container) {
+					border-bottom: none;
+				}
+			}
+
 			&__title {
 				display: flex;
 				gap: 4px;
