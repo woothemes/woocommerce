@@ -19,6 +19,9 @@ export interface ProductGalleryContext {
 	elementThatTriggeredDialogOpening: HTMLElement | null;
 	disableLeft: boolean;
 	disableRight: boolean;
+	touchStartX: number;
+	touchCurrentX: number;
+	isDragging: boolean;
 }
 
 const getContext = ( ns?: string ) =>
@@ -122,6 +125,15 @@ const productGallery = {
 		get thumbnailTabIndex(): string {
 			return state.isSelected ? '0' : '-1';
 		},
+		get isDragging() {
+			return getContext().isDragging;
+		},
+		get touchStartX() {
+			return getContext().touchStartX;
+		},
+		get touchCurrentX() {
+			return getContext().touchCurrentX;
+		},
 	},
 	actions: {
 		selectImage: () => {
@@ -205,11 +217,43 @@ const productGallery = {
 				'wc-block-product-gallery-dialog-open'
 			);
 		},
-		onDragStart: ( event: DragEvent ) => {
-			console.log( 'onDragStart' );
+		onTouchStart: ( event: TouchEvent ) => {
+			const context = getContext();
+			context.touchStartX = event.touches[ 0 ].clientX;
+			context.isDragging = true;
 		},
-		onDragEnd: ( event: DragEvent ) => {
-			console.log( 'onDragEnd' );
+		onTouchMove: ( event: TouchEvent ) => {
+			const context = getContext();
+			if ( ! context.isDragging ) {
+				return;
+			}
+			context.touchCurrentX = event.touches[ 0 ].clientX;
+			event.preventDefault();
+		},
+		onTouchEnd: () => {
+			const context = getContext();
+			if ( ! context.isDragging ) {
+				return;
+			}
+
+			const SNAP_THRESHOLD = 0.3;
+			const delta = context.touchCurrentX - context.touchStartX;
+			const element = getElement()?.ref as HTMLElement;
+			const imageWidth = element?.offsetWidth || 0;
+
+			// Determine if we should snap to next/previous image
+			if ( Math.abs( delta ) > imageWidth * SNAP_THRESHOLD ) {
+				if ( delta > 0 && ! context.disableLeft ) {
+					actions.selectPreviousImage();
+				} else if ( delta < 0 && ! context.disableRight ) {
+					actions.selectNextImage();
+				}
+			}
+
+			// Reset touch state
+			context.isDragging = false;
+			context.touchStartX = 0;
+			context.touchCurrentX = 0;
 		},
 	},
 	callbacks: {
