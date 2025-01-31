@@ -69,11 +69,11 @@ test.describe( 'WooCommerce Email Settings', () => {
 			.selectOption( 'Reset password' );
 		// Email content
 		await expect(
-			await iframeContains( 'Password Reset Request' )
+			await iframeContains( 'Someone has requested a new password' )
 		).toBeVisible();
 		// Email subject
 		await expect( await getSubject() ).toContain(
-			`Password Reset Request for ${ storeName }`
+			`Reset your password for ${ storeName }`
 		);
 	} );
 
