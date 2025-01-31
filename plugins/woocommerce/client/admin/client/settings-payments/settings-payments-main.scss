@@ -51,7 +51,7 @@
 			}
 
 			.components-select-control__input {
-				min-height: 32px;
+				min-height: $button-size-compact;
 			}
 
 			.components-base-control__field {
@@ -94,12 +94,12 @@
 		border: 1px solid $gray-200;
 		border-radius: 4px;
 		margin: 32px 48px 0 48px;
-		padding: 8px 24px;
+		padding: $grid-unit-30 24px;
 
 		&__header {
-			padding: 20px 0;
 			display: flex;
 			justify-content: space-between;
+			align-items: center;
 
 			&:hover {
 				cursor: pointer;
@@ -113,14 +113,18 @@
 				line-height: 24px;
 
 				&-image {
-					width: 24px;
-					height: 24px;
+					width: $icon-size;
+					height: $icon-size;
 					border-radius: 2px;
 				}
 
 				@media screen and ( max-width: $break-medium ) {
 					font-weight: 500;
 				}
+			}
+
+			&__arrow {
+				padding: $grid-unit-05;
 			}
 
 			/* Override hover and focus states for the button */
@@ -134,8 +138,13 @@
 			}
 		}
 
+		&.is-expanded {
+			.other-payment-gateways__header {
+				margin-bottom: $grid-unit-40;
+			}
+		}
+
 		&__content {
-			margin-top: 16px;
 			display: flex;
 			flex-direction: column;
 			gap: 16px;
@@ -143,9 +152,13 @@
 			&__category-container {
 				border-bottom: 1px solid $gray-100;
 
-				// The last element with this class should not have a border.
+				// The last element with this class.
 				&:nth-last-child(1 of .other-payment-gateways__content__category-container) {
 					border-bottom: none;
+
+					.other-payment-gateways__content__grid {
+						padding-bottom: 0;
+					}
 				}
 			}
 
@@ -160,10 +173,10 @@
 					font-weight: 500;
 					color: $gray-900;
 					line-height: 16px;
+					margin: 0;
 				}
 
 				&__icon-container {
-					padding: 4px 0;
 					height: 16px;
 				}
 
@@ -250,15 +263,16 @@
 			}
 
 			&__external-icon {
-				padding: 8px 0;
+				padding: $grid-unit-05;
 
 				img {
-					height: 16px;
-					margin-right: 4px;
+					height: 20px;
+					margin-right: $grid-unit-05;
 				}
 
 				a {
-					padding: 0;
+					min-height: $button-size-small;
+					padding: $grid-unit-05;
 					text-decoration: none;
 				}
 			}

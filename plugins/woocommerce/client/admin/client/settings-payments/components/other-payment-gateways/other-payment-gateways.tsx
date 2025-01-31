@@ -295,7 +295,11 @@ export const OtherPaymentGateways = ( {
 	}
 
 	return (
-		<div className="other-payment-gateways">
+		<div
+			className={
+				'other-payment-gateways' + ( isExpanded ? ' is-expanded' : '' )
+			}
+		>
 			<div
 				className="other-payment-gateways__header"
 				onClick={ () => {
@@ -316,7 +320,10 @@ export const OtherPaymentGateways = ( {
 					</span>
 					{ ! isExpanded && <>{ collapsedImages }</> }
 				</div>
-				<Gridicon icon={ isExpanded ? 'chevron-up' : 'chevron-down' } />
+				<Gridicon
+					className="other-payment-gateways__header__arrow"
+					icon={ isExpanded ? 'chevron-up' : 'chevron-down' }
+				/>
 			</div>
 			{ isExpanded && (
 				<div className="other-payment-gateways__content">
