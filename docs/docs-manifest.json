@@ -79,7 +79,7 @@
           "post_title": "Blocks reference",
           "menu_title": "Blocks Reference",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/building-a-woo-store/block-references.md",
-          "hash": "fee3ebe3c18bb39f0a8e9e1f43fe8153b4b5664913cd50b6e3c078ede151601b",
+          "hash": "0200411990f2cf1bdb9b0240380779d6777d2e60a7d1920fec1181d6b4281e0e",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/building-a-woo-store/block-references.md",
           "id": "1fbe91d7fa4fafaf35f0297e4cee1e7958756aed"
         },
@@ -451,7 +451,7 @@
           "menu_title": "Free shipping customizations",
           "tags": "code-snippets",
           "edit_url": "https://github.com/woocommerce/woocommerce/edit/trunk/docs/code-snippets/free_shipping_customization.md",
-          "hash": "3cf4bf7ecf4ea4138591ee6fead8268f48619e28ecb2c3b10a8cf7f6ad68ed09",
+          "hash": "0f5793a00b7e2db6d0862ff4130951ebdd1845bd77237d8e94dc4e63f4fe70e9",
           "url": "https://raw.githubusercontent.com/woocommerce/woocommerce/trunk/docs/code-snippets/free_shipping_customization.md",
           "id": "cac6f1ccd661588e9a5fa7405643e9c6d4da388e"
         },
@@ -1915,5 +1915,5 @@
       "categories": []
     }
   ],
-  "hash": "010c87899f8432c25051b7e14b4262763197d04ffa0dc581be95945454acacb3"
+  "hash": "541fa48f03c824c6b66c26ea761ad690aba0eda3084e9e28b0a8a5d26f5ffbc7"
 }

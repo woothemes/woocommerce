@@ -6,6 +6,8 @@
  * @since   3.4.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStockStatus;
+
 /**
  * WC_Tests_Template_Functions class.
  */
@@ -37,7 +39,7 @@ class WC_Tests_Template_Functions extends WC_Unit_Test_Case {
 			'post-' . $product->get_id(),
 			'status-publish',
 			'first',
-			'instock',
+			ProductStockStatus::IN_STOCK,
 			'product_cat-some-category',
 			'sale',
 			'virtual',
@@ -56,7 +58,7 @@ class WC_Tests_Template_Functions extends WC_Unit_Test_Case {
 			'type-product',
 			'post-' . $product->get_id(),
 			'status-publish',
-			'instock',
+			ProductStockStatus::IN_STOCK,
 			'product_cat-some-category',
 			'sale',
 			'virtual',

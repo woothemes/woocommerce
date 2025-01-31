@@ -115,7 +115,6 @@ class ProductGallery extends AbstractBlock {
 			$classname_single_image = 'is-single-product-gallery-image';
 		}
 
-		$number_of_thumbnails           = $block->attributes['thumbnailsNumberOfThumbnails'] ?? 0;
 		$classname                      = StyleAttributesUtils::get_classes_by_attributes( $attributes, array( 'extra_classes' ) );
 		$product_gallery_first_image    = ProductGalleryUtils::get_product_gallery_image_ids( $product, 1 );
 		$product_gallery_first_image_id = reset( $product_gallery_first_image );
@@ -129,16 +128,14 @@ class ProductGallery extends AbstractBlock {
 				'data-wc-context',
 				wp_json_encode(
 					array(
-						'firstMainImageId'                => $product_gallery_first_image_id,
-						'selectedImageNumber'             => 1,
-						'isDialogOpen'                    => false,
-						'visibleImagesIds'                => ProductGalleryUtils::get_product_gallery_image_ids( $product, $number_of_thumbnails, true ),
-						'dialogVisibleImagesIds'          => ProductGalleryUtils::get_product_gallery_image_ids( $product, null, false ),
-						'mouseIsOverPreviousOrNextButton' => false,
-						'productId'                       => $product_id,
+						'selectedImageNumber'    => 1,
+						'isDialogOpen'           => false,
+						'visibleImagesIds'       => ProductGalleryUtils::get_product_gallery_image_ids( $product, null, true ),
+						'dialogVisibleImagesIds' => ProductGalleryUtils::get_product_gallery_image_ids( $product, null, false ),
+						'productId'              => $product_id,
 						'elementThatTriggeredDialogOpening' => null,
-						'disableLeft'                     => true,
-						'disableRight'                    => false,
+						'disableLeft'            => true,
+						'disableRight'           => false,
 					),
 					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 				)

@@ -71,6 +71,7 @@
 		"test:metrics:ci": "../../.github/workflows/scripts/run-metrics.sh",
 		"test:php:env": "wp-env run --env-cwd='wp-content/plugins/woocommerce' tests-cli vendor/bin/phpunit -c phpunit.xml --verbose",
 		"test:php:env:watch": "wp-env run --env-cwd='wp-content/plugins/woocommerce' tests-cli vendor/bin/phpunit-watcher watch --verbose",
+		"test:plugincheck": "wp-env run tests-cli wp plugin check woocommerce",
 		"test:unit": "pnpm test:php",
 		"test:unit:watch": "pnpm test:php:watch",
 		"test:unit:env": "pnpm test:php:env",
@@ -190,6 +191,19 @@
 						"pull_request",
 						"push",
 						"php-unit-wp-nightly"
+					]
+				},
+				{
+					"name": "Checks from plugin-check plugin",
+					"command": "test:plugincheck",
+					"optional": true,
+					"changes": [],
+					"testEnv": {
+						"start": "env:test"
+					},
+					"events": [
+						"daily-checks",
+						"release-checks"
 					]
 				},
 				{
@@ -761,7 +775,7 @@
 		"uuid": "^9.0.1",
 		"webpack": "5.70.0",
 		"webpack-cli": "3.3.12",
-		"wireit": "0.14.3",
+		"wireit": "0.14.10",
 		"wp-textdomain": "1.0.1"
 	},
 	"engines": {

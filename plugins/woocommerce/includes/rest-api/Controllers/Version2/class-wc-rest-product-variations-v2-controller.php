@@ -9,6 +9,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -389,7 +390,7 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 		}
 
 		if ( isset( $request['in_stock'] ) ) {
-			$variation->set_stock_status( true === $request['in_stock'] ? 'instock' : 'outofstock' );
+			$variation->set_stock_status( true === $request['in_stock'] ? ProductStockStatus::IN_STOCK : ProductStockStatus::OUT_OF_STOCK );
 		}
 
 		if ( isset( $request['backorders'] ) ) {

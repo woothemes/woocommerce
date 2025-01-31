@@ -14,6 +14,7 @@ use WC_Product_Variable;
 use WC_Product_Variation;
 use WC_Product_Attribute;
 use WC_Cache_Helper;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Class ProductHelper.
@@ -61,7 +62,7 @@ class ProductHelper {
 				'tax_status'    => 'taxable',
 				'downloadable'  => false,
 				'virtual'       => false,
-				'stock_status'  => 'instock',
+				'stock_status'  => ProductStockStatus::IN_STOCK,
 				'weight'        => '1.1',
 			)
 		);
