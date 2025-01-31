@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fixed bug preventing additional fields from being persisted to customer on account details edit.

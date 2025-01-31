@@ -5,6 +5,8 @@
  * @package WooCommerce\Classes\
  */
 
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 
@@ -337,9 +339,9 @@ class WC_Form_Handler {
 			wp_update_user( $user );
 
 			// Update customer object to keep data in sync.
-			$customer = new WC_Customer( $user->ID );
+			try {
+				$customer = new WC_Customer( $user->ID );
 
-			if ( $customer ) {
 				// Keep billing data in sync if data changed.
 				if ( isset( $user->user_email ) && is_email( $user->user_email ) && $current_email !== $user->user_email ) {
 					$customer->set_billing_email( $user->user_email );
@@ -354,6 +356,14 @@ class WC_Form_Handler {
 				}
 
 				$customer->save();
+			} catch ( WC_Data_Exception $e ) {
+				// These error messages are already translated.
+				wc_add_notice( $e->getMessage(), 'error' );
+			} catch ( \Exception $e ) {
+				wc_add_notice(
+					__( 'An error occurred while saving account details: ', 'woocommerce' ) . $e->getMessage(),
+					'error'
+				);
 			}
 
 			/**
