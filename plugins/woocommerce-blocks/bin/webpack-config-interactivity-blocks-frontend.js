@@ -20,6 +20,8 @@ const blockEntries = {
 		'./assets/js/blocks/product-filters/inner-blocks/attribute-filter/frontend.ts',
 	'woocommerce/product-filter-checkbox-list':
 		'./assets/js/blocks/product-filters/inner-blocks/checkbox-list/frontend.ts',
+	'woocommerce/product-filter-chips':
+		'./assets/js/blocks/product-filters/inner-blocks/chips/frontend.ts',
 };
 
 module.exports = {
