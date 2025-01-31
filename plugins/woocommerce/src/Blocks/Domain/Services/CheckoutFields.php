@@ -1,5 +1,6 @@
 <?php
 declare( strict_types = 1);
+
 namespace Automattic\WooCommerce\Blocks\Domain\Services;
 
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
@@ -34,18 +35,18 @@ class CheckoutFields {
 	private $fields_locations;
 
 	/**
-	 * Groups of fields to be saved.
-	 *
-	 * @var array
-	 */
-	private $groups = [ 'billing', 'shipping', 'other' ];
-
-	/**
 	 * Supported field types
 	 *
 	 * @var array
 	 */
 	private $supported_field_types = [ 'text', 'select', 'checkbox' ];
+
+	/**
+	 * Groups of fields to be saved.
+	 *
+	 * @var array
+	 */
+	private $groups = [ 'billing', 'shipping', 'other' ];
 
 	/**
 	 * Instance of the asset data registry.
@@ -244,6 +245,39 @@ class CheckoutFields {
 		// Insert new field into the correct location array.
 		$this->additional_fields[ $field_data['id'] ]        = $field_data;
 		$this->fields_locations[ $field_data['location'] ][] = $field_data['id'];
+	}
+
+	/**
+	 * Returns true if the field is required. Takes rules into consideration if a document object is provided.
+	 *
+	 * @param array               $field The field.
+	 * @param DocumentObject|null $document_object The document object.
+	 * @param string|null         $context Address context.
+	 * @return bool
+	 */
+	public function is_required_field( $field, $document_object = null, $context = null ) {
+		if ( $document_object && ! empty( $field['rules']['required'] ) ) {
+			$document_object->set_context( $context );
+			return true === Validation::validate_document_object( $document_object, $field['rules']['required'] );
+		}
+		return true === $field['required'];
+	}
+
+	/**
+	 * Validates a field against the given document object and context.
+	 *
+	 * @param array               $field The field.
+	 * @param DocumentObject|null $document_object The document object.
+	 * @param string|null         $context The context.
+	 * @return bool|\WP_Error True if the field is valid, a WP_Error otherwise.
+	 */
+	public function is_valid_field( $field, $document_object = null, $context = null ) {
+		if ( $document_object && ! empty( $field['rules']['validation'] ) ) {
+			$document_object->set_context( $context );
+			$field_schema = Validation::get_field_schema_with_context( $field['id'], $field['rules']['validation'], $context );
+			return Validation::validate_document_object( $document_object, $field_schema );
+		}
+		return true;
 	}
 
 	/**
@@ -830,6 +864,8 @@ class CheckoutFields {
 				return $errors;
 			}
 
+			wc_do_deprecated_action( '__experimental_woocommerce_blocks_validate_additional_field', array( $errors, $field_key, $field_value ), '8.7.0', 'woocommerce_validate_additional_field', 'This action has been graduated, use woocommerce_validate_additional_field instead.' );
+
 			/**
 			 * Pass an error object to allow validation of an additional field.
 			 *
@@ -840,7 +876,6 @@ class CheckoutFields {
 			 * @since 8.7.0
 			 */
 			do_action( 'woocommerce_validate_additional_field', $errors, $field_key, $field_value );
-			wc_do_deprecated_action( '__experimental_woocommerce_blocks_validate_additional_field', array( $errors, $field_key, $field_value ), '8.7.0', 'woocommerce_validate_additional_field', 'This action has been graduated, use woocommerce_validate_additional_field instead.' );
 
 		} catch ( \Throwable $e ) {
 
@@ -1084,39 +1119,6 @@ class CheckoutFields {
 	 */
 	public function is_customer_field( $key ) {
 		return in_array( $key, array_intersect( array_merge( $this->get_address_fields_keys(), $this->get_contact_fields_keys() ), array_keys( $this->additional_fields ) ), true );
-	}
-
-	/**
-	 * Returns true if the field is required. Takes rules into consideration if a document object is provided.
-	 *
-	 * @param array               $field The field.
-	 * @param DocumentObject|null $document_object The document object.
-	 * @param string|null         $context Address context.
-	 * @return bool
-	 */
-	public function is_required_field( $field, $document_object = null, $context = null ) {
-		if ( $document_object && ! empty( $field['rules']['required'] ) ) {
-			$document_object->set_context( $context );
-			return true === Validation::validate_document_object( $document_object, $field['rules']['required'] );
-		}
-		return true === $field['required'];
-	}
-
-	/**
-	 * Validates a field against the given document object and context.
-	 *
-	 * @param array               $field The field.
-	 * @param DocumentObject|null $document_object The document object.
-	 * @param string|null         $context The context.
-	 * @return bool|\WP_Error True if the field is valid, a WP_Error otherwise.
-	 */
-	public function is_valid_field( $field, $document_object = null, $context = null ) {
-		if ( $document_object && ! empty( $field['rules']['validation'] ) ) {
-			$document_object->set_context( $context );
-			$field_schema = Validation::get_field_schema_with_context( $field['id'], $field['rules']['validation'], $context );
-			return Validation::validate_document_object( $document_object, $field_schema );
-		}
-		return true;
 	}
 
 	/**
