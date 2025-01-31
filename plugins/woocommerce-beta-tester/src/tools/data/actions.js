@@ -355,3 +355,13 @@ export function* resetLaunchYourStore() {
 		} );
 	} );
 }
+
+export function* updateWcAdminAssetsBaseUrl( { url } ) {
+	yield runCommand( 'Set WC Admin Assets Base URL', function* () {
+		yield apiFetch( {
+			path: '/wc-admin-test-helper/tools/set-wc-admin-assets-base-url/v1',
+			method: 'POST',
+			data: { url },
+		} );
+	} );
+}

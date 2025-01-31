@@ -20,6 +20,7 @@ import { TRIGGER_UPDATE_CALLBACKS_ACTION_NAME } from '../commands/trigger-update
 import { UPDATE_WCCOM_REQUEST_ERRORS_MODE } from '../commands/set-wccom-request-errors';
 import { FAKE_WOO_PAYMENTS_ACTION_NAME } from '../commands/fake-woo-payments';
 import { UPDATE_WCCOM_BASE_URL_ACTION_NAME } from '../commands/set-wccom-base-url';
+import { UPDATE_WC_ADMIN_ASSETS_BASE_URL_ACTION_NAME } from '../commands/set-wc-admin-assets-base-url';
 
 export function* getCronJobs() {
 	const path = `${ API_NAMESPACE }/tools/get-cron-list/v1`;
@@ -163,6 +164,25 @@ export function* getWccomBaseUrl() {
 		yield updateCommandParams( UPDATE_WCCOM_BASE_URL_ACTION_NAME, {
 			url: url || 'https://woocommerce.com/',
 		} );
+	} catch ( error ) {
+		throw new Error( error );
+	}
+}
+
+export function* getWcAdminAssetsBaseUrl() {
+	const path = `${ API_NAMESPACE }/tools/get-wc-admin-assets-base-url/v1`;
+
+	try {
+		const url = yield apiFetch( {
+			path,
+			method: 'GET',
+		} );
+		yield updateCommandParams(
+			UPDATE_WC_ADMIN_ASSETS_BASE_URL_ACTION_NAME,
+			{
+				url,
+			}
+		);
 	} catch ( error ) {
 		throw new Error( error );
 	}
