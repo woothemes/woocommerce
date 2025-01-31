@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
@@ -14,6 +14,7 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -217,6 +218,52 @@ export const SettingsPaymentsMain = () => {
 		}
 	}
 
+	const triggeredPageViewRef = useRef( false );
+
+	// Record a pageview event when the page loads.
+	useEffect( () => {
+		if (
+			isFetching ||
+			! providers.length ||
+			! suggestions.length ||
+			triggeredPageViewRef.current
+		) {
+			return;
+		}
+
+		// Set the ref to true to prevent multiple pageview events.
+		triggeredPageViewRef.current = true;
+
+		const eventProps: { [ key: string ]: boolean } = {
+			woocommerce_payments_displayed: providers.some( ( provider ) =>
+				isWooPayments( provider.id )
+			),
+		};
+
+		suggestions.forEach( ( suggestion ) => {
+			eventProps[ suggestion.id.replace( /-/g, '_' ) + '_displayed' ] =
+				true;
+		} );
+
+		providers
+			.filter( ( provider ) => provider._type === 'suggestion' )
+			.forEach( ( provider ) => {
+				if ( provider._suggestion_id ) {
+					eventProps[
+						provider._suggestion_id.replace( /-/g, '_' ) +
+							'_displayed'
+					] = true;
+				} else if ( provider.plugin && provider.plugin.slug ) {
+					// Fallback to using the slug if the suggestion ID is not available.
+					eventProps[
+						provider.plugin.slug.replace( /-/g, '_' ) + '_displayed'
+					] = true;
+				}
+			} );
+
+		recordEvent( 'settings_payments_recommendations_pageview', eventProps );
+	}, [ suggestions, providers, isFetching ] );
+
 	const setupPlugin = useCallback(
 		( id: string, slug: string, onboardingUrl: string | null ) => {
 			if ( installingPlugin ) {
@@ -230,6 +277,9 @@ export const SettingsPaymentsMain = () => {
 			}
 
 			setInstallingPlugin( id );
+			recordEvent( 'settings_payments_recommendations_setup', {
+				extension_selected: slug,
+			} );
 			installAndActivatePlugins( [ slug ] )
 				.then( async ( response: Response ) => {
 					createNoticesFromResponse( response );

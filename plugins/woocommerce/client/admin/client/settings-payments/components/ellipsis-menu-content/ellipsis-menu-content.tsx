@@ -11,6 +11,8 @@ import {
 } from '@woocommerce/data';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { recordEvent } from '@woocommerce/tracks';
+
 
 /**
  * Internal dependencies
@@ -30,6 +32,10 @@ interface EllipsisMenuContentProps {
 	 * Indicates if the menu is being used for a payment extension suggestion.
 	 */
 	isSuggestion: boolean;
+	/**
+	 * The ID of the payment extension suggestion. Optional.
+	 */
+	suggestionId?: string;
 	/**
 	 * The URL to call when hiding a payment extension suggestion. Optional.
 	 */
@@ -65,6 +71,7 @@ export const EllipsisMenuContent = ( {
 	providerId,
 	pluginFile,
 	isSuggestion,
+	suggestionId,
 	suggestionHideUrl = '',
 	onToggle,
 	links = [],
@@ -155,6 +162,10 @@ export const EllipsisMenuContent = ( {
 	const hideSuggestion = () => {
 		setIsHidingSuggestion( true );
 
+		// Record the event before hiding the suggestion.
+		recordEvent( 'settings_payments_recommendations_dismiss', {
+			pes_id: suggestionId,
+		} );
 		hidePaymentExtensionSuggestion( suggestionHideUrl )
 			.then( () => {
 				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
