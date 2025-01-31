@@ -261,16 +261,6 @@
 
 			&__external-icon {
 				padding: 8px 0;
-
-				img {
-					height: 16px;
-					margin-right: 4px;
-				}
-
-				a {
-					padding: 0;
-					text-decoration: none;
-				}
 			}
 		}
 
@@ -282,6 +272,20 @@
 			margin: 32px $gap 0 $gap;
 			padding: $gap-smaller $gap;
 		}
+	}
+
+	.more-payment-options-link {
+		padding: 0;
+		text-decoration: none;
+
+		img {
+			height: 16px;
+			margin-right: 4px;
+		}
+	}
+
+	.more-payment-options {
+		padding: 25px 54px;
 	}
 }
 
@@ -322,6 +326,10 @@
 			.woocommerce-list__item-after {
 				display: none;
 			}
+		}
+
+		.more-payment-options {
+			padding-left: 25px;
 		}
 	}
 }

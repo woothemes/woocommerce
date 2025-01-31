@@ -289,9 +289,25 @@ export const OtherPaymentGateways = ( {
 		categoryIdWithPopoverVisible,
 	] );
 
-	// Don't render the component if there are no suggestions and not fetching.
+	const morePaymentOptionsLink = (
+		<Button
+			variant={ 'link' }
+			target="_blank"
+			href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/"
+			className="more-payment-options-link"
+		>
+			<img src={ assetUrl + '/icons/external-link.svg' } alt="" />
+			{ __( 'More payment options', 'woocommerce' ) }
+		</Button>
+	);
+
+	// If no suggestions are available, return only a link to the WooCommerce.com payment marketplace page.
 	if ( ! isFetching && suggestions.length === 0 ) {
-		return null;
+		return (
+			<div className="more-payment-options">
+				{ morePaymentOptionsLink }
+			</div>
+		);
 	}
 
 	return (
@@ -322,17 +338,7 @@ export const OtherPaymentGateways = ( {
 				<div className="other-payment-gateways__content">
 					{ expandedContent }
 					<div className="other-payment-gateways__content__external-icon">
-						<Button
-							variant={ 'link' }
-							target="_blank"
-							href="https://woocommerce.com/product-category/woocommerce-extensions/payment-gateways/"
-						>
-							<img
-								src={ assetUrl + '/icons/external-link.svg' }
-								alt=""
-							/>
-							{ __( 'More payment options', 'woocommerce' ) }
-						</Button>
+						{ morePaymentOptionsLink }
 					</div>
 				</div>
 			) }
