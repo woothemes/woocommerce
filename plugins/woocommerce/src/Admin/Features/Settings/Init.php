@@ -175,7 +175,10 @@ class Init {
 		$transformer                       = new Transformer();
 		$settings['settingsData']['pages'] = $transformer->transform( $pages );
 		$start_hook_content                = $setting_pages[0]->get_custom_view( 'woocommerce_settings_start' );
-		$settings['settingsData']['start'] = $setting_pages[0]->get_custom_view_object( $start_hook_content );
+
+		if ( ! empty( $start_hook_content ) ) {
+			$settings['settingsData']['start'] = $setting_pages[0]->get_custom_view_object( $start_hook_content );
+		}
 
 		return $settings;
 	}
