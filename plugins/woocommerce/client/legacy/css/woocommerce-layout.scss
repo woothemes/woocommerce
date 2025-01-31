@@ -411,15 +411,31 @@
 		}
 
 		.show-password-input {
+			background-color: transparent;
+			border-radius: 0;
+			border: 0;
+			color: var(--wc-form-color-text, #000);
+			cursor: pointer;
+			font-size: inherit;
+			line-height: inherit;
+			margin: 0;
+			padding: 0;
 			position: absolute;
 			right: 0.7em;
-			top: 0.7em;
-			cursor: pointer;
+			text-decoration: none;
+			top: 50%;
+			transform: translateY( -50% );
+			-moz-osx-font-smoothing: inherit;
+			-webkit-appearance: none;
+			-webkit-font-smoothing: inherit;
 		}
 
 		.show-password-input::after {
-
 			@include iconafter( "\e010" ); 	// Icon styles and glyph
+			margin-left: 0; /* reset the left margin from iconafter mixin */
+			margin-top: -2px; /* Manual vertical alignment adjustment */
+			vertical-align: middle;
+			display: inline-block;
 		}
 
 		.show-password-input.display-password::after {

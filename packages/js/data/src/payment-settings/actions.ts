@@ -9,12 +9,12 @@ import apiFetch from '@wordpress/api-fetch';
 import { ACTION_TYPES } from './action-types';
 import {
 	PaymentProvider,
-	OfflinePaymentGateway,
+	OfflinePaymentMethodProvider,
+	OrderMap,
 	SuggestedPaymentExtension,
 	SuggestedPaymentExtensionCategory,
 	EnableGatewayResponse,
 } from './types';
-import { parseOrdering } from './utils';
 import { WC_ADMIN_NAMESPACE } from '../constants';
 
 export function getPaymentProvidersRequest(): {
@@ -27,36 +27,20 @@ export function getPaymentProvidersRequest(): {
 
 export function getPaymentProvidersSuccess(
 	providers: PaymentProvider[],
-	offlinePaymentGateways: OfflinePaymentGateway[],
+	offlinePaymentGateways: OfflinePaymentMethodProvider[],
 	suggestions: SuggestedPaymentExtension[],
 	suggestionCategories: SuggestedPaymentExtensionCategory[]
 ): {
 	type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_SUCCESS;
 	providers: PaymentProvider[];
-	offlinePaymentGateways: OfflinePaymentGateway[];
+	offlinePaymentGateways: OfflinePaymentMethodProvider[];
 	suggestions: SuggestedPaymentExtension[];
 	suggestionCategories: SuggestedPaymentExtensionCategory[];
 } {
-	// In the future, this would not be necessary once backend sorting is implemented.
-	let sortedOfflinePaymentGateways = offlinePaymentGateways;
-	const offlinePaymentGatewaysOrdering = localStorage.getItem(
-		'wc_payment_ordering_offline'
-	);
-
-	if ( offlinePaymentGatewaysOrdering ) {
-		try {
-			const ordering = JSON.parse( offlinePaymentGatewaysOrdering );
-			const sorted = [ ...sortedOfflinePaymentGateways ].sort(
-				( a, b ) => ordering[ a.id ] - ordering[ b.id ]
-			);
-			sortedOfflinePaymentGateways = sorted;
-		} catch ( error ) {}
-	}
-
 	return {
 		type: ACTION_TYPES.GET_PAYMENT_PROVIDERS_SUCCESS,
 		providers,
-		offlinePaymentGateways: sortedOfflinePaymentGateways,
+		offlinePaymentGateways,
 		suggestions,
 		suggestionCategories,
 	};
@@ -98,15 +82,11 @@ export function* togglePaymentGateway(
 	}
 }
 
-export function* hideGatewaySuggestion( gatewayId: string ) {
+export function* hidePaymentExtensionSuggestion( url: string ) {
 	try {
 		// Use apiFetch for the AJAX request
 		const result: { success: boolean } = yield apiFetch( {
-			path:
-				WC_ADMIN_NAMESPACE +
-				'/settings/payments/suggestion/' +
-				gatewayId +
-				'/hide',
+			url,
 			method: 'POST',
 		} );
 
@@ -116,21 +96,23 @@ export function* hideGatewaySuggestion( gatewayId: string ) {
 	}
 }
 
-export function updateOfflinePaymentGatewayOrdering(
-	offlinePaymentGateways: OfflinePaymentGateway[]
-): {
-	type: ACTION_TYPES.UPDATE_OFFLINE_PAYMENT_GATEWAY_ORDERING;
-	offlinePaymentGateways: OfflinePaymentGateway[];
+export function updateProviderOrdering( orderMap: OrderMap ): {
+	type: ACTION_TYPES.UPDATE_PROVIDER_ORDERING;
 } {
-	// Temporary until backend is ready.
-	localStorage.setItem(
-		'wc_payment_ordering_offline',
-		JSON.stringify( parseOrdering( offlinePaymentGateways ) )
-	);
+	try {
+		apiFetch( {
+			path: WC_ADMIN_NAMESPACE + '/settings/payments/providers/order',
+			method: 'POST',
+			data: {
+				order_map: orderMap,
+			},
+		} );
+	} catch ( error ) {
+		throw error;
+	}
 
 	return {
-		type: ACTION_TYPES.UPDATE_OFFLINE_PAYMENT_GATEWAY_ORDERING,
-		offlinePaymentGateways,
+		type: ACTION_TYPES.UPDATE_PROVIDER_ORDERING,
 	};
 }
 
@@ -139,5 +121,5 @@ export type Actions =
 	| ReturnType< typeof getPaymentProvidersSuccess >
 	| ReturnType< typeof getPaymentProvidersError >
 	| ReturnType< typeof togglePaymentGateway >
-	| ReturnType< typeof hideGatewaySuggestion >
-	| ReturnType< typeof updateOfflinePaymentGatewayOrdering >;
+	| ReturnType< typeof hidePaymentExtensionSuggestion >
+	| ReturnType< typeof updateProviderOrdering >;

@@ -12,6 +12,7 @@
 
 use Automattic\WooCommerce\Caches\OrderCache;
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\Orders\PaymentInfo;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -1578,9 +1579,9 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 			$default_args = array(
 				'name'         => $product->get_name(),
 				'tax_class'    => $product->get_tax_class(),
-				'product_id'   => $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id(),
-				'variation_id' => $product->is_type( 'variation' ) ? $product->get_id() : 0,
-				'variation'    => $product->is_type( 'variation' ) ? $product->get_attributes() : array(),
+				'product_id'   => $product->is_type( ProductType::VARIATION ) ? $product->get_parent_id() : $product->get_id(),
+				'variation_id' => $product->is_type( ProductType::VARIATION ) ? $product->get_id() : 0,
+				'variation'    => $product->is_type( ProductType::VARIATION ) ? $product->get_attributes() : array(),
 				'subtotal'     => $total,
 				'total'        => $total,
 				'quantity'     => $qty,
@@ -2284,6 +2285,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 
 		if ( $subtotal ) {
 			$total_rows['cart_subtotal'] = array(
+				'type'  => 'subtotal',
 				'label' => __( 'Subtotal:', 'woocommerce' ),
 				'value' => $subtotal,
 			);
@@ -2299,6 +2301,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 	protected function add_order_item_totals_discount_row( &$total_rows, $tax_display ) {
 		if ( $this->get_total_discount() > 0 ) {
 			$total_rows['discount'] = array(
+				'type'  => 'discount',
 				'label' => __( 'Discount:', 'woocommerce' ),
 				'value' => '-' . $this->get_discount_to_display( $tax_display ),
 			);
@@ -2314,8 +2317,10 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 	protected function add_order_item_totals_shipping_row( &$total_rows, $tax_display ) {
 		if ( $this->get_shipping_method() ) {
 			$total_rows['shipping'] = array(
+				'type'  => 'shipping',
 				'label' => __( 'Shipping:', 'woocommerce' ),
 				'value' => $this->get_shipping_to_display( $tax_display ),
+				'meta'  => $this->get_shipping_method(),
 			);
 		}
 	}
@@ -2335,6 +2340,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 					continue;
 				}
 				$total_rows[ 'fee_' . $fee->get_id() ] = array(
+					'type'  => 'fee',
 					'label' => $fee->get_name() . ':',
 					'value' => wc_price( 'excl' === $tax_display ? (float) $fee->get_total() : (float) $fee->get_total() + (float) $fee->get_total_tax(), array( 'currency' => $this->get_currency() ) ),
 				);
@@ -2354,12 +2360,14 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 			if ( 'itemized' === get_option( 'woocommerce_tax_total_display' ) ) {
 				foreach ( $this->get_tax_totals() as $code => $tax ) {
 					$total_rows[ sanitize_title( $code ) ] = array(
+						'type'  => 'tax',
 						'label' => $tax->label . ':',
 						'value' => $tax->formatted_amount,
 					);
 				}
 			} else {
 				$total_rows['tax'] = array(
+					'type'  => 'tax',
 					'label' => WC()->countries->tax_or_vat() . ':',
 					'value' => wc_price( $this->get_total_tax(), array( 'currency' => $this->get_currency() ) ),
 				);
@@ -2375,6 +2383,7 @@ abstract class WC_Abstract_Order extends WC_Abstract_Legacy_Order {
 	 */
 	protected function add_order_item_totals_total_row( &$total_rows, $tax_display ) {
 		$total_rows['order_total'] = array(
+			'type'  => 'total',
 			'label' => __( 'Total:', 'woocommerce' ),
 			'value' => $this->get_formatted_order_total( $tax_display ),
 		);

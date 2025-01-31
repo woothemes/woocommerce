@@ -6,6 +6,8 @@
  * @version  3.3.0
  */
 
+use Automattic\WooCommerce\Enums\ProductType;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -359,7 +361,7 @@ class WC_Admin_List_Table_Products extends WC_Admin_List_Table {
 			$output .= selected( $value, $current_product_type, false );
 			$output .= '>' . esc_html( $label ) . '</option>';
 
-			if ( 'simple' === $value ) {
+			if ( ProductType::SIMPLE === $value ) {
 
 				$output .= '<option value="downloadable" ';
 				$output .= selected( 'downloadable', $current_product_type, false );

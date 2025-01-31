@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { Button } from '@wordpress/components';
+import { Button, CardDivider } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	PLUGINS_STORE_NAME,
@@ -18,27 +18,59 @@ import { useState } from '@wordpress/element';
 import './ellipsis-menu-content.scss';
 
 interface EllipsisMenuContentProps {
-	pluginId: string;
-	pluginName: string;
+	/**
+	 * The ID of the payment provider.
+	 */
+	providerId: string;
+	/**
+	 * The main plugin file path of the plugin associated with the payment gateway.
+	 */
+	pluginFile: string;
+	/**
+	 * Indicates if the menu is being used for a payment extension suggestion.
+	 */
 	isSuggestion: boolean;
+	/**
+	 * The URL to call when hiding a payment extension suggestion. Optional.
+	 */
+	suggestionHideUrl?: string;
+	/**
+	 * Callback to close the ellipsis menu.
+	 */
 	onToggle: () => void;
+	/**
+	 * Array of links related to the payment provider.
+	 */
 	links?: PaymentGatewayLink[];
-	isWooPayments?: boolean;
+	/**
+	 * Indicates if the account can be reset. Optional.
+	 */
+	canResetAccount?: boolean;
+	/**
+	 * Callback to show or hide the reset account modal. Optional.
+	 */
+	setResetAccountModalVisible?: ( isVisible: boolean ) => void;
+	/**
+	 * Indicates if the payment gateway is enabled for payment processing. Optional.
+	 */
 	isEnabled?: boolean;
-	needsSetup?: boolean;
-	testMode?: boolean;
 }
 
+/**
+ * A component for rendering the content of an ellipsis menu in the WooCommerce payment settings.
+ * The menu provides provider links and options to manage payment providers, such as enabling, disabling, deactivating gateways,
+ * hiding suggestions, and resetting accounts.
+ */
 export const EllipsisMenuContent = ( {
-	pluginId,
-	pluginName,
+	providerId,
+	pluginFile,
 	isSuggestion,
+	suggestionHideUrl = '',
 	onToggle,
 	links = [],
-	isWooPayments = false,
+	canResetAccount = false,
+	setResetAccountModalVisible = () => {},
 	isEnabled = false,
-	needsSetup = false,
-	testMode = false,
 }: EllipsisMenuContentProps ) => {
 	const { deactivatePlugin } = useDispatch( PLUGINS_STORE_NAME );
 	const [ isDeactivating, setIsDeactivating ] = useState( false );
@@ -48,7 +80,7 @@ export const EllipsisMenuContent = ( {
 	const {
 		invalidateResolutionForStoreSelector,
 		togglePaymentGateway,
-		hideGatewaySuggestion,
+		hidePaymentExtensionSuggestion,
 	} = useDispatch( PAYMENT_SETTINGS_STORE_NAME );
 	const { createErrorNotice, createSuccessNotice } =
 		useDispatch( 'core/notices' );
@@ -61,9 +93,12 @@ export const EllipsisMenuContent = ( {
 		documentation: __( 'View documentation', 'woocommerce' ),
 	};
 
+	/**
+	 * Deactivates the payment gateway plugin.
+	 */
 	const deactivateGateway = () => {
 		setIsDeactivating( true );
-		deactivatePlugin( pluginName )
+		deactivatePlugin( pluginFile )
 			.then( () => {
 				createSuccessNotice(
 					__( 'Plugin was successfully deactivated.', 'woocommerce' )
@@ -81,6 +116,9 @@ export const EllipsisMenuContent = ( {
 			} );
 	};
 
+	/**
+	 * Disables the payment gateway from payment processing.
+	 */
 	const disableGateway = () => {
 		const gatewayToggleNonce =
 			window.woocommerce_admin.nonces?.gateway_toggle || '';
@@ -93,7 +131,7 @@ export const EllipsisMenuContent = ( {
 		}
 		setIsDisabling( true );
 		togglePaymentGateway(
-			pluginId,
+			providerId,
 			window.woocommerce_admin.ajax_url,
 			gatewayToggleNonce
 		)
@@ -111,10 +149,13 @@ export const EllipsisMenuContent = ( {
 			} );
 	};
 
+	/**
+	 * Hides the payment gateway suggestion.
+	 */
 	const hideSuggestion = () => {
 		setIsHidingSuggestion( true );
 
-		hideGatewaySuggestion( pluginId )
+		hidePaymentExtensionSuggestion( suggestionHideUrl )
 			.then( () => {
 				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsHidingSuggestion( false );
@@ -123,7 +164,7 @@ export const EllipsisMenuContent = ( {
 			.catch( () => {
 				createErrorNotice(
 					__(
-						'Failed to hide the payment gateway suggestion.',
+						'Failed to hide the payment extension suggestion.',
 						'woocommerce'
 					)
 				);
@@ -132,13 +173,8 @@ export const EllipsisMenuContent = ( {
 			} );
 	};
 
-	const resetWooPaymentsAccount = () => {
-		createErrorNotice( __( 'Not implemented yet.', 'woocommerce' ) );
-		onToggle();
-	};
-
 	return (
-		<div className="woocommerce-list__item-after__ellipsis-menu">
+		<>
 			{ links
 				.filter( ( link: PaymentGatewayLink ) => {
 					switch ( link._type ) {
@@ -160,51 +196,77 @@ export const EllipsisMenuContent = ( {
 				.map( ( link: PaymentGatewayLink ) => {
 					const displayName = typeToDisplayName[ link._type ];
 					return displayName ? (
-						// eslint-disable-next-line react/jsx-key
-						<Button target="_blank" href={ link.url }>
-							{ displayName }
-						</Button>
+						<div
+							className="woocommerce-ellipsis-menu__content__item"
+							key={ link._type }
+						>
+							<Button target="_blank" href={ link.url }>
+								{ displayName }
+							</Button>
+						</div>
 					) : null;
 				} ) }
+			<CardDivider />
 			{ isSuggestion && (
-				<Button
-					onClick={ hideSuggestion }
-					isBusy={ isHidingSuggestion }
-					disabled={ isHidingSuggestion }
+				<div
+					className="woocommerce-ellipsis-menu__content__item"
+					key="hide-suggestion"
 				>
-					{ __( 'Hide suggestion', 'woocommerce' ) }
-				</Button>
+					<Button
+						onClick={ hideSuggestion }
+						isBusy={ isHidingSuggestion }
+						disabled={ isHidingSuggestion }
+					>
+						{ __( 'Hide suggestion', 'woocommerce' ) }
+					</Button>
+				</div>
 			) }
-			{ ! isSuggestion && isWooPayments && ! needsSetup && testMode && (
-				<Button
-					onClick={ resetWooPaymentsAccount }
-					isBusy={ false }
-					disabled={ false }
-					className={ 'components-button__danger' }
+			{ canResetAccount && (
+				<div
+					className="woocommerce-ellipsis-menu__content__item"
+					key="reset-account"
 				>
-					{ __( 'Reset account', 'woocommerce' ) }
-				</Button>
+					<Button
+						onClick={ () => {
+							setResetAccountModalVisible( true );
+							onToggle();
+						} }
+						className={ 'components-button__danger' }
+					>
+						{ __( 'Reset account', 'woocommerce' ) }
+					</Button>
+				</div>
 			) }
 			{ ! isSuggestion && ! isEnabled && (
-				<Button
-					className={ 'components-button__danger' }
-					onClick={ deactivateGateway }
-					isBusy={ isDeactivating }
-					disabled={ isDeactivating }
+				<div
+					className="woocommerce-ellipsis-menu__content__item"
+					key="deactivate"
 				>
-					{ __( 'Deactivate', 'woocommerce' ) }
-				</Button>
+					<Button
+						className={ 'components-button__danger' }
+						onClick={ deactivateGateway }
+						isBusy={ isDeactivating }
+						disabled={ isDeactivating }
+					>
+						{ __( 'Deactivate', 'woocommerce' ) }
+					</Button>
+				</div>
 			) }
 			{ ! isSuggestion && isEnabled && (
-				<Button
-					className={ 'components-button__danger' }
-					onClick={ disableGateway }
-					isBusy={ isDisabling }
-					disabled={ isDisabling }
+				<div
+					className="woocommerce-ellipsis-menu__content__item"
+					key="disable"
 				>
-					{ __( 'Disable', 'woocommerce' ) }
-				</Button>
+					<Button
+						className={ 'components-button__danger' }
+						onClick={ disableGateway }
+						isBusy={ isDisabling }
+						disabled={ isDisabling }
+					>
+						{ __( 'Disable', 'woocommerce' ) }
+					</Button>
+				</div>
 			) }
-		</div>
+		</>
 	);
 };

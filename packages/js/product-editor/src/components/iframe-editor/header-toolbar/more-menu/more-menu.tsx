@@ -5,11 +5,9 @@ import { MenuGroup } from '@wordpress/components';
 import { createElement, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isWpVersion } from '@woocommerce/settings';
-// eslint-disable-next-line @woocommerce/dependency-group
 import {
 	ActionItem,
-	MoreMenuDropdown,
-	// @ts-expect-error No types for this exist yet.
+	// @ts-expect-error missing types.
 } from '@wordpress/interface';
 
 /**
@@ -19,6 +17,7 @@ import { ToolsMenuGroup } from './tools-menu-group';
 import { WritingMenu } from '../writing-menu';
 import { getGutenbergVersion } from '../../../../utils/get-gutenberg-version';
 import { MORE_MENU_ACTION_ITEM_SLOT_NAME } from '../../constants';
+import { MoreMenuDropdown } from '../../../more-menu-dropdown';
 
 export const MoreMenu = () => {
 	const renderBlockToolbar =
@@ -26,7 +25,7 @@ export const MoreMenu = () => {
 
 	return (
 		<MoreMenuDropdown>
-			{ ( { onClose }: { onClose: () => void } ) => (
+			{ ( onClose ) => (
 				<>
 					{ renderBlockToolbar && <WritingMenu /> }
 

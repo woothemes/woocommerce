@@ -1,4 +1,8 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
+const {
+	test,
+	expect,
+	tags: pwTags,
+} = require( '../../../fixtures/api-tests-fixtures' );
 
 test.describe( 'Products API tests: List All Products', () => {
 	const PRODUCTS_COUNT = 20;
@@ -7,7 +11,7 @@ test.describe( 'Products API tests: List All Products', () => {
 	test.beforeAll( async ( { request } ) => {
 		const createSampleCategories = async () => {
 			const clothing = await request.post(
-				'/wp-json/wc/v3/products/categories',
+				'./wp-json/wc/v3/products/categories',
 				{
 					data: {
 						name: 'Clothingxxx',
@@ -17,7 +21,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			const clothingJSON = await clothing.json();
 
 			const accessories = await request.post(
-				'/wp-json/wc/v3/products/categories',
+				'./wp-json/wc/v3/products/categories',
 				{
 					data: {
 						name: 'Accessoriesxxx',
@@ -27,7 +31,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			);
 			const accessoriesJSON = await accessories.json();
 			const hoodies = await request.post(
-				'/wp-json/wc/v3/products/categories',
+				'./wp-json/wc/v3/products/categories',
 				{
 					data: {
 						name: 'Hoodiesxxx',
@@ -37,7 +41,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			);
 			const hoodiesJSON = await hoodies.json();
 			const tshirts = await request.post(
-				'/wp-json/wc/v3/products/categories',
+				'./wp-json/wc/v3/products/categories',
 				{
 					data: {
 						name: 'Tshirtsxxx',
@@ -48,7 +52,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			const tshirtsJSON = await tshirts.json();
 
 			const decor = await request.post(
-				'/wp-json/wc/v3/products/categories',
+				'./wp-json/wc/v3/products/categories',
 				{
 					data: {
 						name: 'Decorxxx',
@@ -58,7 +62,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			const decorJSON = await decor.json();
 
 			const music = await request.post(
-				'/wp-json/wc/v3/products/categories',
+				'./wp-json/wc/v3/products/categories',
 				{
 					data: {
 						name: 'Musicxxx',
@@ -80,7 +84,7 @@ test.describe( 'Products API tests: List All Products', () => {
 		const createSampleAttributes = async () => {
 			//const { body: color } = await createProductAttribute( 'Color' );
 			const color = await request.post(
-				'/wp-json/wc/v3/products/attributes',
+				'./wp-json/wc/v3/products/attributes',
 				{
 					data: {
 						name: 'Colorxxx',
@@ -91,7 +95,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			//const { body: size } = await createProductAttribute( 'Size' );
 			const size = await request.post(
-				'/wp-json/wc/v3/products/attributes',
+				'./wp-json/wc/v3/products/attributes',
 				{
 					data: {
 						name: 'Sizexxx',
@@ -105,7 +109,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			} ) );
 
 			const colors = await request.post(
-				`/wp-json/wc/v3/products/attributes/${ colorJSON.id }/terms/batch`,
+				`./wp-json/wc/v3/products/attributes/${ colorJSON.id }/terms/batch`,
 				{
 					data: {
 						create: colorNamesObjectArray,
@@ -120,7 +124,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			} ) );
 
 			const sizes = await request.post(
-				`/wp-json/wc/v3/products/attributes/${ sizeJSON.id }/terms/batch`,
+				`./wp-json/wc/v3/products/attributes/${ sizeJSON.id }/terms/batch`,
 				{
 					data: {
 						create: sizeNamesObjectArray,
@@ -139,7 +143,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 		const createSampleTags = async () => {
 			//const { body: cool } = await createProductTag( 'Cool' );
-			const cool = await request.post( '/wp-json/wc/v3/products/tags', {
+			const cool = await request.post( './wp-json/wc/v3/products/tags', {
 				data: {
 					name: 'Coolxxx',
 				},
@@ -154,7 +158,7 @@ test.describe( 'Products API tests: List All Products', () => {
 		const createSampleShippingClasses = async () => {
 			//const { body: freight } = await createShippingClass( 'Freight' );
 			const freight = await request.post(
-				'/wp-json/wc/v3/products/shipping_classes',
+				'./wp-json/wc/v3/products/shipping_classes',
 				{
 					data: {
 						name: 'Freightxxx',
@@ -171,7 +175,7 @@ test.describe( 'Products API tests: List All Products', () => {
 		const createSampleTaxClasses = async () => {
 			//check to see if Reduced Rate tax class exists - if not, create it
 			let reducedRate = await request.get(
-				'/wp-json/wc/v3/taxes/classes/reduced-rate'
+				'./wp-json/wc/v3/taxes/classes/reduced-rate'
 			);
 			let reducedRateJSON = await reducedRate.json();
 			expect( Array.isArray( reducedRateJSON ) ).toBe( true );
@@ -179,7 +183,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			//if tax class does not exist then create it
 			if ( reducedRateJSON.length < 1 ) {
 				reducedRate = await request.post(
-					'/wp-json/wc/v3/taxes/classes',
+					'./wp-json/wc/v3/taxes/classes',
 					{
 						data: {
 							name: 'Reduced Rate',
@@ -207,7 +211,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			//const { body: simpleProducts } = await createProducts( [
 			const simpleProducts = await request.post(
-				'/wp-json/wc/v3/products/batch',
+				'./wp-json/wc/v3/products/batch',
 				{
 					data: {
 						create: [
@@ -1233,7 +1237,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 		const createSampleExternalProducts = async ( categories ) => {
 			const externalProducts = await request.post(
-				'/wp-json/wc/v3/products/batch',
+				'./wp-json/wc/v3/products/batch',
 				{
 					data: {
 						create: [
@@ -1316,16 +1320,19 @@ test.describe( 'Products API tests: List All Products', () => {
 		};
 
 		const createSampleGroupedProduct = async ( categories ) => {
-			const logoProducts = await request.get( '/wp-json/wc/v3/products', {
-				params: {
-					search: 'logo',
-					_fields: [ 'id' ],
-				},
-			} );
+			const logoProducts = await request.get(
+				'./wp-json/wc/v3/products',
+				{
+					params: {
+						search: 'logo',
+						_fields: [ 'id' ],
+					},
+				}
+			);
 			const logoProductsJSON = await logoProducts.json();
 
 			const groupedProducts = await request.post(
-				'/wp-json/wc/v3/products/batch',
+				'./wp-json/wc/v3/products/batch',
 				{
 					data: {
 						create: [
@@ -1417,7 +1424,7 @@ test.describe( 'Products API tests: List All Products', () => {
 				'Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. ' +
 				'Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>\n';
 
-			const hoodie = await request.post( '/wp-json/wc/v3/products', {
+			const hoodie = await request.post( './wp-json/wc/v3/products', {
 				data: {
 					name: 'Hoodie xxx',
 					date_created_gmt: '2021-09-18T15:50:19',
@@ -1508,7 +1515,7 @@ test.describe( 'Products API tests: List All Products', () => {
 				'Ut eleifend tellus nec erat pulvinar dignissim. Nam non arcu purus. Vivamus et massa massa.</p>\n';
 
 			const hoodieVariations = await request.post(
-				`/wp-json/wc/v3/products/${ hoodieJSON.id }/variations/batch`,
+				`./wp-json/wc/v3/products/${ hoodieJSON.id }/variations/batch`,
 				{
 					data: {
 						create: [
@@ -1702,7 +1709,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			);
 			const hoodieVariationsJSON = await hoodieVariations.json();
 
-			const vneck = await request.post( '/wp-json/wc/v3/products', {
+			const vneck = await request.post( './wp-json/wc/v3/products', {
 				data: {
 					name: 'V-Neck T-Shirt xxx',
 					date_created_gmt: '2021-09-23T15:50:19',
@@ -1784,7 +1791,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			const vneckJSON = await vneck.json();
 
 			const vneckVariations = await request.post(
-				`/wp-json/wc/v3/products/${ vneckJSON.id }/variations/batch`,
+				`./wp-json/wc/v3/products/${ vneckJSON.id }/variations/batch`,
 				{
 					data: {
 						create: [
@@ -1926,7 +1933,7 @@ test.describe( 'Products API tests: List All Products', () => {
 		};
 
 		const createSampleHierarchicalProducts = async () => {
-			const parent = await request.post( '/wp-json/wc/v3/products', {
+			const parent = await request.post( './wp-json/wc/v3/products', {
 				data: {
 					name: 'Parent Product xxx',
 					date_created_gmt: '2021-09-27T15:50:19',
@@ -1934,7 +1941,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			} );
 			const parentJSON = await parent.json();
 
-			const child = await request.post( '/wp-json/wc/v3/products', {
+			const child = await request.post( './wp-json/wc/v3/products', {
 				data: {
 					name: 'Child Product xxx',
 					parent_id: parentJSON.id,
@@ -1959,7 +1966,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			);
 
 			const review1 = await request.post(
-				'/wp-json/wc/v3/products/reviews',
+				'./wp-json/wc/v3/products/reviews',
 				{
 					data: {
 						product_id: cap.id,
@@ -1976,14 +1983,14 @@ test.describe( 'Products API tests: List All Products', () => {
 			// average_rating to be recalculated.
 			// See: https://github.com/woocommerce/woocommerce/issues/29906.
 			await request.post(
-				`/wp-json/wc/v3/products/reviews/${ review1JSON.id }`,
+				`./wp-json/wc/v3/products/reviews/${ review1JSON.id }`,
 				{
 					data: {},
 				}
 			);
 
 			const review2 = await request.post(
-				'/wp-json/wc/v3/products/reviews',
+				'./wp-json/wc/v3/products/reviews',
 				{
 					data: {
 						product_id: shirt.id,
@@ -1997,14 +2004,14 @@ test.describe( 'Products API tests: List All Products', () => {
 			const review2JSON = await review2.json();
 
 			await request.post(
-				`/wp-json/wc/v3/products/reviews/${ review2JSON.id }`,
+				`./wp-json/wc/v3/products/reviews/${ review2JSON.id }`,
 				{
 					data: {},
 				}
 			);
 
 			const review3 = await request.post(
-				'/wp-json/wc/v3/products/reviews',
+				'./wp-json/wc/v3/products/reviews',
 				{
 					data: {
 						product_id: sunglasses.id,
@@ -2018,7 +2025,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			const review3JSON = await review3.json();
 
 			await request.post(
-				`/wp-json/wc/v3/products/reviews/${ review3JSON.id }`,
+				`./wp-json/wc/v3/products/reviews/${ review3JSON.id }`,
 				{
 					data: {},
 				}
@@ -2038,7 +2045,7 @@ test.describe( 'Products API tests: List All Products', () => {
 				( p ) => p.name === 'T-Shirt xxx'
 			);
 
-			const order = await request.post( '/wp-json/wc/v3/orders', {
+			const order = await request.post( './wp-json/wc/v3/orders', {
 				data: {
 					set_paid: true,
 					status: 'completed',
@@ -2145,7 +2152,7 @@ test.describe( 'Products API tests: List All Products', () => {
 				] );
 
 			for ( const order of orders ) {
-				await request.delete( `/wp-json/wc/v3/orders/${ order.id }`, {
+				await request.delete( `./wp-json/wc/v3/orders/${ order.id }`, {
 					data: {
 						force: true,
 					},
@@ -2154,7 +2161,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			for ( const productId of productIds ) {
 				await request.delete(
-					`/wp-json/wc/v3/products/${ productId }`,
+					`./wp-json/wc/v3/products/${ productId }`,
 					{
 						data: {
 							force: true,
@@ -2164,7 +2171,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			}
 
 			await request.delete(
-				`/wp-json/wc/v3/products/attributes/${ attributes.colorJSON.id }`,
+				`./wp-json/wc/v3/products/attributes/${ attributes.colorJSON.id }`,
 				{
 					data: {
 						force: true,
@@ -2173,7 +2180,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			);
 
 			await request.delete(
-				`/wp-json/wc/v3/products/attributes/${ attributes.sizeJSON.id }`,
+				`./wp-json/wc/v3/products/attributes/${ attributes.sizeJSON.id }`,
 				{
 					data: {
 						force: true,
@@ -2184,7 +2191,7 @@ test.describe( 'Products API tests: List All Products', () => {
 			for ( const category of Object.values( categories ) ) {
 				//await deleteRequest( `products/categories/${ id }`, true );
 				await request.delete(
-					`/wp-json/wc/v3/products/categories/${ category.id }`,
+					`./wp-json/wc/v3/products/categories/${ category.id }`,
 					{
 						data: {
 							force: true,
@@ -2195,7 +2202,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			for ( const tag of Object.values( tags ) ) {
 				await request.delete(
-					`/wp-json/wc/v3/products/tags/${ tag.id }`,
+					`./wp-json/wc/v3/products/tags/${ tag.id }`,
 					{
 						data: {
 							force: true,
@@ -2206,7 +2213,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			for ( const shippingClass of Object.values( shippingClasses ) ) {
 				await request.delete(
-					`/wp-json/wc/v3/products/shipping_classes/${ shippingClass.id }`,
+					`./wp-json/wc/v3/products/shipping_classes/${ shippingClass.id }`,
 					{
 						data: {
 							force: true,
@@ -2217,7 +2224,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			for ( const taxClass of Object.values( taxClasses ) ) {
 				await request.delete(
-					`/wp-json/wc/v3/taxes/classes/${ taxClass.slug }`,
+					`./wp-json/wc/v3/taxes/classes/${ taxClass.slug }`,
 					{
 						data: {
 							force: true,
@@ -2232,7 +2239,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 	test.describe(
 		'List all products',
-		{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+		{ tag: [ pwTags.SKIP_ON_PRESSABLE, pwTags.SKIP_ON_WPCOM ] },
 		() => {
 			test( 'defaults', async ( { request } ) => {
 				const result = await request.get( 'wp-json/wc/v3/products', {
@@ -2572,7 +2579,7 @@ test.describe( 'Products API tests: List All Products', () => {
 
 			test(
 				'categories',
-				{ tag: '@skip-on-default-wpcom' },
+				{ tag: pwTags.SKIP_ON_WPCOM },
 				async ( { request } ) => {
 					const accessory = [
 						expect.objectContaining( {

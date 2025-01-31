@@ -323,4 +323,4 @@ add_action( 'woocommerce_before_reset_password_form', 'woocommerce_output_all_no
 /**
  * Hooked blocks.
  */
-add_action( 'after_switch_theme', 'wc_set_hooked_blocks_version_on_theme_switch', 10, 2 );
+add_action( 'after_switch_theme', 'wc_after_switch_theme', 10, 2 );

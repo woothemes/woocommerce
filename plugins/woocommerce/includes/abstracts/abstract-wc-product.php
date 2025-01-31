@@ -9,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 
@@ -62,7 +66,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		'date_modified'      => null,
 		'status'             => false,
 		'featured'           => false,
-		'catalog_visibility' => 'visible',
+		'catalog_visibility' => CatalogVisibility::VISIBLE,
 		'description'        => '',
 		'short_description'  => '',
 		'sku'                => '',
@@ -77,7 +81,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		'tax_class'          => '',
 		'manage_stock'       => false,
 		'stock_quantity'     => null,
-		'stock_status'       => 'instock',
+		'stock_status'       => ProductStockStatus::IN_STOCK,
 		'backorders'         => 'no',
 		'low_stock_amount'   => '',
 		'sold_individually'  => false,
@@ -107,7 +111,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		'rating_counts'      => array(),
 		'average_rating'     => 0,
 		'review_count'       => 0,
-		'cogs_value'         => 0,
+		'cogs_value'         => null,
 	);
 
 	/**
@@ -151,7 +155,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return string
 	 */
 	public function get_type() {
-		return isset( $this->product_type ) ? $this->product_type : 'simple';
+		return isset( $this->product_type ) ? $this->product_type : ProductType::SIMPLE;
 	}
 
 	/**
@@ -1011,13 +1015,13 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 *
 	 * @param string $status New status.
 	 */
-	public function set_stock_status( $status = 'instock' ) {
+	public function set_stock_status( $status = ProductStockStatus::IN_STOCK ) {
 		$valid_statuses = wc_get_product_stock_status_options();
 
 		if ( isset( $valid_statuses[ $status ] ) ) {
 			$this->set_prop( 'stock_status', $status );
 		} else {
-			$this->set_prop( 'stock_status', 'instock' );
+			$this->set_prop( 'stock_status', ProductStockStatus::IN_STOCK );
 		}
 	}
 
@@ -1431,11 +1435,11 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 		$backorders_are_allowed                = ( 'no' !== $this->get_backorders() );
 
 		if ( $stock_is_above_notification_threshold ) {
-			$new_stock_status = 'instock';
+			$new_stock_status = ProductStockStatus::IN_STOCK;
 		} elseif ( $backorders_are_allowed ) {
-			$new_stock_status = 'onbackorder';
+			$new_stock_status = ProductStockStatus::ON_BACKORDER;
 		} else {
-			$new_stock_status = 'outofstock';
+			$new_stock_status = ProductStockStatus::OUT_OF_STOCK;
 		}
 
 		$this->set_stock_status( $new_stock_status );
@@ -1629,18 +1633,18 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	protected function is_visible_core() {
-		$visible = 'visible' === $this->get_catalog_visibility() || ( is_search() && 'search' === $this->get_catalog_visibility() ) || ( ! is_search() && 'catalog' === $this->get_catalog_visibility() );
+		$visible = CatalogVisibility::VISIBLE === $this->get_catalog_visibility() || ( is_search() && CatalogVisibility::SEARCH === $this->get_catalog_visibility() ) || ( ! is_search() && CatalogVisibility::CATALOG === $this->get_catalog_visibility() );
 
-		if ( 'trash' === $this->get_status() ) {
+		if ( ProductStatus::TRASH === $this->get_status() ) {
 			$visible = false;
-		} elseif ( 'publish' !== $this->get_status() && ! current_user_can( 'edit_post', $this->get_id() ) ) {
+		} elseif ( ProductStatus::PUBLISH !== $this->get_status() && ! current_user_can( 'edit_post', $this->get_id() ) ) {
 			$visible = false;
 		}
 
 		if ( $this->get_parent_id() ) {
 			$parent_product = wc_get_product( $this->get_parent_id() );
 
-			if ( $parent_product && 'publish' !== $parent_product->get_status() && ! current_user_can( 'edit_post', $parent_product->get_id() ) ) {
+			if ( $parent_product && ProductStatus::PUBLISH !== $parent_product->get_status() && ! current_user_can( 'edit_post', $parent_product->get_id() ) ) {
 				$visible = false;
 			}
 		}
@@ -1658,7 +1662,14 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_purchasable() {
-		return apply_filters( 'woocommerce_is_purchasable', $this->exists() && ( 'publish' === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
+		/**
+		 * Filters whether a product is purchasable.
+		 *
+		 * @since 2.7.0
+		 * @param bool          $purchasable Whether the product is purchasable.
+		 * @param WC_Product    $product     Product object.
+		 */
+		return apply_filters( 'woocommerce_is_purchasable', $this->exists() && ( ProductStatus::PUBLISH === $this->get_status() || current_user_can( 'edit_post', $this->get_id() ) ) && '' !== $this->get_price(), $this );
 	}
 
 	/**
@@ -1709,7 +1720,14 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_in_stock() {
-		return apply_filters( 'woocommerce_product_is_in_stock', 'outofstock' !== $this->get_stock_status(), $this );
+		/**
+		 * Filters whether a product is in stock.
+		 *
+		 * @since 2.7.0
+		 * @param bool          $in_stock Whether the product is in stock.
+		 * @param WC_Product    $product  Product object.
+		 */
+		return apply_filters( 'woocommerce_product_is_in_stock', ProductStockStatus::OUT_OF_STOCK !== $this->get_stock_status(), $this );
 	}
 
 	/**
@@ -1776,7 +1794,7 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return bool
 	 */
 	public function is_on_backorder( $qty_in_cart = 0 ) {
-		if ( 'onbackorder' === $this->get_stock_status() ) {
+		if ( ProductStockStatus::ON_BACKORDER === $this->get_stock_status() ) {
 			return true;
 		}
 
@@ -2204,30 +2222,62 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	/**
 	 * Set the defined value of the Cost of Goods Sold for this product.
 	 *
+	 * In this implementation the defined value is a monetary value, but in the future
+	 * (or in derived classes) it could be something different like e.g. a percent of the price;
+	 * see also get_cogs_effective_value and get_cogs_total_value.
+	 *
+	 * The defined value can be null. By default this is equivalent to a value of zero,
+	 * but again: in the future, or in derived classes, it can mean something different.
+	 * See also adjust_cogs_value_before_set.
+	 *
 	 * WARNING! If the Cost of Goods Sold feature is disabled this method will have no effect.
 	 *
-	 * @param float $value The value to set for this product.
+	 * @param float|null $value The value to set for this product.
 	 */
-	public function set_cogs_value( float $value ): void {
+	public function set_cogs_value( ?float $value ): void {
 		if ( $this->cogs_is_enabled( __METHOD__ ) ) {
+			$value = $this->adjust_cogs_value_before_set( $value );
 			$this->set_prop( 'cogs_value', $value );
 		}
 	}
 
 	/**
-	 * Get the defined value of the Cost of Goods Sold for this product.
+	 * Adjust the value of the Cost of Goods Sold before actually setting it.
 	 *
-	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return zero.
+	 * To disable the conversion of zero into null in a derived class,
+	 * override this method with just "return $value;" in the body.
+	 *
+	 * @param float|null $value Cost value passed to the set_cogs_value method.
+	 * @return float|null The actual value that will be set for the cost property.
+	 */
+	protected function adjust_cogs_value_before_set( ?float $value ): ?float {
+		return 0.0 === $value ? null : $value;
+	}
+
+	/**
+	 * Get the defined value of the Cost of Goods Sold for this product.
+	 * See set_cogs_value.
+	 *
+	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return null.
 	 *
 	 * @return float The current value for this product.
 	 */
-	public function get_cogs_value(): float {
-		return $this->cogs_is_enabled( __METHOD__ ) ? (float) $this->get_prop( 'cogs_value' ) : 0;
+	public function get_cogs_value(): ?float {
+		if ( ! $this->cogs_is_enabled( __METHOD__ ) ) {
+			return null;
+		}
+
+		$value = $this->get_prop( 'cogs_value' );
+		return is_null( $value ) ? null : (float) $value;
 	}
 
 	/**
 	 * Get the effective value of the Cost of Goods Sold for this product.
-	 * (the final, actual monetary value).
+	 *
+	 * The effective value is the defined value once converted to a monetary value;
+	 * in the current implementation both values are always equal, but this could change
+	 * in the future (or in derived classes). See also get_cogs_effective_value_core
+	 * and get_cogs_total_value.
 	 *
 	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return zero.
 	 *
@@ -2248,12 +2298,13 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	 * @return float The effective value for this product.
 	 */
 	protected function get_cogs_effective_value_core(): float {
-		return $this->get_cogs_value();
+		return $this->get_cogs_value() ?? 0;
 	}
 
 	/**
-	 * Get the effective total value of the Cost of Goods Sold for this product
-	 * (the monetary value that will be applied to orders and used for analytics purposes).
+	 * Get the effective total value of the Cost of Goods Sold for this product.
+	 * This is the monetary value that will be applied to orders and used for analytics purposes,
+	 * see also get_cogs_total_value_core.
 	 *
 	 * WARNING! If the Cost of Goods Sold feature is disabled this method will always return zero.
 	 *

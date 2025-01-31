@@ -3,6 +3,11 @@
  */
 import { getSetting, STORE_PAGES } from '@woocommerce/settings';
 import { CountryData } from '@woocommerce/types';
+import type {
+	AdditionalValues,
+	AddressForm,
+	ContactForm,
+} from '@woocommerce/settings';
 
 export type WordCountType =
 	| 'words'
@@ -41,15 +46,21 @@ export const CART_URL = STORE_PAGES.cart?.permalink;
 export const LOGIN_URL = STORE_PAGES.myaccount?.permalink
 	? STORE_PAGES.myaccount.permalink
 	: getSetting( 'wpLoginUrl', '/wp-login.php' );
+
 export const LOCAL_PICKUP_ENABLED = getSetting< boolean >(
 	'localPickupEnabled',
 	false
 );
 
+export const SHIPPING_METHODS_EXIST = getSetting< boolean >(
+	'shippingMethodsExist',
+	false
+);
+
 type FieldsLocations = {
-	address: string[];
-	contact: string[];
-	order: string[];
+	address: ( keyof AddressForm )[];
+	contact: ( keyof ContactForm )[];
+	order: ( keyof AdditionalValues )[];
 };
 
 // Contains country names.

@@ -7,6 +7,7 @@
  */
 
 use Automattic\WooCommerce\Enums\OrderStatus;
+use Automattic\WooCommerce\Enums\ProductType;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -474,7 +475,7 @@ final class WC_Cart_Session {
 			}
 
 			// Prevent reordering variable products if no selected variation.
-			if ( ! $variation_id && $product->is_type( 'variable' ) ) {
+			if ( ! $variation_id && $product->is_type( ProductType::VARIABLE ) ) {
 				continue;
 			}
 

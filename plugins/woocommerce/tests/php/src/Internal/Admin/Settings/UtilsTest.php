@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Tests\Internal\Admin\Settings;
 
 use Automattic\WooCommerce\Internal\Admin\Settings\Utils;
 use WC_Unit_Test_Case;
+use WP_Locale;
 
 /**
  * Payments settings utilities test.
@@ -1462,5 +1463,274 @@ class UtilsTest extends WC_Unit_Test_Case {
 				),
 			),
 		);
+	}
+
+	/**
+	 * Test getting testing plugin slug suffixes list
+	 */
+	public function test_get_testing_plugin_slug_suffixes() {
+		// Act.
+		$suffixes = Utils::get_testing_plugin_slug_suffixes();
+
+		// Assert.
+		$this->assertIsArray( $suffixes );
+		$this->assertNotEmpty( $suffixes );
+		$this->assertContainsOnly( 'string', $suffixes );
+		$this->assertContains( '-dev', $suffixes );
+		$this->assertContains( '-beta', $suffixes );
+		$this->assertContains( '-alpha', $suffixes );
+		$this->assertContains( '-rc', $suffixes );
+		$this->assertContains( '-test', $suffixes );
+	}
+
+	/**
+	 * Test generating testing plugin slugs.
+	 */
+	public function test_generate_testing_plugin_slugs() {
+		// Act.
+		$slugs = Utils::generate_testing_plugin_slugs( 'plugin-slug', false );
+
+		// Assert.
+		$this->assertIsArray( $slugs );
+		$this->assertNotEmpty( $slugs );
+		$this->assertContainsOnly( 'string', $slugs );
+		$this->assertNotContains( 'plugin-slug', $slugs );
+		$this->assertContains( 'plugin-slug-dev', $slugs );
+	}
+
+	/**
+	 * Test generating testing plugin slugs with the original slug included.
+	 */
+	public function test_generate_testing_plugin_slugs_with_original() {
+		// Act.
+		$slugs = Utils::generate_testing_plugin_slugs( 'plugin-slug', true );
+
+		// Assert.
+		$this->assertIsArray( $slugs );
+		$this->assertNotEmpty( $slugs );
+		$this->assertContainsOnly( 'string', $slugs );
+		$this->assertSame( 'plugin-slug', $slugs[0] );
+		$this->assertContains( 'plugin-slug-dev', $slugs );
+	}
+
+	/**
+	 * Test normalizing a plugin slug.
+	 *
+	 * @dataProvider data_provider_normalize_plugin_slug
+	 *
+	 * @param string $slug     The plugin slug to normalize.
+	 * @param string $expected The expected normalized plugin slug.
+	 */
+	public function test_normalize_plugin_slug( string $slug, string $expected ) {
+		// Act.
+		$slug = Utils::normalize_plugin_slug( $slug );
+
+		// Assert.
+		$this->assertSame( $expected, $slug );
+	}
+
+	/**
+	 * Data provider for the test_normalize_plugin_slug test.
+	 *
+	 * @return array
+	 */
+	public function data_provider_normalize_plugin_slug(): array {
+		return array(
+			'empty-slug'            => array(
+				'',
+				'',
+			),
+			'already-normalized'    => array(
+				'plugin-slug_01',
+				'plugin-slug_01',
+			),
+			'does-not-transform'    => array(
+				'Plugin Title',
+				'Plugin Title',
+			),
+			'does-not-transform-2'  => array(
+				'Plugin*%$Title@#',
+				'Plugin*%$Title@#',
+			),
+			'lowercases'            => array(
+				'PLugin-sLug_01',
+				'plugin-slug_01',
+			),
+			'suffix-not-at-the-end' => array(
+				'plugin-beta-slug',
+				'plugin-beta-slug',
+			),
+			'alpha-slug'            => array(
+				'plugin-slug-alpha',
+				'plugin-slug',
+			),
+			'rc-slug'               => array(
+				'plugin-slug-rc',
+				'plugin-slug',
+			),
+			'test-slug'             => array(
+				'plugin-slug-test',
+				'plugin-slug',
+			),
+			'dev-slug'              => array(
+				'plugin-slug-dev',
+				'plugin-slug',
+			),
+		);
+	}
+
+	/**
+	 * Test truncation with words.
+	 *
+	 * @dataProvider data_provider_truncate_with_words
+	 *
+	 * @param string $text     The text to truncate.
+	 * @param int    $length   The length to truncate the text to.
+	 * @param string $expected The expected truncated text.
+	 */
+	public function test_truncate_with_words( string $text, int $length, string $expected ) {
+		// Act.
+		$truncated = Utils::truncate_with_words( $text, $length );
+
+		// Assert.
+		$this->assertSame( $expected, $truncated );
+	}
+
+	/**
+	 * Data provider for the test_truncate_with_words test.
+	 *
+	 * @return array
+	 */
+	public function data_provider_truncate_with_words(): array {
+		return array(
+			'empty text'                   => array(
+				'',
+				10,
+				'',
+			),
+			'text shorter than the length' => array(
+				'Hello, world!',
+				20,
+				'Hello, world!',
+			),
+			'text longer than the length'  => array(
+				'Hello, world! This is a test.',
+				14,
+				'Hello, world!',
+			),
+			'text longer than length - does not cut word #1' => array(
+				'Hello, world! This_is_not_cut is a test.',
+				20,
+				'Hello, world! This_is_not_cut',
+			),
+			'text longer than length - does not cut word #2' => array(
+				'Hello, world! This_is_not_cut is a test.',
+				27,
+				'Hello, world! This_is_not_cut',
+			),
+		);
+	}
+
+	/**
+	 * Test truncation with words and appending a string when truncating.
+	 *
+	 * @dataProvider data_provider_truncate_with_words_append
+	 *
+	 * @param string $text     The text to truncate.
+	 * @param int    $length   The length to truncate the text to.
+	 * @param string $append   The string to append when truncating.
+	 * @param string $expected The expected truncated text.
+	 */
+	public function test_truncate_with_words_append( string $text, int $length, string $append, string $expected ) {
+		// Act.
+		$truncated = Utils::truncate_with_words( $text, $length, $append );
+
+		// Assert.
+		$this->assertSame( $expected, $truncated );
+	}
+
+	/**
+	 * Data provider for the truncate_with_words_append test.
+	 *
+	 * @return array
+	 */
+	public function data_provider_truncate_with_words_append(): array {
+		return array(
+			'empty text'                                 => array(
+				'',
+				10,
+				'...',
+				'',
+			),
+			'text shorter than the length'               => array(
+				'Hello, world!',
+				20,
+				'...',
+				'Hello, world!',
+			),
+			'text longer than the length'                => array(
+				'Hello, world! This is a test.',
+				14,
+				'...',
+				'Hello, world!...',
+			),
+			'text longer than length - does not cut word #1' => array(
+				'Hello, world! This_is_not_cut is a test.',
+				20,
+				'...',
+				'Hello, world! This_is_not_cut...',
+			),
+			'text longer than length - does not cut word #2' => array(
+				'Hello, world! This_is_not_cut is a test.',
+				27,
+				'...',
+				'Hello, world! This_is_not_cut...',
+			),
+			'text longer than the length - UTF-8 append' => array(
+				'Hello, world! This is a test.',
+				14,
+				'…',
+				'Hello, world!…',
+			),
+			'text longer than the length - single char append' => array(
+				'Hello, world! This is a test.',
+				14,
+				'*',
+				'Hello, world!*',
+			),
+		);
+	}
+
+	/**
+	 * Test truncation with words when dealing with locale that counts characters, not words.
+	 */
+	public function test_truncate_with_words_locale() {
+		global $wp_locale;
+
+		// Arrange.
+		$tmp_local = $wp_locale;
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_locale                  = new WP_Locale();
+		$wp_locale->word_count_type = 'characters_excluding_spaces';
+
+		$text = '尉ち雨　ケ　ッピみ　イカ援'; // Translation of: 'This is just a test! for truncating without cutting words.'.
+
+		// Act.
+		$truncated = Utils::truncate_with_words( $text, 8, '...' );
+
+		// Assert.
+		// The space separators are ignored, so the text is truncated at the 8th character.
+		$this->assertSame( '尉ち雨　ケ　ッピ...', $truncated );
+
+		// Act.
+		$truncated = Utils::truncate_with_words( $text, 15, '...' );
+
+		// Assert.
+		// No truncation or appending.
+		$this->assertSame( $text, $truncated );
+
+		// Cleanup.
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_locale = $tmp_local;
 	}
 }

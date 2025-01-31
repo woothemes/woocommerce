@@ -85,8 +85,9 @@ export const renderRemovableListItem = ( {
 		name
 	);
 	const removeText = sprintf(
-		/* translators: %s attribute value used in the filter. For example: yellow, green, small, large. */
-		__( 'Remove %s filter', 'woocommerce' ),
+		/* translators: 1: filter type, 2: attribute value used in the filter. For example: Remove Size Large filter. */
+		__( 'Remove %1$s %2$s filter', 'woocommerce' ),
+		type,
 		name
 	);
 

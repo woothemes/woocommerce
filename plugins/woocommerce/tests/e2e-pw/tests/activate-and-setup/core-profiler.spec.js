@@ -1,5 +1,7 @@
 const { test, expect, request } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
 const { setOption } = require( '../../utils/options' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 const getPluginLocator = ( page, slug ) => {
 	return page.locator(
@@ -7,20 +9,14 @@ const getPluginLocator = ( page, slug ) => {
 	);
 };
 
+test.use( { storageState: ADMIN_STATE_PATH } );
+
 test.describe(
 	'Store owner can complete the core profiler',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
 		test.beforeAll( async ( { baseURL } ) => {
 			try {
-				await setOption(
-					request,
-					baseURL,
-					'woocommerce_coming_soon',
-					'no'
-				);
 				await setOption(
 					request,
 					baseURL,
@@ -470,23 +466,8 @@ test.describe(
 
 test.describe(
 	'Store owner can skip the core profiler',
-	{ tag: [ '@skip-on-default-pressable', '@skip-on-default-wpcom' ] },
+	{ tag: tags.SKIP_ON_EXTERNAL_ENV },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
-
-		test.beforeAll( async ( { baseURL } ) => {
-			try {
-				await setOption(
-					request,
-					baseURL,
-					'woocommerce_coming_soon',
-					'no'
-				);
-			} catch ( error ) {
-				console.log( error );
-			}
-		} );
-
 		test( 'Can click skip guided setup', async ( { page } ) => {
 			await page.goto(
 				'wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard'
@@ -531,6 +512,7 @@ test.describe(
 			} );
 		} );
 
+		// TODO (E2E Audit): Move this test to the merchant folder as per the Critical Flows list on GitHub. This test should NOT be skipped on WPCOM. Newly created WPCOM sites are not connected to WooCommerce.com by default.
 		test( 'Can connect to WooCommerce.com', async ( { page } ) => {
 			await test.step( 'Go to WC Home and make sure the total sales is visible', async () => {
 				await page.goto( 'wp-admin/admin.php?page=wc-admin' );
@@ -540,8 +522,19 @@ test.describe(
 			} );
 
 			await test.step( 'Go to the extensions tab and connect store', async () => {
+				const connectButton = page.getByRole( 'link', {
+					name: 'Connect your store',
+				} );
 				await page.goto(
 					'wp-admin/admin.php?page=wc-admin&tab=my-subscriptions&path=%2Fextensions'
+				);
+				const waitForSubscriptionsResponse = page.waitForResponse(
+					( response ) =>
+						response
+							.url()
+							.includes(
+								'/wp-json/wc/v3/marketplace/subscriptions'
+							) && response.status() === 200
 				);
 				await expect(
 					page.getByText(
@@ -551,12 +544,13 @@ test.describe(
 				await expect(
 					page.getByRole( 'button', { name: 'My Subscriptions' } )
 				).toBeVisible();
-				await expect(
-					page.getByRole( 'link', { name: 'Connect your store' } )
-				).toBeVisible();
-				await page
-					.getByRole( 'link', { name: 'Connect your store' } )
-					.click();
+				await expect( connectButton ).toBeVisible();
+				await waitForSubscriptionsResponse;
+				await expect( connectButton ).toHaveAttribute(
+					'href',
+					/my-subscriptions/
+				);
+				await connectButton.click();
 			} );
 
 			await test.step( 'Check that we are sent to wp.com', async () => {

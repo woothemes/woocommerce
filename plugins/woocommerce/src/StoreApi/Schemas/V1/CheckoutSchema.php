@@ -207,11 +207,11 @@ class CheckoutSchema extends AbstractSchema {
 	/**
 	 * Get the checkout response based on the current order and any payments.
 	 *
-	 * @param \WC_Order     $order Order object.
-	 * @param PaymentResult $payment_result Payment result object.
+	 * @param \WC_Order          $order          Order object.
+	 * @param PaymentResult|null $payment_result Payment result object.
 	 * @return array
 	 */
-	protected function get_checkout_response( \WC_Order $order, PaymentResult $payment_result = null ) {
+	protected function get_checkout_response( \WC_Order $order, ?PaymentResult $payment_result = null ) {
 		return [
 			'order_id'          => $order->get_id(),
 			'status'            => $order->get_status(),
@@ -311,6 +311,11 @@ class CheckoutSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 				'required'    => $field['required'],
 			];
+
+			// Conditional required field rules trump the default required value.
+			if ( ! empty( $field['rules']['required'] ) ) {
+				$field_schema['required'] = false;
+			}
 
 			if ( 'select' === $field['type'] ) {
 				$field_schema['enum'] = array_map(

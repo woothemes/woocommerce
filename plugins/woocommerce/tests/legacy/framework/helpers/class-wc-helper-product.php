@@ -5,6 +5,8 @@
  * @package WooCommerce\Tests
  */
 
+use Automattic\WooCommerce\Enums\ProductStockStatus;
+
 /**
  * Class WC_Helper_Product.
  *
@@ -52,7 +54,7 @@ class WC_Helper_Product {
 				'tax_status'    => 'taxable',
 				'downloadable'  => false,
 				'virtual'       => false,
-				'stock_status'  => 'instock',
+				'stock_status'  => ProductStockStatus::IN_STOCK,
 				'weight'        => '1.1',
 			);
 
@@ -89,7 +91,7 @@ class WC_Helper_Product {
 				'tax_status'    => 'taxable',
 				'downloadable'  => true,
 				'virtual'       => false,
-				'stock_status'  => 'instock',
+				'stock_status'  => ProductStockStatus::IN_STOCK,
 			)
 		);
 

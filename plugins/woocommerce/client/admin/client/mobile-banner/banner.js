@@ -13,8 +13,10 @@ import GridiconCrossIcon from 'gridicons/dist/cross-small';
  */
 import { platform, ANDROID_PLATFORM } from '../lib/platform';
 import { AppIcon } from './app-icon';
+import { AppIconNew } from './app-icon-new';
 import { PLAY_STORE_LINK, TRACKING_EVENT_NAME } from './constants';
 import './banner.scss';
+import { isNewBranding } from '~/utils/admin-settings';
 
 const SHOW_APP_BANNER_MODIFIER_CLASS = 'woocommerce-layout__show-app-banner';
 
@@ -56,7 +58,7 @@ export const Banner = ( { onInstall, onDismiss } ) => {
 					} );
 				} }
 			/>
-			<AppIcon />
+			{ isNewBranding() ? <AppIconNew /> : <AppIcon /> }
 			<div className="woocommerce-mobile-app-banner__description">
 				<p className="woocommerce-mobile-app-banner__description__text">
 					{ __( 'Run your store from anywhere', 'woocommerce' ) }

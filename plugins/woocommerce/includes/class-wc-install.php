@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Notes\Notes;
+use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\TransientFiles\TransientFilesEngine;
 use Automattic\WooCommerce\Internal\DataStores\Orders\{ CustomOrdersTableController, DataSynchronizer, OrdersTableDataStore };
 use Automattic\WooCommerce\Internal\Features\FeaturesController;
@@ -268,7 +269,6 @@ class WC_Install {
 			'wc_update_940_remove_help_panel_highlight_shown',
 		),
 		'9.5.0' => array(
-			'wc_update_950_add_brands_enabled_option',
 			'wc_update_950_tracking_option_autoload',
 		),
 	);
@@ -999,14 +999,15 @@ class WC_Install {
 	}
 
 	/**
-	 * Add the woocommerce_coming_soon option for new shops.
+	 * Add the coming soon options for new shops.
 	 *
-	 * Ensure that the option is set for all shops, even if core profiler is disabled on the host.
+	 * Ensure that the options are set for all shops for performance even if core profiler is disabled on the host.
 	 *
 	 * @since 9.3.0
 	 */
 	public static function add_coming_soon_option() {
-		add_option( 'woocommerce_coming_soon', 'no' );
+		add_option( 'woocommerce_coming_soon', 'yes' );
+		add_option( 'woocommerce_store_pages_only', 'yes' );
 	}
 
 	/**
@@ -1183,10 +1184,10 @@ class WC_Install {
 	public static function create_terms() {
 		$taxonomies = array(
 			'product_type'       => array(
-				'simple',
-				'grouped',
-				'variable',
-				'external',
+				ProductType::SIMPLE,
+				ProductType::GROUPED,
+				ProductType::VARIABLE,
+				ProductType::EXTERNAL,
 			),
 			'product_visibility' => array(
 				'exclude-from-search',

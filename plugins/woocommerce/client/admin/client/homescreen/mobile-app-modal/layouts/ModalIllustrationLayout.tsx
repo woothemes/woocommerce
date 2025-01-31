@@ -9,6 +9,8 @@ import { closeSmall } from '@wordpress/icons';
  * Internal dependencies
  */
 import Illustration from '../illustrations/intro-devices-desktop.png';
+import IllustrationNew from '../illustrations/intro-devices-desktop-new.png';
+import { isNewBranding } from '~/utils/admin-settings';
 
 export const ModalIllustrationLayout = ( {
 	body,
@@ -22,7 +24,7 @@ export const ModalIllustrationLayout = ( {
 			<div className="mobile-app-modal-content">{ body }</div>
 			<div className="mobile-app-modal-illustration">
 				<img
-					src={ Illustration }
+					src={ isNewBranding() ? IllustrationNew : Illustration }
 					alt={ __(
 						'Screen captures of the WooCommerce mobile app',
 						'woocommerce'

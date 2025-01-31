@@ -4,11 +4,9 @@
 import {
 	FormField,
 	FormFields,
-	CountryAddressForm,
-	defaultFields,
+	CountryAddressFields,
 	KeyedFormField,
 	LocaleSpecificFormField,
-	FormFieldsConfig,
 } from '@woocommerce/settings';
 import { __, sprintf } from '@wordpress/i18n';
 import { isNumber, isString } from '@woocommerce/types';
@@ -69,7 +67,9 @@ const getSupportedCoreLocaleProps = (
  *
  * This supports new properties such as optionalLabel which are not used by core (yet).
  */
-const countryAddressForm: CountryAddressForm = Object.entries( COUNTRY_LOCALE )
+const countryAddressFields: CountryAddressFields = Object.entries(
+	COUNTRY_LOCALE
+)
 	.map( ( [ country, countryLocale ] ) => [
 		country,
 		Object.entries( countryLocale )
@@ -93,33 +93,29 @@ const countryAddressForm: CountryAddressForm = Object.entries( COUNTRY_LOCALE )
 
 /**
  * Combines address fields, including fields from the locale, and sorts them by index.
- *
- * @param {Array}  fields         List of field keys--only address fields matching these will be returned.
- * @param {Object} fieldConfigs   Fields config contains field specific overrides at block level which may, for example, hide a field.
- * @param {string} addressCountry Address country code. If unknown, locale fields will not be merged.
- * @return {CountryAddressForm} Object containing address fields.
  */
 const prepareFormFields = (
-	fields: ( keyof FormFields )[],
-	fieldConfigs: FormFieldsConfig,
+	// ist of field keys--only address fields matching these will be returned
+	fieldKeys: ( keyof FormFields )[],
+	// Default fields from settings.
+	defaultFields: FormFields,
+	// Address country code. If unknown, locale fields will not be merged.
 	addressCountry = ''
 ): KeyedFormField[] => {
 	const localeConfigs: FormFields =
-		addressCountry && countryAddressForm[ addressCountry ] !== undefined
-			? countryAddressForm[ addressCountry ]
+		addressCountry && countryAddressFields[ addressCountry ] !== undefined
+			? countryAddressFields[ addressCountry ]
 			: ( {} as FormFields );
 
-	return fields
+	return fieldKeys
 		.map( ( field ) => {
 			const defaultConfig = defaultFields[ field ] || {};
 			const localeConfig = localeConfigs[ field ] || {};
-			const fieldConfig = fieldConfigs[ field ] || {};
 
 			return {
 				key: field,
 				...defaultConfig,
 				...localeConfig,
-				...fieldConfig,
 			};
 		} )
 		.sort( ( a, b ) => a.index - b.index );

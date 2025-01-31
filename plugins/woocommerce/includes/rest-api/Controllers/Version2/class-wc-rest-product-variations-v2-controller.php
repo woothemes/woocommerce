@@ -8,6 +8,8 @@
  * @since   3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -325,7 +327,7 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 
 		// Status.
 		if ( isset( $request['visible'] ) ) {
-			$variation->set_status( false === $request['visible'] ? 'private' : 'publish' );
+			$variation->set_status( false === $request['visible'] ? ProductStatus::PRIVATE : ProductStatus::PUBLISH );
 		}
 
 		// SKU.
@@ -388,7 +390,7 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 		}
 
 		if ( isset( $request['in_stock'] ) ) {
-			$variation->set_stock_status( true === $request['in_stock'] ? 'instock' : 'outofstock' );
+			$variation->set_stock_status( true === $request['in_stock'] ? ProductStockStatus::IN_STOCK : ProductStockStatus::OUT_OF_STOCK );
 		}
 
 		if ( isset( $request['backorders'] ) ) {
@@ -646,11 +648,18 @@ class WC_REST_Product_Variations_V2_Controller extends WC_REST_Products_V2_Contr
 			if ( ! empty( $items[ $batch_type ] ) ) {
 				$injected_items = array();
 				foreach ( $items[ $batch_type ] as $item ) {
-					$injected_items[] = is_array( $item ) ? array_merge(
+					$injected_item = is_array( $item ) ? array_merge(
 						array(
 							'product_id' => $product_id,
 						), $item
 					) : $item;
+					if ( 'delete' === $batch_type && is_int( $item ) ) {
+						$injected_item = array(
+							'id'         => $item,
+							'product_id' => $product_id,
+						);
+					}
+					$injected_items[] = $injected_item;
 				}
 				$body_params[ $batch_type ] = $injected_items;
 			}

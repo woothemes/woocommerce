@@ -58,6 +58,6 @@ export const CustomHandle = () => {
 };
 
 export default {
-	title: 'WooCommerce Admin/components/Sortable',
+	title: 'Components/Sortable',
 	component: Sortable,
 };

@@ -14,10 +14,6 @@
 	}
 }
 
-.wc-block-editor-quantity-selector-style {
-	width: 100%;
-}
-
 .quantity .qty {
 	// WooCommerce core styles: https://github.com/woocommerce/woocommerce/blob/c9f62609155825cd817976c7611b9b0415e90f2f/plugins/woocommerce/client/legacy/css/woocommerce.scss/#L111-L112
 	width: 3.631em;
@@ -32,10 +28,6 @@ div.product form.cart div.quantity {
 
 input {
 	height: auto;
-}
-
-.wc-block-components-quantity-selector--input {
-	padding: unset;
 }
 
 .wc-block-add-to-cart-form.wc-block-add-to-cart-form--stepper {

@@ -1,6 +1,9 @@
 <?php
 namespace Automattic\WooCommerce\StoreApi\Utilities;
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use WC_Tax;
 
 /**
@@ -30,7 +33,7 @@ class ProductQuery {
 			'slug'                => $request['slug'],
 			'fields'              => 'ids',
 			'ignore_sticky_posts' => true,
-			'post_status'         => 'publish',
+			'post_status'         => ProductStatus::PUBLISH,
 			'date_query'          => array(),
 			'post_type'           => 'product',
 		);
@@ -45,7 +48,7 @@ class ProductQuery {
 
 		// Filter product type by slug.
 		if ( ! empty( $request['type'] ) ) {
-			if ( 'variation' === $request['type'] ) {
+			if ( ProductType::VARIATION === $request['type'] ) {
 				$args['post_type'] = 'product_variation';
 			} else {
 				$args['post_type'] = 'product';
@@ -200,14 +203,14 @@ class ProductQuery {
 		$visibility_options = wc_get_product_visibility_options();
 
 		if ( in_array( $catalog_visibility, array_keys( $visibility_options ), true ) ) {
-			$exclude_from_catalog = 'search' === $catalog_visibility ? '' : 'exclude-from-catalog';
-			$exclude_from_search  = 'catalog' === $catalog_visibility ? '' : 'exclude-from-search';
+			$exclude_from_catalog = CatalogVisibility::SEARCH === $catalog_visibility ? '' : 'exclude-from-catalog';
+			$exclude_from_search  = CatalogVisibility::CATALOG === $catalog_visibility ? '' : 'exclude-from-search';
 
 			$args['tax_query'][] = array(
 				'taxonomy'      => 'product_visibility',
 				'field'         => 'name',
 				'terms'         => array( $exclude_from_catalog, $exclude_from_search ),
-				'operator'      => 'hidden' === $catalog_visibility ? 'AND' : 'NOT IN',
+				'operator'      => CatalogVisibility::HIDDEN === $catalog_visibility ? 'AND' : 'NOT IN',
 				'rating_filter' => true,
 			);
 		}

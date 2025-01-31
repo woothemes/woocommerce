@@ -1,4 +1,6 @@
 const { test, expect } = require( '@playwright/test' );
+const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 const wcApi = require( '@woocommerce/woocommerce-rest-api' ).default;
 
 const searchString = 'James Doe';
@@ -71,9 +73,9 @@ const deleteCustomer = async ( api ) => {
 
 test.describe(
 	'WooCommerce Orders > Search orders',
-	{ tag: [ '@services', '@hpos' ] },
+	{ tag: [ tags.HPOS ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		let productId, customerId, orderId;
 
@@ -142,7 +144,7 @@ test.describe(
 		} );
 
 		test( 'can search for order by order id', async ( { page } ) => {
-			await page.goto( '/wp-admin/admin.php?page=wc-orders' );
+			await page.goto( 'wp-admin/admin.php?page=wc-orders' );
 			await page
 				.locator( '[type=search][name=s]' )
 				.fill( orderId.toString() );
@@ -157,7 +159,7 @@ test.describe(
 			test( `can search for order containing "${ queries[ i ][ 0 ] }" as the ${ queries[ i ][ 1 ] }`, async ( {
 				page,
 			} ) => {
-				await page.goto( '/wp-admin/admin.php?page=wc-orders' );
+				await page.goto( 'wp-admin/admin.php?page=wc-orders' );
 				await page
 					.locator( '[type=search][name=s]' )
 					.fill( queries[ i ][ 0 ] );

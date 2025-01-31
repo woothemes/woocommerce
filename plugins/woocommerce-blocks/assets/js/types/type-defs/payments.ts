@@ -150,12 +150,7 @@ export type PaymentMethods =
 /**
  * Used to represent payment methods in a context where storing objects is not allowed, i.e. in data stores.
  */
-export type PlainPaymentMethods = Record< string, { name: string } >;
-
-/**
- * Used to represent payment methods in a context where storing objects is not allowed, i.e. in data stores.
- */
-export type PlainExpressPaymentMethods = Record<
+export type PlainPaymentMethods = Record<
 	string,
 	{
 		name: string;
@@ -165,6 +160,11 @@ export type PlainExpressPaymentMethods = Record<
 		supportsStyle: string[];
 	}
 >;
+
+/**
+ * Used to represent payment methods in a context where storing objects is not allowed, i.e. in data stores.
+ */
+export type PlainExpressPaymentMethods = PlainPaymentMethods;
 
 export type ExpressPaymentMethods =
 	| Record< string, ExpressPaymentMethodConfigInstance >

@@ -1,12 +1,21 @@
-const { test: baseTest, expect } = require( '../../fixtures/fixtures' );
-const {
-	goToPageEditor,
-	fillPageTitle,
-	insertBlock,
-	getCanvas,
-	publishPage,
+/**
+ * External dependencies
+ */
+import {
 	closeChoosePatternModal,
-} = require( '../../utils/editor' );
+	getCanvas,
+	goToPageEditor,
+	insertBlock,
+	publishPage,
+} from '@woocommerce/e2e-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { ADMIN_STATE_PATH } from '../../playwright.config';
+
+const { test: baseTest, expect, tags } = require( '../../fixtures/fixtures' );
+const { fillPageTitle } = require( '../../utils/editor' );
 const { getInstalledWordPressVersion } = require( '../../utils/wordpress' );
 
 // some WooCommerce Patterns to use
@@ -22,19 +31,14 @@ const wooPatterns = [
 ];
 
 const test = baseTest.extend( {
-	storageState: process.env.ADMINSTATE,
+	storageState: ADMIN_STATE_PATH,
 	testPageTitlePrefix: 'Woocommerce Patterns',
 } );
 
 test.describe(
 	'Add WooCommerce Patterns Into Page',
 	{
-		tag: [
-			'@gutenberg',
-			'@services',
-			'@skip-on-default-pressable',
-			'@skip-on-default-wpcom',
-		],
+		tag: [ tags.GUTENBERG, tags.SKIP_ON_EXTERNAL_ENV ],
 	},
 	() => {
 		test( 'can insert WooCommerce patterns into page', async ( {

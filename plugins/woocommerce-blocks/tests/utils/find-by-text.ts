@@ -9,7 +9,7 @@ import type { MatcherFunction } from '@testing-library/react';
  */
 export const textContentMatcher = ( text: string ): MatcherFunction => {
 	return ( _content, node ) => {
-		const hasText = ( _node ) => _node.textContent === text;
+		const hasText = ( _node ) => _node.textContent?.includes( text );
 		const nodeHasText = hasText( node );
 		const childrenDontHaveText = Array.from( node?.children || [] ).every(
 			( child ) => ! hasText( child )

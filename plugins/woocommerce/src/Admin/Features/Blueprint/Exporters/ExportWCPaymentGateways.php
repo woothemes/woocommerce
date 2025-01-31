@@ -71,4 +71,22 @@ class ExportWCPaymentGateways implements StepExporter {
 			\WC_Payments::hide_gateways_on_settings_page();
 		}
 	}
+
+	/**
+	 * Return label used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_label() {
+		return __( 'Payments', 'woocommerce' );
+	}
+
+	/**
+	 * Return description used in the frontend.
+	 *
+	 * @return string
+	 */
+	public function get_description() {
+		return __( 'It includes payment gateways and their settings.', 'woocommerce' );
+	}
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { CHECKOUT_STORE_KEY, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore, PAYMENT_STORE_KEY } from '@woocommerce/block-data';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -23,7 +23,7 @@ export const useCheckoutSubmit = () => {
 		isComplete,
 		hasError,
 	} = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
+		const store = select( checkoutStore );
 		return {
 			isCalculating: store.isCalculating(),
 			isBeforeProcessing: store.isBeforeProcessing(),
@@ -33,19 +33,17 @@ export const useCheckoutSubmit = () => {
 			hasError: store.hasError(),
 		};
 	} );
-	const {
-		activePaymentMethod,
-		isExpressPaymentMethodActive,
-		isPaymentMethodsInitialized,
-	} = useSelect( ( select ) => {
-		const store = select( PAYMENT_STORE_KEY );
+	const { activePaymentMethod, isExpressPaymentMethodActive } = useSelect(
+		( select ) => {
+			const store = select( PAYMENT_STORE_KEY );
 
-		return {
-			activePaymentMethod: store.getActivePaymentMethod(),
-			isExpressPaymentMethodActive: store.isExpressPaymentMethodActive(),
-			isPaymentMethodsInitialized: store.paymentMethodsInitialized(),
-		};
-	} );
+			return {
+				activePaymentMethod: store.getActivePaymentMethod(),
+				isExpressPaymentMethodActive:
+					store.isExpressPaymentMethodActive(),
+			};
+		}
+	);
 
 	const { onSubmit } = useCheckoutEventsContext();
 
@@ -60,10 +58,7 @@ export const useCheckoutSubmit = () => {
 		paymentMethodButtonLabel,
 		onSubmit,
 		isCalculating,
-		isDisabled:
-			isProcessing ||
-			isExpressPaymentMethodActive ||
-			! isPaymentMethodsInitialized,
+		isDisabled: isProcessing || isExpressPaymentMethodActive,
 		waitingForProcessing,
 		waitingForRedirect,
 	};

@@ -17,12 +17,12 @@ use Automattic\WooCommerce\Blocks\QueryFilters;
 use Automattic\WooCommerce\Blocks\Domain\Services\CreateAccount;
 use Automattic\WooCommerce\Blocks\Domain\Services\Notices;
 use Automattic\WooCommerce\Blocks\Domain\Services\DraftOrders;
-use Automattic\WooCommerce\Blocks\Domain\Services\FeatureGating;
 use Automattic\WooCommerce\Blocks\Domain\Services\GoogleAnalytics;
 use Automattic\WooCommerce\Blocks\Domain\Services\Hydration;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsAdmin;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsFrontend;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
 use Automattic\WooCommerce\Blocks\InboxNotifications;
 use Automattic\WooCommerce\Blocks\Installer;
 use Automattic\WooCommerce\Blocks\Migration;
@@ -224,12 +224,6 @@ class Bootstrap {
 	 */
 	protected function register_dependencies() {
 		$this->container->register(
-			FeatureGating::class,
-			function () {
-				return new FeatureGating();
-			}
-		);
-		$this->container->register(
 			AssetApi::class,
 			function ( Container $container ) {
 				return new AssetApi( $container->get( Package::class ) );
@@ -306,9 +300,16 @@ class Bootstrap {
 			}
 		);
 		$this->container->register(
+			CheckoutFieldsSchema::class,
+			function () {
+				return new CheckoutFieldsSchema();
+			}
+		);
+		$this->container->register(
 			CheckoutFields::class,
 			function ( Container $container ) {
-				return new CheckoutFields( $container->get( AssetDataRegistry::class ) );
+				$schema = $container->get( CheckoutFieldsSchema::class );
+				return new CheckoutFields( $container->get( AssetDataRegistry::class ), $schema );
 			}
 		);
 		$this->container->register(

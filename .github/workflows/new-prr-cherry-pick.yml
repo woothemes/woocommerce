@@ -262,6 +262,16 @@ jobs:
 
                       An attempt to cherry pick PR(s) into outgoing `${{ needs.prep.outputs.frozenRelease }}` for  `${{ needs.prep.outputs.release }}` has failed. This could be due to a merge conflict or something else that requires manual attention. Please check: https://github.com/woocommerce/woocommerce/pull/${{ needs.prep.outputs.pr }}
 
+            - name: Apply label "cherry pick failed" using the newly created PR url
+              if: ${{ failure() }}
+              run: |
+                gh pr edit $PR_NUMBER --add-label "cherry pick failed" --repo "$OWNER/$REPO"
+              env:
+                PR_NUMBER: ${{ needs.prep.outputs.pr }}
+                OWNER: ${{ github.event.repository.owner.login }}
+                REPO: ${{ github.event.repository.name }}
+                GH_TOKEN: ${{ github.token }}
+
             - name: Notify Slack on success
               if: ${{ success() && inputs.skipSlackPing != true }}
               uses: archive/github-actions-slack@v2.0.0
@@ -280,7 +290,7 @@ jobs:
               run: |
                   gh pr comment $HTML_URL --body "IMPORTANT: Merging this PR to the appropriate branches is critical to the release process and ensures that the bug does not cause regressions in the future releases.
 
-                  Cherry picking failed for the frozen release: $FROZEN_RELEASE_BRANCH. Please bring this to release team's attention. Workflow link for debugging:https://github.com/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/new-prr-cherry-pick.yml"
+                  Cherry picking failed for the frozen release: $FROZEN_RELEASE_BRANCH. Please bring this to release team's attention. Workflow link for debugging: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
               env:
                 GH_TOKEN: ${{ github.token }}
                 HTML_URL: ${{ github.event.pull_request.html_url }}

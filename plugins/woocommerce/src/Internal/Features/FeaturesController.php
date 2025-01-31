@@ -5,6 +5,7 @@
 
 namespace Automattic\WooCommerce\Internal\Features;
 
+use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Internal\Admin\Analytics;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -161,8 +162,9 @@ class FeaturesController {
 	 */
 	private function get_feature_definitions() {
 		if ( empty( $this->features ) ) {
-			$legacy_features = array(
-				'analytics'             => array(
+			$alpha_feature_testing_is_enabled = Constants::is_true( 'WOOCOMMERCE_ENABLE_ALPHA_FEATURE_TESTING' );
+			$legacy_features                  = array(
+				'analytics'              => array(
 					'name'               => __( 'Analytics', 'woocommerce' ),
 					'description'        => __( 'Enable WooCommerce Analytics', 'woocommerce' ),
 					'option_key'         => Analytics::TOGGLE_OPTION_NAME,
@@ -171,7 +173,7 @@ class FeaturesController {
 					'disable_ui'         => false,
 					'is_legacy'          => true,
 				),
-				'product_block_editor'  => array(
+				'product_block_editor'   => array(
 					'name'            => __( 'New product editor', 'woocommerce' ),
 					'description'     => __( 'Try the new product editor (Beta)', 'woocommerce' ),
 					'is_experimental' => true,
@@ -192,13 +194,25 @@ class FeaturesController {
 						return $string;
 					},
 				),
-				'cart_checkout_blocks'  => array(
+				'cart_checkout_blocks'   => array(
 					'name'            => __( 'Cart & Checkout Blocks', 'woocommerce' ),
 					'description'     => __( 'Optimize for faster checkout', 'woocommerce' ),
 					'is_experimental' => false,
 					'disable_ui'      => true,
 				),
-				'marketplace'           => array(
+				'rate_limit_checkout'    => array(
+					'name'               => __( 'Rate limit Checkout', 'woocommerce' ),
+					'description'        => sprintf(
+						// translators: %s is the URL to the rate limiting documentation.
+						__( 'Enables rate limiting for Checkout place order and Store API /checkout endpoint. To further control this, refer to <a href="%s" target="_blank">rate limiting documentation</a>.', 'woocommerce' ),
+						'https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/StoreApi/docs/rate-limiting.md'
+					),
+					'is_experimental'    => false,
+					'disable_ui'         => false,
+					'enabled_by_default' => false,
+					'is_legacy'          => true,
+				),
+				'marketplace'            => array(
 					'name'               => __( 'Marketplace', 'woocommerce' ),
 					'description'        => __(
 						'New, faster way to find extensions and themes for your WooCommerce store',
@@ -211,7 +225,7 @@ class FeaturesController {
 				),
 				// Marked as a legacy feature to avoid compatibility checks, which aren't really relevant to this feature.
 				// https://github.com/woocommerce/woocommerce/pull/39701#discussion_r1376976959.
-				'order_attribution'     => array(
+				'order_attribution'      => array(
 					'name'               => __( 'Order Attribution', 'woocommerce' ),
 					'description'        => __(
 						'Enable this feature to track and credit channels and campaigns that contribute to orders on your site',
@@ -222,7 +236,7 @@ class FeaturesController {
 					'is_legacy'          => true,
 					'is_experimental'    => false,
 				),
-				'site_visibility_badge' => array(
+				'site_visibility_badge'  => array(
 					'name'               => __( 'Site visibility badge', 'woocommerce' ),
 					'description'        => __(
 						'Enable the site visibility badge in the WordPress admin bar',
@@ -234,7 +248,7 @@ class FeaturesController {
 					'is_experimental'    => false,
 					'disabled'           => false,
 				),
-				'hpos_fts_indexes'      => array(
+				'hpos_fts_indexes'       => array(
 					'name'               => __( 'HPOS Full text search indexes', 'woocommerce' ),
 					'description'        => __(
 						'Create and use full text search indexes for orders. This feature only works with high-performance order storage.',
@@ -245,24 +259,58 @@ class FeaturesController {
 					'is_legacy'          => true,
 					'option_key'         => CustomOrdersTableController::HPOS_FTS_INDEX_OPTION,
 				),
-				'remote_logging'        => array(
+				'hpos_datastore_caching' => array(
+					'name'               => __( 'HPOS Data Caching', 'woocommerce' ),
+					'description'        => __(
+						'Enable order data caching in the datastore. This feature only works with high-performance order storage.',
+						'woocommerce'
+					),
+					'is_experimental'    => true,
+					'enabled_by_default' => false,
+					'is_legacy'          => true,
+					'disable_ui'         => ! $alpha_feature_testing_is_enabled,
+					'setting'            => array(
+						'disabled' => ! ( $alpha_feature_testing_is_enabled && wp_using_ext_object_cache() ),
+						'desc_tip' => function () {
+							$string = '';
+							if ( ! wp_using_ext_object_cache() ) {
+								$string = __(
+									'⚠ This feature is currently only suggested with the use of external object caching.',
+									'woocommerce'
+								);
+							}
+
+							return $string;
+						},
+					),
+					'option_key'         => CustomOrdersTableController::HPOS_DATASTORE_CACHING_ENABLED_OPTION,
+				),
+				'remote_logging'         => array(
 					'name'               => __( 'Remote Logging', 'woocommerce' ),
 					'description'        => __(
 						'Enable this feature to log errors and related data to Automattic servers for debugging purposes and to improve WooCommerce',
 						'woocommerce'
 					),
 					'enabled_by_default' => true,
-					'disable_ui'         => true,
-					'is_legacy'          => false,
-					'is_experimental'    => true,
+					'disable_ui'         => false,
+
+					/*
+					 * This is not truly a legacy feature (it is not a feature that pre-dates the FeaturesController),
+					 * but we wish to handle compatibility checking in a similar fashion to legacy features. The
+					 * rational for setting legacy to true is therefore similar to that of the 'order_attribution'
+					 * feature.
+					 *
+					 * @see https://github.com/woocommerce/woocommerce/pull/39701#discussion_r1376976959
+					 */
+					'is_legacy'          => true,
+					'is_experimental'    => false,
 				),
-				'email_improvements'    => array(
+				'email_improvements'     => array(
 					'name'        => __( 'Email improvements', 'woocommerce' ),
 					'description' => __(
 						'Enable modern email design and live preview for transactional emails',
 						'woocommerce'
 					),
-					'disable_ui'  => true,
 				),
 			);
 
@@ -551,7 +599,7 @@ class FeaturesController {
 	 *
 	 * @return bool True if 'woocommerce_init' has run or is running, false otherwise.
 	 */
-	private function verify_did_woocommerce_init( string $function_name = null ): bool {
+	private function verify_did_woocommerce_init( ?string $function_name = null ): bool {
 		if ( ! $this->proxy->call_function( 'did_action', 'woocommerce_init' ) &&
 			! $this->proxy->call_function( 'doing_action', 'woocommerce_init' ) ) {
 			if ( ! is_null( $function_name ) ) {

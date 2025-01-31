@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { useState } from '@wordpress/element';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { Pill } from '@woocommerce/components';
 import { __ } from '@wordpress/i18n';
 import { recordEvent } from '@woocommerce/tracks';
-import { PLUGINS_STORE_NAME } from '@woocommerce/data';
+import { PLUGINS_STORE_NAME, type PluginSelectors } from '@woocommerce/data';
 
 /**
  * Internal dependencies
@@ -17,7 +17,6 @@ import { RecommendedPlugin } from '~/marketing/types';
 import { getRecommendationSource } from '~/marketing/utils';
 import { getInAppPurchaseUrl } from '~/lib/in-app-purchase';
 import { createNoticesFromResponse } from '~/lib/notices';
-import { useIsPluginInstalledNotActivated } from './useIsPluginInstalledNotActivated';
 import './PluginCardBody.scss';
 
 type SmartPluginCardBodyProps = {
@@ -40,8 +39,18 @@ export const SmartPluginCardBody = ( {
 		null
 	);
 	const { installAndActivatePlugins } = useDispatch( PLUGINS_STORE_NAME );
-	const { isPluginInstalledNotActivated } =
-		useIsPluginInstalledNotActivated();
+	const { installState } = useSelect(
+		( select ) => {
+			const { getPluginInstallState } = select(
+				PLUGINS_STORE_NAME
+			) as PluginSelectors;
+
+			return {
+				installState: getPluginInstallState( plugin.product ),
+			};
+		},
+		[ plugin.product ]
+	);
 
 	/**
 	 * Install and activate a plugin.
@@ -76,7 +85,12 @@ export const SmartPluginCardBody = ( {
 	const renderButton = () => {
 		const buttonDisabled = !! currentPlugin;
 
-		if ( isPluginInstalledNotActivated( plugin.product ) ) {
+		/**
+		 * When the plugin is installed but not activated yet.
+		 */
+		const isPluginInstalledNotActivated = installState === 'installed';
+
+		if ( isPluginInstalledNotActivated ) {
 			return (
 				<Button
 					variant="secondary"

@@ -6,6 +6,10 @@
 	}
 
 	.drag-handle-wrapper {
+		margin-right: $gap;
+		align-self: stretch;
+		align-content: center;
+
 		&:hover {
 			cursor: grab;
 		}
@@ -15,10 +19,14 @@
 				0 0 0 var(--wp-admin-border-width-focus)
 				var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 		}
-		margin-right: 16px;
+
+		&:last-child {
+			margin-right: 0;
+		}
 	}
 
 	.drag-handle {
 		line-height: 0;
+		align-content: center;
 	}
 }
