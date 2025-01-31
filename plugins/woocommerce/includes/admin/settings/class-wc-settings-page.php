@@ -295,7 +295,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		public function get_custom_view( $action, $section_id = false ) {
 			global $current_section;
 
-			if ( $section_id ) {	
+			if ( $section_id ) {
 				// Make sure the current section is set to the sectionid here. Reset it at the end of the function.
 				$saved_current_section = $current_section;
 				// set global current_section to the section_id.
