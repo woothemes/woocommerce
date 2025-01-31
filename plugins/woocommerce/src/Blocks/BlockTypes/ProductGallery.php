@@ -115,12 +115,10 @@ class ProductGallery extends AbstractBlock {
 			$classname_single_image = 'is-single-product-gallery-image';
 		}
 
-		$classname                      = StyleAttributesUtils::get_classes_by_attributes( $attributes, array( 'extra_classes' ) );
-		$product_gallery_first_image    = ProductGalleryUtils::get_product_gallery_image_ids( $product, 1 );
-		$product_gallery_first_image_id = reset( $product_gallery_first_image );
-		$product_id                     = strval( $product->get_id() );
-		$gallery_with_dialog            = $this->inject_dialog( $content, $this->render_dialog( $product_gallery_full_images ) );
-		$p                              = new \WP_HTML_Tag_Processor( $gallery_with_dialog );
+		$classname           = StyleAttributesUtils::get_classes_by_attributes( $attributes, array( 'extra_classes' ) );
+		$product_id          = strval( $product->get_id() );
+		$gallery_with_dialog = $this->inject_dialog( $content, $this->render_dialog( $product_gallery_full_images ) );
+		$p                   = new \WP_HTML_Tag_Processor( $gallery_with_dialog );
 
 		if ( $p->next_tag() ) {
 			$p->set_attribute( 'data-wc-interactive', wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) );
@@ -136,6 +134,9 @@ class ProductGallery extends AbstractBlock {
 						'elementThatTriggeredDialogOpening' => null,
 						'disableLeft'            => true,
 						'disableRight'           => false,
+						'isDragging'             => false,
+						'touchStartX'            => 0,
+						'touchCurrentX'          => 0,
 					),
 					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 				)
