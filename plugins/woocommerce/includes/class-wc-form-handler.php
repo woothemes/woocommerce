@@ -357,7 +357,7 @@ class WC_Form_Handler {
 
 				$customer->save();
 			} catch ( WC_Data_Exception $e ) {
-				// These error message are already translated.
+				// These error messages are already translated.
 				wc_add_notice( $e->getMessage(), 'error' );
 			} catch ( \Exception $e ) {
 				wc_add_notice(
