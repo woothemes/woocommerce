@@ -159,9 +159,15 @@
 			&__actions {
 				display: flex;
 				gap: $gap;
+				align-items: center;
 
 				.woocommerce-ellipsis-menu {
 					width: 32px;
+				}
+
+				&__arrow {
+					padding: $grid-unit-05;
+					line-height: 0;
 				}
 			}
 		}
