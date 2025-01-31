@@ -10,9 +10,7 @@ test.describe( 'Marketing page', () => {
 		page,
 	} ) => {
 		// See if this is a WPCOM site.
-		const base_hostname = new URL( baseURL ).hostname;
-		const pattern_domain_name = /\.(?:wordpress\.com|wpcomstaging\.com)$/;
-		const is_wpcom_site = pattern_domain_name.test( base_hostname );
+		const is_wpcom_site = process.env.IS_WPCOM.toLowerCase() === 'true';
 
 		// Go to the Marketing page.
 		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing' );
