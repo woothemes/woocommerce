@@ -130,7 +130,7 @@ export const PaymentGatewayListItem = ( {
 						) }
 						{ /* If the gateway has a matching suggestion, it is an official extension. */ }
 						{ gateway._suggestion_id && (
-							<OfficialBadge variant="compact" />
+							<OfficialBadge variant="expanded" />
 						) }
 					</span>
 					<span
