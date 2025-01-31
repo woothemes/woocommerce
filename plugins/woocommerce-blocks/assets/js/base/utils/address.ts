@@ -194,7 +194,7 @@ export const formatShippingAddress = (
  *                             they will be ignored.
  */
 export const isAddressComplete = (
-	address: ShippingAddress | BillingAddress,
+	address: CartResponseBillingAddress | CartResponseShippingAddress,
 	keysToCheck: ( keyof CoreAddress )[] = []
 ): boolean => {
 	if ( ! address.country ) {

@@ -52,7 +52,11 @@
 			margin: 0;
 			display: flex;
 			align-items: center;
-			fill: var(--wc-product-filter-removable-chips-text, currentColor);
+			color: var(--wc-product-filter-removable-chips-text, currentColor);
+
+			.wc-block-product-filter-removable-chips__remove-icon {
+				fill: currentColor;
+			}
 		}
 	}
 }
