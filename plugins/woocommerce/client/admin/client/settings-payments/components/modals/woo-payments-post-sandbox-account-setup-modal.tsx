@@ -83,7 +83,7 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 								<p>
 									{ interpolateComponents( {
 										mixedString: __(
-											"We've created a test account for you so that you can begin testing payments on your store. Not sure what to test? Take a look at {{link}}how to test payments{{/link}}.",
+											"We've created a test account for you so that you can begin testing payments on your store. {{break/}}Not sure what to test? Take a look at {{link}}how to test payments{{/link}}.",
 											'woocommerce'
 										),
 										components: {
@@ -95,6 +95,7 @@ export const WooPaymentsPostSandboxAccountSetupModal = ( {
 													type="external"
 												/>
 											),
+											break: <br />,
 										},
 									} ) }
 								</p>
