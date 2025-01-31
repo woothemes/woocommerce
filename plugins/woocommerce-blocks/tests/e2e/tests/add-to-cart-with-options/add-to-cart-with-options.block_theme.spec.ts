@@ -1,26 +1,33 @@
 /**
  * External dependencies
  */
-import { test, expect } from '@woocommerce/e2e-utils';
+import { test as base, expect } from '@woocommerce/e2e-utils';
 
-const blockData = {
-	name: 'Add to Cart with Options (Experimental)',
-	slug: 'woocommerce/add-to-cart-with-options',
-};
+/**
+ * Internal dependencies
+ */
+import AddToCartWithOptionsPage from './add-to-cart-with-options.page';
 
-test.describe( `${ blockData.name } Block`, () => {
-	test( 'allows switching to 3rd-party product types', async ( {
+const test = base.extend< { pageObject: AddToCartWithOptionsPage } >( {
+	pageObject: async ( { page, admin, editor, requestUtils }, use ) => {
+		const pageObject = new AddToCartWithOptionsPage( {
+			page,
+			admin,
+			editor,
+			requestUtils,
+		} );
+		await use( pageObject );
+	},
+} );
+
+test.describe( 'Add to Cart with Options Block', () => {
+	test( 'allows modifying the template parts', async ( {
+		page,
+		pageObject,
 		editor,
 		admin,
-		requestUtils,
-		page,
 	} ) => {
-		await requestUtils.activatePlugin(
-			'woocommerce-blocks-test-custom-product-type'
-		);
-
-		await requestUtils.setFeatureFlag( 'experimental-blocks', true );
-		await requestUtils.setFeatureFlag( 'blockified-add-to-cart', true );
+		await pageObject.setFeatureFlags();
 
 		await admin.visitSiteEditor( {
 			postId: 'woocommerce/woocommerce//single-product',
@@ -28,22 +35,48 @@ test.describe( `${ blockData.name } Block`, () => {
 			canvas: 'edit',
 		} );
 
-		await editor.insertBlock( { name: blockData.slug } );
-		const addToCartWithOptionsBlock = await editor.getBlockByName(
-			blockData.slug
+		await editor.insertBlock( { name: pageObject.BLOCK_SLUG } );
+
+		await pageObject.insertParagraphInTemplatePart(
+			'This is a test paragraph added to the Add to Cart with Options template part.'
 		);
-		await editor.selectBlocks( addToCartWithOptionsBlock );
 
-		const productTypeSwitcher = page.getByRole( 'button', {
-			name: 'Switch product type',
-		} );
-		await productTypeSwitcher.click();
-		const customProductTypeButton = page.getByRole( 'menuitem', {
-			name: 'Custom Product Type',
-		} );
-		await customProductTypeButton.click();
+		await editor.saveSiteEditorEntities();
 
-		const block = editor.canvas.getByLabel( `Block: ${ blockData.name }` );
+		await page.goto( '/product/cap' );
+
+		await expect(
+			page.getByText(
+				'This is a test paragraph added to the Add to Cart with Options template part.'
+			)
+		).toBeVisible();
+	} );
+
+	test( 'allows switching to 3rd-party product types', async ( {
+		pageObject,
+		editor,
+		admin,
+		requestUtils,
+	} ) => {
+		await requestUtils.activatePlugin(
+			'woocommerce-blocks-test-custom-product-type'
+		);
+
+		await pageObject.setFeatureFlags();
+
+		await admin.visitSiteEditor( {
+			postId: 'woocommerce/woocommerce//single-product',
+			postType: 'wp_template',
+			canvas: 'edit',
+		} );
+
+		await editor.insertBlock( { name: pageObject.BLOCK_SLUG } );
+
+		await pageObject.switchProductType( 'Custom Product Type' );
+
+		const block = editor.canvas.getByLabel(
+			`Block: ${ pageObject.BLOCK_NAME }`
+		);
 		const skeleton = block.locator( '.wc-block-components-skeleton' );
 		await expect( skeleton ).toBeVisible();
 	} );

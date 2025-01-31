@@ -3,6 +3,11 @@
  */
 import { getSetting, STORE_PAGES } from '@woocommerce/settings';
 import { CountryData } from '@woocommerce/types';
+import type {
+	AdditionalValues,
+	AddressForm,
+	ContactForm,
+} from '@woocommerce/settings';
 
 export type WordCountType =
 	| 'words'
@@ -53,9 +58,9 @@ export const SHIPPING_METHODS_EXIST = getSetting< boolean >(
 );
 
 type FieldsLocations = {
-	address: string[];
-	contact: string[];
-	order: string[];
+	address: ( keyof AddressForm )[];
+	contact: ( keyof ContactForm )[];
+	order: ( keyof AdditionalValues )[];
 };
 
 // Contains country names.

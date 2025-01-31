@@ -77,6 +77,11 @@ class PluginsHelper {
 	const DISMISS_DISCONNECT_NOTICE = 'woo_disconnect_notice_dismiss';
 
 	/**
+	 * Meta key for dismissing connected notice
+	 */
+	const DISMISS_CONNECT_NOTICE = 'woo_connect_notice_dismiss';
+
+	/**
 	 * Initialize hooks.
 	 */
 	public static function init() {
@@ -1104,6 +1109,33 @@ class PluginsHelper {
 		return sprintf(
 			/* translators: 1: Disconnected user email */
 			__( 'Successfully disconnected from <b>%1$s</b>.', 'woocommerce' ),
+			$user_email
+		);
+	}
+
+	/**
+	 * Get the connected status notice message.
+	 *
+	 * @param string $user_email the user email.
+	 *
+	 * @return string the connected notice message.
+	 */
+	public static function get_wccom_connected_notice( $user_email ) {
+		if ( ! WC_Helper::is_site_connected() ) {
+			return '';
+		}
+
+		if ( ! self::should_show_notice( self::DISMISS_CONNECT_NOTICE, false ) ) {
+			return '';
+		}
+
+		if ( ! $user_email ) {
+			return '';
+		}
+
+		return sprintf(
+		/* translators: 1: Disconnected user email */
+			__( 'Successfully connected to <b>%s</b>.', 'woocommerce' ),
 			$user_email
 		);
 	}

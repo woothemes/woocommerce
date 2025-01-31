@@ -31,6 +31,10 @@ class LocalPickupUtils {
 			$pickup_location_settings['enabled'] = 'no';
 		}
 
+		if ( ! isset( $pickup_location_settings['cost'] ) ) {
+			$pickup_location_settings['cost'] = '';
+		}
+
 		// Return settings as is if we're editing them.
 		if ( 'edit' === $context ) {
 			return $pickup_location_settings;

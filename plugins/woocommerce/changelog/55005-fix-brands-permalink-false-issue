@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Early exit in case of empty permalink.

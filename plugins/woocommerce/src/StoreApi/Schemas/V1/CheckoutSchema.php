@@ -329,6 +329,11 @@ class CheckoutSchema extends AbstractSchema {
 				'required'    => $field['required'],
 			];
 
+			// Conditional required field rules trump the default required value.
+			if ( ! empty( $field['rules']['required'] ) ) {
+				$field_schema['required'] = false;
+			}
+
 			if ( 'select' === $field['type'] ) {
 				$field_schema['enum'] = array_map(
 					function ( $option ) {
