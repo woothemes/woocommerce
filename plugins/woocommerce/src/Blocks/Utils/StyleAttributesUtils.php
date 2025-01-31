@@ -604,13 +604,12 @@ class StyleAttributesUtils {
 	 * @return array
 	 */
 	public static function get_text_align_class_and_style( $attributes ) {
-		if ( isset( $attributes['style']['typography']['textAlign'] ) ) {
+		if ( isset( $attributes['textAlign'] ) ) {
 			return array(
-				'class' => 'has-text-align-' . $attributes['style']['typography']['textAlign'],
+				'class' => 'has-text-align-' . $attributes['textAlign'],
 				'style' => null,
 			);
 		}
-
 		return self::EMPTY_STYLE;
 	}
 
