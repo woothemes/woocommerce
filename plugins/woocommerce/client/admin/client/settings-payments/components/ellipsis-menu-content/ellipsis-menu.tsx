@@ -67,6 +67,7 @@ export const EllipsisMenuWrapper = ( {
 						}
 					/>
 				) }
+				focusOnMount={ true }
 			/>
 			{ /* Modal for resetting WooPayments accounts */ }
 			<WooPaymentsResetAccountModal

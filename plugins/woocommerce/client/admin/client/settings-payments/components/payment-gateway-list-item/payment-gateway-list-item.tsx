@@ -28,6 +28,7 @@ import {
 } from '~/settings-payments/components/buttons';
 import { ReactivateLivePaymentsButton } from '~/settings-payments/components/buttons/reactivate-live-payments-button';
 import { IncentiveStatusBadge } from '~/settings-payments/components/incentive-status-badge';
+import { OfficialBadge } from '~/settings-payments/components/official-badge';
 
 type PaymentGatewayItemProps = {
 	gateway: PaymentGatewayProvider;
@@ -126,6 +127,10 @@ export const PaymentGatewayListItem = ( {
 									/>
 								}
 							/>
+						) }
+						{ /* If the gateway has a matching suggestion, it is an official extension. */ }
+						{ gateway._suggestion_id && (
+							<OfficialBadge variant="expanded" />
 						) }
 					</span>
 					<span

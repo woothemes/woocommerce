@@ -17,6 +17,7 @@ import { Link } from '@woocommerce/components';
 import { getAdminLink } from '@woocommerce/settings';
 import InfoOutline from 'gridicons/dist/info-outline';
 import interpolateComponents from '@automattic/interpolate-components';
+import { useDebounce } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -77,14 +78,22 @@ export const PaymentGateways = ( {
 			.sort( ( a, b ) => a.name.localeCompare( b.name ) );
 	}, [] );
 
-	const isBaseCountryDiffrent =
+	const isBaseCountryDifferent =
 		storeCountryCode !== businessRegistrationCountry;
 	const selectContainerClass = clsx(
 		'settings-payment-gateways__header-select-container',
 		{
-			'has-alert': isBaseCountryDiffrent,
+			'has-alert': isBaseCountryDifferent,
 		}
 	);
+
+	const hidePopoverDebounced = useDebounce( () => {
+		setIsPopoverVisible( false );
+	}, 500 );
+	const showPopover = () => {
+		setIsPopoverVisible( true );
+		hidePopoverDebounced.cancel();
+	};
 
 	return (
 		<div className="settings-payment-gateways">
@@ -120,14 +129,14 @@ export const PaymentGateways = ( {
 							} );
 						} }
 					/>
-					{ isBaseCountryDiffrent && (
+					{ isBaseCountryDifferent && (
 						<div
 							className="settings-payment-gateways__header-select-container--indicator"
 							onClick={ () =>
 								setIsPopoverVisible( ! isPopoverVisible )
 							}
-							onMouseEnter={ () => setIsPopoverVisible( true ) }
-							onMouseLeave={ () => setIsPopoverVisible( false ) }
+							onMouseEnter={ showPopover }
+							onMouseLeave={ hidePopoverDebounced }
 							tabIndex={ 0 }
 							role="button"
 							onKeyDown={ ( event ) => {
@@ -145,31 +154,38 @@ export const PaymentGateways = ( {
 
 							{ isPopoverVisible && (
 								<Popover
-									position="top left"
 									className="settings-payment-gateways__header-select-container--indicator-popover"
+									placement="top-end"
+									offset={ 4 }
+									variant="unstyled"
+									focusOnMount={ true }
 									noArrow={ true }
+									shift={ true }
+									inline={ true }
 									onClose={ () =>
 										setIsPopoverVisible( false )
 									}
 								>
-									<div className="settings-payment-gateways__header-select-container--indicator-popover-content">
-										{ interpolateComponents( {
-											mixedString: __(
-												'Your business location does not match your store location. {{link}}Edit store location.{{/link}}',
-												'woocommerce'
-											),
-											components: {
-												link: (
-													<Link
-														href={ getAdminLink(
-															'admin.php?page=wc-settings&tab=general'
-														) }
-														target="_blank"
-														type="external"
-													/>
+									<div className="components-popover__content-container">
+										<p>
+											{ interpolateComponents( {
+												mixedString: __(
+													'Your business location does not match your store location. {{link}}Edit store location.{{/link}}',
+													'woocommerce'
 												),
-											},
-										} ) }
+												components: {
+													link: (
+														<Link
+															href={ getAdminLink(
+																'admin.php?page=wc-settings&tab=general'
+															) }
+															target="_blank"
+															type="external"
+														/>
+													),
+												},
+											} ) }
+										</p>
 									</div>
 								</Popover>
 							) }

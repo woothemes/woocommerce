@@ -2647,7 +2647,7 @@ class PaymentExtensionSuggestions {
 			self::WOOPAYMENTS       => array(
 				'_type'       => self::TYPE_PSP,
 				'title'       => esc_html__( 'Accept payments with Woo', 'woocommerce' ),
-				'description' => esc_html__( 'Credit/debit cards, Apple Pay, Google Pay and more.', 'woocommerce' ),
+				'description' => esc_html__( 'Credit/debit cards, Apple Pay, Google Pay, and more.', 'woocommerce' ),
 				'image'       => plugins_url( 'assets/images/onboarding/woopayments.svg', WC_PLUGIN_FILE ),
 				'icon'        => plugins_url( 'assets/images/onboarding/icons/woo.svg', WC_PLUGIN_FILE ),
 				'plugin'      => array(
