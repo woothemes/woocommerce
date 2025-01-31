@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\StoreApi\Schemas\V1;
 
 use Automattic\WooCommerce\StoreApi\SchemaController;
@@ -7,6 +9,7 @@ use Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\StoreApi\Utilities\SanitizationUtils;
+use Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema;
 
 /**
  * CheckoutSchema class.
@@ -48,6 +51,13 @@ class CheckoutSchema extends AbstractSchema {
 	protected $image_attachment_schema;
 
 	/**
+	 * Cart schema instance.
+	 *
+	 * @var CartSchema
+	 */
+	protected $cart_schema;
+
+	/**
 	 * Additional fields controller.
 	 *
 	 * @var CheckoutFields
@@ -65,6 +75,7 @@ class CheckoutSchema extends AbstractSchema {
 		$this->billing_address_schema       = $this->controller->get( BillingAddressSchema::IDENTIFIER );
 		$this->shipping_address_schema      = $this->controller->get( ShippingAddressSchema::IDENTIFIER );
 		$this->image_attachment_schema      = $this->controller->get( ImageAttachmentSchema::IDENTIFIER );
+		$this->cart_schema                  = $this->controller->get( CartSchema::IDENTIFIER );
 		$this->additional_fields_controller = Package::container()->get( CheckoutFields::class );
 	}
 
@@ -146,8 +157,8 @@ class CheckoutSchema extends AbstractSchema {
 				'context'     => [ 'view', 'edit' ],
 			],
 			'payment_result'    => [
-				'description' => __( 'Result of payment processing, or false if not yet processed.', 'woocommerce' ),
-				'type'        => 'object',
+				'description' => __( 'Result of payment processing, or null if not yet processed.', 'woocommerce' ),
+				'type'        => [ 'object', 'null' ],
 				'context'     => [ 'view', 'edit' ],
 				'readonly'    => true,
 				'properties'  => [
@@ -201,7 +212,9 @@ class CheckoutSchema extends AbstractSchema {
 	 * @return array
 	 */
 	public function get_item_response( $item ) {
-		return $this->get_checkout_response( $item->order, $item->payment_result );
+		$cart           = property_exists( $item, 'cart' ) ? $item->cart : null;
+		$payment_result = property_exists( $item, 'payment_result' ) ? $item->payment_result : null;
+		return $this->get_checkout_response( $item->order, $payment_result, $cart );
 	}
 
 	/**
@@ -209,26 +222,30 @@ class CheckoutSchema extends AbstractSchema {
 	 *
 	 * @param \WC_Order          $order          Order object.
 	 * @param PaymentResult|null $payment_result Payment result object.
+	 * @param \WC_Cart|null      $cart           Cart object.
 	 * @return array
 	 */
-	protected function get_checkout_response( \WC_Order $order, ?PaymentResult $payment_result = null ) {
+	protected function get_checkout_response( \WC_Order $order, PaymentResult $payment_result = null, \WC_Cart $cart = null ) {
+		$payment_result = $payment_result ? [
+			'payment_status'  => $payment_result->status,
+			'payment_details' => $this->prepare_payment_details_for_response( $payment_result->payment_details ),
+			'redirect_url'    => $payment_result->redirect_url,
+		] : null;
+
 		return [
-			'order_id'          => $order->get_id(),
-			'status'            => $order->get_status(),
-			'order_key'         => $order->get_order_key(),
-			'order_number'      => $order->get_order_number(),
-			'customer_note'     => $order->get_customer_note(),
-			'customer_id'       => $order->get_customer_id(),
-			'billing_address'   => (object) $this->billing_address_schema->get_item_response( $order ),
-			'shipping_address'  => (object) $this->shipping_address_schema->get_item_response( $order ),
-			'payment_method'    => $order->get_payment_method(),
-			'payment_result'    => [
-				'payment_status'  => $payment_result->status,
-				'payment_details' => $this->prepare_payment_details_for_response( $payment_result->payment_details ),
-				'redirect_url'    => $payment_result->redirect_url,
-			],
-			'additional_fields' => $this->get_additional_fields_response( $order ),
-			self::EXTENDING_KEY => $this->get_extended_data( self::IDENTIFIER ),
+			'order_id'           => $order->get_id(),
+			'status'             => $order->get_status(),
+			'order_key'          => $order->get_order_key(),
+			'order_number'       => $order->get_order_number(),
+			'customer_note'      => $order->get_customer_note(),
+			'customer_id'        => $order->get_customer_id(),
+			'billing_address'    => (object) $this->billing_address_schema->get_item_response( $order ),
+			'shipping_address'   => (object) $this->shipping_address_schema->get_item_response( $order ),
+			'payment_method'     => $order->get_payment_method(),
+			'payment_result'     => $payment_result,
+			'additional_fields'  => $this->get_additional_fields_response( $order ),
+			'__experimentalCart' => $cart ? $this->cart_schema->get_item_response( $cart ) : null,
+			self::EXTENDING_KEY  => $this->get_extended_data( self::IDENTIFIER ),
 		];
 	}
 
@@ -397,7 +414,12 @@ class CheckoutSchema extends AbstractSchema {
 		$fields                  = $this->sanitize_additional_fields( $fields );
 		$additional_field_schema = $this->get_additional_fields_schema();
 
-		// Loop over the schema instead of the fields. This is to ensure missing fields are validated.
+		// for PUT requests, we only want to validate the fields that are being updated.
+		if ( $request->get_method() === 'PUT' ) {
+			$additional_field_schema = array_intersect_key( $additional_field_schema, $fields );
+		}
+
+		// on POST, loop over the schema instead of the fields. This is to ensure missing fields are validated.
 		foreach ( $additional_field_schema as $key => $schema ) {
 			if ( ! isset( $fields[ $key ] ) && ! $schema['required'] ) {
 				// Optional fields can go missing.

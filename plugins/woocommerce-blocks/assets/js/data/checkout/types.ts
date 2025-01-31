@@ -4,6 +4,7 @@
 import type { Notice } from '@wordpress/notices/';
 import { DataRegistry } from '@wordpress/data';
 import { FieldValidationStatus } from '@woocommerce/types';
+import { AdditionalValues } from '@woocommerce/settings';
 
 /**
  * Internal dependencies
@@ -65,3 +66,9 @@ export type emitValidateEventType = ( {
 	dispatch: DispatchFromMap< typeof actions >;
 	registry: DataRegistry;
 } ) => void;
+
+export type CheckoutPutData = {
+	additional_fields?: AdditionalValues;
+	order_notes?: string;
+	payment_method?: string;
+};
