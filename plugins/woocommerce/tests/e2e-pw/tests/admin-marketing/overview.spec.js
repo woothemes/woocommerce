@@ -6,7 +6,6 @@ test.describe( 'Marketing page', () => {
 	test.use( { storageState: ADMIN_STATE_PATH } );
 
 	test( 'Marketing Overview page have relevant content', async ( {
-		baseURL,
 		page,
 	} ) => {
 		// See if this is a WPCOM site.
