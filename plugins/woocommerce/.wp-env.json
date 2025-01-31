@@ -17,7 +17,6 @@
 			"mysqlPort": 58888
 		},
 		"tests": {
-			"multisite": true,
 			"port": 8086,
 			"mysqlPort": 58086,
 			"plugins": [
