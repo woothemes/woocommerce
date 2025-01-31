@@ -11,12 +11,12 @@ import { useLayoutContext } from '@woocommerce/admin-layout';
 /**
  * Internal dependencies
  */
-import './woocommerce-services-item.scss';
+import './woocommerce-shipping-item.scss';
 import WooIcon from './woo-icon.svg';
 
-const WooCommerceServicesItem: React.FC< {
-	isWCSInstalled: boolean | undefined;
-} > = ( { isWCSInstalled } ) => {
+const WooCommerceShippingItem: React.FC< {
+	isPluginInstalled: boolean | undefined;
+} > = ( { isPluginInstalled } ) => {
 	const { layoutString } = useLayoutContext();
 
 	const handleSetupClick = () => {
@@ -30,12 +30,12 @@ const WooCommerceServicesItem: React.FC< {
 	};
 
 	return (
-		<div className="woocommerce-list__item-inner woocommerce-services-item">
+		<div className="woocommerce-list__item-inner woocommerce-shipping-plugin-item">
 			<div className="woocommerce-list__item-before">
 				<img
-					className="woocommerce-services-item__logo"
+					className="woocommerce-shipping-plugin-item__logo"
 					src={ WooIcon }
-					alt="WooCommerce Service Logo"
+					alt="WooCommerce Shipping Logo"
 				/>
 			</div>
 			<div className="woocommerce-list__item-text">
@@ -45,7 +45,7 @@ const WooCommerceServicesItem: React.FC< {
 				</span>
 				<span className="woocommerce-list__item-content">
 					{ __(
-						'Print USPS and DHL Express labels straight from your WooCommerce dashboard and save on shipping.',
+						'Print USPS, UPS, and DHL Express labels straight from your WooCommerce dashboard and save on shipping.',
 						'woocommerce'
 					) }
 					<br />
@@ -56,7 +56,7 @@ const WooCommerceServicesItem: React.FC< {
 			</div>
 			<div className="woocommerce-list__item-after">
 				<Button isSecondary onClick={ handleSetupClick }>
-					{ isWCSInstalled
+					{ isPluginInstalled
 						? __( 'Activate', 'woocommerce' )
 						: __( 'Get started', 'woocommerce' ) }
 				</Button>
@@ -65,4 +65,4 @@ const WooCommerceServicesItem: React.FC< {
 	);
 };
 
-export default WooCommerceServicesItem;
+export default WooCommerceShippingItem;

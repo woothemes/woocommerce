@@ -7,7 +7,7 @@ import { recordEvent } from '@woocommerce/tracks';
 /**
  * Internal dependencies
  */
-import WooCommerceServicesItem from '../experimental-woocommerce-services-item';
+import WooCommerceShippingItem from '../experimental-woocommerce-shipping-item';
 jest.mock( '@woocommerce/tracks', () => ( {
 	...jest.requireActual( '@woocommerce/tracks' ),
 	recordEvent: jest.fn(),
@@ -29,7 +29,7 @@ jest.mock( '@woocommerce/admin-layout', () => {
 
 describe( 'WooCommerceServicesItem', () => {
 	it( 'should render WCS item with CTA = "Get started" when WCS is not installed', () => {
-		render( <WooCommerceServicesItem isWCSInstalled={ false } /> );
+		render( <WooCommerceShippingItem isPluginInstalled={ false } /> );
 
 		expect(
 			screen.queryByText( 'WooCommerce Shipping' )
@@ -41,7 +41,7 @@ describe( 'WooCommerceServicesItem', () => {
 	} );
 
 	it( 'should render WCS item with CTA = "Activate" when WCS is installed', () => {
-		render( <WooCommerceServicesItem isWCSInstalled={ true } /> );
+		render( <WooCommerceShippingItem isPluginInstalled={ true } /> );
 
 		expect(
 			screen.queryByText( 'WooCommerce Shipping' )
@@ -53,7 +53,7 @@ describe( 'WooCommerceServicesItem', () => {
 	} );
 
 	it( 'should record track when clicking setup button', () => {
-		render( <WooCommerceServicesItem isWCSInstalled={ false } /> );
+		render( <WooCommerceShippingItem isPluginInstalled={ false } /> );
 
 		screen.queryByRole( 'button', { name: 'Get started' } )?.click();
 		expect( recordEvent ).toHaveBeenCalledWith( 'tasklist_click', {

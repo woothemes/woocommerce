@@ -147,10 +147,15 @@ Connect.propTypes = {
 	 * Text used for the abort connection button.
 	 */
 	abortText: PropTypes.string,
+	/**
+	 * Source identifier for the connection.
+	 */
+	from: PropTypes.string,
 };
 
 Connect.defaultProps = {
 	setIsPending: () => {},
+	from: 'woocommerce-services',
 };
 
 export default compose(
@@ -161,7 +166,7 @@ export default compose(
 
 		const queryArgs = {
 			redirectUrl: props.redirectUrl || window.location.href,
-			from: 'woocommerce-services',
+			from: props.from,
 		};
 
 		const jetpackAuthUrlResponse = getJetpackAuthUrl( queryArgs );

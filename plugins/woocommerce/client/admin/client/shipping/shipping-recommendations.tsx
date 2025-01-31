@@ -20,7 +20,7 @@ import {
 	DismissableList,
 	DismissableListHeading,
 } from '../settings-recommendations/dismissable-list';
-import WooCommerceServicesItem from './woocommerce-services-item';
+import WoocommerceShippingItem from './woocommerce-shipping-item';
 import './shipping-recommendations.scss';
 
 const useInstallPlugin = () => {
@@ -52,7 +52,9 @@ const useInstallPlugin = () => {
 	return [ pluginsBeingSetup, handleSetup ] as const;
 };
 
-export const ShippingRecommendationsList: React.FC = ( { children } ) => (
+export const ShippingRecommendationsList: React.FC< {
+	children: React.ReactNode;
+} > = ( { children } ) => (
 	<DismissableList
 		className="woocommerce-recommended-shipping-extensions"
 		dismissOptionName="woocommerce_settings_shipping_recommendations_hidden"
@@ -105,15 +107,14 @@ const ShippingRecommendations: React.FC = () => {
 
 	if (
 		activePlugins.includes( 'woocommerce-services' ) ||
-		activePlugins.includes( 'woocommerce-shipping' ) ||
-		activePlugins.includes( 'woocommerce-tax' )
+		activePlugins.includes( 'woocommerce-shipping' )
 	) {
 		return null;
 	}
 
 	return (
 		<ShippingRecommendationsList>
-			<WooCommerceServicesItem
+			<WoocommerceShippingItem
 				pluginsBeingSetup={ pluginsBeingSetup }
 				onSetupClick={ setupPlugin }
 			/>
