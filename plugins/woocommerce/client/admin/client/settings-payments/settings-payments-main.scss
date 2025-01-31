@@ -23,6 +23,10 @@
 			@media screen and ( max-width: $break-medium ) {
 				padding: $gap-smaller $gap $gap-large;
 			}
+
+			@media screen and ( max-width: $break-mobile ) {
+				display: block;
+			}
 		}
 
 		&__header-title {
@@ -32,12 +36,12 @@
 		}
 
 		&__header-select-container {
-			min-width: 240px;
-			max-width: 313px;
-			min-height: 32px;
+			min-width: 280px;
+			min-height: 36px;
 			background-color: #fff;
 			border: 1px solid $gray-300;
-			display: inline-block;
+			display: flex;
+			align-items: center;
 			border-radius: 2px;
 
 			.components-input-control__prefix {
@@ -69,19 +73,6 @@
 						fill: $alert-yellow;
 						width: 20px;
 						height: 20px;
-					}
-				}
-			}
-
-			&.has-alert {
-				display: flex;
-				align-items: center;
-
-				.components-country-select-control__menu {
-					width: 310px;
-
-					@media screen and ( max-width: 782px ) {
-						width: 313px;
 					}
 				}
 			}
