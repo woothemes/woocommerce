@@ -304,7 +304,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 	public function data_provider_for_test_sanitize_cost_in_current_locale_with_special_thousand_separators(): array {
 		return array(
 			// 1. Special chars present but not used in current locale (should error).
-			'space in USD locale'                        => array(
+			'space in USD locale'                          => array(
 				'1 234.56',  // Input with space.
 				'',          // Expected output (empty as it should error).
 				',',         // Locale thousand sep.
@@ -312,7 +312,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'$',         // Currency.
 				true,        // Should throw error.
 			),
-			'apostrophe in USD locale'                   => array(
+			'apostrophe in USD locale'                     => array(
 				"1'234.56",
 				'',
 				',',
@@ -322,7 +322,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 			),
 
 			// 2. Special chars present and correctly used in appropriate locales.
-			'space correctly used in FR locale'          => array(
+			'space correctly used in FR locale'            => array(
 				'1 234,56',
 				'1234.56',
 				' ',
@@ -330,7 +330,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'€',
 				false,
 			),
-			'apostrophe correctly used in CH locale'     => array(
+			'apostrophe correctly used in CH locale'       => array(
 				"1'234.56",
 				'1234.56',
 				"'",
@@ -340,7 +340,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 			),
 
 			// 3. Special chars present but incorrectly used
-			'incorrect space position in FR locale'      => array(
+			'incorrect space position in FR locale'        => array(
 				'12 34,56',
 				'1234.56',
 				' ',
@@ -348,7 +348,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'€',
 				false, // This is a borderline edge case but I think it's recoverable and is more likely to result in false positives if we error here.
 			),
-			'mixed separators in FR locale'              => array(
+			'mixed separators in FR locale'                => array(
 				"1'234,56",
 				'',
 				' ',
@@ -356,7 +356,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'€',
 				true,
 			),
-			'incorrect apostrophe position in CH locale' => array(
+			'incorrect apostrophe position in CH locale'   => array(
 				"12'34.56",
 				'1234.56',
 				"'",
@@ -364,7 +364,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'CHF',
 				false, // This is a borderline edge case but I think it's recoverable and is more likely to result in false positives if we error here.
 			),
-			'mixed separators in CH locale'              => array(
+			'mixed separators in CH locale'                => array(
 				'1 234.56',
 				'',
 				"'",
@@ -374,7 +374,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 			),
 
 			// 4. Decimal separator without thousands separator.
-			'decimal only in USD locale'                 => array(
+			'decimal only in USD locale'                   => array(
 				'1234.56',
 				'1234.56',
 				',',
@@ -382,7 +382,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'$',
 				false,
 			),
-			'decimal only in FR locale'                  => array(
+			'decimal only in FR locale'                    => array(
 				'1234,56',
 				'1234.56',
 				' ',
@@ -392,7 +392,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 			),
 
 			// 5. Thousands separator with decimal
-			'thousands and decimal in USD locale'        => array(
+			'thousands and decimal in USD locale'          => array(
 				'1,234.56',
 				'1234.56',
 				',',
@@ -400,7 +400,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'$',
 				false,
 			),
-			'space thousands and decimal in FR locale'   => array(
+			'space thousands and decimal in FR locale'     => array(
 				'1 234,56',
 				'1234.56',
 				' ',
@@ -418,7 +418,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 			),
 
 			// 6. Multiple thousands separators
-			'multiple commas in USD locale'              => array(
+			'multiple commas in USD locale'                => array(
 				'1,234,567.89',
 				'1234567.89',
 				',',
@@ -426,7 +426,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'$',
 				false,
 			),
-			'multiple spaces in FR locale'               => array(
+			'multiple spaces in FR locale'                 => array(
 				'1 234 567,89',
 				'1234567.89',
 				' ',
@@ -434,7 +434,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'€',
 				false,
 			),
-			'multiple apostrophes in CH locale'          => array(
+			'multiple apostrophes in CH locale'            => array(
 				"1'234'567.89",
 				'1234567.89',
 				"'",
@@ -444,7 +444,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 			),
 
 			// 7. Invalid multiple separators (Technically invalid but I think it is recoverable and is more likely to result in false positives if we error)
-			'invalid multiple commas in USD locale'      => array(
+			'invalid multiple commas in USD locale'        => array(
 				'1,23,4.56',
 				'1234.56',
 				',',
@@ -452,7 +452,7 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'$',
 				false,
 			),
-			'invalid multiple spaces in FR locale'       => array(
+			'invalid multiple spaces in FR locale'         => array(
 				'1 23 4,56',
 				'1234.56',
 				' ',
@@ -460,8 +460,90 @@ class NumberUtilTest extends \WC_Unit_Test_Case {
 				'€',
 				false,
 			),
-			'invalid multiple apostrophes in CH locale'  => array(
+			'invalid multiple apostrophes in CH locale'    => array(
 				"1'23'4.56",
+				'1234.56',
+				"'",
+				'.',
+				'CHF',
+				false,
+			),
+
+			// 8. Standard decimal format across different locales
+			'standard decimal in USD locale'               => array(
+				'1234.56',
+				'1234.56',
+				',',
+				'.',
+				'$',
+				false,
+			),
+			'standard decimal in FR locale'                => array(
+				'1234.56',
+				'1234.56',
+				' ',
+				',',
+				'€',
+				false,
+			),
+			'standard decimal in CH locale'                => array(
+				'1234.56',
+				'1234.56',
+				"'",
+				'.',
+				'CHF',
+				false,
+			),
+			'standard decimal with thousands in USD locale' => array(
+				'1234567.89',
+				'1234567.89',
+				',',
+				'.',
+				'$',
+				false,
+			),
+			'standard decimal with thousands in FR locale' => array(
+				'1234567.89',
+				'1234567.89',
+				' ',
+				',',
+				'€',
+				false,
+			),
+			'standard decimal with thousands in CH locale' => array(
+				'1234567.89',
+				'1234567.89',
+				"'",
+				'.',
+				'CHF',
+				false,
+			),
+			'standard decimal with period thousand and comma decimal locale' => array(
+				'1234.56',
+				'1234.56',
+				'.',
+				',',
+				'€',
+				false,
+			),
+			'standard decimal with comma thousand and period decimal locale' => array(
+				'1234.56',
+				'1234.56',
+				',',
+				'.',
+				'$',
+				false,
+			),
+			'standard decimal with space thousand and comma decimal locale' => array(
+				'1234.56',
+				'1234.56',
+				' ',
+				',',
+				'€',
+				false,
+			),
+			'standard decimal with apostrophe thousand and period decimal locale' => array(
+				'1234.56',
 				'1234.56',
 				"'",
 				'.',

@@ -69,6 +69,16 @@ final class NumberUtil {
 
 		$value = str_replace( $currency_symbol_variations, '', $value );
 
+		// Count the number of decimal points.
+		$decimal_point_count = substr_count( $value, '.' );
+
+		// If it's a standard decimal number (single decimal point and is_numeric), accept it directly. This could be in the case where the frontend has de-localised the value.
+		// We check for the decimal point count because is_numeric is looser than that.
+		if ( 1 === $decimal_point_count && is_numeric( $value ) ) {
+			return $value;
+		}
+
+		// Otherwise, attempt to delocalise according to localisation rules.
 		$allowed_characters_regex = sprintf(
 			'/^[0-9\%s\%s]*$/',
 			wc_get_price_thousand_separator(),
@@ -76,10 +86,10 @@ final class NumberUtil {
 		);
 
 		if ( 1 !== preg_match( $allowed_characters_regex, $value ) ) {
-			/* translators: %1$s: Invalid value that was input by the user, %2$s: thousand separator, %3$s: decimal separator */
 			throw new \InvalidArgumentException(
 				esc_html(
 					sprintf(
+						/* translators: %1$s: Invalid value that was input by the user, %2$s: thousand separator, %3$s: decimal separator */
 						__( '%1$s is not a valid numeric value. Allowed characters are numbers, and the thousand (%2$s) and decimal (%3$s) separators.', 'woocommerce' ),
 						$value,
 						wc_get_price_thousand_separator(),
