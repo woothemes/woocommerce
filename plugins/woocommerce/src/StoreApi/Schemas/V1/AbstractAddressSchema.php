@@ -247,25 +247,23 @@ abstract class AbstractAddressSchema extends AbstractSchema {
 		$additional_keys = array_keys( $this->get_additional_address_fields_schema() );
 
 		foreach ( array_keys( $address ) as $key ) {
-
-			// Skip email here it will be validated in BillingAddressSchema.
-			if ( 'email' === $key ) {
-				continue;
-			}
-
 			// Only run specific validation on properties that are defined in the schema and present in the address.
 			// This is for partial address pushes when only part of a customer address is sent.
 			// Full schema address validation still happens later, so empty, required values are disallowed.
-			if ( empty( $schema[ $key ] ) || empty( $address[ $key ] ) ) {
+			// Also skip email here it will be validated in BillingAddressSchema.
+			if ( 'email' === $key || empty( $schema[ $key ] ) || empty( $address[ $key ] ) ) {
 				continue;
 			}
 
-			$result = rest_validate_value_from_schema( $address[ $key ], $schema[ $key ], $key );
+			$field_schema        = $schema[ $key ];
+			$is_additional_field = in_array( $key, $additional_keys, true );
+			$field_value         = isset( $address[ $key ] ) ? $address[ $key ] : null;
+			$result              = rest_validate_value_from_schema( $field_value, $field_schema, $key );
 
 			// Check if a field is in the list of additional fields then validate the value against the custom validation rules defined for it.
 			// Skip additional validation if the schema validation failed.
-			if ( true === $result && in_array( $key, $additional_keys, true ) ) {
-				$result = $this->additional_fields_controller->validate_field( $key, $address[ $key ] );
+			if ( true === $result && $is_additional_field ) {
+				$result = $this->additional_fields_controller->validate_field( $key, $field_value );
 			}
 
 			if ( is_wp_error( $result ) && $result->has_errors() ) {

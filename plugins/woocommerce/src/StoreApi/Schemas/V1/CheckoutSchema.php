@@ -398,14 +398,14 @@ class CheckoutSchema extends AbstractSchema {
 		$additional_field_schema = $this->get_additional_fields_schema();
 
 		// Loop over the schema instead of the fields. This is to ensure missing fields are validated.
-		foreach ( $additional_field_schema as $key => $schema ) {
-			if ( ! isset( $fields[ $key ] ) && ! $schema['required'] ) {
-				// Optional fields can go missing.
+		foreach ( $additional_field_schema as $key => $field_schema ) {
+			// Optional fields can go missing.
+			if ( ! isset( $fields[ $key ] ) && ! $field_schema['required'] ) {
 				continue;
 			}
 
 			$field_value = isset( $fields[ $key ] ) ? $fields[ $key ] : null;
-			$result      = rest_validate_value_from_schema( $field_value, $schema, $key );
+			$result      = rest_validate_value_from_schema( $field_value, $field_schema, $key );
 
 			// Only allow custom validation on fields that pass the schema validation.
 			if ( true === $result ) {
@@ -413,16 +413,6 @@ class CheckoutSchema extends AbstractSchema {
 			}
 
 			if ( is_wp_error( $result ) && $result->has_errors() ) {
-				$location = $this->additional_fields_controller->get_field_location( $key );
-				foreach ( $result->get_error_codes() as $code ) {
-					$result->add_data(
-						array(
-							'location' => $location,
-							'key'      => $key,
-						),
-						$code
-					);
-				}
 				$errors->merge_from( $result );
 			}
 		}
