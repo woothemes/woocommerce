@@ -17,6 +17,23 @@ import { persistenceLayer } from './persistence-layer';
  */
 const reducer: Reducer< CartState > = ( state = defaultCartState, action ) => {
 	switch ( action.type ) {
+		case types.PRODUCT_PENDING_ADD:
+			if ( action.isAdding ) {
+				const productsPendingAdd = [ ...state.productsPendingAdd ];
+				productsPendingAdd.push( action.productId );
+				state = {
+					...state,
+					productsPendingAdd,
+				};
+				break;
+			}
+			state = {
+				...state,
+				productsPendingAdd: state.productsPendingAdd.filter(
+					( productId ) => productId !== action.productId
+				),
+			};
+			break;
 		case types.SET_ERROR_DATA:
 			if ( 'error' in action && action.error ) {
 				state = {
