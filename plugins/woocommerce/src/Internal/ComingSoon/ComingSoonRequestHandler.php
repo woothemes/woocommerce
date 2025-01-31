@@ -36,6 +36,11 @@ class ComingSoonRequestHandler {
 	 */
 	final public function init( ComingSoonHelper $coming_soon_helper ) {
 		$this->coming_soon_helper = $coming_soon_helper;
+		// Skip if the site is live.
+		if ( $this->coming_soon_helper->is_site_live() ) {
+			return;
+		}
+
 		add_filter( 'template_include', array( $this, 'handle_template_include' ) );
 		add_filter( 'wp_theme_json_data_theme', array( $this, 'experimental_filter_theme_json_theme' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
@@ -44,14 +49,9 @@ class ComingSoonRequestHandler {
 
 
 	/**
-	 * Initializes block templates for use in classic theme.
+	 * Initializes block templates so we can show coming soon page in non-FSE themes.
 	 */
 	public function possibly_init_block_templates() {
-		// Early exit if the site is live.
-		if ( $this->coming_soon_helper->is_site_live() ) {
-			return;
-		}
-
 		// No need to initialize block templates since we've already initialized them in the Block Bootstrap.
 		if ( wc_current_theme_is_fse_theme() || current_theme_supports( 'block-template-parts' ) ) {
 			return;

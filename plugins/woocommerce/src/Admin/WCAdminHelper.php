@@ -126,6 +126,8 @@ class WCAdminHelper {
 	/**
 	 * Check if the current page is a store page.
 	 *
+	 * This should only be called when WP has has set up the query, typically during or after the parse_query or template_redirect action hooks.
+	 *
 	 * @return bool
 	 */
 	public static function is_current_page_store_page() {
@@ -145,7 +147,6 @@ class WCAdminHelper {
 		 * @param array $store_pages The store pages array. The keys are the page slugs and the values are the page IDs.
 		 */
 		$store_pages = apply_filters( 'woocommerce_store_pages', $store_pages );
-		global $wp_query;
 
 		foreach ( $store_pages as $page_slug => $page_id ) {
 			if ( is_page( $page_slug ) || ( $page_id > 0 && is_page( $page_id ) ) ) {
@@ -189,11 +190,11 @@ class WCAdminHelper {
 	}
 
 	/**
-	 * Test if a URL is a store page. Deprecated.
+	 * Test if a URL is a store page.
 	 *
 	 * @param string $url URL to check. If not provided, the current URL will be used.
 	 * @return bool Whether or not the URL is a store page.
-	 * @deprecated 9.3.0 Use is_current_page_store_page instead.
+	 * @deprecated 9.8.0 Use is_current_page_store_page instead.
 	 */
 	public static function is_store_page( $url = '' ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		_deprecated_function( __METHOD__, '9.8.0', 'is_current_page_store_page' );

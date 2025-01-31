@@ -30,7 +30,7 @@ class ComingSoonHelper {
 	}
 
 	/**
-	 * Returns true when the current page is behind a coming soon screen.
+	 * Return true if the current page should be shown in coming soon mode.
 	 */
 	public function is_current_page_coming_soon(): bool {
 		// Early exit if coming soon mode not active.
