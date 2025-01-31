@@ -622,7 +622,7 @@ const getPlugins = fromPromise( async () => {
 	dispatch( ONBOARDING_STORE_NAME ).invalidateResolution(
 		'getFreeExtensions'
 	);
-	const extensionsBundles = await resolveSelect(
+	const extensionsBundles: ExtensionList[] = await resolveSelect(
 		ONBOARDING_STORE_NAME
 	).getFreeExtensions();
 	return (
