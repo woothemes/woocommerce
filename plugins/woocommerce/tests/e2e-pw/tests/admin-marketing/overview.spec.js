@@ -9,7 +9,9 @@ test.describe( 'Marketing page', () => {
 		page,
 	} ) => {
 		// See if this is a WPCOM site.
-		const is_wpcom_site = process.env.IS_WPCOM.toLowerCase() === 'true';
+		const is_wpcom_site =
+			process.env.IS_WPCOM &&
+			process.env.IS_WPCOM.toLowerCase() === 'true';
 
 		// Go to the Marketing page.
 		await page.goto( 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing' );
