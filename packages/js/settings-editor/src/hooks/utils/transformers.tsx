@@ -20,15 +20,26 @@ import { getSelectEdit } from '../../components/selectEdit';
 export type DataItem = Record< string, BaseSettingsField[ 'value' ] >;
 
 /**
- * Helper function to determine label and help text from setting
- * If desc_tip is true, we should display the desc as the help text.
+ * Helper function to determine label and help text from setting.
+ *
+ * @param setting The setting object containing description and tip information
+ * @return Object with label and help text
  */
-const getLabelAndHelp = (
+export const getLabelAndHelp = (
 	setting: BaseSettingsField | CheckboxSettingsField
 ) => {
+	const description = setting.desc || setting.description || '';
+
+	if ( setting.desc_tip === true ) {
+		return {
+			label: '',
+			help: description,
+		};
+	}
+
 	return {
-		label: setting.desc_tip === true ? '' : setting.desc,
-		help: setting.desc_tip === true ? setting.desc : setting.desc_tip,
+		label: description,
+		help: typeof setting.desc_tip === 'string' ? setting.desc_tip : '',
 	};
 };
 

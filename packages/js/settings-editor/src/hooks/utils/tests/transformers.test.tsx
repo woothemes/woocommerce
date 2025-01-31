@@ -10,6 +10,7 @@ import {
 	transformToInitialData,
 	transformToField,
 	transformToFormField,
+	getLabelAndHelp,
 } from '../transformers';
 
 describe( 'dataforms-transformers', () => {
@@ -256,6 +257,100 @@ describe( 'dataforms-transformers', () => {
 			expect( transformToFormField( custom ) ).toBe( 'custom1' );
 			expect( transformToFormField( group ) ).toBe( 'group1' );
 			expect( transformToFormField( slotfill ) ).toBe( 'slot1' );
+		} );
+	} );
+
+	describe( 'getLabelAndHelp', () => {
+		it( 'should set help text to desc when desc_tip is true', () => {
+			const setting: BaseSettingsField = {
+				id: 'test',
+				type: 'text',
+				desc: 'Test description',
+				desc_tip: true,
+				value: 'test',
+			};
+
+			const result = getLabelAndHelp( setting );
+			expect( result ).toEqual( {
+				label: '',
+				help: 'Test description',
+			} );
+		} );
+
+		it( 'should set label and help text when both desc and desc_tip are provided', () => {
+			const setting: BaseSettingsField = {
+				id: 'test',
+				type: 'text',
+				desc: 'Main description',
+				desc_tip: 'Helpful tip',
+				value: 'test',
+			};
+
+			const result = getLabelAndHelp( setting );
+			expect( result ).toEqual( {
+				label: 'Main description',
+				help: 'Helpful tip',
+			} );
+		} );
+
+		it( 'should set empty help text when desc_tip is false', () => {
+			const setting: BaseSettingsField = {
+				id: 'test',
+				type: 'text',
+				desc: 'Test description',
+				desc_tip: false,
+				value: 'test',
+			};
+
+			const result = getLabelAndHelp( setting );
+			expect( result ).toEqual( {
+				label: 'Test description',
+				help: '',
+			} );
+		} );
+
+		it( 'should handle desc_tip undefined', () => {
+			const setting: BaseSettingsField = {
+				id: 'test',
+				type: 'text',
+				desc: 'Test description',
+				value: 'test',
+			};
+
+			const result = getLabelAndHelp( setting );
+			expect( result ).toEqual( {
+				label: 'Test description',
+				help: '',
+			} );
+		} );
+
+		it( 'should use description if desc is not provided', () => {
+			const setting: BaseSettingsField = {
+				id: 'test',
+				type: 'text',
+				description: 'Test description',
+				value: 'test',
+			};
+
+			const result = getLabelAndHelp( setting );
+			expect( result ).toEqual( {
+				label: 'Test description',
+				help: '',
+			} );
+		} );
+
+		it( 'should handle empty descriptions', () => {
+			const setting: BaseSettingsField = {
+				id: 'test',
+				type: 'text',
+				value: 'test',
+			};
+
+			const result = getLabelAndHelp( setting );
+			expect( result ).toEqual( {
+				label: '',
+				help: '',
+			} );
 		} );
 	} );
 } );
