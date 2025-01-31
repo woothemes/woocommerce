@@ -202,10 +202,10 @@ class CheckoutFieldsFrontend {
 		$field_values = array();
 
 		foreach ( $additional_fields as $key => $field_data ) {
+			// We can't skip, field might be required.
+			$field_value = wc_clean( wp_unslash( $_POST[ $key ] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-			$field_value = $_POST[ $key ] ?? ''; // We can't skip, field might be required.
-
-			$field_value = $this->checkout_fields_controller->sanitize_field( $key, wc_clean( wp_unslash( $field_value ) ) );
+			$field_value = $this->checkout_fields_controller->sanitize_field( $key, $field_value );
 			$validation  = $this->checkout_fields_controller->validate_field( $key, $field_value );
 
 			if ( is_wp_error( $validation ) && $validation->has_errors() ) {
