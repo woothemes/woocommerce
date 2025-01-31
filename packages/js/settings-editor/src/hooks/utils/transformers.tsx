@@ -24,6 +24,12 @@ export type DataItem = Record< string, BaseSettingsField[ 'value' ] >;
  *
  * @param setting The setting object containing description and tip information
  * @return Object with label and help text
+ *
+ * Cases:
+ * - desc_tip === true: description becomes help text, empty label
+ * - desc_tip is string: string becomes help text, description becomes label
+ * - desc_tip === false: empty help text, description becomes label
+ * - desc_tip undefined: empty help text, description becomes label
  */
 export const getLabelAndHelp = (
 	setting: BaseSettingsField | CheckboxSettingsField
