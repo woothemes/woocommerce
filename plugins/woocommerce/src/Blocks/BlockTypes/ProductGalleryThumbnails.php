@@ -156,9 +156,9 @@ class ProductGalleryThumbnails extends AbstractBlock {
 		$number_of_images             = count( $product_gallery_images );
 		// If the number of thumbnails is greater than the number of images, set the number of thumbnails to the number of images.
 		// But not less than than 3 (default number of thumbnails).
-		$thumbnails_layout            = max( min( $number_of_images, $number_of_thumbnails ), $default_number_of_thumbnails );
-		$number_of_thumbnails_class   = 'wc-block-product-gallery-thumbnails--number-of-thumbnails-' . $thumbnails_layout;
-		$thumbnails_count             = 1;
+		$thumbnails_layout          = max( min( $number_of_images, $number_of_thumbnails ), $default_number_of_thumbnails );
+		$number_of_thumbnails_class = 'wc-block-product-gallery-thumbnails--number-of-thumbnails-' . $thumbnails_layout;
+		$thumbnails_count           = 1;
 
 		foreach ( $product_gallery_images as $product_gallery_image_html ) {
 			// Limit the number of thumbnails only in the standard mode (and not in dialog).
