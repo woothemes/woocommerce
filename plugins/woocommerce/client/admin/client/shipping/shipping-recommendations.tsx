@@ -52,7 +52,11 @@ const useInstallPlugin = () => {
 	return [ pluginsBeingSetup, handleSetup ] as const;
 };
 
-export const ShippingRecommendationsList: React.FC = ( { children } ) => (
+export const ShippingRecommendationsList = ( {
+	children,
+}: {
+	children: React.ReactNode;
+} ) => (
 	<DismissableList
 		className="woocommerce-recommended-shipping-extensions"
 		dismissOptionName="woocommerce_settings_shipping_recommendations_hidden"
@@ -99,8 +103,11 @@ export const ShippingRecommendationsList: React.FC = ( { children } ) => (
 const ShippingRecommendations: React.FC = () => {
 	const [ pluginsBeingSetup, setupPlugin ] = useInstallPlugin();
 
-	const activePlugins = useSelect( ( select ) =>
-		select( PLUGINS_STORE_NAME ).getActivePlugins()
+	const activePlugins = useSelect(
+		( select ) =>
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			select( PLUGINS_STORE_NAME ).getActivePlugins(),
+		[]
 	);
 
 	if (

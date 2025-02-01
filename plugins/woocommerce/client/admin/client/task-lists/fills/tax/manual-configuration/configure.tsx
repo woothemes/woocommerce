@@ -21,9 +21,10 @@ export const Configure: React.FC<
 		const { getSettings } = select( SETTINGS_STORE_NAME );
 
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			generalSettings: getSettings( 'general' )?.general,
 		};
-	} );
+	}, [] );
 
 	return (
 		<>

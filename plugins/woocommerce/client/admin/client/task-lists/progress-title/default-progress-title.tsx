@@ -21,11 +21,13 @@ export const DefaultProgressTitle: React.FC< DefaultProgressTitleProps > = ( {
 } ) => {
 	const { loading, tasksCount, completedCount, hasVisitedTasks } = useSelect(
 		( select ) => {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			const taskList = select( ONBOARDING_STORE_NAME ).getTaskList(
 				taskListId
 			);
 			const finishedResolution = select(
 				ONBOARDING_STORE_NAME
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			).hasFinishedResolution( 'getTaskList', [ taskListId ] );
 			const visibleTasks = getVisibleTasks( taskList?.tasks || [] );
 
@@ -41,7 +43,8 @@ export const DefaultProgressTitle: React.FC< DefaultProgressTitleProps > = ( {
 							task.isVisited && task.id !== 'store_details'
 					).length > 0,
 			};
-		}
+		},
+		[ taskListId ]
 	);
 
 	const title = useMemo( () => {

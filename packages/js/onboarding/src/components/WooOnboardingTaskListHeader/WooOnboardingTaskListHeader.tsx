@@ -30,7 +30,9 @@ export const WooOnboardingTaskListHeader = ( {
 WooOnboardingTaskListHeader.Slot = ( {
 	id,
 	fillProps,
-}: WooOnboardingTaskListHeaderProps & React.ComponentProps< typeof Slot > ) => (
+}: WooOnboardingTaskListHeaderProps & {
+	fillProps?: React.ComponentProps< typeof Slot >[ 'fillProps' ];
+} ) => (
 	<Slot
 		name={ 'woocommerce_onboarding_task_list_header_' + id }
 		fillProps={ fillProps }

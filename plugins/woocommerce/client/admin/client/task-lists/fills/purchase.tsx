@@ -32,11 +32,15 @@ const PurchaseTaskItem = ( { defaultTaskItem }: PurchaseTaskItemProps ) => {
 			const { getInstalledPlugins } = select( PLUGINS_STORE_NAME );
 
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				installedPlugins: getInstalledPlugins(),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				productTypes: getProductTypes(),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				profileItems: getProfileItems(),
 			};
-		}
+		},
+		[]
 	);
 
 	const toggleCartModal = useCallback( () => {
@@ -65,6 +69,7 @@ const PurchaseTaskItem = ( { defaultTaskItem }: PurchaseTaskItemProps ) => {
 				} }
 			/>
 			{ cartModalOpen && (
+				// @ts-expect-error Todo: convert CartModal to TS
 				<CartModal
 					onClose={ () => toggleCartModal() }
 					onClickPurchaseLater={ () => toggleCartModal() }
@@ -77,7 +82,7 @@ const PurchaseTaskItem = ( { defaultTaskItem }: PurchaseTaskItemProps ) => {
 const PurchaseTaskItemFill = () => {
 	return (
 		<WooOnboardingTaskListItem id="purchase">
-			{ ( { defaultTaskItem }: PurchaseTaskItemProps ) => (
+			{ ( { defaultTaskItem } ) => (
 				<PurchaseTaskItem defaultTaskItem={ defaultTaskItem } />
 			) }
 		</WooOnboardingTaskListItem>

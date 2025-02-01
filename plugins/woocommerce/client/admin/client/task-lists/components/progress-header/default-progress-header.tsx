@@ -18,22 +18,28 @@ export type DefaultProgressHeaderProps = {
 export const DefaultProgressHeader: React.FC< DefaultProgressHeaderProps > = ( {
 	taskListId,
 } ) => {
-	const { loading, tasksCount, completedCount } = useSelect( ( select ) => {
-		const taskList = select( ONBOARDING_STORE_NAME ).getTaskList(
-			taskListId
-		);
-		const finishedResolution = select(
-			ONBOARDING_STORE_NAME
-		).hasFinishedResolution( 'getTaskList', [ taskListId ] );
-		const visibleTasks = getVisibleTasks( taskList?.tasks || [] );
+	const { loading, tasksCount, completedCount } = useSelect(
+		( select ) => {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const taskList = select( ONBOARDING_STORE_NAME ).getTaskList(
+				taskListId
+			);
+			const finishedResolution = select(
+				ONBOARDING_STORE_NAME
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			).hasFinishedResolution( 'getTaskList', [ taskListId ] );
+			const visibleTasks = getVisibleTasks( taskList?.tasks || [] );
 
-		return {
-			loading: ! finishedResolution,
-			tasksCount: visibleTasks?.length,
-			completedCount: visibleTasks?.filter( ( task ) => task.isComplete )
-				.length,
-		};
-	} );
+			return {
+				loading: ! finishedResolution,
+				tasksCount: visibleTasks?.length,
+				completedCount: visibleTasks?.filter(
+					( task ) => task.isComplete
+				).length,
+			};
+		},
+		[ taskListId ]
+	);
 
 	if ( loading ) {
 		return null;

@@ -14,9 +14,9 @@ import { getCountryCode } from '~/dashboard/utils';
 import { hasCompleteAddress } from '../utils';
 import {
 	default as StoreLocationForm,
-	FormValues,
 	defaultValidate,
 } from '~/task-lists/fills/steps/location';
+import { FormValues } from '~/dashboard/components/settings/general/store-address';
 
 const validateLocationForm = ( values: FormValues ) => {
 	const errors = defaultValidate( values );
@@ -60,13 +60,17 @@ export const StoreLocation: React.FC< {
 			} = select( SETTINGS_STORE_NAME );
 
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				generalSettings: getSettings( 'general' )?.general,
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isResolving: ! hasFinishedResolution( 'getSettings', [
 					'general',
 				] ),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isUpdating: isUpdateSettingsRequesting( 'general' ),
 			};
-		}
+		},
+		[]
 	);
 
 	useEffect( () => {

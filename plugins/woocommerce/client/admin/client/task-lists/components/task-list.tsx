@@ -46,9 +46,10 @@ export const TaskList: React.FC< TaskListProps > = ( {
 		const { getProfileItems } = select( ONBOARDING_STORE_NAME );
 
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			profileItems: getProfileItems(),
 		};
-	} );
+	}, [] );
 	const prevQueryRef = useRef( query );
 	const visibleTasks = getVisibleTasks( tasks );
 	const { layoutString } = useLayoutContext();
