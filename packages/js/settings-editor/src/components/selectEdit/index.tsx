@@ -11,44 +11,52 @@ import type { DataFormControlProps } from '@wordpress/dataviews';
  */
 import type { DataFormItem } from '../../types';
 
-export const SelectEdit = ( {
-	data,
-	field,
-	onChange,
-	hideLabelFromVision,
-}: DataFormControlProps< DataFormItem > ) => {
-	const { id, label } = field;
-	const value = field.getValue( { item: data } ) ?? '';
-	const onChangeControl = useCallback(
-		( newValue: string ) =>
-			onChange( {
-				[ id ]: newValue,
-			} ),
-		[ id, onChange ]
-	);
+export const getSelectEdit =
+	( help?: React.ReactNode ) =>
+	( {
+		data,
+		field,
+		onChange,
+		hideLabelFromVision,
+	}: DataFormControlProps< DataFormItem > ) => {
+		const { id } = field;
 
-	const elements = [
-		/*
-		 * Value can be undefined when:
-		 *
-		 * - the field is not required
-		 * - in bulk editing
-		 *
-		 */
-		{ label: __( 'Select item', 'woocommerce' ), value: '' },
-		...( field?.elements ?? [] ),
-	];
+		// DataForm will automatically use the id as the label if no label is provided so we conditionally set the label to undefined if it matches the id to avoid displaying it.
+		// We should contribute upstream to allow label to be optional.
+		const label = field.label === id ? undefined : field.label;
 
-	return (
-		<SelectControl
-			id={ id }
-			label={ label }
-			value={ value }
-			options={ elements }
-			onChange={ onChangeControl }
-			__next40pxDefaultSize
-			__nextHasNoMarginBottom
-			hideLabelFromVision={ hideLabelFromVision }
-		/>
-	);
-};
+		const value = field.getValue( { item: data } ) ?? '';
+		const onChangeControl = useCallback(
+			( newValue: string ) =>
+				onChange( {
+					[ id ]: newValue,
+				} ),
+			[ id, onChange ]
+		);
+
+		const elements = [
+			/*
+			 * Value can be undefined when:
+			 *
+			 * - the field is not required
+			 * - in bulk editing
+			 *
+			 */
+			{ label: __( 'Select item', 'woocommerce' ), value: '' },
+			...( field?.elements ?? [] ),
+		];
+
+		return (
+			<SelectControl
+				id={ id }
+				label={ label }
+				value={ value }
+				help={ help }
+				options={ elements }
+				onChange={ onChangeControl }
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				hideLabelFromVision={ hideLabelFromVision }
+			/>
+		);
+	};
