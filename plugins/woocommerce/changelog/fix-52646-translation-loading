@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Adjust translation handling; improve support for custom translations under WP 6.7 upwards.
