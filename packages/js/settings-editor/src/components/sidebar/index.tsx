@@ -19,15 +19,15 @@ const { Icon, ...icons } = IconPackage;
 
 const SidebarNavigationScreenContent = ( {
 	activePage,
-	settingsData,
+	pages,
 }: {
 	activePage: string;
-	settingsData: SettingsData;
+	pages: { [ key: string ]: SettingsPage };
 } ) => {
 	return (
 		<ItemGroup>
-			{ Object.keys( settingsData ).map( ( slug ) => {
-				const { label, icon } = settingsData[ slug ];
+			{ Object.keys( pages ).map( ( slug ) => {
+				const { label, icon } = pages[ slug ];
 				return (
 					<SettingItem
 						key={ slug }
@@ -51,11 +51,11 @@ const SidebarNavigationScreenContent = ( {
 
 export const Sidebar = ( {
 	activePage,
-	settingsData,
+	pages,
 	pageTitle,
 }: {
 	activePage: string;
-	settingsData: SettingsData;
+	pages: { [ key: string ]: SettingsPage };
 	pageTitle: string;
 } ) => {
 	return (
@@ -65,7 +65,7 @@ export const Sidebar = ( {
 			content={
 				<SidebarNavigationScreenContent
 					activePage={ activePage }
-					settingsData={ settingsData }
+					pages={ pages }
 				/>
 			}
 		/>

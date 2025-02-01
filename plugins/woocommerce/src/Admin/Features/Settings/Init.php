@@ -172,8 +172,13 @@ class Init {
 			$settings['settingsScripts'][ $setting_page->get_id() ] = self::get_script_urls( $settings_scripts_handles );
 		}
 
-		$transformer              = new Transformer();
-		$settings['settingsData'] = $transformer->transform( $pages );
+		$transformer                       = new Transformer();
+		$settings['settingsData']['pages'] = $transformer->transform( $pages );
+		$start_hook_content                = $setting_pages[0]->get_custom_view( 'woocommerce_settings_start' );
+
+		if ( ! empty( $start_hook_content ) ) {
+			$settings['settingsData']['start'] = $setting_pages[0]->get_custom_view_object( $start_hook_content );
+		}
 
 		return $settings;
 	}
