@@ -96,7 +96,10 @@ declare global {
 	}
 
 	interface SettingsData {
-		[ key: string ]: SettingsPage;
+		start?: CustomSettingsField;
+		pages: {
+			[ key: string ]: SettingsPage;
+		};
 	}
 }
 

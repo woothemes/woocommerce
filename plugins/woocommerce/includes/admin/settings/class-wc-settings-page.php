@@ -224,7 +224,7 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		protected function get_section_settings_data( $section_id, $sections ) {
 			$section_settings_data = array();
 
-			$custom_view = $this->get_custom_view( $section_id );
+			$custom_view = $this->get_custom_view( 'woocommerce_settings_' . $this->id, $section_id );
 			// We only want to loop through the settings object if the parent class's output method is being rendered during the get_custom_view call.
 			if ( $this->output_called ) {
 				$section_settings = count( $sections ) > 1
@@ -239,17 +239,27 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 
 			// If the custom view has output, add it to the settings data.
 			if ( ! empty( $custom_view ) ) {
-				$section_settings_data[] = array(
-					'id'      => wp_unique_prefixed_id( 'settings_custom_view' ),
-					'type'    => 'custom',
-					'content' => $custom_view,
-				);
+				$section_settings_data[] = $this->get_custom_view_object( $custom_view );
 			}
 
 			// Reset the output_called property.
 			$this->output_called = false;
 
 			return $section_settings_data;
+		}
+
+		/**
+		 * Get the custom view object.
+		 *
+		 * @param string $content The content of the custom view.
+		 * @return array The custom view object.
+		 */
+		public function get_custom_view_object( $content ) {
+			return array(
+				'id'      => wp_unique_prefixed_id( 'settings_custom_view' ),
+				'type'    => 'custom',
+				'content' => $content,
+			);
 		}
 
 		/**
@@ -278,15 +288,19 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 		/**
 		 * Get the custom view given the current tab and section.
 		 *
+		 * @param string $action The action to call.
 		 * @param string $section_id The section id.
 		 * @return string The custom view. HTML output.
 		 */
-		public function get_custom_view( $section_id ) {
+		public function get_custom_view( $action, $section_id = false ) {
 			global $current_section;
-			// Make sure the current section is set to the sectionid here. Reset it at the end of the function.
-			$saved_current_section = $current_section;
-			// set global current_section to the section_id.
-			$current_section = $section_id;
+
+			if ( $section_id ) {
+				// Make sure the current section is set to the sectionid here. Reset it at the end of the function.
+				$saved_current_section = $current_section;
+				// set global current_section to the section_id.
+				$current_section = $section_id;
+			}
 
 			ob_start();
 			/**
@@ -294,12 +308,14 @@ if ( ! class_exists( 'WC_Settings_Page', false ) ) :
 			 *
 			 * @since 2.1.0
 			 */
-			do_action( 'woocommerce_settings_' . $this->id );
+			do_action( $action );
 			$html = ob_get_contents();
 			ob_end_clean();
 
 			// Reset the global variable.
-			$current_section = $saved_current_section;
+			if ( $section_id ) {
+				$current_section = $saved_current_section;
+			}
 			return trim( $html );
 		}
 
