@@ -39,7 +39,7 @@
 		"launch-your-store": true,
 		"product-editor-template-system": false,
 		"blueprint": true,
-		"reactify-classic-payments-settings": false,
+		"reactify-classic-payments-settings": true,
 		"use-wp-horizon": false,
 		"add-to-cart-with-options-stepper-layout": true,
 		"blockified-add-to-cart": true

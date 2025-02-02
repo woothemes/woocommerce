@@ -5,6 +5,7 @@ namespace Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks;
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Task;
 use Automattic\WooCommerce\Internal\Admin\WcPayWelcomePage;
+use WooCommerce\Admin\Experimental_Abtest;
 
 /**
  * Payments Task
@@ -77,7 +78,8 @@ class Payments extends Task {
 	 */
 	public function can_view() {
 		// If the React-based Payments settings page is enabled, the task is always visible.
-		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' )
+            && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2025_v1' ) ) {
 			return true;
 		}
 
@@ -112,7 +114,7 @@ class Payments extends Task {
 	 */
 	public function get_action_url() {
 		// If the React-based Payments settings page is enabled, we want the task to link to the Payments Settings page.
-		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2025_v1' ) ) {
 			return admin_url( 'admin.php?page=wc-settings&tab=checkout' );
 		}
 

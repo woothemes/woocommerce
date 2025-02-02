@@ -9,6 +9,7 @@ use Automattic\WooCommerce\Admin\Features\OnboardingTasks\TaskLists;
 use Automattic\WooCommerce\Admin\PageController;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestionIncentives;
 use Automattic\WooCommerce\Internal\Admin\Suggestions\PaymentExtensionSuggestions;
+use WooCommerce\Admin\Experimental_Abtest;
 
 /**
  * Class WCPayWelcomePage
@@ -68,7 +69,7 @@ class WcPayWelcomePage {
 	 */
 	public function delayed_register() {
 		// Don't do anything if the feature is enabled.
-		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) ) {
+		if ( Features::is_enabled( 'reactify-classic-payments-settings' ) && Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2025_v1' ) ) {
 			return;
 		}
 

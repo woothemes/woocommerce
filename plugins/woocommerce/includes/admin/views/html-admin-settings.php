@@ -8,6 +8,7 @@
  */
 
 use Automattic\WooCommerce\Admin\Features\Features;
+use WooCommerce\Admin\Experimental_Abtest;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -34,6 +35,7 @@ if ( ! $tab_exists ) {
 }
 
 $hide_nav = Features::is_enabled( 'reactify-classic-payments-settings' ) &&
+    Experimental_Abtest::in_treatment( 'woocommerce_payment_settings_2025_v1' ) &&
 	( 'checkout' === $current_tab && 'offline' === $current_section );
 ?>
 
