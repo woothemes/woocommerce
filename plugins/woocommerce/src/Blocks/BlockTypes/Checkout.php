@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
-use Automattic\WooCommerce\Blocks\Package;
+use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
-use Automattic\WooCommerce\Admin\Features\Features;
-
+use Automattic\WooCommerce\Blocks\Package;
+use Automattic\WooCommerce\StoreApi\Utilities\PaymentUtils;
 /**
  * Checkout class.
  *
@@ -443,6 +444,7 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'hasDarkEditorStyleSupport', current_theme_supports( 'dark-editor-style' ) );
 		$this->asset_data_registry->register_page_id( isset( $attributes['cartPageId'] ) ? $attributes['cartPageId'] : 0 );
 		$this->asset_data_registry->add( 'isBlockTheme', wc_current_theme_is_fse_theme() );
+		$this->asset_data_registry->add( 'isCheckoutBlock', true );
 
 		$pickup_location_settings = LocalPickupUtils::get_local_pickup_settings();
 		$local_pickup_method_ids  = LocalPickupUtils::get_local_pickup_method_ids();
@@ -509,7 +511,7 @@ class Checkout extends AbstractBlock {
 		if ( $is_block_editor && ! $this->asset_data_registry->exists( 'globalPaymentMethods' ) ) {
 			// These are used to show options in the sidebar. We want to get the full list of enabled payment methods,
 			// not just the ones that are available for the current cart (which may not exist yet).
-			$payment_methods           = $this->get_enabled_payment_gateways();
+			$payment_methods           = PaymentUtils::get_enabled_payment_gateways();
 			$formatted_payment_methods = array_reduce(
 				$payment_methods,
 				function ( $acc, $method ) {
@@ -564,71 +566,17 @@ class Checkout extends AbstractBlock {
 	}
 
 	/**
-	 * Get payment methods that are enabled in settings.
-	 *
-	 * @return array
-	 */
-	protected function get_enabled_payment_gateways() {
-		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		return array_filter(
-			$payment_gateways,
-			function ( $payment_gateway ) {
-				return 'yes' === $payment_gateway->enabled;
-			}
-		);
-	}
-
-	/**
 	 * Get saved customer payment methods for use in checkout.
 	 */
 	protected function hydrate_customer_payment_methods() {
-		if ( ! is_user_logged_in() || $this->asset_data_registry->exists( 'customerPaymentMethods' ) ) {
-			return;
-		}
-		add_filter( 'woocommerce_payment_methods_list_item', [ $this, 'include_token_id_with_payment_methods' ], 10, 2 );
-
-		$payment_gateways = $this->get_enabled_payment_gateways();
-		$payment_methods  = wc_get_customer_saved_methods_list( get_current_user_id() );
-
-		// Filter out payment methods that are not enabled.
-		foreach ( $payment_methods as $payment_method_group => $saved_payment_methods ) {
-			$payment_methods[ $payment_method_group ] = array_values(
-				array_filter(
-					$saved_payment_methods,
-					function ( $saved_payment_method ) use ( $payment_gateways ) {
-						return in_array( $saved_payment_method['method']['gateway'], array_keys( $payment_gateways ), true );
-					}
-				)
-			);
-		}
+		$payment_methods = PaymentUtils::get_saved_payment_methods();
 
 		$this->asset_data_registry->add(
 			'customerPaymentMethods',
-			$payment_methods
+			$payment_methods['enabled']
 		);
-		remove_filter( 'woocommerce_payment_methods_list_item', [ $this, 'include_token_id_with_payment_methods' ], 10, 2 );
 	}
 
-	/**
-	 * Callback for woocommerce_payment_methods_list_item filter to add token id
-	 * to the generated list.
-	 *
-	 * @param array     $list_item The current list item for the saved payment method.
-	 * @param \WC_Token $token     The token for the current list item.
-	 *
-	 * @return array The list item with the token id added.
-	 */
-	public static function include_token_id_with_payment_methods( $list_item, $token ) {
-		$list_item['tokenId'] = $token->get_id();
-		$brand                = ! empty( $list_item['method']['brand'] ) ?
-			strtolower( $list_item['method']['brand'] ) :
-			'';
-		// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- need to match on translated value from core.
-		if ( ! empty( $brand ) && esc_html__( 'Credit card', 'woocommerce' ) !== $brand ) {
-			$list_item['method']['brand'] = wc_get_credit_card_type_label( $brand );
-		}
-		return $list_item;
-	}
 	/**
 	 * Register script and style assets for the block type before it is registered.
 	 *

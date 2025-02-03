@@ -13,6 +13,7 @@ import {
  */
 import { SavedPaymentMethod } from './types';
 import { STATUS as PAYMENT_STATUS } from './constants';
+import { checkoutData } from '../checkout/constants';
 
 export interface PaymentState {
 	status: string;
@@ -32,7 +33,7 @@ export interface PaymentState {
 
 export const defaultPaymentState: PaymentState = {
 	status: PAYMENT_STATUS.IDLE,
-	activePaymentMethod: '',
+	activePaymentMethod: checkoutData?.payment_method ?? '',
 	availablePaymentMethods: {},
 	availableExpressPaymentMethods: {},
 	savedPaymentMethods: getSetting<

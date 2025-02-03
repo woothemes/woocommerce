@@ -126,7 +126,11 @@ export const apiFetchWithHeadersControl = ( options: APIFetchOptions ) =>
 	} as const );
 
 // List of paths which should not be batched.
-const preventBatching = [ '/wc/store/v1/cart/select-shipping-rate' ];
+const preventBatching = [
+	'/wc/store/v1/cart/select-shipping-rate',
+	'/wc/store/v1/checkout',
+	'/wc/store/v1/checkout?__experimental_calc_totals=true',
+];
 
 /**
  * The underlying function that actually does the fetch. This is used by both the generator (control) version of

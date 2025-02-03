@@ -18,7 +18,7 @@ const CheckoutOrderNotes = ( {
 	placeholder,
 	value,
 }: CheckoutOrderNotesProps ): JSX.Element => {
-	const [ withOrderNotes, setWithOrderNotes ] = useState( false );
+	const [ withOrderNotes, setWithOrderNotes ] = useState( value !== '' );
 	// Store order notes when the textarea is hidden. This allows us to recover
 	// text entered previously by the user when the checkbox is re-enabled
 	// while keeping the context clean if the checkbox is disabled.

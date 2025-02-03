@@ -53,7 +53,7 @@ export const defaultState: CheckoutState = {
 	extensionData: {},
 	hasError: false,
 	orderId: checkoutData.order_id,
-	orderNotes: '',
+	orderNotes: checkoutData.customer_note || '',
 	prefersCollection: undefined,
 	redirectUrl: '',
 	shouldCreateAccount: false,
