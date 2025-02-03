@@ -63,6 +63,8 @@ class ProductGalleryLargeImage extends AbstractBlock {
 			return '';
 		}
 
+		wp_enqueue_script_module( $this->get_full_block_name() );
+
 		global $product;
 
 		$previous_product = $product;
