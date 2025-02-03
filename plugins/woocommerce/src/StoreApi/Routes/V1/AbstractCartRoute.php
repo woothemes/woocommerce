@@ -108,36 +108,39 @@ abstract class AbstractCartRoute extends AbstractRoute {
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 *
+	 * @throws RouteException If the nonce is invalid, which is caught later on.
 	 * @return \WP_REST_Response
 	 */
 	public function get_response( \WP_REST_Request $request ) {
-		$this->load_cart_session( $request );
+		$response = null;
+		try {
+			$this->load_cart_session( $request );
 
-		$response    = null;
-		$nonce_check = $this->requires_nonce( $request ) ? $this->check_nonce( $request ) : null;
+			$nonce_check = $this->requires_nonce( $request ) ? $this->check_nonce( $request ) : null;
 
-		if ( is_wp_error( $nonce_check ) ) {
-			$response = $nonce_check;
-		}
-
-		if ( ! $response ) {
-			try {
-				$response = $this->get_response_by_request_method( $request );
-			} catch ( RouteException $error ) {
-				$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
-			} catch ( \Exception $error ) {
-				$response = $this->get_route_error_response( 'woocommerce_rest_unknown_server_error', $error->getMessage(), 500 );
+			if ( is_wp_error( $nonce_check ) ) {
+				throw new RouteException(
+					$nonce_check->get_error_message(),
+					$nonce_check->get_error_code(),
+					$nonce_check->get_error_data()['status'],
+					$nonce_check->get_error_data()
+				);
 			}
-		}
 
-		// For update requests, this will recalculate cart totals and sync draft orders with the current cart.
-		if ( $this->is_update_request( $request ) ) {
-			$this->cart_updated( $request );
-		}
+			$response = $this->get_response_by_request_method( $request );
 
-		// Format error responses.
-		if ( is_wp_error( $response ) ) {
-			$response = $this->error_to_response( $response );
+			// For update requests, this will recalculate cart totals and sync draft orders with the current cart.
+			if ( $this->is_update_request( $request ) ) {
+				$this->cart_updated( $request );
+			}
+		} catch ( RouteException $error ) {
+			$response = $this->get_route_error_response( $error->getErrorCode(), $error->getMessage(), $error->getCode(), $error->getAdditionalData() );
+		} catch ( \Exception $error ) {
+			$response = $this->get_route_error_response( 'woocommerce_rest_unknown_server_error', $error->getMessage(), 500 );
+		} finally {
+			if ( is_wp_error( $response ) ) {
+				$response = $this->error_to_response( $response );
+			}
 		}
 
 		return $this->add_response_headers( rest_ensure_response( $response ) );
@@ -166,6 +169,7 @@ abstract class AbstractCartRoute extends AbstractRoute {
 	 * Load the cart session before handling responses.
 	 *
 	 * @param \WP_REST_Request $request Request object.
+	 * @throws \Exception If the cart cannot be loaded or normalized.
 	 */
 	protected function load_cart_session( \WP_REST_Request $request ) {
 		if ( $this->has_cart_token( $request ) ) {
