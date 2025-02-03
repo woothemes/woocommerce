@@ -94,7 +94,25 @@ class WCAdminAssets {
 			$suffix       = self::should_use_minified_js_file( $script_debug ) ? '.min' : '';
 		}
 
-		return plugins_url( self::get_path( $ext ) . $file . $suffix . '.' . $ext, WC_ADMIN_PLUGIN_FILE );
+		$asset_url = plugins_url( self::get_path( $ext ) . $file . $suffix . '.' . $ext, WC_ADMIN_PLUGIN_FILE );
+
+		/**
+		 * Overrides the WC Admin asset URLs. These are the JS and CSS built files from woocommerce/client/admin
+		 *
+		 * @param string $file    The base filename for the asset file.
+		 * @param string $suffix  Additional suffix for the filename, if needed. E.g .min.js
+		 * @param string $ext     The file extension for the asset file. Typically .js or .css
+		 *
+		 * @return string The filtered URL for the specified asset file.
+		 */
+		return apply_filters(
+			'woocommerce_admin_asset_url',
+			$asset_url,
+			self::get_path( $ext ),
+			$file,
+			$suffix,
+			$ext
+		);
 	}
 
 	/**

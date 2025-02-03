@@ -49,3 +49,7 @@ export function getIsFakeWooPaymentsEnabled( state ) {
 export function getWccomBaseUrl( state ) {
 	return state.params.updateWccomBaseUrl.url;
 }
+
+export function getWcAdminAssetsBaseUrl( state ) {
+	return state.params.updateWcAdminAssetsBaseUrl.url;
+}

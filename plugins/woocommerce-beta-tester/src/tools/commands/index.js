@@ -28,6 +28,10 @@ import {
 	SetWccomBaseUrl,
 	UPDATE_WCCOM_BASE_URL_ACTION_NAME,
 } from './set-wccom-base-url';
+import {
+	SetWcAdminAssetsBaseUrl,
+	UPDATE_WC_ADMIN_ASSETS_BASE_URL_ACTION_NAME,
+} from './set-wc-admin-assets-base-url';
 
 export default [
 	{
@@ -119,5 +123,10 @@ export default [
 		command: 'Reset Launch Your Store',
 		description: 'Resets Launch Your Store and coming soon mode changes.',
 		action: 'resetLaunchYourStore',
+	},
+	{
+		command: 'WC Admin Assets Webpack Dev Server URL',
+		description: <SetWcAdminAssetsBaseUrl />,
+		action: UPDATE_WC_ADMIN_ASSETS_BASE_URL_ACTION_NAME,
 	},
 ];

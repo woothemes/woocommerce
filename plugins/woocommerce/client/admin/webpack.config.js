@@ -309,9 +309,13 @@ if ( ! isProduction || WC_ADMIN_PHASE === 'development' ) {
 			devMiddleware: {
 				writeToDisk: true,
 			},
-			allowedHosts: 'auto',
+			allowedHosts: 'all',
 			host: 'localhost',
 			port: 8887,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+			watchFiles: [ 'node_modules/@woocommerce/**' ],
 			proxy: {
 				'/build': {
 					pathRewrite: {
