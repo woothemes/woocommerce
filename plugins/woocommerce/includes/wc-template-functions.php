@@ -2571,6 +2571,15 @@ if ( ! function_exists( 'woocommerce_checkout_payment' ) ) {
 	 * Output the Payment Methods on the checkout.
 	 */
 	function woocommerce_checkout_payment() {
+		if ( ! WC()->cart ) {
+			wc_doing_it_wrong(
+				__FUNCTION__,
+				__( 'Cart is not available. This may indicate that the function is being called before woocommerce_init or in an admin context.', 'woocommerce' ),
+				'9.8.0'
+			);
+			return;
+		}
+
 		if ( WC()->cart->needs_payment() ) {
 			$available_gateways = WC()->payment_gateways()->get_available_payment_gateways();
 			WC()->payment_gateways()->set_current_gateway( $available_gateways );
