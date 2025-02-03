@@ -248,6 +248,22 @@ const getBlockEntries = ( relativePath, blockEntries = blocks ) => {
 	);
 };
 
+// The way entries are defined right now, we use them to build styles and JS, but for
+// frontend JS of these blocks we use a script modules build so we skip building them on
+// the frontend.
+const frontendScriptModuleBlocksToSkip = [
+	'product-gallery',
+	'product-gallery-large-image',
+	'store-notices',
+];
+
+const frontendEntries = getBlockEntries( 'frontend.{t,j}s{,x}', {
+	...blocks.filter( ( [ blockName ] ) => {
+		return ! frontendScriptModuleBlocksToSkip.includes( blockName );
+	} ),
+	...genericBlocks,
+} );
+
 const entries = {
 	styling: {
 		// Packages styles
@@ -312,12 +328,7 @@ const entries = {
 	},
 	frontend: {
 		reviews: './assets/js/blocks/reviews/frontend.ts',
-		...getBlockEntries( 'frontend.{t,j}s{,x}', {
-			...blocks,
-			...genericBlocks,
-		} ),
-		'product-button-interactivity':
-			'./assets/js/atomic/blocks/product-elements/button/frontend.tsx',
+		...frontendEntries,
 	},
 	payments: {
 		'wc-payment-method-cheque':

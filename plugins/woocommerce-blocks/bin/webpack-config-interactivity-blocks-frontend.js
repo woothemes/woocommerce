@@ -13,6 +13,10 @@ const blockEntries = {
 	'woocommerce/store-notices': './assets/js/blocks/store-notices/frontend.ts',
 	'woocommerce/product-button':
 		'./assets/js/atomic/blocks/product-elements/button/frontend.tsx',
+	'woocommerce/product-gallery':
+		'./assets/js/blocks/product-gallery/frontend.tsx',
+	'woocommerce/product-gallery-large-image':
+		'./assets/js/blocks/product-gallery-large-image/frontend.tsx',
 };
 
 module.exports = {
