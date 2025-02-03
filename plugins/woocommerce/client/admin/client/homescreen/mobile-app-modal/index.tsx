@@ -157,6 +157,7 @@ export const MobileAppModal = () => {
 			{ guideIsOpen && (
 				<Guide
 					onFinish={ onFinish }
+					contentLabel=""
 					className={ 'woocommerce__mobile-app-welcome-modal' }
 					pages={ [
 						{
@@ -186,7 +187,13 @@ export const MobileAppHelpMenuEntryLoader = () => {
 	const { state } = useJetpackPluginState();
 
 	const filterHelpMenuEntries = useCallback(
-		( helpMenuEntries ) => {
+		(
+			helpMenuEntries: Array< {
+				title: string;
+				link: string;
+				linkType?: string;
+			} >
+		) => {
 			if (
 				state === JetpackPluginStates.INITIALIZING ||
 				state === JetpackPluginStates.USER_CANNOT_INSTALL ||

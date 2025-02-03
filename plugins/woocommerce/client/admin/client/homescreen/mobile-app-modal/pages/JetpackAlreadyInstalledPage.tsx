@@ -38,13 +38,15 @@ export const JetpackAlreadyInstalledPage: React.FC<
 			select( OPTIONS_STORE_NAME );
 
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			isLoading: ! hasFinishedResolution( 'getOption', [
 				DISMISSED_MOBILE_APP_MODAL_OPTION,
 			] ),
 			repeatUser:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( DISMISSED_MOBILE_APP_MODAL_OPTION ) === 'yes',
 		};
-	} );
+	}, [] );
 
 	useEffect( () => {
 		if ( ! isLoading && ! isRetryingMagicLinkSend ) {
