@@ -84,7 +84,7 @@ export default function HeaderAccount(): JSX.Element {
 					{ __( 'Connect account', 'woocommerce' ) }
 					<span className="woocommerce-marketplace__sub-text">
 						{ __(
-							'Manage your subscriptions, get updates and support for your extensions and themes.',
+							'Get product updates, manage your subscriptions from your store admin, and get streamlined support.',
 							'woocommerce'
 						) }
 					</span>
