@@ -33,6 +33,7 @@ require WC_ABSPATH . 'includes/wc-attribute-functions.php';
 require WC_ABSPATH . 'includes/wc-rest-functions.php';
 require WC_ABSPATH . 'includes/wc-widget-functions.php';
 require WC_ABSPATH . 'includes/wc-webhook-functions.php';
+require WC_ABSPATH . 'includes/wc-order-step-logger-functions.php';
 
 /**
  * Filters on data used in admin and frontend.
