@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { act, render, screen } from '@testing-library/react';
+import { within } from '@testing-library/dom';
 import * as hooks from '@woocommerce/base-context/hooks';
 import userEvent from '@testing-library/user-event';
 
@@ -170,6 +171,17 @@ describe( 'Filter by Attribute block', () => {
 				await userEvent.click( smallAttributeCheckbox );
 			} );
 			expect( applyButton ).not.toBeDisabled();
+		} );
+
+		test( 'should render list as group role and have a legend inside', async () => {
+			setupWithoutSelectedFilterAttributes();
+
+			const groupElement = screen.getByRole( 'group' );
+			const legendElement =
+				within( groupElement ).getByText( 'Filter by "Size"' );
+
+			expect( groupElement ).toBeVisible();
+			expect( legendElement ).toBeVisible();
 		} );
 	} );
 

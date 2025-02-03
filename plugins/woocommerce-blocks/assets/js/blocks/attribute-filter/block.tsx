@@ -507,8 +507,10 @@ const AttributeFilterBlock = ( {
 		? ! isLoading && checked.length < displayedOptions.length
 		: ! isLoading && checked.length === 0;
 
+	const titleId = `attribute-filter-title-${ blockAttributes.attributeId }`;
+
 	const heading = (
-		<TagName className="wc-block-attribute-filter__title">
+		<TagName className="wc-block-attribute-filter__title" id={ titleId }>
 			{ blockAttributes.heading }
 		</TagName>
 	);
@@ -536,9 +538,11 @@ const AttributeFilterBlock = ( {
 		return false;
 	};
 
+	const hasHeading = ! isEditor && blockAttributes.heading;
+
 	return (
 		<>
-			{ ! isEditor && blockAttributes.heading && filterHeading }
+			{ hasHeading && filterHeading }
 			<div
 				className={ clsx(
 					'wc-block-attribute-filter',
@@ -640,6 +644,7 @@ const AttributeFilterBlock = ( {
 					</>
 				) : (
 					<CheckboxFilter
+						titleId={ hasHeading ? titleId : undefined }
 						options={ displayedOptions }
 						checked={ checked }
 						onChange={ onChange }

@@ -17,13 +17,9 @@ const Edit = ( { attributes }: EditProps ) => {
 				allowedBlocks={ [ 'core/heading' ] }
 				template={ [
 					[
-						'core/heading',
-						{ level: 3, content: attributes.heading || '' },
-					],
-					[
 						`woocommerce/${ attributes.filterType }`,
 						{
-							heading: '',
+							heading: attributes.heading,
 							lock: {
 								remove: true,
 							},
