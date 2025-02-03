@@ -8,6 +8,7 @@
 
 use Automattic\WooCommerce\Internal\Admin\EmailPreview\EmailPreview;
 use Automattic\WooCommerce\Internal\BrandingController;
+use Automattic\WooCommerce\Internal\Email\EmailFont;
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 defined( 'ABSPATH' ) || exit;
@@ -20,24 +21,6 @@ if ( class_exists( 'WC_Settings_Emails', false ) ) {
  * WC_Settings_Emails.
  */
 class WC_Settings_Emails extends WC_Settings_Page {
-
-	/**
-	 * Array of font families supported in email templates
-	 *
-	 * @var string[]
-	 */
-	public static $font = array(
-		'Arial'           => "Arial, 'Helvetica Neue', Helvetica, sans-serif",
-		'Comic Sans MS'   => "'Comic Sans MS', 'Marker Felt-Thin', Arial, sans-serif",
-		'Courier New'     => "'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace",
-		'Georgia'         => "Georgia, Times, 'Times New Roman', serif",
-		'Helvetica'       => "'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif",
-		'Lucida'          => "'Lucida Sans Unicode', 'Lucida Grande', sans-serif",
-		'Tahoma'          => 'Tahoma, Verdana, Segoe, sans-serif',
-		'Times New Roman' => "'Times New Roman', Times, Baskerville, Georgia, serif",
-		'Trebuchet MS'    => "'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif",
-		'Verdana'         => 'Verdana, Geneva, sans-serif',
-	);
 
 	/**
 	 * Constructor.
@@ -102,6 +85,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 			'autoload'    => false,
 			'desc_tip'    => true,
 		);
+		$logo_image_width           = null;
 		$header_alignment           = null;
 		$font_family                = null;
 
@@ -153,6 +137,13 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				'default'     => '',
 				'autoload'    => false,
 				'desc_tip'    => true,
+			);
+			$logo_image_width           = array(
+				'title'    => __( 'Logo width (px)', 'woocommerce' ),
+				'id'       => 'woocommerce_email_header_image_width',
+				'desc_tip' => '',
+				'default'  => 120,
+				'type'     => 'number',
 			);
 			$header_alignment           = array(
 				'title'    => __( 'Header alignment', 'woocommerce' ),
@@ -349,6 +340,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 				),
 
 				$logo_image,
+
+				$logo_image_width,
 
 				$header_alignment,
 
@@ -641,7 +634,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * Creates the React mount point for the email preview.
 	 */
 	public function email_preview() {
-		$this->delete_transient_email_settings( null );
+		$this->delete_transient_email_settings();
 		$emails      = WC()->mailer()->get_emails();
 		$email_types = array();
 		foreach ( $emails as $type => $email ) {
@@ -666,7 +659,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 * @param object $email The email object to run the method on.
 	 */
 	public function email_preview_single( $email ) {
-		$this->delete_transient_email_settings( $email->id );
+		$this->delete_transient_email_settings();
 		// Email types array should have a single entry for current email.
 		$email_types = array(
 			array(
@@ -694,14 +687,9 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	/**
 	 * Deletes transient with email settings used for live preview. This is to
 	 * prevent conflicts where the preview would show values from previous session.
-	 *
-	 * @param string|null $email_id Email ID.
 	 */
-	private function delete_transient_email_settings( ?string $email_id ) {
-		$setting_ids = array_merge(
-			EmailPreview::get_email_style_settings_ids(),
-			EmailPreview::get_email_content_settings_ids( $email_id ),
-		);
+	private function delete_transient_email_settings() {
+		$setting_ids = EmailPreview::get_all_email_settings_ids();
 		foreach ( $setting_ids as $id ) {
 			delete_transient( $id );
 		}
@@ -758,7 +746,8 @@ class WC_Settings_Emails extends WC_Settings_Page {
 	 */
 	public function email_font_family( $value ) {
 		$option_value = $value['value'];
-		$custom_fonts = $this->get_custom_fonts();
+		// This is a temporary fix to prevent using custom fonts without fallback.
+		$custom_fonts = null;
 
 		?>
 		<tr class="<?php echo esc_attr( $value['row_class'] ); ?>">
@@ -791,7 +780,7 @@ class WC_Settings_Emails extends WC_Settings_Page {
 					>
 					<optgroup label="<?php echo esc_attr__( 'Standard fonts', 'woocommerce' ); ?>">
 						<?php
-						foreach ( self::$font as $key => $font_family ) {
+						foreach ( EmailFont::$font as $key => $font_family ) {
 							?>
 							<option
 								value="<?php echo esc_attr( $key ); ?>"

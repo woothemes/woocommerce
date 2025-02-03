@@ -6,7 +6,7 @@ import { TotalsShipping } from '@woocommerce/base-components/cart-checkout';
 import { useStoreCart } from '@woocommerce/base-context';
 import { TotalsWrapper } from '@woocommerce/blocks-checkout';
 import { useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 import {
 	filterShippingRatesByPrefersCollection,
 	isAddressComplete,
@@ -21,7 +21,7 @@ const Block = ( {
 	const { cartNeedsShipping, shippingRates, shippingAddress } =
 		useStoreCart();
 	const prefersCollection = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).prefersCollection()
+		select( checkoutStore ).prefersCollection()
 	);
 
 	if ( ! cartNeedsShipping ) {
@@ -47,7 +47,7 @@ const Block = ( {
 			<TotalsShipping
 				label={
 					hasSelectedCollectionOnly
-						? __( 'Collection', 'woocommerce' )
+						? __( 'Pickup', 'woocommerce' )
 						: __( 'Delivery', 'woocommerce' )
 				}
 				placeholder={

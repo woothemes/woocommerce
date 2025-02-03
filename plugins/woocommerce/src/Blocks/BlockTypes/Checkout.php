@@ -3,6 +3,10 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\StoreApi\Utilities\LocalPickupUtils;
 use Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils;
+use Automattic\WooCommerce\Blocks\Package;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsSchema;
+use Automattic\WooCommerce\Admin\Features\Features;
 
 /**
  * Checkout class.
@@ -157,6 +161,16 @@ class Checkout extends AbstractBlock {
 		// Load password strength meter script asynchronously if needed.
 		if ( ! is_user_logged_in() && 'no' === get_option( 'woocommerce_registration_generate_password' ) ) {
 			$dependencies[] = 'zxcvbn-async';
+		}
+
+		if ( Features::is_enabled( 'experimental-blocks' ) ) {
+			$checkout_fields = Package::container()->get( CheckoutFields::class );
+			$checkout_schema = Package::container()->get( CheckoutFieldsSchema::class );
+
+			// Load schema parser asynchronously if we need it.
+			if ( $checkout_schema->has_valid_schema( $checkout_fields->get_additional_fields() ) ) {
+				$dependencies[] = 'wc-schema-parser';
+			}
 		}
 
 		$script = [
@@ -435,6 +449,7 @@ class Checkout extends AbstractBlock {
 
 		$this->asset_data_registry->add( 'localPickupEnabled', $pickup_location_settings['enabled'] );
 		$this->asset_data_registry->add( 'localPickupText', $pickup_location_settings['title'] );
+		$this->asset_data_registry->add( 'localPickupCost', $pickup_location_settings['cost'] );
 		$this->asset_data_registry->add( 'collectableMethodIds', $local_pickup_method_ids );
 
 		// Local pickup is included with legacy shipping methods since they do not support shipping zones.
@@ -451,6 +466,19 @@ class Checkout extends AbstractBlock {
 		$this->asset_data_registry->add( 'shippingMethodsExist', $shipping_methods_count > 0 );
 
 		$is_block_editor = $this->is_block_editor();
+
+		if ( $is_block_editor && ! $this->asset_data_registry->exists( 'localPickupLocations' ) ) {
+			$this->asset_data_registry->add(
+				'localPickupLocations',
+				array_map(
+					function ( $location ) {
+						$location['formatted_address'] = wc()->countries->get_formatted_address( $location['address'], ', ' );
+						return $location;
+					},
+					get_option( 'pickup_location_pickup_locations', array() )
+				)
+			);
+		}
 
 		if ( $is_block_editor && ! $this->asset_data_registry->exists( 'globalShippingMethods' ) ) {
 			$shipping_methods           = WC()->shipping()->get_shipping_methods();
@@ -548,18 +576,6 @@ class Checkout extends AbstractBlock {
 				return 'yes' === $payment_gateway->enabled;
 			}
 		);
-	}
-
-	/**
-	 * Are we currently on the admin block editor screen?
-	 */
-	protected function is_block_editor() {
-		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
-			return false;
-		}
-		$screen = get_current_screen();
-
-		return $screen && $screen->is_block_editor();
 	}
 
 	/**

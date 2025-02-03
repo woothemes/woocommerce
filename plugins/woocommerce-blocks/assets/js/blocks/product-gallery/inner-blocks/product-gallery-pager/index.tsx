@@ -9,7 +9,6 @@ import { registerBlockType } from '@wordpress/blocks';
 import { ProductGalleryPagerBlockIcon } from './icons';
 import { Edit } from './edit';
 import metadata from './block.json';
-import './editor.scss';
 
 // @ts-expect-error: `metadata` currently does not have a type definition in WordPress core
 registerBlockType( metadata, {

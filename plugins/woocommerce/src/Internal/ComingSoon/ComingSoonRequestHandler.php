@@ -21,6 +21,13 @@ class ComingSoonRequestHandler {
 	private $coming_soon_helper = null;
 
 	/**
+	 * Whether the coming soon screen should be shown. Cache the result to avoid multiple calls to the helper.
+	 *
+	 * @var bool
+	 */
+	private static $show_coming_soon = false;
+
+	/**
 	 * Sets up the hook.
 	 *
 	 * @internal
@@ -32,8 +39,26 @@ class ComingSoonRequestHandler {
 		add_filter( 'template_include', array( $this, 'handle_template_include' ) );
 		add_filter( 'wp_theme_json_data_theme', array( $this, 'experimental_filter_theme_json_theme' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'after_setup_theme', array( $this, 'possibly_init_block_templates' ), 999 );
 	}
 
+	/**
+	 * Initializes block templates for use in classic theme.
+	 */
+	public function possibly_init_block_templates() {
+		global $wp;
+		if ( ! $this->should_show_coming_soon( $wp ) ) {
+			return;
+		}
+
+		$is_fse_theme = wc_current_theme_is_fse_theme();
+		if ( ! $is_fse_theme && ! current_theme_supports( 'block-template-parts' ) ) {
+			BlocksPackage::init();
+			$container = BlocksPackage::container();
+			$container->get( BlockTemplatesRegistry::class )->init();
+			$container->get( BlockTemplatesController::class )->init();
+		}
+	}
 
 	/**
 	 * Replaces the page template with a 'coming soon' when the site is in coming soon mode.
@@ -55,14 +80,6 @@ class ComingSoonRequestHandler {
 
 		$is_fse_theme         = wc_current_theme_is_fse_theme();
 		$is_store_coming_soon = $this->coming_soon_helper->is_store_coming_soon();
-
-		if ( ! $is_fse_theme && ! current_theme_supports( 'block-template-parts' ) ) {
-			// Initialize block templates for use in classic theme.
-			BlocksPackage::init();
-			$container = BlocksPackage::container();
-			$container->get( BlockTemplatesRegistry::class )->init();
-			$container->get( BlockTemplatesController::class )->init();
-		}
 
 		add_theme_support( 'block-templates' );
 
@@ -110,6 +127,11 @@ class ComingSoonRequestHandler {
 	 * @return bool
 	 */
 	private function should_show_coming_soon( \WP &$wp ) {
+		// Early exit if already determined that the coming soon screen should be shown.
+		if ( self::$show_coming_soon ) {
+			return true;
+		}
+
 		// Early exit if LYS feature is disabled.
 		if ( ! Features::is_enabled( 'launch-your-store' ) ) {
 			return false;
@@ -155,6 +177,8 @@ class ComingSoonRequestHandler {
 				return false;
 			}
 		}
+
+		self::$show_coming_soon = true;
 		return true;
 	}
 

@@ -41,11 +41,11 @@ You can use them in your component like so
 
 ```jsx
 const { useSelect } = window.wp.data;
-const { CHECKOUT_STORE_KEY } = window.wc.wcBlocksData;
+const { checkoutStore } = window.wc.wcBlocksData;
 
 const MyComponent = ( props ) => {
 	const isComplete = useSelect( ( select ) =>
-		select( CHECKOUT_STORE_KEY ).isComplete()
+		select( checkoutStore ).isComplete()
 	);
 	// do something with isComplete
 };

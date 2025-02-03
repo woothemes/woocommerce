@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+Update @wordpress/dependency-extraction-webpack-plugin to 6.16.0 in @woocommerce/block-library

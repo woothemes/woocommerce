@@ -9,7 +9,7 @@ import { Icon, button } from '@wordpress/icons';
  */
 import metadata from './block.json';
 import AddToCartWithOptionsVariationSelectorEdit from './edit';
-import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '..';
+import { shouldBlockifiedAddToCartWithOptionsBeRegistered } from '../utils';
 import './style.scss';
 import './editor.scss';
 

@@ -8,6 +8,7 @@ const {
 	setupRequestInterceptor,
 } = require( './loading-screen.utils' );
 const { tags } = require( '../../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../../playwright.config' );
 
 const test = base.extend( {
 	pageObject: async ( { page }, use ) => {
@@ -26,7 +27,7 @@ test.describe(
 	'Assembler - Loading Page',
 	{ tag: [ tags.GUTENBERG, tags.NOT_E2E ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.beforeAll( async ( { baseURL } ) => {
 			try {

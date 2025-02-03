@@ -10,6 +10,7 @@ use Automattic\WooCommerce\Tests\Blocks\Helpers\FixtureData;
 use Automattic\WooCommerce\Tests\Blocks\Helpers\ValidateSchema;
 use WC_Logger;
 use WC_Logger_Interface;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * Cart Controller Tests.
@@ -35,7 +36,7 @@ class CartItems extends ControllerTestCase {
 			$fixtures->get_simple_product(
 				array(
 					'name'          => 'Test Product 1',
-					'stock_status'  => 'instock',
+					'stock_status'  => ProductStockStatus::IN_STOCK,
 					'regular_price' => 10,
 					'weight'        => 10,
 					'image_id'      => $fixtures->sideload_image(),
@@ -46,7 +47,7 @@ class CartItems extends ControllerTestCase {
 		$variable_product = $fixtures->get_variable_product(
 			array(
 				'name'          => 'Test Product 2',
-				'stock_status'  => 'instock',
+				'stock_status'  => ProductStockStatus::IN_STOCK,
 				'regular_price' => 10,
 				'weight'        => 10,
 				'image_id'      => $fixtures->sideload_image(),

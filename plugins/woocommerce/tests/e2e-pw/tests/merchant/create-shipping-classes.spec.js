@@ -1,11 +1,12 @@
 const { test, expect } = require( '@playwright/test' );
 const { tags } = require( '../../fixtures/fixtures' );
+const { ADMIN_STATE_PATH } = require( '../../playwright.config' );
 
 test.describe(
 	'Merchant can add shipping classes',
 	{ tag: [ tags.SERVICES ] },
 	() => {
-		test.use( { storageState: process.env.ADMINSTATE } );
+		test.use( { storageState: ADMIN_STATE_PATH } );
 
 		test.afterEach( async ( { page } ) => {
 			// no api endpoints for shipping classes, so use the UI to cleanup

@@ -44,7 +44,7 @@
 		"@wordpress/components": "wp-6.6",
 		"@wordpress/compose": "wp-6.6",
 		"@wordpress/core-data": "wp-6.6",
-		"@wordpress/dataviews": "^4.4.1",
+		"@wordpress/dataviews": "^4.11.1",
 		"@wordpress/date": "wp-6.6",
 		"@wordpress/deprecated": "wp-6.6",
 		"@wordpress/edit-post": "wp-6.6",
@@ -109,7 +109,7 @@
 		"webpack-cli": "^3.3.12",
 		"webpack-remove-empty-scripts": "^0.7.3",
 		"webpack-rtl-plugin": "^2.0.0",
-		"wireit": "0.14.3"
+		"wireit": "0.14.10"
 	},
 	"scripts": {
 		"build": "pnpm --if-present --workspace-concurrency=Infinity --stream --filter=\"$npm_package_name...\" '/^build:project:.*$/'",
