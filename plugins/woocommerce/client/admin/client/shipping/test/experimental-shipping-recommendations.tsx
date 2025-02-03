@@ -14,8 +14,10 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 } ) );
 jest.mock( '../../settings-recommendations/dismissable-list', () => ( {
-	DismissableList: ( ( { children } ) => children ) as React.FC,
-	DismissableListHeading: ( ( { children } ) => children ) as React.FC,
+	DismissableList: ( ( { children }: { children: React.ReactNode } ) =>
+		children ) as React.FC,
+	DismissableListHeading: ( ( { children }: { children: React.ReactNode } ) =>
+		children ) as React.FC,
 } ) );
 jest.mock( '@woocommerce/admin-layout', () => {
 	const mockContext = {
@@ -34,7 +36,6 @@ jest.mock( '@woocommerce/admin-layout', () => {
 const defaultSelectReturn = {
 	getActivePlugins: () => [],
 	getInstalledPlugins: () => [],
-	isJetpackConnected: () => false,
 	getSettings: () => ( {
 		general: {
 			woocommerce_default_country: 'US',
@@ -52,43 +53,26 @@ describe( 'ShippingRecommendations', () => {
 		);
 	} );
 
-	it( 'should not render when WCS is already installed and Jetpack is connected', () => {
-		( useSelect as jest.Mock ).mockImplementation( ( fn ) =>
-			fn( () => ( {
-				...defaultSelectReturn,
-				getActivePlugins: () => [ 'woocommerce-services' ],
-				isJetpackConnected: () => true,
-			} ) )
-		);
-		render( <ShippingRecommendations /> );
+	[ [ 'woocommerce-shipping' ], [ 'woocommerce-services' ] ].forEach(
+		( activePlugins ) => {
+			it( `should not render if the following plugins are active: ${ JSON.stringify(
+				activePlugins
+			) }`, () => {
+				( useSelect as jest.Mock ).mockImplementation( ( fn ) =>
+					fn( () => ( {
+						...defaultSelectReturn,
+						getActivePlugins: () => activePlugins,
+					} ) )
+				);
 
-		expect(
-			screen.queryByText( 'WooCommerce Shipping' )
-		).not.toBeInTheDocument();
-	} );
+				render( <ShippingRecommendations /> );
 
-	[
-		[ 'woocommerce-shipping' ],
-		[ 'woocommerce-tax' ],
-		[ 'woocommerce-shipping', 'woocommerce-tax' ],
-	].forEach( ( activePlugins ) => {
-		it( `should not render if the following plugins are active: ${ JSON.stringify(
-			activePlugins
-		) }`, () => {
-			( useSelect as jest.Mock ).mockImplementation( ( fn ) =>
-				fn( () => ( {
-					...defaultSelectReturn,
-					getActivePlugins: () => activePlugins,
-				} ) )
-			);
-
-			render( <ShippingRecommendations /> );
-
-			expect(
-				screen.queryByText( 'WooCommerce Shipping' )
-			).not.toBeInTheDocument();
-		} );
-	} );
+				expect(
+					screen.queryByText( 'WooCommerce Shipping' )
+				).not.toBeInTheDocument();
+			} );
+		}
+	);
 
 	it( 'should not render when store location is not US', () => {
 		( useSelect as jest.Mock ).mockImplementation( ( fn ) =>
@@ -122,13 +106,5 @@ describe( 'ShippingRecommendations', () => {
 		expect(
 			screen.queryByText( 'WooCommerce Shipping' )
 		).not.toBeInTheDocument();
-	} );
-
-	it( 'should render WCS when not installed', () => {
-		render( <ShippingRecommendations /> );
-
-		expect(
-			screen.queryByText( 'WooCommerce Shipping' )
-		).toBeInTheDocument();
 	} );
 } );

@@ -11,10 +11,10 @@ import { getAdminLink } from '@woocommerce/settings';
 /**
  * Internal dependencies
  */
-import './woocommerce-services-item.scss';
+import './woocommerce-shipping-item.scss';
 import WooIcon from './woo-icon.svg';
 
-const WooCommerceServicesItem: React.FC< {
+const WoocommerceShippingItem: React.FC< {
 	pluginsBeingSetup: Array< string >;
 	onSetupClick: ( slugs: string[] ) => PromiseLike< void >;
 } > = ( { onSetupClick, pluginsBeingSetup } ) => {
@@ -25,11 +25,13 @@ const WooCommerceServicesItem: React.FC< {
 	);
 
 	const handleSetupClick = () => {
-		onSetupClick( [ 'woocommerce-services' ] ).then( () => {
+		onSetupClick( [ 'woocommerce-shipping' ] ).then( () => {
 			const actions = [];
 			if ( ! isSiteConnectedToJetpack ) {
 				actions.push( {
-					url: getAdminLink( 'plugins.php' ),
+					url: getAdminLink(
+						'admin.php?page=wc-settings&tab=shipping&section=woocommerce-shipping-settings'
+					),
 					label: __(
 						'Finish the setup by connecting your store to WordPress.com.',
 						'woocommerce'
@@ -47,10 +49,10 @@ const WooCommerceServicesItem: React.FC< {
 	};
 
 	return (
-		<div className="woocommerce-list__item-inner woocommerce-services-item">
+		<div className="woocommerce-list__item-inner woocommerce-shipping-plugin-item">
 			<div className="woocommerce-list__item-before">
 				<img
-					className="woocommerce-services-item__logo"
+					className="woocommerce-shipping-plugin-item__logo"
 					src={ WooIcon }
 					alt=""
 				/>
@@ -62,7 +64,7 @@ const WooCommerceServicesItem: React.FC< {
 				</span>
 				<span className="woocommerce-list__item-content">
 					{ __(
-						'Print USPS and DHL Express labels straight from your WooCommerce dashboard and save on shipping.',
+						'Print USPS, UPS, and DHL Express labels straight from your WooCommerce dashboard and save on shipping.',
 						'woocommerce'
 					) }
 					<br />
@@ -76,7 +78,7 @@ const WooCommerceServicesItem: React.FC< {
 					isSecondary
 					onClick={ handleSetupClick }
 					isBusy={ pluginsBeingSetup.includes(
-						'woocommerce-services'
+						'woocommerce-shipping'
 					) }
 					disabled={ pluginsBeingSetup.length > 0 }
 				>
@@ -87,4 +89,4 @@ const WooCommerceServicesItem: React.FC< {
 	);
 };
 
-export default WooCommerceServicesItem;
+export default WoocommerceShippingItem;

@@ -257,9 +257,9 @@ class DefaultShippingPartners {
 				'available_layouts' => array( 'row', 'column' ),
 			),
 			array(
-				'id'                => 'woocommerce-services',
+				'id'                => 'woocommerce-shipping',
 				'name'              => 'WooCommerce Shipping',
-				'slug'              => 'woocommerce-services',
+				'slug'              => 'woocommerce-shipping',
 				'description'       => __( 'Save time and money by printing your shipping labels right from your computer with WooCommerce Shipping. Try WooCommerce Shipping for free.', 'woocommerce' ),
 				'dependencies'      => array( 'jetpack' ),
 				'layout_column'     => array(
@@ -278,7 +278,7 @@ class DefaultShippingPartners {
 						array(
 							'icon'        => $asset_base_url . 'discount.svg',
 							'title'       => __( 'Discounted rates', 'woocommerce' ),
-							'description' => __( 'Access discounted shipping rates with DHL and USPS.', 'woocommerce' ),
+							'description' => __( 'Access discounted shipping rates with USPS, UPS, and DHL.', 'woocommerce' ),
 						),
 					),
 				),
