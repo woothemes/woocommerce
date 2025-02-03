@@ -56,6 +56,10 @@ export const SHIPPING_METHODS_EXIST = getSetting< boolean >(
 	'shippingMethodsExist',
 	false
 );
+export const SHIPPING_ENABLED = getSetting< boolean >(
+	'shippingEnabled',
+	true
+);
 
 type FieldsLocations = {
 	address: ( keyof AddressForm )[];
