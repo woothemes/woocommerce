@@ -53,17 +53,21 @@ export const Setup: React.FC< SetupProps > = ( {
 		const { getActivePlugins } = select( PLUGINS_STORE_NAME );
 
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			activePlugins: getActivePlugins(),
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			generalSettings: getSettings( 'general' )?.general,
 			isResolving:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					'woocommerce_setup_jetpack_opted_in',
 				] ) ||
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					'wc_connect_options',
 				] ),
 		};
-	} );
+	}, [] );
 	const [ stepIndex, setStepIndex ] = useState( 0 );
 
 	useEffect( () => {

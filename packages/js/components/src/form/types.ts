@@ -68,13 +68,13 @@ export type FormRef< Values > = {
 export type InputProps< Values, Value > = {
 	value: Value;
 	checked: boolean;
-	selected?: boolean;
+	selected?: Value;
 	onChange: (
 		value: ChangeEvent< HTMLInputElement > | Values[ keyof Values ]
 	) => void;
 	onBlur: () => void;
 	className: string | undefined;
-	help: string | null | undefined;
+	help?: React.ReactNode;
 };
 
 export type CheckboxProps< Values, Value > = Omit<

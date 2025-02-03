@@ -10,7 +10,6 @@ import {
 	ONBOARDING_STORE_NAME,
 	TaskListType,
 	TaskType,
-	WCDataSelector,
 } from '@woocommerce/data';
 import { recordEvent } from '@woocommerce/tracks';
 
@@ -38,16 +37,16 @@ export const TaskLists: React.FC< TaskListsProps > = ( { query } ) => {
 	const { task } = query;
 	const { hideTaskList } = useDispatch( ONBOARDING_STORE_NAME );
 
-	const { isResolving, taskLists } = useSelect(
-		( select: WCDataSelector ) => {
-			return {
-				isResolving: ! select(
-					ONBOARDING_STORE_NAME
-				).hasFinishedResolution( 'getTaskLists' ),
-				taskLists: select( ONBOARDING_STORE_NAME ).getTaskLists(),
-			};
-		}
-	);
+	const { isResolving, taskLists } = useSelect( ( select ) => {
+		return {
+			isResolving: ! select(
+				ONBOARDING_STORE_NAME
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			).hasFinishedResolution( 'getTaskLists' ),
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			taskLists: select( ONBOARDING_STORE_NAME ).getTaskLists(),
+		};
+	}, [] );
 
 	const getCurrentTask = () => {
 		if ( ! task ) {

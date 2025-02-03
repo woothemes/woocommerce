@@ -15,15 +15,8 @@ import type { Status, Options } from 'wordpress__notices';
 import {
 	StoreAddress,
 	getStoreAddressValidator,
-} from '../../../dashboard/components/settings/general/store-address';
-
-export type FormValues = {
-	addressLine1: string;
-	addressLine2: string;
-	countryState: string;
-	city: string;
-	postCode: string;
-};
+	FormValues,
+} from '~/dashboard/components/settings/general/store-address';
 
 type StoreLocationProps = {
 	onComplete: ( values: FormValues ) => void;
@@ -69,15 +62,21 @@ const StoreLocation = ( {
 }: StoreLocationProps ) => {
 	const { hasFinishedResolution } = useSelect( ( select ) => {
 		const countryStore = select( COUNTRIES_STORE_NAME );
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		countryStore.getCountries();
+
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			getLocale: countryStore.getLocale,
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			locales: countryStore.getLocales(),
 			hasFinishedResolution:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				countryStore.hasFinishedResolution( 'getLocales' ) &&
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				countryStore.hasFinishedResolution( 'getCountries' ),
 		};
-	} );
+	}, [] );
 	const [ isSubmitting, setSubmitting ] = useState( false );
 	const onSubmit = async ( values: FormValues ) => {
 		setSubmitting( true );
@@ -130,17 +129,18 @@ const StoreLocation = ( {
 		>
 			{ ( {
 				getInputProps,
+				getSelectControlProps,
 				handleSubmit,
 				setValue,
 			}: FormContextType< FormValues > ) => (
 				<Fragment>
 					<StoreAddress
-						// @ts-expect-error return type doesn't match, but they do work. We should revisit and refactor them in a follow up issue.
 						getInputProps={ getInputProps }
+						getSelectControlProps={ getSelectControlProps }
 						setValue={ setValue }
 					/>
 					<Button
-						isPrimary
+						variant="primary"
 						onClick={ handleSubmit }
 						isBusy={ isSubmitting }
 					>

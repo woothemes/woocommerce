@@ -13,13 +13,7 @@ import { PaymentGatewaySuggestions } from './PaymentGatewaySuggestions';
 // Shows up at http://host/wp-admin/admin.php?page=wc-admin&task=woocommerce-payments which is the default url for woocommerce-payments task
 const WoocommercePaymentsTaskPage = () => (
 	<WooOnboardingTask id="woocommerce-payments">
-		{ ( {
-			onComplete,
-			query,
-		}: {
-			onComplete: () => void;
-			query: { id: string };
-		} ) => (
+		{ ( { onComplete, query } ) => (
 			<PaymentGatewaySuggestions
 				onComplete={ onComplete }
 				query={ query }

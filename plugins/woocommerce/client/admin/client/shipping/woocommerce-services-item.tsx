@@ -20,8 +20,11 @@ const WooCommerceServicesItem: React.FC< {
 } > = ( { onSetupClick, pluginsBeingSetup } ) => {
 	const { createSuccessNotice } = useDispatch( 'core/notices' );
 
-	const isSiteConnectedToJetpack = useSelect( ( select ) =>
-		select( PLUGINS_STORE_NAME ).isJetpackConnected()
+	const isSiteConnectedToJetpack = useSelect(
+		( select ) =>
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			select( PLUGINS_STORE_NAME ).isJetpackConnected(),
+		[]
 	);
 
 	const handleSetupClick = () => {

@@ -13,10 +13,13 @@ import { getCountryCode } from '~/dashboard/utils';
 import { hasCompleteAddress } from '../../tax/utils';
 import { default as StoreLocationForm } from '~/task-lists/fills/steps/location';
 
-export const StoreLocation: React.FC< {
+export const StoreLocation = ( {
+	nextStep,
+	onLocationComplete,
+}: {
 	nextStep: () => void;
 	onLocationComplete: () => void;
-} > = ( { nextStep, onLocationComplete } ) => {
+} ) => {
 	const { createNotice } = useDispatch( 'core/notices' );
 	const { updateAndPersistSettingsForGroup } =
 		useDispatch( SETTINGS_STORE_NAME );
@@ -25,12 +28,14 @@ export const StoreLocation: React.FC< {
 			select( SETTINGS_STORE_NAME );
 
 		return {
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			generalSettings: getSettings( 'general' )?.general,
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 			isResolving: ! hasFinishedResolution( 'getSettings', [
 				'general',
 			] ),
 		};
-	} );
+	}, [] );
 
 	useEffect( () => {
 		if ( isResolving || ! hasCompleteAddress( generalSettings || {} ) ) {

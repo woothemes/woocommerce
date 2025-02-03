@@ -18,7 +18,7 @@ const LoadSampleProductModal: React.FC = () => {
 			title=""
 			onRequestClose={ () => {} }
 		>
-			<Spinner color="#007cba" size={ 48 } />
+			<Spinner color="#007cba" style={ { width: 48, height: 48 } } />
 			<Text className="woocommerce-load-sample-product-modal__title">
 				{ __( 'Loading sample products', 'woocommerce' ) }
 			</Text>

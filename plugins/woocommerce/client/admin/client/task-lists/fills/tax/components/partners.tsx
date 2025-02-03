@@ -12,12 +12,12 @@ import clsx from 'clsx';
 import { TaxChildProps } from '../utils';
 import './partners.scss';
 
-export const Partners: React.FC< TaxChildProps > = ( {
+export const Partners = ( {
 	children,
 	isPending,
 	onManual,
 	onDisable,
-} ) => {
+}: TaxChildProps ) => {
 	const classes = clsx(
 		'woocommerce-task-card',
 		'woocommerce-tax-partners',

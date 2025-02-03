@@ -94,43 +94,53 @@ export const TasksReminderBar: React.FC< ReminderBarProps > = ( {
 		taskListComplete,
 		reminderBarHidden,
 		completedTasksCount,
-	} = useSelect( ( select ) => {
-		const {
-			getTaskList,
-			hasFinishedResolution: onboardingHasFinishedResolution,
-		} = select( ONBOARDING_STORE_NAME );
-		const {
-			getOption,
-			hasFinishedResolution: optionHasFinishedResolution,
-		} = select( OPTIONS_STORE_NAME );
-		const reminderBarHiddenOption = getOption( REMINDER_BAR_HIDDEN_OPTION );
-		const taskList = getTaskList( taskListId );
-		const taskListIsResolved = onboardingHasFinishedResolution(
-			'getTaskList',
-			[ taskListId ]
-		);
-		const optionIsResolved = optionHasFinishedResolution( 'getOption', [
-			REMINDER_BAR_HIDDEN_OPTION,
-		] );
+	} = useSelect(
+		( select ) => {
+			const {
+				getTaskList,
+				hasFinishedResolution: onboardingHasFinishedResolution,
+			} = select( ONBOARDING_STORE_NAME );
+			const {
+				getOption,
+				hasFinishedResolution: optionHasFinishedResolution,
+			} = select( OPTIONS_STORE_NAME );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const reminderBarHiddenOption = getOption(
+				REMINDER_BAR_HIDDEN_OPTION
+			);
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const taskList = getTaskList( taskListId );
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const taskListIsResolved = onboardingHasFinishedResolution(
+				'getTaskList',
+				[ taskListId ]
+			);
+			// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
+			const optionIsResolved = optionHasFinishedResolution( 'getOption', [
+				REMINDER_BAR_HIDDEN_OPTION,
+			] );
 
-		const visibleTasks = getVisibleTasks( taskList?.tasks || [] );
+			const visibleTasks = getVisibleTasks( taskList?.tasks || [] );
 
-		const completedTasks =
-			visibleTasks.filter( ( task: TaskType ) => task.isComplete ) || [];
+			const completedTasks =
+				visibleTasks.filter( ( task: TaskType ) => task.isComplete ) ||
+				[];
 
-		const isResolved = taskListIsResolved && optionIsResolved;
+			const isResolved = taskListIsResolved && optionIsResolved;
 
-		return {
-			reminderBarHidden: reminderBarHiddenOption === 'yes',
-			taskListHidden: isResolved ? taskList?.isHidden : false,
-			taskListComplete: isResolved ? taskList?.isComplete : false,
-			loading: ! isResolved,
-			completedTasksCount: completedTasks.length,
-			remainingCount: isResolved
-				? visibleTasks?.length - completedTasks.length
-				: null,
-		};
-	} );
+			return {
+				reminderBarHidden: reminderBarHiddenOption === 'yes',
+				taskListHidden: isResolved ? taskList?.isHidden : false,
+				taskListComplete: isResolved ? taskList?.isComplete : false,
+				loading: ! isResolved,
+				completedTasksCount: completedTasks.length,
+				remainingCount: isResolved
+					? visibleTasks?.length - completedTasks.length
+					: null,
+			};
+		},
+		[ taskListId ]
+	);
 
 	const query = getQuery() as { [ key: string ]: string };
 	const isHomescreen =

@@ -33,22 +33,26 @@ export const Plugins: React.FC< Props > = ( {
 	const { isResolving, tosAccepted } = useSelect( ( select ) => {
 		const { getOption, hasFinishedResolution } =
 			select( OPTIONS_STORE_NAME );
+		// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 		const wcConnectOptions = getOption( 'wc_connect_options' );
 
 		return {
 			isResolving:
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					'woocommerce_setup_jetpack_opted_in',
 				] ) ||
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				! hasFinishedResolution( 'getOption', [
 					'wc_connect_options',
 				] ),
 			tosAccepted:
 				( isWcConnectOptions( wcConnectOptions ) &&
 					wcConnectOptions?.tos_accepted ) ||
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				getOption( 'woocommerce_setup_jetpack_opted_in' ) === '1',
 		};
-	} );
+	}, [] );
 
 	useEffect( () => {
 		if ( ! tosAccepted || pluginsToActivate.length ) {

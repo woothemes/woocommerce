@@ -24,7 +24,7 @@ export type TaskType = {
 	canView: boolean;
 	isActioned: boolean;
 	eventPrefix: string;
-	level: number;
+	level: 1 | 2 | 3;
 	recordViewEvent: boolean;
 	badge?: string;
 	additionalData?: {

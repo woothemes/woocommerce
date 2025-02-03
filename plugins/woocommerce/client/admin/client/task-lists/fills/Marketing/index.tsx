@@ -116,12 +116,16 @@ const Marketing: React.FC< MarketingProps > = ( { onComplete } ) => {
 			);
 
 			return {
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				activePlugins: getActivePlugins(),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				freeExtensions: getFreeExtensions(),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				installedPlugins: getInstalledPlugins(),
+				// @ts-expect-error Todo: awaiting more global fix, demo: https://github.com/woocommerce/woocommerce/pull/54146
 				isResolving: ! hasFinishedResolution( 'getFreeExtensions' ),
 			};
-		} );
+		}, [] );
 
 	const [ installedExtensions, pluginLists ] = useMemo(
 		() =>
@@ -137,7 +141,7 @@ const Marketing: React.FC< MarketingProps > = ( { onComplete } ) => {
 		setCurrentPlugin( slug );
 		actionTask( 'marketing' );
 		installAndActivatePlugins( [ slug ] )
-			.then( ( response ) => {
+			.then( ( response: unknown ) => {
 				recordEvent( 'tasklist_marketing_install', {
 					selected_extension: slug,
 					installed_extensions: installedExtensions.map(
@@ -235,7 +239,7 @@ registerPlugin( 'wc-admin-onboarding-task-marketing', {
 	scope: 'woocommerce-tasks',
 	render: () => (
 		<WooOnboardingTask id="marketing">
-			{ ( { onComplete }: MarketingProps ) => {
+			{ ( { onComplete } ) => {
 				return <Marketing onComplete={ onComplete } />;
 			} }
 		</WooOnboardingTask>
