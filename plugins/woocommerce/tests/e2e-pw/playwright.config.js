@@ -86,10 +86,16 @@ export const setupProjects = [
 		testMatch: `token.teardown.js`,
 	},
 	{
+		name: 'users setup',
+		testDir: `${ TESTS_ROOT_PATH }/fixtures`,
+		testMatch: `users.setup.js`,
+		dependencies: [ 'consumer token setup' ],
+	},
+	{
 		name: 'site setup',
 		testDir: `${ TESTS_ROOT_PATH }/fixtures`,
 		testMatch: `site.setup.js`,
-		dependencies: [ 'consumer token setup' ],
+		dependencies: [ 'users setup' ],
 	},
 ];
 
