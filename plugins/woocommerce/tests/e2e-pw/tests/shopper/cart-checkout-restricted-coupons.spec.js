@@ -30,8 +30,8 @@ const applyCoupon = async ( page, couponCode ) => {
 
 const expandCouponForm = async ( page ) => {
 	await page
-		.getByRole( 'link', {
-			name: 'Click here to enter your code',
+		.getByRole( 'button', {
+			name: 'Enter your coupon code',
 		} )
 		.click();
 	// This is to wait for the expand animation to finish, it avoids flakiness.
