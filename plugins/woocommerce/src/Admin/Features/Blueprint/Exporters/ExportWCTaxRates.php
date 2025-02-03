@@ -5,7 +5,10 @@ declare( strict_types = 1);
 namespace Automattic\WooCommerce\Admin\Features\Blueprint\Exporters;
 
 use Automattic\WooCommerce\Admin\Features\Blueprint\Steps\SetWCTaxRates;
+use Automattic\WooCommerce\Blueprint\ClassExtractor;
+use Automattic\WooCommerce\Blueprint\Exporters\HasAlias;
 use Automattic\WooCommerce\Blueprint\Exporters\StepExporter;
+use Automattic\WooCommerce\Blueprint\Steps\RunPHP;
 
 /**
  * Class ExportWCTaxRates
@@ -14,12 +17,12 @@ use Automattic\WooCommerce\Blueprint\Exporters\StepExporter;
  *
  * @package Automattic\WooCommerce\Admin\Features\Blueprint\Exporters
  */
-class ExportWCTaxRates implements StepExporter {
+class ExportWCTaxRates implements StepExporter, HasAlias {
 
 	/**
 	 * Export WooCommerce tax rates.
 	 *
-	 * @return SetWCTaxRates
+	 * @return RunPHP
 	 */
 	public function export() {
 		global $wpdb;
@@ -42,15 +45,12 @@ class ExportWCTaxRates implements StepExporter {
 			ARRAY_A
 		);
 
-		// Create a new SetWCTaxRates step with the fetched data.
-		$step = new SetWCTaxRates( $rates, $locations );
-		$step->set_meta_values(
-			array(
-				'plugin' => 'woocommerce',
-			)
-		);
+		$class_extractor = new ClassExtractor( __DIR__ . '/../RunPHPTemplates/ImportSetWCTaxRates.php' );
+		$class_extractor->replace_class_variable( 'rates', $rates );
+		$class_extractor->replace_class_variable( 'locations', $locations );
+		$code = $class_extractor->with_wp_load()->get_code();
 
-		return $step;
+		return new RunPHP( $code );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class ExportWCTaxRates implements StepExporter {
 	 * @return string
 	 */
 	public function get_step_name() {
-		return 'setWCTaxRates';
+		return 'runPHP';
 	}
 
 	/**
@@ -78,5 +78,14 @@ class ExportWCTaxRates implements StepExporter {
 	 */
 	public function get_description() {
 		return __( 'It includes tax rates and locations.', 'woocommerce' );
+	}
+
+	/**
+	 * Get the alias
+	 *
+	 * @return string
+	 */
+	public function get_alias() {
+		return 'setWCTaxRates';
 	}
 }

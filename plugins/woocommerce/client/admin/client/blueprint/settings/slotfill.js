@@ -192,22 +192,6 @@ const Blueprint = () => {
 			) ) }
 
 			<div id="download-link-container"></div>
-			<h4>{ __( 'Options', 'woocommerce' ) }</h4>
-			<div>
-				<input
-					type="checkbox"
-					id="export-as-zip"
-					name={ 'export-as-zip' }
-					value={ 'yes' }
-					checked={ exportAsZip }
-					onChange={ () => {
-						setExportAsZip( ! exportAsZip );
-					} }
-				/>
-				<label htmlFor="export-as-zip">
-					{ __( 'Export as a zip (Experimental)', 'woocommerce' ) }
-				</label>
-			</div>
 			<br></br>
 			<Button
 				variant="primary"

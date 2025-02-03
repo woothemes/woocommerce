@@ -44,12 +44,11 @@ class Init {
 		add_filter(
 			'wooblueprint_export_landingpage',
 			function () {
-				return 'admin.php?page=wc-admin';
+				return '/wp-admin/admin.php?page=wc-admin';
 			}
 		);
 
 		add_filter( 'wooblueprint_exporters', array( $this, 'add_woo_exporters' ) );
-		add_filter( 'wooblueprint_importers', array( $this, 'add_woo_importers' ) );
 	}
 
 	/**
@@ -96,24 +95,6 @@ class Init {
 		return array_merge(
 			$exporters,
 			$this->get_woo_exporters()
-		);
-	}
-
-	/**
-	 * Add Woo Specific Importers.
-	 *
-	 * @param StepProcessor[] $importers Array of step processors.
-	 *
-	 * @return array
-	 */
-	public function add_woo_importers( array $importers ) {
-		return array_merge(
-			$importers,
-			array(
-				new ImportSetWCPaymentGateways(),
-				new ImportSetWCShipping(),
-				new ImportSetWCTaxRates(),
-			)
 		);
 	}
 

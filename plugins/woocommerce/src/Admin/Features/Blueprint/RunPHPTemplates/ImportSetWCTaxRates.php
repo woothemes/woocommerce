@@ -1,13 +1,6 @@
 <?php
-
+// phpcs:ignoreFile
 declare( strict_types = 1);
-
-namespace Automattic\WooCommerce\Admin\Features\Blueprint\Importers;
-
-use Automattic\WooCommerce\Admin\Features\Blueprint\Steps\SetWCTaxRates;
-use Automattic\WooCommerce\Blueprint\StepProcessor;
-use Automattic\WooCommerce\Blueprint\StepProcessorResult;
-use WC_Tax;
 
 /**
  * Class ImportSetWCTaxRates
@@ -16,32 +9,33 @@ use WC_Tax;
  *
  * @package Automattic\WooCommerce\Admin\Features\Blueprint\Importers
  */
-class ImportSetWCTaxRates implements StepProcessor {
+class ImportSetWCTaxRates {
+
 	/**
-	 * The result of the step processing.
+	 * Tax rates.
 	 *
-	 * @var StepProcessorResult $result The result of the step processing.
+	 * @var array $rates
 	 */
-	private StepProcessorResult $result;
+	protected array $rates = array();
+
+	/**
+	 * Tax rate locations.
+	 *
+	 * @var array $locations
+	 */
+	protected array $locations = array();
 
 	/**
 	 * Process the import of WooCommerce tax rates.
-	 *
-	 * @param object $schema The schema object containing import details.
-	 * @return StepProcessorResult
 	 */
-	public function process( $schema ): StepProcessorResult {
-		$this->result = StepProcessorResult::success( SetWCTaxRates::get_step_name() );
-
-		foreach ( $schema->values->rates as $rate ) {
+	public function import() {
+		foreach ( $this->rates as $rate ) {
 			$this->add_rate( $rate );
 		}
 
-		foreach ( $schema->values->locations as $location ) {
+		foreach ( $this->locations as $location ) {
 			$this->add_location( $location );
 		}
-
-		return $this->result;
 	}
 
 	/**
@@ -76,7 +70,6 @@ class ImportSetWCTaxRates implements StepProcessor {
 		$tax_rate = (array) $rate;
 
 		if ( $this->exist( $tax_rate['tax_rate_id'] ) ) {
-			$this->result->add_info( "Tax rate with I.D {$tax_rate['tax_rate_id']} already exists. Skipped creating it." );
 			return false;
 		}
 
@@ -112,13 +105,6 @@ class ImportSetWCTaxRates implements StepProcessor {
 		// phpcs:ignore
 		$wpdb->query( $sql );
 	}
-
-	/**
-	 * Get the class name for the step.
-	 *
-	 * @return string
-	 */
-	public function get_step_class(): string {
-		return SetWCTaxRates::class;
-	}
 }
+
+( new ImportSetWCTaxRates() )->import();
