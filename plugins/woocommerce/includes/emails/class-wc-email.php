@@ -5,6 +5,7 @@
  * @package WooCommerce\Emails
  */
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use Pelago\Emogrifier\CssInliner;
 use Pelago\Emogrifier\HtmlProcessor\CssToAttributeConverter;
 use Pelago\Emogrifier\HtmlProcessor\HtmlPruner;
@@ -236,9 +237,18 @@ class WC_Email extends WC_Settings_API {
 	public $email_type;
 
 	/**
+	 * Wether email improvements feature is enabled.
+	 *
+	 * @var bool
+	 */
+	public $email_improvements_enabled;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
+		$this->email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
+
 		// Find/replace.
 		$this->placeholders = array_merge(
 			array(
