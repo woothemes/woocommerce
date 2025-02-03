@@ -12,6 +12,7 @@ use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
 use Automattic\WooCommerce\Proxies\LegacyProxy;
@@ -459,7 +460,7 @@ class WC_Post_Data {
 			if ( $customer_id > 0 && 'shop_order' === $order->get_type() ) {
 				$customer    = new WC_Customer( $customer_id );
 				$order_count = $customer->get_order_count();
-				$order_count --;
+				--$order_count;
 
 				if ( 0 === $order_count ) {
 					$customer->set_is_paying_customer( false );
@@ -527,6 +528,11 @@ class WC_Post_Data {
 	 */
 	public static function flush_object_meta_cache( $meta_id, $object_id, $meta_key, $meta_value ) {
 		WC_Cache_Helper::invalidate_cache_group( 'object_' . $object_id );
+
+		$cogs_controller = wc_get_container()->get( CostOfGoodsSoldController::class );
+		if ( $cogs_controller->feature_is_enabled() && '_cogs_total_value' === $meta_key ) {
+			$cogs_controller->remove_cached_variations_with_custom_cost_count( $object_id );
+		}
 	}
 
 	/**
