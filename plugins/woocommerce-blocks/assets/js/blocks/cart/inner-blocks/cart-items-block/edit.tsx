@@ -12,6 +12,7 @@ import {
 	useForcedLayout,
 	getAllowedBlocks,
 } from '../../../cart-checkout-shared';
+import crossSells from '../../../product-collection/collections/cross-sells';
 
 interface Props {
 	clientId: string;
@@ -22,7 +23,13 @@ export const Edit = ( { clientId }: Props ): JSX.Element => {
 	const allowedBlocks = getAllowedBlocks( innerBlockAreas.CART_ITEMS );
 	const defaultTemplate = [
 		[ 'woocommerce/cart-line-items-block', {}, [] ],
-		[ 'woocommerce/cart-cross-sells-block', {}, [] ],
+		[
+			'woocommerce/product-collection',
+			{
+				collection: 'woocommerce/product-collection/cross-sells',
+			},
+			crossSells.innerBlocks,
+		],
 	] as unknown as TemplateArray;
 
 	useForcedLayout( {
