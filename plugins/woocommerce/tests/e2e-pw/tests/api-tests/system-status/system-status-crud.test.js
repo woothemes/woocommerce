@@ -252,7 +252,7 @@ const getExpectedOtherTables = ( dbPrefix ) => {
 
 /* eslint-disable playwright/no-nested-step */
 test.describe( 'System Status API tests', () => {
-	test.only( 'can view all system status items', async ( { request } ) => {
+	test( 'can view all system status items', async ( { request } ) => {
 		let responseJSON,
 			databasePrefix,
 			databaseSize,
