@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Automattic\WooCommerce\Internal\Orders\CouponsController;
@@ -2540,7 +2541,7 @@ class WC_AJAX {
 	 * @used-by bulk_edit_variations
 	 */
 	private static function variation_bulk_action_variable_stock_status_instock( $variations, $data ) {
-		self::variation_bulk_set( $variations, 'stock_status', 'instock' );
+		self::variation_bulk_set( $variations, 'stock_status', ProductStockStatus::IN_STOCK );
 	}
 
 	/**
@@ -2552,7 +2553,7 @@ class WC_AJAX {
 	 * @used-by bulk_edit_variations
 	 */
 	private static function variation_bulk_action_variable_stock_status_outofstock( $variations, $data ) {
-		self::variation_bulk_set( $variations, 'stock_status', 'outofstock' );
+		self::variation_bulk_set( $variations, 'stock_status', ProductStockStatus::OUT_OF_STOCK );
 	}
 
 	/**
@@ -2564,7 +2565,7 @@ class WC_AJAX {
 	 * @used-by bulk_edit_variations
 	 */
 	private static function variation_bulk_action_variable_stock_status_onbackorder( $variations, $data ) {
-		self::variation_bulk_set( $variations, 'stock_status', 'onbackorder' );
+		self::variation_bulk_set( $variations, 'stock_status', ProductStockStatus::ON_BACKORDER );
 	}
 
 	/**

@@ -2,74 +2,50 @@
  * External dependencies
  */
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import { Disabled, PanelBody } from '@wordpress/components';
-import type { BlockEditProps } from '@wordpress/blocks';
+import { PanelBody } from '@wordpress/components';
 import { WC_BLOCKS_IMAGE_URL } from '@woocommerce/block-settings';
-import clsx from 'clsx';
+import type { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import './editor.scss';
 import { ProductGalleryThumbnailsBlockSettings } from './block-settings';
-import type {
-	ProductGalleryThumbnailsBlockAttributes,
-	ProductGalleryContext,
-} from '../../types';
-import { ThumbnailsPosition } from './constants';
+import type { ProductGalleryThumbnailsBlockAttributes } from './types';
 
-interface EditProps
-	extends BlockEditProps< ProductGalleryThumbnailsBlockAttributes > {
-	context: ProductGalleryContext;
-}
-
-export const Edit = ( { attributes, setAttributes, context }: EditProps ) => {
+export const Edit = ( {
+	attributes,
+	setAttributes,
+}: BlockEditProps< ProductGalleryThumbnailsBlockAttributes > ) => {
 	const blockProps = useBlockProps( {
-		className: clsx(
-			'wc-block-product-gallery-thumbnails',
-			`wc-block-product-gallery-thumbnails--number-of-thumbnails-${ context.thumbnailsNumberOfThumbnails }`,
-			`wc-block-product-gallery-thumbnails--position-${ context.thumbnailsPosition }`
-		),
+		className: `wc-block-product-gallery-thumbnails wc-block-product-gallery-thumbnails--number-of-thumbnails-${ attributes.numberOfThumbnails }`,
 	} );
 
-	const Placeholder = () => {
-		return context.thumbnailsPosition !== ThumbnailsPosition.OFF ? (
-			<div className="wc-block-editor-product-gallery-thumbnails">
-				{ [
-					...Array( context.thumbnailsNumberOfThumbnails ).keys(),
-				].map( ( index ) => {
+	return (
+		<div { ...blockProps }>
+			<InspectorControls>
+				<PanelBody>
+					<ProductGalleryThumbnailsBlockSettings
+						attributes={ attributes }
+						setAttributes={ setAttributes }
+					/>
+				</PanelBody>
+			</InspectorControls>
+			{ [ ...Array( attributes.numberOfThumbnails ).keys() ].map(
+				( index ) => {
 					return (
 						<div
 							className="wc-block-product-gallery-thumbnails__thumbnail"
 							key={ index }
 						>
 							<img
+								className="wc-block-product-gallery-thumbnails__image"
 								src={ `${ WC_BLOCKS_IMAGE_URL }block-placeholders/product-image-gallery.svg` }
-								alt="Placeholder"
+								alt=""
 							/>
 						</div>
 					);
-				} ) }
-			</div>
-		) : null;
-	};
-
-	return (
-		<>
-			<div { ...blockProps }>
-				<InspectorControls>
-					<PanelBody>
-						<ProductGalleryThumbnailsBlockSettings
-							attributes={ attributes }
-							setAttributes={ setAttributes }
-							context={ context }
-						/>
-					</PanelBody>
-				</InspectorControls>
-				<Disabled>
-					<Placeholder />
-				</Disabled>
-			</div>
-		</>
+				}
+			) }
+		</div>
 	);
 };

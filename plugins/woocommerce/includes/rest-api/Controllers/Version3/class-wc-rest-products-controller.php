@@ -9,7 +9,9 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -819,7 +821,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				$product->set_manage_stock( 'no' );
 				$product->set_backorders( 'no' );
 				$product->set_stock_quantity( '' );
-				$product->set_stock_status( 'instock' );
+				$product->set_stock_status( ProductStockStatus::IN_STOCK );
 			} elseif ( $product->get_manage_stock() ) {
 				// Stock status is always determined by children so sync later.
 				if ( ! $product->is_type( ProductType::VARIABLE ) ) {
@@ -1095,8 +1097,8 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'catalog_visibility'    => array(
 					'description' => __( 'Catalog visibility.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'visible',
-					'enum'        => array( 'visible', 'catalog', 'search', 'hidden' ),
+					'default'     => CatalogVisibility::VISIBLE,
+					'enum'        => array( CatalogVisibility::VISIBLE, CatalogVisibility::CATALOG, CatalogVisibility::SEARCH, CatalogVisibility::HIDDEN ),
 					'context'     => array( 'view', 'edit' ),
 				),
 				'description'           => array(
@@ -1265,7 +1267,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 				'stock_status'          => array(
 					'description' => __( 'Controls the stock status of the product.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'instock',
+					'default'     => ProductStockStatus::IN_STOCK,
 					'enum'        => array_keys( wc_get_product_stock_status_options() ),
 					'context'     => array( 'view', 'edit' ),
 				),

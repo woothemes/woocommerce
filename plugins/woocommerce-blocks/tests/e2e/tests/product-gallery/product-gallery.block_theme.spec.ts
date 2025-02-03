@@ -239,10 +239,10 @@ test.describe( `${ blockData.name }`, () => {
 	} );
 
 	test.describe( 'with pager', () => {
-		test( 'should change the image when the user click on a pager item', async ( {
-			page,
-			editor,
+		test( 'pager should change when clicking on a next button or thumbnail', async ( {
 			pageObject,
+			editor,
+			page,
 		} ) => {
 			await pageObject.addProductGalleryBlock( { cleanContent: true } );
 
@@ -252,61 +252,26 @@ test.describe( `${ blockData.name }`, () => {
 
 			await page.goto( blockData.productPage );
 
-			const initialVisibleLargeImageId = await getVisibleLargeImageId(
-				await pageObject.getMainImageBlock( {
-					page: 'frontend',
-				} )
-			);
+			const pagerBlock = await pageObject.getPagerBlock( {
+				page: 'frontend',
+			} );
 
-			const secondImageThumbnailId = await getThumbnailImageIdByNth(
-				1,
-				await pageObject.getThumbnailsBlock( {
-					page: 'frontend',
-				} )
-			);
+			await expect( pagerBlock ).toHaveText( '1/3' );
 
-			const thirdImageThumbnailId = await getThumbnailImageIdByNth(
-				2,
-				await pageObject.getThumbnailsBlock( {
-					page: 'frontend',
-				} )
-			);
+			const nextButton = page.getByRole( 'button', {
+				name: 'Next image',
+			} );
+			await nextButton.click();
 
-			expect( initialVisibleLargeImageId ).not.toBe(
-				secondImageThumbnailId
-			);
-			expect( initialVisibleLargeImageId ).not.toBe(
-				thirdImageThumbnailId
-			);
+			await expect( pagerBlock ).toHaveText( '2/3' );
 
-			const pagerBlock = pageObject.getPagerBlock( { page: 'frontend' } );
-			const thirdPagerItem = ( await pagerBlock )
-				.locator( '.wc-block-product-gallery-pager__pager-item' )
-				.nth( 2 );
-			await thirdPagerItem.click();
+			const thumbnailsLocator = await pageObject.getThumbnailsBlock( {
+				page: 'frontend',
+			} );
+			const firstThumbnail = thumbnailsLocator.locator( 'img' ).nth( 0 );
+			await firstThumbnail.click();
 
-			let currentVisibleLargeImageId = await getVisibleLargeImageId(
-				await pageObject.getMainImageBlock( {
-					page: 'frontend',
-				} )
-			);
-
-			expect( currentVisibleLargeImageId ).toBe( thirdImageThumbnailId );
-
-			const firstPagerItem = ( await pagerBlock )
-				.locator( '.wc-block-product-gallery-pager__pager-item' )
-				.first();
-			await firstPagerItem.click();
-
-			currentVisibleLargeImageId = await getVisibleLargeImageId(
-				await pageObject.getMainImageBlock( {
-					page: 'frontend',
-				} )
-			);
-
-			expect( currentVisibleLargeImageId ).toBe(
-				initialVisibleLargeImageId
-			);
+			await expect( pagerBlock ).toHaveText( '1/3' );
 		} );
 	} );
 
@@ -361,113 +326,25 @@ test.describe( `${ blockData.name }`, () => {
 			} );
 			await largeImageBlock.click();
 
-			const productGalleryPopUpContent = page.locator(
-				'.wc-block-product-gallery-dialog__body'
-			);
-
-			const popUpSelectedImageId = await getVisibleLargeImageId(
-				productGalleryPopUpContent.locator(
-					`[data-block-name="woocommerce/product-gallery-large-image"]`
-				)
-			);
+			// eslint-disable-next-line playwright/no-wait-for-timeout, no-restricted-syntax
+			await page.waitForTimeout( 300 );
+			const popUpSelectedImageId =
+				await pageObject.getActiveElementImageId( {
+					page,
+				} );
 
 			expect( popUpSelectedImageId ).toBe( nextImageId );
-		} );
 
-		test( 'if available, should display the same image when pop-up is closed', async ( {
-			page,
-			editor,
-			pageObject,
-		} ) => {
-			await pageObject.addProductGalleryBlock( { cleanContent: true } );
-
-			await editor.saveSiteEditorEntities( {
-				isOnlyCurrentEntityDirty: true,
-			} );
-
-			await page.goto( blockData.productPage );
-
-			const largeImageBlock = await pageObject.getMainImageBlock( {
-				page: 'frontend',
-			} );
-			const initialVisibleLargeImageId = await getVisibleLargeImageId(
-				largeImageBlock
-			);
-
-			const secondImageThumbnailId = await getThumbnailImageIdByNth(
-				1,
-				await pageObject.getThumbnailsBlock( {
-					page: 'frontend',
-				} )
-			);
-
-			expect( initialVisibleLargeImageId ).not.toBe(
-				secondImageThumbnailId
-			);
-
-			const nextButton = page
-				.locator(
-					'.wc-block-product-gallery-large-image-next-previous--button'
-				)
-				.nth( 1 );
-			await nextButton.click();
-
-			const imageAfterClickingNextButton = await getVisibleLargeImageId(
-				largeImageBlock
-			);
-
-			expect( imageAfterClickingNextButton ).toBe(
-				secondImageThumbnailId
-			);
-
-			await largeImageBlock.click();
-
-			const productGalleryPopUpContent = page.locator(
-				'.wc-block-product-gallery-dialog__body'
-			);
-
-			const popUpInitialSelectedImageId = await getVisibleLargeImageId(
-				productGalleryPopUpContent.locator(
-					`[data-block-name="woocommerce/product-gallery-large-image"]`
-				)
-			);
-
-			const popUpNextButton = productGalleryPopUpContent
-				.locator(
-					'.wc-block-product-gallery-large-image-next-previous--button'
-				)
-				.nth( 1 );
-			await popUpNextButton.click();
-
-			const popUpNextImageId = await getVisibleLargeImageId(
-				productGalleryPopUpContent.locator(
-					`[data-block-name="woocommerce/product-gallery-large-image"]`
-				)
-			);
-
-			expect( popUpInitialSelectedImageId ).not.toBe( popUpNextImageId );
-
-			const productGalleryPopUpHeader = page.locator(
-				'.wc-block-product-gallery-dialog__header'
-			);
-			const closePopUpButton = productGalleryPopUpHeader.locator(
-				'.wc-block-product-gallery-dialog__close'
+			const closePopUpButton = page.locator(
+				'.wc-block-product-gallery-dialog__close-button'
 			);
 			await closePopUpButton.click();
-
-			await page.waitForFunction( () => {
-				const isPopUpOpen = document
-					.querySelector( '[aria-label="Product gallery"]' )
-					?.checkVisibility();
-
-				return isPopUpOpen === false;
-			} );
 
 			const singleProductImageId = await getVisibleLargeImageId(
 				largeImageBlock
 			);
 
-			expect( singleProductImageId ).toBe( popUpNextImageId );
+			expect( singleProductImageId ).toBe( nextImageId );
 		} );
 	} );
 
@@ -544,21 +421,6 @@ test.describe( `${ blockData.name }`, () => {
 				.getByRole( 'option', { name: blockData.title } );
 
 			await expect( productGalleryBlockOption ).toBeVisible();
-		} );
-
-		test( 'should be inserted on the Product Gallery template part by default', async ( {
-			admin,
-			editor,
-		} ) => {
-			await admin.visitSiteEditor( {
-				postId: `woocommerce/woocommerce//product-gallery`,
-				postType: 'wp_template_part',
-				canvas: 'edit',
-			} );
-
-			await expect(
-				await editor.getBlockByName( blockData.name )
-			).toHaveCount( 1 );
 		} );
 
 		test( 'should be hidden on the post editor globally', async ( {

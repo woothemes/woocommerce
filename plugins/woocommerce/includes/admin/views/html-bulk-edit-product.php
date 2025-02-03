@@ -4,6 +4,7 @@
  */
 
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -251,11 +252,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<select class="visibility" name="_visibility">
 					<?php
 					$options = array(
-						''        => __( '— No change —', 'woocommerce' ),
-						'visible' => __( 'Catalog &amp; search', 'woocommerce' ),
-						'catalog' => __( 'Catalog', 'woocommerce' ),
-						'search'  => __( 'Search', 'woocommerce' ),
-						'hidden'  => __( 'Hidden', 'woocommerce' ),
+						''                         => __( '— No change —', 'woocommerce' ),
+						CatalogVisibility::VISIBLE => __( 'Catalog &amp; search', 'woocommerce' ),
+						CatalogVisibility::CATALOG => __( 'Catalog', 'woocommerce' ),
+						CatalogVisibility::SEARCH  => __( 'Search', 'woocommerce' ),
+						CatalogVisibility::HIDDEN  => __( 'Hidden', 'woocommerce' ),
 					);
 					foreach ( $options as $key => $value ) {
 						echo '<option value="' . esc_attr( $key ) . '">' . esc_html( $value ) . '</option>';

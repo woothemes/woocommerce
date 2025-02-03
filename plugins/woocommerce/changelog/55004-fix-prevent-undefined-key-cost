@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Ensure the `cost` key is always present in `get_local_pickup_settings` to prevent PHP warnings in the Checkout block.

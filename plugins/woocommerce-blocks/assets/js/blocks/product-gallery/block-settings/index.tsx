@@ -9,43 +9,14 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import type { ProductGallerySettingsProps } from '../types';
-import { ProductGalleryThumbnailsBlockSettings } from '../inner-blocks/product-gallery-thumbnails/block-settings';
-import { ProductGalleryPagerBlockSettings } from '../inner-blocks/product-gallery-pager/settings';
-import { ProductGalleryNextPreviousBlockSettings } from '../inner-blocks/product-gallery-large-image-next-previous/settings';
 
 export const ProductGalleryBlockSettings = ( {
 	attributes,
 	setAttributes,
-	context,
 }: ProductGallerySettingsProps ) => {
 	const { cropImages, hoverZoom, fullScreenOnClick } = attributes;
-	const {
-		productGalleryClientId,
-		pagerDisplayMode,
-		nextPreviousButtonsPosition,
-		thumbnailsNumberOfThumbnails,
-		thumbnailsPosition,
-	} = context;
 	return (
 		<InspectorControls>
-			<PanelBody title={ __( 'Gallery Navigation', 'woocommerce' ) }>
-				<ProductGalleryPagerBlockSettings
-					context={ { productGalleryClientId, pagerDisplayMode } }
-				/>
-				<ProductGalleryNextPreviousBlockSettings
-					context={ {
-						productGalleryClientId,
-						nextPreviousButtonsPosition,
-					} }
-				/>
-				<ProductGalleryThumbnailsBlockSettings
-					context={ {
-						productGalleryClientId,
-						thumbnailsNumberOfThumbnails,
-						thumbnailsPosition,
-					} }
-				/>
-			</PanelBody>
 			<PanelBody title={ __( 'Media Settings', 'woocommerce' ) }>
 				<ToggleControl
 					label={ __( 'Crop images to fit', 'woocommerce' ) }

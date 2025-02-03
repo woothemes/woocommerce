@@ -19,6 +19,7 @@ interface NotifyQuantityChangesArgs {
 	newCart: Cart;
 	cartItemsPendingQuantity?: string[] | undefined;
 	cartItemsPendingDelete?: string[] | undefined;
+	productsPendingAdd?: number[] | undefined;
 }
 
 const isWithinQuantityLimits = ( cartItem: CartItem ) => {
@@ -36,10 +37,14 @@ const stripAndDecode = ( text: string ) => {
 const notifyIfQuantityChanged = (
 	oldCart: Cart,
 	newCart: Cart,
-	cartItemsPendingQuantity: string[]
+	cartItemsPendingQuantity: string[],
+	productsPendingAdd: number[]
 ) => {
 	newCart.items.forEach( ( cartItem ) => {
-		if ( cartItemsPendingQuantity.includes( cartItem.key ) ) {
+		if (
+			cartItemsPendingQuantity.includes( cartItem.key ) ||
+			productsPendingAdd.includes( cartItem.id )
+		) {
 			return;
 		}
 		const oldCartItem = oldCart.items.find( ( item ) => {
@@ -137,6 +142,7 @@ export const notifyQuantityChanges = ( {
 	newCart,
 	cartItemsPendingQuantity = [],
 	cartItemsPendingDelete = [],
+	productsPendingAdd = [],
 }: NotifyQuantityChangesArgs ) => {
 	const isResolutionFinished =
 		select( CART_STORE_KEY ).hasFinishedResolution( 'getCartData' );
@@ -144,5 +150,10 @@ export const notifyQuantityChanges = ( {
 		return;
 	}
 	notifyIfRemoved( oldCart, newCart, cartItemsPendingDelete );
-	notifyIfQuantityChanged( oldCart, newCart, cartItemsPendingQuantity );
+	notifyIfQuantityChanged(
+		oldCart,
+		newCart,
+		cartItemsPendingQuantity,
+		productsPendingAdd
+	);
 };

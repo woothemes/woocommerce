@@ -3,6 +3,7 @@
  */
 import { test, expect, tags } from '../../fixtures/fixtures';
 import { getFakeCustomer, getFakeProduct } from '../../utils/data';
+import { ADMIN_STATE_PATH } from '../../playwright.config';
 
 // a representation of the menu structure for WC
 const wcPages = [
@@ -85,7 +86,78 @@ const wcPages = [
 			},
 		],
 	},
-	// analytics is handled through a separate test
+	{
+		name: 'Analytics',
+		url: 'wp-admin/admin.php?page=wc-admin&path=%2Fanalytics%2Foverview',
+		subpages: [
+			{
+				name: 'Overview',
+				heading: 'Overview',
+				element: '#woocommerce-layout__primary',
+				text: 'Performance',
+			},
+			{
+				name: 'Products',
+				heading: 'Products',
+				element: '#woocommerce-layout__primary',
+				text: 'Items sold',
+			},
+			{
+				name: 'Revenue',
+				heading: 'Revenue',
+				element: '#woocommerce-layout__primary',
+				text: 'Gross sales',
+			},
+			{
+				name: 'Orders',
+				heading: 'Orders',
+				element: '#woocommerce-layout__primary',
+				text: 'Orders',
+			},
+			{
+				name: 'Variations',
+				heading: 'Variations',
+				element: '#woocommerce-layout__primary',
+				text: 'Items sold',
+			},
+			{
+				name: 'Categories',
+				heading: 'Categories',
+				element: '#woocommerce-layout__primary',
+				text: 'Items sold',
+			},
+			{
+				name: 'Coupons',
+				heading: 'Coupons',
+				element: '#woocommerce-layout__primary',
+				text: 'Discounted orders',
+			},
+			{
+				name: 'Taxes',
+				heading: 'Taxes',
+				element: '#woocommerce-layout__primary',
+				text: 'Total tax',
+			},
+			{
+				name: 'Downloads',
+				heading: 'Downloads',
+				element: '#woocommerce-layout__primary',
+				text: 'Downloads',
+			},
+			{
+				name: 'Stock',
+				heading: 'Stock',
+				element: '#woocommerce-layout__primary',
+				text: 'Stock',
+			},
+			{
+				name: 'Settings',
+				heading: 'Settings',
+				element: '#woocommerce-layout__primary',
+				text: 'Analytics settings',
+			},
+		],
+	},
 	{
 		name: 'Marketing',
 		url: 'wp-admin/admin.php?page=wc-admin&path=%2Fmarketing',
@@ -116,7 +188,7 @@ for ( const currentPage of wcPages ) {
 			const customer = getFakeCustomer();
 			let orderId;
 
-			test.use( { storageState: process.env.ADMINSTATE } );
+			test.use( { storageState: ADMIN_STATE_PATH } );
 
 			test.beforeAll( async ( { api, wcAdminApi } ) => {
 				// skip onboarding

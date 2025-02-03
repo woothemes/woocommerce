@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Add To Cart form - tweak CSS to ensure that layout isn't broken when `woocommerce_before_add_to_cart_button` hook is used.
