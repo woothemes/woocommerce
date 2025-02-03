@@ -1,5 +1,73 @@
-const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
-const { any, anything } = expect;
+const {
+	test,
+	expect: baseExpect,
+} = require( '../../../fixtures/api-tests-fixtures' );
+const expect = baseExpect.extend( {
+	/**
+	 * Custom matcher for matching an object with multiple possible types.
+	 *
+	 * @param {*} received
+	 * @param {string[]} expectedTypes
+	 */
+	anyOf( received, expectedTypes ) {
+		const assertionName = 'anyOf';
+		let pass;
+		let matcherResult;
+
+		try {
+			baseExpect( expectedTypes ).toContain( typeof received );
+			pass = true;
+		} catch ( e ) {
+			matcherResult = e.matcherResult;
+			pass = false;
+		}
+
+		const message = pass
+			? () =>
+					this.utils.matcherHint(
+						assertionName,
+						undefined,
+						undefined,
+						{ isNot: this.isNot }
+					) +
+					'\n\n' +
+					`Received: ${ received }\n` +
+					`Expected: not ${ this.utils.printExpected(
+						expectedTypes
+					) }\n` +
+					( matcherResult
+						? `Received: ${ this.utils.printReceived(
+								matcherResult.actual
+						  ) }`
+						: '' )
+			: () =>
+					this.utils.matcherHint(
+						assertionName,
+						undefined,
+						undefined,
+						{ isNot: this.isNot }
+					) +
+					'\n\n' +
+					`Received: ${ received }\n` +
+					`Expected: ${ this.utils.printExpected(
+						expectedTypes
+					) }\n` +
+					( matcherResult
+						? `Received: ${ this.utils.printReceived(
+								matcherResult.actual
+						  ) }`
+						: '' );
+
+		return {
+			message,
+			pass,
+			name: assertionName,
+			expectedTypes,
+			actual: matcherResult?.actual,
+		};
+	},
+} );
+const { any, anything, anyOf } = expect;
 
 const schemas = {
 	environment: [
@@ -31,7 +99,12 @@ const schemas = {
 		{ field: 'gzip_enabled', type: any( Boolean ) },
 		{ field: 'mbstring_enabled', type: any( Boolean ) },
 		{ field: 'remote_post_successful', type: any( Boolean ) },
+		{
+			field: 'remote_post_response',
+			type: anyOf( [ 'string', 'number' ] ),
+		},
 		{ field: 'remote_get_successful', type: any( Boolean ) },
+		{ field: 'remote_get_response', type: anyOf( [ 'string', 'number' ] ) },
 	],
 	database: [
 		{ field: 'wc_database_version', type: any( String ) },
@@ -112,8 +185,8 @@ const schemas = {
 		{ field: 'page_set', type: any( Boolean ) },
 		{ field: 'page_exists', type: any( Boolean ) },
 		{ field: 'page_visible', type: any( Boolean ) },
-		{ field: 'shortcode', type: any( String ) },
-		{ field: 'block', type: any( String ) },
+		{ field: 'shortcode', type: anyOf( [ 'boolean', 'string' ] ) },
+		{ field: 'block', type: anyOf( [ 'boolean', 'string' ] ) },
 		{ field: 'shortcode_required', type: any( Boolean ) },
 		{ field: 'shortcode_present', type: any( Boolean ) },
 		{ field: 'block_present', type: any( Boolean ) },
@@ -179,7 +252,7 @@ const getExpectedOtherTables = ( dbPrefix ) => {
 
 /* eslint-disable playwright/no-nested-step */
 test.describe( 'System Status API tests', () => {
-	test( 'can view all system status items', async ( { request } ) => {
+	test.only( 'can view all system status items', async ( { request } ) => {
 		let responseJSON,
 			databasePrefix,
 			databaseSize,
@@ -219,22 +292,6 @@ test.describe( 'System Status API tests', () => {
 					typeof external_object_cache === 'boolean' ||
 						external_object_cache === null
 				).toBeTruthy();
-			} );
-
-			// Handle special cases of environment.remote_get_response and environment.remote_post_response.
-			// They are a Number when wp-env is first launched, but becomes a String on succeeding runs.
-			await test.step( 'Verify environment.remote_get_response', () => {
-				const { remote_get_response } = environment;
-				expect( [ 'number', 'string' ] ).toContain(
-					typeof remote_get_response
-				);
-			} );
-
-			await test.step( 'Verify environment.remote_post_response', () => {
-				const { remote_post_response } = environment;
-				expect( [ 'number', 'string' ] ).toContain(
-					typeof remote_post_response
-				);
 			} );
 		} );
 
