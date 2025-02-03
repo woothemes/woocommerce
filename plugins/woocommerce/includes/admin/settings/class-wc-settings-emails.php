@@ -584,12 +584,35 @@ class WC_Settings_Emails extends WC_Settings_Page {
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">
 										<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=email&section=' . strtolower( $email_key ) ) ) . '">' . esc_html( $email->get_title() ) . '</a>
 										' . wc_help_tip( $email->get_description() ) . '
-									</td>';
+										</td>';
 										break;
 									case 'recipient':
-										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">
-										' . esc_html( $email->is_customer_email() ? __( 'Customer', 'woocommerce' ) : $email->get_recipient() ) . '
-									</td>';
+										$to  = $email->is_customer_email() ? __( 'Customer', 'woocommerce' ) : $email->get_recipient();
+										$cc  = false;
+										$bcc = false;
+										if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+											$ccs  = $email->get_cc_recipient();
+											$bccs = $email->get_bcc_recipient();
+											// Translators: %s: comma separated email address to which the email is cc-ed.
+											$cc = $ccs ? sprintf( __( '<b>Cc</b>: %s', 'woocommerce' ), $ccs ) : false;
+											// Translators: %s: comma separated email address to which the email is bcc-ed.
+											$bcc = $bccs ? sprintf( __( '<b>Bcc</b>: %s', 'woocommerce' ), $bccs ) : false;
+											if ( $cc || $bcc ) {
+												// Translators: %s: comma separated email address to which the email is sent.
+												$to = sprintf( __( '<b>To</b>: %s', 'woocommerce' ), $to );
+											}
+										}
+										$allowed_tags = array( 'b' => array() );
+
+										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">';
+										echo wp_kses( $to, $allowed_tags );
+										if ( $cc ) {
+											echo '<br>' . wp_kses( $cc, $allowed_tags );
+										}
+										if ( $bcc ) {
+											echo '<br>' . wp_kses( $bcc, $allowed_tags );
+										}
+										echo '</td>';
 										break;
 									case 'status':
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">';
@@ -607,12 +630,12 @@ class WC_Settings_Emails extends WC_Settings_Page {
 									case 'email_type':
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">
 										' . esc_html( $email->get_content_type() ) . '
-									</td>';
+										</td>';
 										break;
 									case 'actions':
 										echo '<td class="wc-email-settings-table-' . esc_attr( $key ) . '">
 										<a class="button alignright" href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=email&section=' . strtolower( $email_key ) ) ) . '">' . esc_html__( 'Manage', 'woocommerce' ) . '</a>
-									</td>';
+										</td>';
 										break;
 									default:
 										do_action( 'woocommerce_email_setting_column_' . $key, $email );

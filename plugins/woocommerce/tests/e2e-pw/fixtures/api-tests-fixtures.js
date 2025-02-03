@@ -13,3 +13,4 @@ exports.test = base.test.extend( {
 
 exports.expect = base.expect;
 exports.tags = tags;
+exports.request = base.request;

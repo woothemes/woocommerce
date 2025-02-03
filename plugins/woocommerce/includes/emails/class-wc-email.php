@@ -5,6 +5,7 @@
  * @package WooCommerce\Emails
  */
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use Pelago\Emogrifier\CssInliner;
 use Pelago\Emogrifier\HtmlProcessor\CssToAttributeConverter;
 use Pelago\Emogrifier\HtmlProcessor\HtmlPruner;
@@ -104,6 +105,20 @@ class WC_Email extends WC_Settings_API {
 	 * @var string
 	 */
 	public $recipient;
+
+	/**
+	 * Cc recipients for the email.
+	 *
+	 * @var string
+	 */
+	public $cc;
+
+	/**
+	 * Bcc recipients for the email.
+	 *
+	 * @var string
+	 */
+	public $bcc;
 
 	/**
 	 * Object this email is for, for example a customer, product, or email.
@@ -261,6 +276,10 @@ class WC_Email extends WC_Settings_API {
 
 		$this->email_type = $this->get_option( 'email_type' );
 		$this->enabled    = $this->get_option( 'enabled' );
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			$this->cc  = $this->get_option( 'cc' );
+			$this->bcc = $this->get_option( 'bcc' );
+		}
 
 		add_action( 'phpmailer_init', array( $this, 'handle_multipart' ) );
 		add_action( 'woocommerce_update_options_email_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -462,10 +481,61 @@ class WC_Email extends WC_Settings_API {
 	 * @return string
 	 */
 	public function get_recipient() {
+		/**
+		 * Filter the recipient for the email.
+		 *
+		 * @since 2.0.0
+		 * @since 3.7.0 Added $email parameter.
+		 * @param string   $recipient Recipient.
+		 * @param object   $object    The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email $email     WC_Email instance managing the email.
+		 */
 		$recipient  = apply_filters( 'woocommerce_email_recipient_' . $this->id, $this->recipient, $this->object, $this );
 		$recipients = array_map( 'trim', explode( ',', $recipient ) );
 		$recipients = array_filter( $recipients, 'is_email' );
 		return implode( ', ', $recipients );
+	}
+
+	/**
+	 * Get valid Cc recipients.
+	 *
+	 * @return string
+	 */
+	public function get_cc_recipient() {
+		$cc = $this->cc;
+		/**
+		 * Filter the Cc recipient for the email.
+		 *
+		 * @since 9.8.0
+		 * @param string   $cc     Cc recipient.
+		 * @param object   $object The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email $email  WC_Email instance managing the email.
+		 */
+		$cc  = apply_filters( 'woocommerce_email_cc_recipient_' . $this->id, $cc, $this->object, $this );
+		$ccs = array_map( 'trim', explode( ',', $cc ) );
+		$ccs = array_filter( $ccs, 'is_email' );
+		return implode( ', ', $ccs );
+	}
+
+	/**
+	 * Get valid Bcc recipients.
+	 *
+	 * @return string
+	 */
+	public function get_bcc_recipient() {
+		$bcc = $this->bcc;
+		/**
+		 * Filter the Bcc recipient for the email.
+		 *
+		 * @since 9.8.0
+		 * @param string   $bcc    CC recipient.
+		 * @param object   $object The object (ie, product or order) this email relates to, if any.
+		 * @param WC_Email $email  WC_Email instance managing the email.
+		 */
+		$bcc  = apply_filters( 'woocommerce_email_bcc_recipient_' . $this->id, $bcc, $this->object, $this );
+		$bccs = array_map( 'trim', explode( ',', $bcc ) );
+		$bccs = array_filter( $bccs, 'is_email' );
+		return implode( ', ', $bccs );
 	}
 
 	/**
@@ -482,6 +552,18 @@ class WC_Email extends WC_Settings_API {
 			}
 		} elseif ( $this->get_from_address() && $this->get_from_name() ) {
 			$header .= 'Reply-to: ' . $this->get_from_name() . ' <' . $this->get_from_address() . ">\r\n";
+		}
+
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			$cc = $this->get_cc_recipient();
+			if ( ! empty( $cc ) ) {
+				$header .= 'Cc: ' . $cc . "\r\n";
+			}
+
+			$bcc = $this->get_bcc_recipient();
+			if ( ! empty( $bcc ) ) {
+				$header .= 'Bcc: ' . $bcc . "\r\n";
+			}
 		}
 
 		return apply_filters( 'woocommerce_email_headers', $header, $this->id, $this->object, $this );
@@ -850,6 +932,26 @@ class WC_Email extends WC_Settings_API {
 				'desc_tip'    => true,
 			),
 		);
+		if ( FeaturesUtil::feature_is_enabled( 'email_improvements' ) ) {
+			$this->form_fields['cc']  = array(
+				'title'       => __( 'Cc(s)', 'woocommerce' ),
+				'type'        => 'text',
+				/* translators: %s: admin email */
+				'description' => __( 'Enter Cc recipients (comma separated) for this email.', 'woocommerce' ),
+				'placeholder' => '',
+				'default'     => '',
+				'desc_tip'    => true,
+			);
+			$this->form_fields['bcc'] = array(
+				'title'       => __( 'Bcc(s)', 'woocommerce' ),
+				'type'        => 'text',
+				/* translators: %s: admin email */
+				'description' => __( 'Enter Bcc recipients (comma separated) for this email.', 'woocommerce' ),
+				'placeholder' => '',
+				'default'     => '',
+				'desc_tip'    => true,
+			);
+		}
 	}
 
 	/**
