@@ -1300,16 +1300,16 @@
         },
         {
             "name": "woocommerce/action-scheduler",
-            "version": "3.9.1",
+            "version": "3.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/woocommerce/action-scheduler.git",
-                "reference": "d73b5f83cd42832fa137e03687bad3e312298d29"
+                "reference": "efbb7953f72a433086335b249292f280dd43ddfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/woocommerce/action-scheduler/zipball/d73b5f83cd42832fa137e03687bad3e312298d29",
-                "reference": "d73b5f83cd42832fa137e03687bad3e312298d29",
+                "url": "https://api.github.com/repos/woocommerce/action-scheduler/zipball/efbb7953f72a433086335b249292f280dd43ddfe",
+                "reference": "efbb7953f72a433086335b249292f280dd43ddfe",
                 "shasum": ""
             },
             "require": {
@@ -1337,9 +1337,9 @@
             "homepage": "https://actionscheduler.org/",
             "support": {
                 "issues": "https://github.com/woocommerce/action-scheduler/issues",
-                "source": "https://github.com/woocommerce/action-scheduler/tree/3.9.1"
+                "source": "https://github.com/woocommerce/action-scheduler/tree/3.9.2"
             },
-            "time": "2025-01-21T11:39:08+00:00"
+            "time": "2025-02-03T09:09:30+00:00"
         },
         {
             "name": "woocommerce/blueprint",
