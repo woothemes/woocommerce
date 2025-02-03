@@ -31,15 +31,7 @@ const schemas = {
 		{ field: 'gzip_enabled', type: any( Boolean ) },
 		{ field: 'mbstring_enabled', type: any( Boolean ) },
 		{ field: 'remote_post_successful', type: any( Boolean ) },
-		{
-			field: 'remote_post_response',
-			type: process.env.IS_WPCOM ? any( Number ) : any( String ),
-		},
 		{ field: 'remote_get_successful', type: any( Boolean ) },
-		{
-			field: 'remote_get_response',
-			type: process.env.IS_WPCOM ? any( Number ) : any( String ),
-		},
 	],
 	database: [
 		{ field: 'wc_database_version', type: any( String ) },
@@ -93,13 +85,13 @@ const schemas = {
 		{ field: 'product_visibility_terms', type: anything() },
 		{ field: 'woocommerce_com_connected', type: any( String ) },
 	],
-	settings_taxonomies: [
+	taxonomies: [
 		{ field: 'external', type: any( String ) },
 		{ field: 'grouped', type: any( String ) },
 		{ field: 'simple', type: any( String ) },
 		{ field: 'variable', type: any( String ) },
 	],
-	settings_product_visibility_terms: [
+	product_visibility_terms: [
 		{ field: 'exclude-from-catalog', type: any( String ) },
 		{ field: 'exclude-from-search', type: any( String ) },
 		{ field: 'featured', type: any( String ) },
@@ -187,7 +179,7 @@ const getExpectedOtherTables = ( dbPrefix ) => {
 
 /* eslint-disable playwright/no-nested-step */
 test.describe( 'System Status API tests', () => {
-	test.only( 'can view all system status items', async ( { request } ) => {
+	test( 'can view all system status items', async ( { request } ) => {
 		let responseJSON,
 			databasePrefix,
 			databaseSize,
@@ -197,7 +189,8 @@ test.describe( 'System Status API tests', () => {
 			activePlugins,
 			dropinsMuPlugins,
 			taxonomiesJSON,
-			productVisibilityTerms;
+			productVisibilityTerms,
+			pagesList;
 
 		await test.step( 'Call API to view all system status items', async () => {
 			const response = await request.get(
@@ -217,8 +210,8 @@ test.describe( 'System Status API tests', () => {
 				} );
 			}
 
-			// Handle special case of environment.external_object_cache which is null on wp-env
-			// but could be a Boolean in other environments.
+			// Handle special case of environment.external_object_cache
+			// It is null on wp-env, but could be a Boolean in other environments.
 			await test.step( 'Verify "environment.external_object_cache"', () => {
 				const { external_object_cache } = environment;
 
@@ -226,6 +219,22 @@ test.describe( 'System Status API tests', () => {
 					typeof external_object_cache === 'boolean' ||
 						external_object_cache === null
 				).toBeTruthy();
+			} );
+
+			// Handle special cases of environment.remote_get_response and environment.remote_post_response.
+			// They are a Number when wp-env is first launched, but becomes a String on succeeding runs.
+			await test.step( 'Verify environment.remote_get_response', () => {
+				const { remote_get_response } = environment;
+				expect( [ 'number', 'string' ] ).toContain(
+					typeof remote_get_response
+				);
+			} );
+
+			await test.step( 'Verify environment.remote_post_response', () => {
+				const { remote_post_response } = environment;
+				expect( [ 'number', 'string' ] ).toContain(
+					typeof remote_post_response
+				);
 			} );
 		} );
 
@@ -300,16 +309,17 @@ test.describe( 'System Status API tests', () => {
 			const { active_plugins } = responseJSON;
 			expect( active_plugins ).toEqual( any( Array ) );
 			expect( active_plugins.length ).toBeGreaterThan( 0 );
-
 			activePlugins = active_plugins;
 		} );
 
 		for ( const aPlugin of activePlugins ) {
-			for ( const { field, type } of schemas.active_plugins ) {
-				await test.step( `Verify "active_plugins.${ aPlugin.plugin }.${ field }"`, async () => {
-					expect( aPlugin[ field ] ).toEqual( type );
-				} );
-			}
+			await test.step( `Verify active plugin "${ aPlugin.name }"`, async () => {
+				for ( const { field, type } of schemas.active_plugins ) {
+					await test.step( `Verify "${ field }"`, async () => {
+						expect( aPlugin[ field ] ).toEqual( type );
+					} );
+				}
+			} );
 		}
 
 		await test.step( 'Verify "dropins_mu_plugins"', async () => {
@@ -362,7 +372,7 @@ test.describe( 'System Status API tests', () => {
 		} );
 
 		await test.step( 'Verify "settings.taxonomies"', async () => {
-			for ( const { field, type } of schemas.settings_taxonomies ) {
+			for ( const { field, type } of schemas.taxonomies ) {
 				await test.step( `Verify "settings.taxonomies.${ field }"`, async () => {
 					expect( taxonomiesJSON[ field ] ).toEqual( type );
 				} );
@@ -370,10 +380,7 @@ test.describe( 'System Status API tests', () => {
 		} );
 
 		await test.step( 'Verify "settings.product_visibility_terms"', async () => {
-			for ( const {
-				field,
-				type,
-			} of schemas.settings_product_visibility_terms ) {
+			for ( const { field, type } of schemas.product_visibility_terms ) {
 				await test.step( `Verify "settings.product_visibility_terms.${ field }"`, async () => {
 					expect( productVisibilityTerms[ field ] ).toEqual( type );
 				} );
@@ -391,108 +398,35 @@ test.describe( 'System Status API tests', () => {
 			}
 		} );
 
-		await test.step( 'Verify "pages', async () => {
+		await test.step( 'Verify "pages" array', async () => {
 			const { pages } = responseJSON;
 			expect( pages ).toEqual( any( Array ) );
+			expect( pages.length ).toBeGreaterThan( 0 );
+			pagesList = pages;
+		} );
 
-			for ( const page of pages ) {
+		for ( const page of pagesList ) {
+			await test.step( `Verify page "${ page.page_name }"`, async () => {
 				for ( const { field, type } of schemas.pages ) {
-					await test.step( `Verify page "${ page.page_name }"`, async () => {
+					await test.step( `Verify "${ field }"`, async () => {
 						expect( page[ field ] ).toEqual( type );
 					} );
 				}
+			} );
+		}
+
+		await test.step( 'Verify "post_type_counts" array', async () => {
+			const { post_type_counts } = responseJSON;
+			expect( post_type_counts ).toEqual( any( Array ) );
+			expect( post_type_counts.length ).toBeGreaterThan( 0 );
+
+			for ( const { type, count } of post_type_counts ) {
+				await test.step( `Verify post type "${ type }"`, () => {
+					expect( type ).toEqual( any( String ) );
+					expect( count ).toEqual( any( String ) );
+				} );
 			}
 		} );
-
-		// expect( responseJSON ).toEqual(
-		// 	expect.objectContaining( {
-		// 		pages: expect.arrayContaining( [
-		// 			{
-		// 				page_name: expect.any( String ),
-		// 				page_id: expect.any( String ),
-		// 				page_set: expect.any( Boolean ),
-		// 				page_exists: expect.any( Boolean ),
-		// 				page_visible: expect.any( Boolean ),
-		// 				shortcode: expect.any( String ),
-		// 				block: expect.any( String ),
-		// 				shortcode_required: expect.any( Boolean ),
-		// 				shortcode_present: expect.any( Boolean ),
-		// 				block_present: expect.any( Boolean ),
-		// 				block_required: expect.any( Boolean ),
-		// 			},
-		// 			{
-		// 				page_name: expect.any( String ),
-		// 				page_id: expect.any( String ),
-		// 				page_set: expect.any( Boolean ),
-		// 				page_exists: expect.any( Boolean ),
-		// 				page_visible: expect.any( Boolean ),
-		// 				shortcode: expect.any( String ),
-		// 				block: expect.any( String ),
-		// 				shortcode_required: expect.any( Boolean ),
-		// 				shortcode_present: expect.any( Boolean ),
-		// 				block_present: expect.any( Boolean ),
-		// 				block_required: expect.any( Boolean ),
-		// 			},
-		// 			{
-		// 				page_name: expect.any( String ),
-		// 				page_id: expect.any( String ),
-		// 				page_set: expect.any( Boolean ),
-		// 				page_exists: expect.any( Boolean ),
-		// 				page_visible: expect.any( Boolean ),
-		// 				shortcode: expect.any( String ),
-		// 				block: expect.any( String ),
-		// 				shortcode_required: expect.any( Boolean ),
-		// 				shortcode_present: expect.any( Boolean ),
-		// 				block_present: expect.any( Boolean ),
-		// 				block_required: expect.any( Boolean ),
-		// 			},
-		// 			{
-		// 				page_name: expect.any( String ),
-		// 				page_id: expect.any( String ),
-		// 				page_set: expect.any( Boolean ),
-		// 				page_exists: expect.any( Boolean ),
-		// 				page_visible: expect.any( Boolean ),
-		// 				shortcode: expect.any( String ),
-		// 				block: expect.any( String ),
-		// 				shortcode_required: expect.any( Boolean ),
-		// 				shortcode_present: expect.any( Boolean ),
-		// 				block_present: expect.any( Boolean ),
-		// 				block_required: expect.any( Boolean ),
-		// 			},
-		// 			{
-		// 				page_name: expect.any( String ),
-		// 				page_id: expect.any( String ),
-		// 				page_set: expect.any( Boolean ),
-		// 				page_exists: expect.any( Boolean ),
-		// 				page_visible: expect.any( Boolean ),
-		// 				shortcode: expect.any( String ),
-		// 				block: expect.any( String ),
-		// 				shortcode_required: expect.any( Boolean ),
-		// 				shortcode_present: expect.any( Boolean ),
-		// 				block_present: expect.any( Boolean ),
-		// 				block_required: expect.any( Boolean ),
-		// 			},
-		// 		] ),
-		// 	} )
-		// );
-		// expect( responseJSON ).toEqual(
-		// 	expect.objectContaining( {
-		// 		post_type_counts: expect.arrayContaining( [
-		// 			{
-		// 				type: expect.any( String ),
-		// 				count: expect.any( String ),
-		// 			},
-		// 			{
-		// 				type: expect.any( String ),
-		// 				count: expect.any( String ),
-		// 			},
-		// 			{
-		// 				type: expect.any( String ),
-		// 				count: expect.any( String ),
-		// 			},
-		// 		] ),
-		// 	} )
-		// );
 	} );
 
 	test( 'can view all system status tools', async ( { request } ) => {
