@@ -13,7 +13,7 @@
 		touch: true, // enables a touch fallback
 		onZoomIn: false,
 		onZoomOut: false,
-		magnify: 1
+		magnify: 1,
 	};
 
 	// Core Zoom Logic, independent of event listeners.
@@ -115,7 +115,7 @@
 				$img.remove();
 			}.bind(this, target.style.position, target.style.overflow));
 
-			img.onload = function () {
+			function setupZoomOnload() {
 				var zoom = $.zoom(target, source, img, settings.magnify);
 
 				function start(e) {
@@ -225,11 +225,28 @@
 				if ('function' === typeof settings.callback) {
 					settings.callback.call(img);
 				}
-			};
+			}
 
 			img.setAttribute('role', 'presentation');
 			img.alt = settings.alt || '';
-			img.src = settings.url;
+			
+			if (settings.on === 'mouseover') {
+				$source.one('mouseenter.zoom touchstart.zoom', function() {
+					// Only load image on mouseenter or touchstart
+					// and trigger mouseenter event to start zoom
+					img.onload = function() {
+						setupZoomOnload();
+						// Simulate both mouseenter and touchstart events to start zoom
+						$source.trigger('mouseenter.zoom touchstart.zoom');
+					}
+					img.src = settings.url;
+				});
+			} else {
+				img.onload = function() {
+					setupZoomOnload();
+				}
+				img.src = settings.url;
+			}
 		});
 	};
 
