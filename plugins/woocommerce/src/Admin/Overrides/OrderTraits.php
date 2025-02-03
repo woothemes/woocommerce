@@ -16,20 +16,22 @@ trait OrderTraits {
 	/**
 	 * Calculate shipping amount for line item/product as a total shipping amount ratio based on quantity.
 	 *
-	 * @param WC_Order_Item $item Line item from order.
+	 * @param WC_Order_Item $item              Line item from order.
+	 * @param int           $order_items_count (optional) The number of order items in an order. This could be the remaining items left to refund.
+	 * @param float         $shipping_amount   (optional) The shipping fee amount in an order. This could be the remaining shipping amount left to refund.
 	 *
 	 * @return float|int
 	 */
-	public function get_item_shipping_amount( $item ) {
+	public function get_item_shipping_amount( $item, $order_items_count = null, $shipping_amount = null ) {
 		// Shipping amount loosely based on woocommerce code in includes/admin/meta-boxes/views/html-order-item(s).php
 		// distributed simply based on number of line items.
 		$product_qty = $item->get_quantity( 'edit' );
-		$order_items = $this->get_item_count();
+		$order_items = $order_items_count ? $order_items_count : $this->get_item_count();
 		if ( 0 === $order_items ) {
 			return 0;
 		}
 
-		$total_shipping_amount = (float) $this->get_shipping_total();
+		$total_shipping_amount = $shipping_amount ? $shipping_amount : (float) $this->get_shipping_total();
 
 		return $total_shipping_amount / $order_items * $product_qty;
 	}
@@ -42,11 +44,13 @@ trait OrderTraits {
 	 * @todo If WC is currently not tax enabled, but it was before (or vice versa), would this work correctly?
 	 *
 	 * @param WC_Order_Item $item Line item from order.
+	 * @param int           $order_items_count   (optional) The number of order items in an order. This could be the remaining items left to refund.
+	 * @param float         $shipping_tax_amount (optional) The shipping tax amount in an order. This could be the remaining shipping tax amount left to refund.
 	 *
 	 * @return float|int
 	 */
-	public function get_item_shipping_tax_amount( $item ) {
-		$order_items = $this->get_item_count();
+	public function get_item_shipping_tax_amount( $item, $order_items_count = null, $shipping_tax_amount = null ) {
+		$order_items = $order_items_count ? $order_items_count : $this->get_item_count();
 		if ( 0 === $order_items ) {
 			return 0;
 		}
@@ -54,17 +58,21 @@ trait OrderTraits {
 		$product_qty               = $item->get_quantity( 'edit' );
 		$order_taxes               = $this->get_taxes();
 		$line_items_shipping       = $this->get_items( 'shipping' );
-		$total_shipping_tax_amount = 0;
-		foreach ( $line_items_shipping as $item_id => $shipping_item ) {
-			$tax_data = $shipping_item->get_taxes();
-			if ( $tax_data ) {
-				foreach ( $order_taxes as $tax_item ) {
-					$tax_item_id                = $tax_item->get_rate_id();
-					$tax_item_total             = isset( $tax_data['total'][ $tax_item_id ] ) ? (float) $tax_data['total'][ $tax_item_id ] : 0;
-					$total_shipping_tax_amount += $tax_item_total;
+		$total_shipping_tax_amount = $shipping_tax_amount ? $shipping_tax_amount : 0;
+
+		if ( 0 === $total_shipping_tax_amount ) {
+			foreach ( $line_items_shipping as $item_id => $shipping_item ) {
+				$tax_data = $shipping_item->get_taxes();
+				if ( $tax_data ) {
+					foreach ( $order_taxes as $tax_item ) {
+						$tax_item_id                = $tax_item->get_rate_id();
+						$tax_item_total             = isset( $tax_data['total'][ $tax_item_id ] ) ? (float) $tax_data['total'][ $tax_item_id ] : 0;
+						$total_shipping_tax_amount += $tax_item_total;
+					}
 				}
 			}
 		}
+
 		return $total_shipping_tax_amount / $order_items * $product_qty;
 	}
 

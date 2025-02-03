@@ -1031,13 +1031,30 @@ WHERE
 	/**
 	 * Get the total tax refunded.
 	 *
-	 * @param  WC_Order $order Order object.
+	 * @param WC_Order $order Order object.
+	 * @param bool     $include_tax_amount          (optional) Whether to include tax amount in the total. Default true.
+	 * @param bool     $include_shipping_tax_amount (optional) Whether to include shipping tax amount in the total. Default true.
+	 *
 	 * @return float
 	 */
-	public function get_total_tax_refunded( $order ) {
+	public function get_total_tax_refunded( $order, $include_tax_amount = true, $include_shipping_tax_amount = true ) {
 		global $wpdb;
 
 		$order_table = self::get_orders_table_name();
+
+		$meta_key_includes = array();
+
+		if ( $include_tax_amount ) {
+			$meta_key_includes[] = 'tax_amount';
+		} else {
+			$meta_key_includes[] = '';
+		}
+
+		if ( $include_shipping_tax_amount ) {
+			$meta_key_includes[] = 'shipping_tax_amount';
+		} else {
+			$meta_key_includes[] = '';
+		}
 
 		$total = $wpdb->get_var(
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $order_table is hardcoded.
@@ -1047,8 +1064,13 @@ WHERE
 				INNER JOIN $order_table AS orders ON ( orders.type = 'shop_order_refund' AND orders.parent_order_id = %d )
 				INNER JOIN {$wpdb->prefix}woocommerce_order_items AS order_items ON ( order_items.order_id = orders.id AND order_items.order_item_type = 'tax' )
 				WHERE order_itemmeta.order_item_id = order_items.order_item_id
-				AND order_itemmeta.meta_key IN ('tax_amount', 'shipping_tax_amount')",
-				$order->get_id()
+				AND order_itemmeta.meta_key IN (%s, %s)",
+				array_merge(
+					array(
+						$order->get_id(),
+					),
+					$meta_key_includes
+				)
 			)
 		) ?? 0;
 		// phpcs:enable
