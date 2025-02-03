@@ -1,17 +1,9 @@
 $admin-bar-height: 32px;
-$gallery: ".wc-block-product-gallery";
-$large-image: "#{$gallery}-large-image";
-$thumbnails: "#{$gallery}-thumbnails";
-$next-previous: "#{$large-image}-next-previous";
-$next-previous-left-off: "#{$next-previous}-left--off";
-$next-previous-right-off: "#{$next-previous}-right--off";
-$outside-image-offset: 30px;
-$outside-image-max-width: calc(100% - (2 * $outside-image-offset));
 $thumbnails-gap: 15px;
-$default-number-of-thumbnails: 3;
+$thumbnails-border-width: 1px;
+$dialog-padding: 20px;
 
-// Large Image
-#{$large-image} {
+.wc-block-product-gallery-large-image {
 	width: 100%;
 	height: fit-content;
 	position: relative;
@@ -84,8 +76,7 @@ $default-number-of-thumbnails: 3;
 	}
 }
 
-// Next/Previous Buttons
-#{$next-previous} {
+.wc-block-product-gallery-large-image-next-previous {
 	display: flex;
 	align-items: flex-end;
 	flex-direction: row;
@@ -125,12 +116,6 @@ $default-number-of-thumbnails: 3;
 	width: 100%;
 }
 
-// Next/Previous Buttons Off Setting
-#{$next-previous-left-off},
-#{$next-previous-right-off} {
-	display: none;
-}
-
 //  Next/Previous Buttons Inside the Image Settings
 .wc-block-product-gallery-large-image-next-previous-left--inside-image {
 	margin-left: 15px;
@@ -157,99 +142,44 @@ $default-number-of-thumbnails: 3;
 	}
 }
 
-// Thumbnails
-#{$thumbnails} {
+.wc-block-product-gallery-thumbnails {
 	display: flex;
+	gap: $thumbnails-gap;
 
-	img {
+	&__image {
 		cursor: pointer;
-		height: auto;
-		width: auto;
 		max-width: 100%;
-	}
-
-	#{$gallery}[data-thumbnails-position='bottom'] & {
-		flex-direction: row;
-		gap: 0 15px;
-	}
-
-	#{$gallery}:not([data-thumbnails-position='bottom']) & {
-		flex-direction: column;
-		gap: 15px 0;
-
-		// Calculate the total width occupied by the gaps between thumbnails.
-		$gap-width: $thumbnails-gap * ($default-number-of-thumbnails - 1);
-
-		// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-		$border-width: #{$default-number-of-thumbnails * 1px * 2};
-
-		// Calculate the width of each thumbnail by accounting for the gap, border, and additional space.
-		flex-basis: calc((100% - #{$gap-width} - #{$border-width} - 4px) / #{$default-number-of-thumbnails});
-	}
-
-	@for $i from 3 through 8 {
-		#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}']:not([data-thumbnails-position='bottom']) & {
-			// Calculate the total width occupied by the gaps between thumbnails.
-			$gap-width: $thumbnails-gap * ($i - 1);
-
-			// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-			$border-width: $i * 1px * 2;
-
-			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-		}
-	}
-
-	.wc-block-product-gallery-thumbnails__thumbnail {
-		border: 1px solid rgba($color: #000, $alpha: 0.1);
-		height: auto;
-		width: auto;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		aspect-ratio: 1 / 1;
-		position: relative;
+		object-fit: contain;
+	}
+
+	&__thumbnail {
+		border: $thumbnails-border-width solid rgba($color: #000, $alpha: 0.1);
+		display: flex;
 		flex-basis: 0;
 		flex-grow: 1;
-
-		img {
-			aspect-ratio: 1 / 1;
-			object-fit: contain;
-		}
-
-		&::before {
-			content: "";
-			display: block;
-			padding-top: 100%;
-		}
-
-		@for $i from 3 through 8 {
-			#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}'][data-thumbnails-position="bottom"] & {
-				// Calculate the total width occupied by the gaps between thumbnails.
-				$gap-width: $thumbnails-gap * ($i - 1);
-
-				// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-				$border-width: $i * 1px * 2;
-
-				$thumbnail-width: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-
-				flex: 0 0 $thumbnail-width;
-			}
-		}
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		aspect-ratio: 1 / 1;
 	}
 
-	.wc-block-product-gallery-thumbnails__thumbnail__overlay {
+	&__thumbnail__overlay {
 		container-type: inline-size;
-		cursor: pointer;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		position: absolute;
+		cursor: pointer;
+		color: #fff;
 		background-color: rgba(0, 0, 0, 0.4);
-		top: 0;
-		width: 100%;
-		height: 100%;
 		line-height: 1.5;
+
 
 		.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
 			font-size: 1.2rem;
@@ -258,11 +188,6 @@ $default-number-of-thumbnails: 3;
 
 		.wc-block-product-gallery-thumbnails__thumbnail__view-all {
 			text-decoration: underline;
-		}
-
-		.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count,
-		.wc-block-product-gallery-thumbnails__thumbnail__view-all {
-			color: #fff;
 		}
 
 		@container (width < 70px) {
@@ -301,7 +226,34 @@ $default-number-of-thumbnails: 3;
 	}
 }
 
-$dialog-padding: 20px;
+// Automattically react to the Group container settings.
+.is-nowrap .wc-block-product-gallery-thumbnails,
+.is-horizontal.is-nowrap .wc-block-product-gallery-thumbnails {
+	flex-direction: column;
+
+	@for $i from 3 through 8 {
+		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
+			$gap-width: $thumbnails-gap * ($i - 1);
+			$border-width: $i * $thumbnails-border-width * 2;
+
+			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
+		}
+	}
+}
+
+.is-vertical .wc-block-product-gallery-thumbnails,
+.is-horizontal .wc-block-product-gallery-thumbnails {
+	flex-direction: row;
+
+	@for $i from 3 through 8 {
+		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
+			$gap-width: $thumbnails-gap * ($i - 1);
+			$border-width: $i * $thumbnails-border-width * 2;
+
+			flex: 0 0 calc((100% - #{$gap-width} - #{$border-width}) / $i);
+		}
+	}
+}
 
 body.wc-block-product-gallery-dialog-open {
 	overflow: hidden;

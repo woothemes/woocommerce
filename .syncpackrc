@@ -263,7 +263,7 @@
 				"@woocommerce/block-library",
 				"**"
 			],
-			"pinVersion": "10.14.0"
+			"pinVersion": "10.17.0"
 		},
 		{
 			"dependencies": [
@@ -444,7 +444,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "0.14.3"
+			"pinVersion": "0.14.10"
 		},
 		{
 			"dependencies": [

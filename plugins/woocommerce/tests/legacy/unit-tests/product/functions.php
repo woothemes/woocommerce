@@ -7,6 +7,8 @@
 
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 /**
  * WC_Tests_Product_Functions class.
@@ -570,35 +572,35 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 	 */
 	public function test_wc_get_products_visibility() {
 		$product_1 = new WC_Product_Simple();
-		$product_1->set_catalog_visibility( 'visible' );
+		$product_1->set_catalog_visibility( CatalogVisibility::VISIBLE );
 		$product_1->save();
 
 		$product_2 = new WC_Product_Simple();
-		$product_2->set_catalog_visibility( 'hidden' );
+		$product_2->set_catalog_visibility( CatalogVisibility::HIDDEN );
 		$product_2->save();
 
 		$product_3 = new WC_Product_Simple();
-		$product_3->set_catalog_visibility( 'search' );
+		$product_3->set_catalog_visibility( CatalogVisibility::SEARCH );
 		$product_3->save();
 
 		$products = wc_get_products(
 			array(
 				'return'     => 'ids',
-				'visibility' => 'visible',
+				'visibility' => CatalogVisibility::VISIBLE,
 			)
 		);
 		$this->assertEquals( array( $product_1->get_id() ), $products );
 		$products = wc_get_products(
 			array(
 				'return'     => 'ids',
-				'visibility' => 'hidden',
+				'visibility' => CatalogVisibility::HIDDEN,
 			)
 		);
 		$this->assertEquals( array( $product_2->get_id() ), $products );
 		$products = wc_get_products(
 			array(
 				'return'     => 'ids',
-				'visibility' => 'search',
+				'visibility' => CatalogVisibility::SEARCH,
 			)
 		);
 		sort( $products );
@@ -617,13 +619,13 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 	public function test_wc_get_products_stock() {
 		$product_1 = new WC_Product_Simple();
 		$product_1->set_manage_stock( true );
-		$product_1->set_stock_status( 'instock' );
+		$product_1->set_stock_status( ProductStockStatus::IN_STOCK );
 		$product_1->set_stock_quantity( 5 );
 		$product_1->save();
 
 		$product_2 = new WC_Product_Simple();
 		$product_2->set_manage_stock( true );
-		$product_2->set_stock_status( 'outofstock' );
+		$product_2->set_stock_status( ProductStockStatus::OUT_OF_STOCK );
 		$product_2->set_stock_quantity( 0 );
 		$product_2->save();
 
@@ -645,7 +647,7 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$products = wc_get_products(
 			array(
 				'return'       => 'ids',
-				'stock_status' => 'outofstock',
+				'stock_status' => ProductStockStatus::OUT_OF_STOCK,
 			)
 		);
 		$this->assertEquals( array( $product_2->get_id() ), $products );
@@ -936,12 +938,12 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 	public function test_wc_update_product_stock_status_should_change_stock_status() {
 		$product = WC_Helper_Product::create_simple_product();
 
-		$this->assertEquals( 'instock', $product->get_stock_status() );
+		$this->assertEquals( ProductStockStatus::IN_STOCK, $product->get_stock_status() );
 
-		wc_update_product_stock_status( $product->get_id(), 'outofstock' );
+		wc_update_product_stock_status( $product->get_id(), ProductStockStatus::OUT_OF_STOCK );
 		$product = wc_get_product( $product->get_id() );
 
-		$this->assertEquals( 'outofstock', $product->get_stock_status() );
+		$this->assertEquals( ProductStockStatus::OUT_OF_STOCK, $product->get_stock_status() );
 	}
 
 	/**
@@ -1175,9 +1177,9 @@ class WC_Tests_Product_Functions extends WC_Unit_Test_Case {
 		$status_options = (array) apply_filters(
 			'woocommerce_product_stock_status_options',
 			array(
-				'instock'     => 'In stock',
-				'outofstock'  => 'Out of stock',
-				'onbackorder' => 'On backorder',
+				ProductStockStatus::IN_STOCK     => 'In stock',
+				ProductStockStatus::OUT_OF_STOCK => 'Out of stock',
+				ProductStockStatus::ON_BACKORDER => 'On backorder',
 			)
 		);
 

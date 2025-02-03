@@ -9,6 +9,7 @@
  */
 
 use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareRestControllerTrait;
 use Automattic\WooCommerce\Utilities\I18nUtil;
 
@@ -701,7 +702,7 @@ class WC_REST_Product_Variations_Controller extends WC_REST_Product_Variations_V
 				'stock_status'          => array(
 					'description' => __( 'Controls the stock status of the product.', 'woocommerce' ),
 					'type'        => 'string',
-					'default'     => 'instock',
+					'default'     => ProductStockStatus::IN_STOCK,
 					'enum'        => array_keys( wc_get_product_stock_status_options() ),
 					'context'     => array( 'view', 'edit' ),
 				),

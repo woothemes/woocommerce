@@ -1,0 +1,4 @@
+Significance: patch
+Type: dev
+
+E2E tests: clean up left over HPOS disabled project in main config file

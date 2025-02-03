@@ -28,7 +28,7 @@ import fastDeepEqual from 'fast-deep-equal/es6';
  * Internal dependencies
  */
 import { AddressFormProps } from './types';
-import prepareFormFields from './prepare-form-fields';
+import { useFormFields } from './use-form-fields';
 import validateCountry from './validate-country';
 import customValidationHandler from './custom-validation-handler';
 import AddressLineFields from './address-line-fields';
@@ -55,8 +55,7 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 }: AddressFormProps< T > ): JSX.Element => {
 	const instanceId = useInstanceId( Form );
 	const isFirstRender = useRef( true );
-	const { defaultFields } = useCheckoutAddress();
-
+	const { defaultFields } = useCheckoutAddress(); // We read from here because `useCheckoutAddress` can adapt to being in the editor or frontend.
 	// Track incoming props.
 	const currentFields = useShallowEqual( fields );
 	const currentCountry = useShallowEqual(
@@ -64,9 +63,10 @@ const Form = < T extends AddressFormValues | ContactFormValues >( {
 	);
 
 	// Prepare address form fields by combining fields from the locale and default fields.
-	const formFields = prepareFormFields(
+	const formFields = useFormFields(
 		currentFields,
 		defaultFields,
+		addressType,
 		currentCountry
 	);
 

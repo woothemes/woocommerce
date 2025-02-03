@@ -7,6 +7,7 @@
  */
 
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\Filterer;
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -805,7 +806,7 @@ class WC_Query {
 
 		// Hide out of stock products.
 		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
-			$product_visibility_not_in[] = $product_visibility_terms['outofstock'];
+			$product_visibility_not_in[] = $product_visibility_terms[ ProductStockStatus::OUT_OF_STOCK ];
 		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
@@ -980,7 +981,7 @@ class WC_Query {
 	 * @param string $status (default: 'instock').
 	 * @return array
 	 */
-	public function stock_status_meta_query( $status = 'instock' ) {
+	public function stock_status_meta_query( $status = ProductStockStatus::IN_STOCK ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		return array();
 	}
 

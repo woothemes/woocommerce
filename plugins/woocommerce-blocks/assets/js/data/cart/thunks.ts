@@ -57,6 +57,7 @@ export const receiveCart =
 			newCart,
 			cartItemsPendingQuantity: select.getItemsPendingQuantityUpdate(),
 			cartItemsPendingDelete: select.getItemsPendingDelete(),
+			productsPendingAdd: select.getProductsPendingAdd(),
 		} );
 
 		updateCartErrorNotices( newCart.errors, oldCartErrors );
@@ -225,7 +226,7 @@ export const addItemToCart =
 	) =>
 	async ( { dispatch }: CartThunkArgs ) => {
 		try {
-			triggerAddingToCartEvent();
+			dispatch.startAddingToCart( productId );
 			const { response } = await apiFetchWithHeaders< {
 				response: CartResponse;
 			} >( {
@@ -240,13 +241,38 @@ export const addItemToCart =
 				cache: 'no-store',
 			} );
 			dispatch.receiveCart( response );
-			triggerAddedToCartEvent( { preserveCartData: true } );
+			dispatch.finishAddingToCart( productId );
 			return response;
 		} catch ( error ) {
 			dispatch.receiveError( isApiErrorResponse( error ) ? error : null );
+
+			// Finish adding to cart, but don't dispatch the added to cart event.
+			dispatch.finishAddingToCart( productId, false );
 			return Promise.reject( error );
 		}
 	};
+
+/**
+ * Sets the metadata to show an item ID being added.
+ */
+export function startAddingToCart( productId: number ) {
+	return async ( { dispatch }: CartThunkArgs ) => {
+		triggerAddingToCartEvent();
+		dispatch.setProductsPendingAdd( productId, true );
+	};
+}
+
+/**
+ * Removes the metadata of an item ID that was added.
+ */
+export function finishAddingToCart( productId: number, dispatchEvent = true ) {
+	return async ( { dispatch }: CartThunkArgs ) => {
+		if ( dispatchEvent ) {
+			triggerAddedToCartEvent( { preserveCartData: true } );
+		}
+		dispatch.setProductsPendingAdd( productId, false );
+	};
+}
 
 /**
  * Removes specified item from the cart:
