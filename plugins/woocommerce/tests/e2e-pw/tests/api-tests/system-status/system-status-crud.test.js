@@ -1,429 +1,409 @@
 const { test, expect } = require( '../../../fixtures/api-tests-fixtures' );
+const { any, anything } = expect;
 
-const { BASE_URL } = process.env;
-const { any } = expect;
-const shouldSkip = BASE_URL !== undefined && ! BASE_URL.includes( 'localhost' );
+const schemas = {
+	environment: [
+		{ field: 'home_url', type: any( String ) },
+		{ field: 'site_url', type: any( String ) },
+		{ field: 'version', type: any( String ) },
+		{ field: 'log_directory', type: any( String ) },
+		{ field: 'log_directory_writable', type: any( Boolean ) },
+		{ field: 'wp_version', type: any( String ) },
+		{ field: 'wp_multisite', type: any( Boolean ) },
+		{ field: 'wp_memory_limit', type: any( Number ) },
+		{ field: 'wp_debug_mode', type: any( Boolean ) },
+		{ field: 'wp_cron', type: any( Boolean ) },
+		{ field: 'language', type: any( String ) },
+		{ field: 'server_info', type: any( String ) },
+		{ field: 'php_version', type: any( String ) },
+		{ field: 'php_post_max_size', type: any( Number ) },
+		{ field: 'php_max_execution_time', type: any( Number ) },
+		{ field: 'php_max_input_vars', type: any( Number ) },
+		{ field: 'curl_version', type: any( String ) },
+		{ field: 'suhosin_installed', type: any( Boolean ) },
+		{ field: 'max_upload_size', type: any( Number ) },
+		{ field: 'mysql_version', type: any( String ) },
+		{ field: 'mysql_version_string', type: any( String ) },
+		{ field: 'default_timezone', type: any( String ) },
+		{ field: 'fsockopen_or_curl_enabled', type: any( Boolean ) },
+		{ field: 'soapclient_enabled', type: any( Boolean ) },
+		{ field: 'domdocument_enabled', type: any( Boolean ) },
+		{ field: 'gzip_enabled', type: any( Boolean ) },
+		{ field: 'mbstring_enabled', type: any( Boolean ) },
+		{ field: 'remote_post_successful', type: any( Boolean ) },
+		{
+			field: 'remote_post_response',
+			type: process.env.IS_WPCOM ? any( Number ) : any( String ),
+		},
+		{ field: 'remote_get_successful', type: any( Boolean ) },
+		{
+			field: 'remote_get_response',
+			type: process.env.IS_WPCOM ? any( Number ) : any( String ),
+		},
+	],
+	database: [
+		{ field: 'wc_database_version', type: any( String ) },
+		{ field: 'database_prefix', type: any( String ) },
+		{ field: 'maxmind_geoip_database', type: any( String ) },
+		{ field: 'database_tables', type: anything() },
+		{ field: 'database_size', type: anything() },
+	],
+	database_tables_woocommerce_other: [
+		{ field: 'data', type: any( String ) },
+		{ field: 'index', type: any( String ) },
+		{ field: 'engine', type: any( String ) },
+	],
+	active_plugins: [
+		{ field: 'plugin', type: any( String ) },
+		{ field: 'name', type: any( String ) },
+		{ field: 'version', type: any( String ) },
+		{ field: 'version_latest', type: any( String ) },
+		{ field: 'url', type: any( String ) },
+		{ field: 'author_name', type: any( String ) },
+		{ field: 'author_url', type: any( String ) },
+		{ field: 'network_activated', type: any( Boolean ) },
+	],
+	theme: [
+		{ field: 'name', type: any( String ) },
+		{ field: 'version', type: any( String ) },
+		{ field: 'version_latest', type: any( String ) },
+		{ field: 'author_url', type: any( String ) },
+		{ field: 'is_child_theme', type: any( Boolean ) },
+		{ field: 'is_block_theme', type: any( Boolean ) },
+		{ field: 'has_woocommerce_support', type: any( Boolean ) },
+		{ field: 'has_woocommerce_file', type: any( Boolean ) },
+		{ field: 'has_outdated_templates', type: any( Boolean ) },
+		{ field: 'overrides', type: any( Array ) },
+		{ field: 'parent_name', type: any( String ) },
+		{ field: 'parent_version', type: any( String ) },
+		{ field: 'parent_version_latest', type: any( String ) },
+		{ field: 'parent_author_url', type: any( String ) },
+	],
+	settings: [
+		{ field: 'api_enabled', type: any( Boolean ) },
+		{ field: 'force_ssl', type: any( Boolean ) },
+		{ field: 'currency', type: any( String ) },
+		{ field: 'currency_symbol', type: any( String ) },
+		{ field: 'currency_position', type: any( String ) },
+		{ field: 'thousand_separator', type: any( String ) },
+		{ field: 'decimal_separator', type: any( String ) },
+		{ field: 'number_of_decimals', type: any( Number ) },
+		{ field: 'geolocation_enabled', type: any( Boolean ) },
+		{ field: 'taxonomies', type: anything() },
+		{ field: 'product_visibility_terms', type: anything() },
+		{ field: 'woocommerce_com_connected', type: any( String ) },
+	],
+	settings_taxonomies: [
+		{ field: 'external', type: any( String ) },
+		{ field: 'grouped', type: any( String ) },
+		{ field: 'simple', type: any( String ) },
+		{ field: 'variable', type: any( String ) },
+	],
+	settings_product_visibility_terms: [
+		{ field: 'exclude-from-catalog', type: any( String ) },
+		{ field: 'exclude-from-search', type: any( String ) },
+		{ field: 'featured', type: any( String ) },
+		{ field: 'outofstock', type: any( String ) },
+		{ field: 'rated-1', type: any( String ) },
+		{ field: 'rated-2', type: any( String ) },
+		{ field: 'rated-3', type: any( String ) },
+		{ field: 'rated-4', type: any( String ) },
+		{ field: 'rated-5', type: any( String ) },
+	],
+	security: [
+		{ field: 'secure_connection', type: any( Boolean ) },
+		{ field: 'hide_errors', type: any( Boolean ) },
+	],
+	pages: [
+		{ field: 'page_name', type: any( String ) },
+		{ field: 'page_id', type: any( String ) },
+		{ field: 'page_set', type: any( Boolean ) },
+		{ field: 'page_exists', type: any( Boolean ) },
+		{ field: 'page_visible', type: any( Boolean ) },
+		{ field: 'shortcode', type: any( String ) },
+		{ field: 'block', type: any( String ) },
+		{ field: 'shortcode_required', type: any( Boolean ) },
+		{ field: 'shortcode_present', type: any( Boolean ) },
+		{ field: 'block_present', type: any( Boolean ) },
+		{ field: 'block_required', type: any( Boolean ) },
+	],
+};
 
+const getExpectedWooCommerceTables = ( dbPrefix ) => {
+	return [
+		`${ dbPrefix }woocommerce_sessions`,
+		`${ dbPrefix }woocommerce_api_keys`,
+		`${ dbPrefix }woocommerce_attribute_taxonomies`,
+		`${ dbPrefix }woocommerce_downloadable_product_permissions`,
+		`${ dbPrefix }woocommerce_order_items`,
+		`${ dbPrefix }woocommerce_order_itemmeta`,
+		`${ dbPrefix }woocommerce_tax_rates`,
+		`${ dbPrefix }woocommerce_tax_rate_locations`,
+		`${ dbPrefix }woocommerce_shipping_zones`,
+		`${ dbPrefix }woocommerce_shipping_zone_locations`,
+		`${ dbPrefix }woocommerce_shipping_zone_methods`,
+		`${ dbPrefix }woocommerce_payment_tokens`,
+		`${ dbPrefix }woocommerce_payment_tokenmeta`,
+		`${ dbPrefix }woocommerce_log`,
+	];
+};
+
+const getExpectedOtherTables = ( dbPrefix ) => {
+	return [
+		`${ dbPrefix }actionscheduler_actions`,
+		`${ dbPrefix }actionscheduler_claims`,
+		`${ dbPrefix }actionscheduler_groups`,
+		`${ dbPrefix }actionscheduler_logs`,
+		`${ dbPrefix }commentmeta`,
+		`${ dbPrefix }comments`,
+		`${ dbPrefix }links`,
+		`${ dbPrefix }options`,
+		`${ dbPrefix }postmeta`,
+		`${ dbPrefix }posts`,
+		`${ dbPrefix }termmeta`,
+		`${ dbPrefix }terms`,
+		`${ dbPrefix }term_relationships`,
+		`${ dbPrefix }term_taxonomy`,
+		`${ dbPrefix }usermeta`,
+		`${ dbPrefix }users`,
+		`${ dbPrefix }wc_admin_notes`,
+		`${ dbPrefix }wc_admin_note_actions`,
+		`${ dbPrefix }wc_category_lookup`,
+		`${ dbPrefix }wc_customer_lookup`,
+		`${ dbPrefix }wc_download_log`,
+		`${ dbPrefix }wc_order_coupon_lookup`,
+		`${ dbPrefix }wc_order_product_lookup`,
+		`${ dbPrefix }wc_order_stats`,
+		`${ dbPrefix }wc_order_tax_lookup`,
+		`${ dbPrefix }wc_product_attributes_lookup`,
+		`${ dbPrefix }wc_product_download_directories`,
+		`${ dbPrefix }wc_product_meta_lookup`,
+		`${ dbPrefix }wc_rate_limits`,
+		`${ dbPrefix }wc_reserved_stock`,
+		`${ dbPrefix }wc_tax_rate_classes`,
+		`${ dbPrefix }wc_webhooks`,
+	];
+};
+
+/* eslint-disable playwright/no-nested-step */
 test.describe( 'System Status API tests', () => {
 	test.only( 'can view all system status items', async ( { request } ) => {
-		// call API to view all system status items
-		const response = await request.get( './wp-json/wc/v3/system_status' );
-		const responseJSON = await response.json();
-		expect( response.status() ).toEqual( 200 );
+		let responseJSON,
+			databasePrefix,
+			databaseSize,
+			databaseTables,
+			woocommerceTables,
+			otherTables,
+			activePlugins,
+			dropinsMuPlugins,
+			taxonomiesJSON,
+			productVisibilityTerms;
+
+		await test.step( 'Call API to view all system status items', async () => {
+			const response = await request.get(
+				'./wp-json/wc/v3/system_status'
+			);
+			responseJSON = await response.json();
+			expect( response.status() ).toEqual( 200 );
+		} );
 
 		await test.step( 'Verify "environment" fields', async () => {
 			const { environment } = responseJSON;
 			expect( environment ).toBeDefined();
 
-			const {
-				home_url,
-				site_url,
-				version,
-				log_directory,
-				log_directory_writable,
-				wp_version,
-				wp_multisite,
-				wp_memory_limit,
-				wp_debug_mode,
-				wp_cron,
-				language,
-				external_object_cache,
-				server_info,
-				php_version,
-				php_post_max_size,
-				php_max_execution_time,
-				php_max_input_vars,
-				curl_version,
-				suhosin_installed,
-				max_upload_size,
-				mysql_version,
-				mysql_version_string,
-				default_timezone,
-				fsockopen_or_curl_enabled,
-				soapclient_enabled,
-				domdocument_enabled,
-				gzip_enabled,
-				mbstring_enabled,
-				remote_post_successful,
-				remote_post_response,
-				remote_get_successful,
-				remote_get_response,
-			} = environment;
+			for ( const { field, type } of schemas.environment ) {
+				await test.step( `Verify "environment.${ field }"`, () => {
+					expect( environment[ field ] ).toEqual( type );
+				} );
+			}
 
-			expect( home_url ).toEqual( any( String ) );
-			expect( site_url ).toEqual( any( String ) );
-			expect( version ).toEqual( any( String ) );
-			expect( log_directory ).toEqual( any( String ) );
-			expect( log_directory_writable ).toEqual( any( Boolean ) );
-			expect( wp_version ).toEqual( any( String ) );
-			expect( wp_multisite ).toEqual( any( Boolean ) );
-			expect( wp_memory_limit ).toEqual( any( Number ) );
-			expect( wp_debug_mode ).toEqual( any( Boolean ) );
-			expect( wp_cron ).toEqual( any( Boolean ) );
-			expect( language ).toEqual( any( String ) );
-			expect(
-				external_object_cache === null ||
-					typeof external_object_cache === 'boolean'
-			).toBeTruthy();
-			expect( server_info ).toEqual( any( String ) );
-			expect( php_version ).toEqual( any( String ) );
-			expect( php_post_max_size ).toEqual( any( Number ) );
-			expect( php_max_execution_time ).toEqual( any( Number ) );
-			expect( php_max_input_vars ).toEqual( any( Number ) );
-			expect( curl_version ).toEqual( any( String ) );
-			expect( suhosin_installed ).toEqual( any( Boolean ) );
-			expect( max_upload_size ).toEqual( any( Number ) );
-			expect( mysql_version ).toEqual( any( String ) );
-			expect( mysql_version_string ).toEqual( any( String ) );
-			expect( default_timezone ).toEqual( any( String ) );
-			expect( fsockopen_or_curl_enabled ).toEqual( any( Boolean ) );
-			expect( soapclient_enabled ).toEqual( any( Boolean ) );
-			expect( domdocument_enabled ).toEqual( any( Boolean ) );
-			expect( gzip_enabled ).toEqual( any( Boolean ) );
-			expect( mbstring_enabled ).toEqual( any( Boolean ) );
-			expect( remote_post_successful ).toEqual( any( Boolean ) );
-			expect( [ 'number', 'string' ] ).toContain(
-				typeof remote_post_response
-			);
-			expect( remote_get_successful ).toEqual( any( Boolean ) );
-			expect( [ 'number', 'string' ] ).toContain(
-				typeof remote_get_response
-			);
+			// Handle special case of environment.external_object_cache which is null on wp-env
+			// but could be a Boolean in other environments.
+			await test.step( 'Verify "environment.external_object_cache"', () => {
+				const { external_object_cache } = environment;
+
+				expect(
+					typeof external_object_cache === 'boolean' ||
+						external_object_cache === null
+				).toBeTruthy();
+			} );
 		} );
 
 		await test.step( 'Verify "database" fields', async () => {
 			const { database } = responseJSON;
 			expect( database ).toBeDefined();
 
-			const {
-				wc_database_version,
-				database_prefix,
-				maxmind_geoip_database,
-				database_tables,
-				database_size,
-			} = database;
-
-			expect( wc_database_version ).toEqual( any( String ) );
-			expect( database_prefix ).toEqual( any( String ) );
-			expect( maxmind_geoip_database ).toEqual( any( String ) );
-
-			await test.step( 'Verify "database_tables" fields', async () => {
-				expect( database_tables ).toBeDefined();
-
-				await test.step( 'Verify "woocommerce" fields', async () => {
-					const { woocommerce } = database_tables;
-					expect( woocommerce ).toBeDefined();
-
-					const {
-						[ `${ database_prefix }woocommerce_sessions` ]:
-							woocommerce_sessions,
-						[ `${ database_prefix }woocommerce_api_keys` ]:
-							woocommerce_api_keys,
-						[ `${ database_prefix }woocommerce_attribute_taxonomies` ]:
-							woocommerce_attribute_taxonomies,
-						[ `${ database_prefix }woocommerce_downloadable_product_permissions` ]:
-							woocommerce_downloadable_product_permissions,
-						[ `${ database_prefix }woocommerce_order_items` ]:
-							woocommerce_order_items,
-						[ `${ database_prefix }woocommerce_order_itemmeta` ]:
-							woocommerce_order_itemmeta,
-						[ `${ database_prefix }woocommerce_tax_rates` ]:
-							woocommerce_tax_rates,
-						[ `${ database_prefix }woocommerce_tax_rate_locations` ]:
-							woocommerce_tax_rate_locations,
-						[ `${ database_prefix }woocommerce_shipping_zones` ]:
-							woocommerce_shipping_zones,
-						[ `${ database_prefix }woocommerce_shipping_zone_locations` ]:
-							woocommerce_shipping_zone_locations,
-						[ `${ database_prefix }woocommerce_shipping_zone_methods` ]:
-							woocommerce_shipping_zone_methods,
-						[ `${ database_prefix }woocommerce_payment_tokens` ]:
-							woocommerce_payment_tokens,
-						[ `${ database_prefix }woocommerce_payment_tokenmeta` ]:
-							woocommerce_payment_tokenmeta,
-						[ `${ database_prefix }woocommerce_log` ]:
-							woocommerce_log,
-					} = woocommerce;
-
-					const woocommerce_tables = [
-						woocommerce_sessions,
-						woocommerce_api_keys,
-						woocommerce_attribute_taxonomies,
-						woocommerce_downloadable_product_permissions,
-						woocommerce_order_items,
-						woocommerce_order_itemmeta,
-						woocommerce_tax_rates,
-						woocommerce_tax_rate_locations,
-						woocommerce_shipping_zones,
-						woocommerce_shipping_zone_locations,
-						woocommerce_shipping_zone_methods,
-						woocommerce_payment_tokens,
-						woocommerce_payment_tokenmeta,
-						woocommerce_log,
-					];
-
-					for ( const table of woocommerce_tables ) {
-						await test.step( `Verify "${ table }"`, () => {
-							expect( table ).toBeDefined();
-							const { data, index, engine } = table;
-							expect( data ).toEqual( any( String ) );
-							expect( index ).toEqual( any( String ) );
-							expect( engine ).toEqual( any( String ) );
-						} );
-					}
+			for ( const { field, type } of schemas.database ) {
+				await test.step( `Verify "database.${ field }"`, () => {
+					expect( database[ field ] ).toEqual( type );
 				} );
+			}
 
-				await test.step( 'Verify "other" fields', async () => {
-					const { other } = database_tables;
-					expect( other ).toBeDefined();
-
-					const {
-						[ `${ database_prefix }actionscheduler_actions` ]:
-							actionscheduler_actions,
-						[ `${ database_prefix }actionscheduler_claims` ]:
-							actionscheduler_claims,
-						[ `${ database_prefix }actionscheduler_groups` ]:
-							actionscheduler_groups,
-						[ `${ database_prefix }actionscheduler_logs` ]:
-							actionscheduler_logs,
-						[ `${ database_prefix }commentmeta` ]: commentmeta,
-						[ `${ database_prefix }comments` ]: comments,
-						[ `${ database_prefix }links` ]: links,
-						[ `${ database_prefix }options` ]: options,
-						[ `${ database_prefix }postmeta` ]: postmeta,
-						[ `${ database_prefix }posts` ]: posts,
-						[ `${ database_prefix }termmeta` ]: termmeta,
-						[ `${ database_prefix }terms` ]: terms,
-						[ `${ database_prefix }term_relationships` ]:
-							term_relationships,
-						[ `${ database_prefix }term_taxonomy` ]: term_taxonomy,
-						[ `${ database_prefix }usermeta` ]: usermeta,
-						[ `${ database_prefix }users` ]: users,
-						[ `${ database_prefix }wc_admin_notes` ]:
-							wc_admin_notes,
-						[ `${ database_prefix }wc_admin_note_actions` ]:
-							wc_admin_note_actions,
-						[ `${ database_prefix }wc_category_lookup` ]:
-							wc_category_lookup,
-						[ `${ database_prefix }wc_customer_lookup` ]:
-							wc_customer_lookup,
-						[ `${ database_prefix }wc_download_log` ]:
-							wc_download_log,
-						[ `${ database_prefix }wc_order_coupon_lookup` ]:
-							wc_order_coupon_lookup,
-						[ `${ database_prefix }wc_order_product_lookup` ]:
-							wc_order_product_lookup,
-						[ `${ database_prefix }wc_order_stats` ]:
-							wc_order_stats,
-						[ `${ database_prefix }wc_order_tax_lookup` ]:
-							wc_order_tax_lookup,
-						[ `${ database_prefix }wc_product_attributes_lookup` ]:
-							wc_product_attributes_lookup,
-						[ `${ database_prefix }wc_product_download_directories` ]:
-							wc_product_download_directories,
-						[ `${ database_prefix }wc_product_meta_lookup` ]:
-							wc_product_meta_lookup,
-						[ `${ database_prefix }wc_rate_limits` ]:
-							wc_rate_limits,
-						[ `${ database_prefix }wc_reserved_stock` ]:
-							wc_reserved_stock,
-						[ `${ database_prefix }wc_tax_rate_classes` ]:
-							wc_tax_rate_classes,
-						[ `${ database_prefix }wc_webhooks` ]: wc_webhooks,
-					} = other;
-
-					const other_tables = [
-						actionscheduler_actions,
-						actionscheduler_claims,
-						actionscheduler_groups,
-						actionscheduler_logs,
-						commentmeta,
-						comments,
-						links,
-						options,
-						postmeta,
-						posts,
-						termmeta,
-						terms,
-						term_relationships,
-						term_taxonomy,
-						usermeta,
-						users,
-						wc_admin_notes,
-						wc_admin_note_actions,
-						wc_category_lookup,
-						wc_customer_lookup,
-						wc_download_log,
-						wc_order_coupon_lookup,
-						wc_order_product_lookup,
-						wc_order_stats,
-						wc_order_tax_lookup,
-						wc_product_attributes_lookup,
-						wc_product_download_directories,
-						wc_product_meta_lookup,
-						wc_rate_limits,
-						wc_reserved_stock,
-						wc_tax_rate_classes,
-						wc_webhooks,
-					];
-
-					for ( const table of other_tables ) {
-						await test.step( `Verify "${ table }"`, () => {
-							expect( table ).toBeDefined();
-							const { data, index, engine } = table;
-							expect( data ).toEqual( any( String ) );
-							expect( index ).toEqual( any( String ) );
-							expect( engine ).toEqual( any( String ) );
-						} );
-					}
-				} );
-			} );
-
-			await test.step( 'Verify "database_size" fields', async () => {
-				const { data, index } = database_size;
-				expect( data ).toEqual( any( Number ) );
-				expect( index ).toEqual( any( Number ) );
-			} );
+			databaseSize = database.database_size;
+			databasePrefix = database.database_prefix;
+			databaseTables = database.database_tables;
 		} );
 
-		// expect( responseJSON ).toEqual(
-		// 	expect.objectContaining( {
-		// 		active_plugins: expect.arrayContaining( [
-		// 			{
-		// 				plugin: expect.any( String ),
-		// 				name: expect.any( String ),
-		// 				version: expect.any( String ),
-		// 				version_latest: expect.any( String ),
-		// 				url: expect.any( String ),
-		// 				author_name: expect.any( String ),
-		// 				author_url: expect.any( String ),
-		// 				network_activated: expect.any( Boolean ),
-		// 			},
-		// 			{
-		// 				plugin: expect.any( String ),
-		// 				name: expect.any( String ),
-		// 				version: expect.any( String ),
-		// 				version_latest: expect.any( String ),
-		// 				url: expect.any( String ),
-		// 				author_name: expect.any( String ),
-		// 				author_url: expect.any( String ),
-		// 				network_activated: expect.any( Boolean ),
-		// 			},
-		// 			{
-		// 				plugin: expect.any( String ),
-		// 				name: expect.any( String ),
-		// 				version: expect.any( String ),
-		// 				version_latest: expect.any( String ),
-		// 				url: expect.any( String ),
-		// 				author_name: expect.any( String ),
-		// 				author_url: expect.any( String ),
-		// 				network_activated: expect.any( Boolean ),
-		// 			},
-		// 			{
-		// 				plugin: expect.any( String ),
-		// 				name: expect.any( String ),
-		// 				version: expect.any( String ),
-		// 				version_latest: expect.any( String ),
-		// 				url: expect.any( String ),
-		// 				author_name: expect.any( String ),
-		// 				author_url: expect.any( String ),
-		// 				network_activated: expect.any( Boolean ),
-		// 			},
-		// 		] ),
-		// 	} )
-		// );
+		await test.step( 'Verify "database.database_tables" fields', async () => {
+			const { woocommerce, other } = databaseTables;
+			expect( woocommerce ).toBeDefined();
+			expect( other ).toBeDefined();
 
-		// local environment differs from external hosts.  Local listed first.
-		// eslint-disable-next-line playwright/no-conditional-in-test
-		// if ( ! shouldSkip ) {
-		// 	expect( responseJSON ).toEqual(
-		// 		expect.objectContaining( {
-		// 			dropins_mu_plugins: expect.objectContaining( {
-		// 				dropins: expect.arrayContaining( [] ),
-		// 				mu_plugins: expect.arrayContaining( [] ),
-		// 			} ),
-		// 		} )
-		// 	);
-		// } else {
-		// 	expect( responseJSON ).toEqual(
-		// 		expect.objectContaining( {
-		// 			dropins_mu_plugins: expect.objectContaining( {
-		// 				dropins: expect.arrayContaining( [
-		// 					{
-		// 						name: expect.any( String ),
-		// 						plugin: expect.any( String ),
-		// 					},
-		// 					{
-		// 						name: expect.any( String ),
-		// 						plugin: expect.any( String ),
-		// 					},
-		// 				] ),
-		// 				mu_plugins: [],
-		// 			} ),
-		// 		} )
-		// 	);
-		// }
-		// expect( responseJSON ).toEqual(
-		// 	expect.objectContaining( {
-		// 		theme: expect.objectContaining( {
-		// 			name: expect.any( String ),
-		// 			version: expect.any( String ),
-		// 			version_latest: expect.any( String ),
-		// 			author_url: expect.any( String ),
-		// 			is_child_theme: expect.any( Boolean ),
-		// 			is_block_theme: expect.any( Boolean ),
-		// 			has_woocommerce_support: expect.any( Boolean ),
-		// 			has_woocommerce_file: expect.any( Boolean ),
-		// 			has_outdated_templates: expect.any( Boolean ),
-		// 			overrides: expect.any( Array ),
-		// 			parent_name: expect.any( String ),
-		// 			parent_version: expect.any( String ),
-		// 			parent_version_latest: expect.any( String ),
-		// 			parent_author_url: expect.any( String ),
-		// 		} ),
-		// 	} )
-		// );
-		// expect( responseJSON ).toEqual(
-		// 	expect.objectContaining( {
-		// 		settings: expect.objectContaining( {
-		// 			api_enabled: expect.any( Boolean ),
-		// 			force_ssl: expect.any( Boolean ),
-		// 			currency: expect.any( String ),
-		// 			currency_symbol: expect.any( String ),
-		// 			currency_position: expect.any( String ),
-		// 			thousand_separator: expect.any( String ),
-		// 			decimal_separator: expect.any( String ),
-		// 			number_of_decimals: expect.any( Number ),
-		// 			geolocation_enabled: expect.any( Boolean ),
-		// 			taxonomies: {
-		// 				external: expect.any( String ),
-		// 				grouped: expect.any( String ),
-		// 				simple: expect.any( String ),
-		// 				variable: expect.any( String ),
-		// 			},
-		// 			product_visibility_terms: {
-		// 				'exclude-from-catalog': expect.any( String ),
-		// 				'exclude-from-search': expect.any( String ),
-		// 				featured: expect.any( String ),
-		// 				outofstock: expect.any( String ),
-		// 				'rated-1': expect.any( String ),
-		// 				'rated-2': expect.any( String ),
-		// 				'rated-3': expect.any( String ),
-		// 				'rated-4': expect.any( String ),
-		// 				'rated-5': expect.any( String ),
-		// 			},
-		// 			woocommerce_com_connected: expect.any( String ),
-		// 		} ),
-		// 	} )
-		// );
-		// expect( responseJSON ).toEqual(
-		// 	expect.objectContaining( {
-		// 		security: expect.objectContaining( {
-		// 			secure_connection: expect.any( Boolean ),
-		// 			hide_errors: expect.any( Boolean ),
-		// 		} ),
-		// 	} )
-		// );
+			woocommerceTables = woocommerce;
+			otherTables = other;
+		} );
+
+		await test.step( 'Verify "database.database_tables.woocommerce" fields', async () => {
+			const wooTableNames =
+				getExpectedWooCommerceTables( databasePrefix );
+
+			for ( const tableName of wooTableNames ) {
+				const thisTable = woocommerceTables[ tableName ];
+				expect( thisTable ).toBeDefined();
+
+				for ( const {
+					field,
+					type,
+				} of schemas.database_tables_woocommerce_other ) {
+					await test.step( `Verify "database.database_tables.woocommerce.${ tableName }.${ field }"`, () => {
+						expect( thisTable[ field ] ).toEqual( type );
+					} );
+				}
+			}
+		} );
+
+		await test.step( 'Verify "database.database_tables.other" fields', async () => {
+			const otherTableNames = getExpectedOtherTables( databasePrefix );
+
+			for ( const tableName of otherTableNames ) {
+				const thisTable = otherTables[ tableName ];
+				expect( thisTable ).toBeDefined();
+
+				for ( const {
+					field,
+					type,
+				} of schemas.database_tables_woocommerce_other ) {
+					await test.step( `Verify "database.database_tables.other.${ tableName }.${ field }"`, () => {
+						expect( thisTable[ field ] ).toEqual( type );
+					} );
+				}
+			}
+		} );
+
+		await test.step( 'Verify "database.database_size" fields', async () => {
+			const { data, index } = databaseSize;
+			expect( data ).toEqual( any( Number ) );
+			expect( index ).toEqual( any( Number ) );
+		} );
+
+		await test.step( 'Verify "active_plugins"', async () => {
+			const { active_plugins } = responseJSON;
+			expect( active_plugins ).toEqual( any( Array ) );
+			expect( active_plugins.length ).toBeGreaterThan( 0 );
+
+			activePlugins = active_plugins;
+		} );
+
+		for ( const aPlugin of activePlugins ) {
+			for ( const { field, type } of schemas.active_plugins ) {
+				await test.step( `Verify "active_plugins.${ aPlugin.plugin }.${ field }"`, async () => {
+					expect( aPlugin[ field ] ).toEqual( type );
+				} );
+			}
+		}
+
+		await test.step( 'Verify "dropins_mu_plugins"', async () => {
+			const { dropins_mu_plugins } = responseJSON;
+			expect( dropins_mu_plugins ).toBeDefined();
+			dropinsMuPlugins = dropins_mu_plugins;
+		} );
+
+		await test.step( 'Verify "dropins_mu_plugins.dropins"', async () => {
+			const { dropins } = dropinsMuPlugins;
+			expect( dropins ).toEqual( any( Array ) );
+
+			for ( const dropin of dropins ) {
+				const { name, plugin } = dropin;
+				await test.step( `Verify dropin "${ name }"`, async () => {
+					expect( name ).toEqual( any( String ) );
+					expect( plugin ).toEqual( any( String ) );
+				} );
+			}
+		} );
+
+		await test.step( 'Verify "dropins_mu_plugins.mu_plugins"', async () => {
+			const { mu_plugins } = dropinsMuPlugins;
+			expect( mu_plugins ).toEqual( any( Array ) );
+		} );
+
+		await test.step( 'Verify "theme"', async () => {
+			const { theme } = responseJSON;
+			expect( theme ).toBeDefined();
+
+			for ( const { field, type } of schemas.theme ) {
+				await test.step( `Verify "theme.${ field }"`, () => {
+					expect( theme[ field ] ).toEqual( type );
+				} );
+			}
+		} );
+
+		await test.step( 'Verify "settings"', async () => {
+			const { settings } = responseJSON;
+			expect( settings ).toBeDefined();
+
+			for ( const { field, type } of schemas.settings ) {
+				await test.step( `Verify "settings.${ field }"`, async () => {
+					expect( settings[ field ] ).toEqual( type );
+				} );
+			}
+
+			taxonomiesJSON = settings.taxonomies;
+			productVisibilityTerms = settings.product_visibility_terms;
+		} );
+
+		await test.step( 'Verify "settings.taxonomies"', async () => {
+			for ( const { field, type } of schemas.settings_taxonomies ) {
+				await test.step( `Verify "settings.taxonomies.${ field }"`, async () => {
+					expect( taxonomiesJSON[ field ] ).toEqual( type );
+				} );
+			}
+		} );
+
+		await test.step( 'Verify "settings.product_visibility_terms"', async () => {
+			for ( const {
+				field,
+				type,
+			} of schemas.settings_product_visibility_terms ) {
+				await test.step( `Verify "settings.product_visibility_terms.${ field }"`, async () => {
+					expect( productVisibilityTerms[ field ] ).toEqual( type );
+				} );
+			}
+		} );
+
+		await test.step( 'Verify "security" fields', async () => {
+			const { security } = responseJSON;
+			expect( security ).toBeDefined();
+
+			for ( const { field, type } of schemas.security ) {
+				await test.step( `Verify "security.${ field }"`, () => {
+					expect( security[ field ] ).toEqual( type );
+				} );
+			}
+		} );
+
+		await test.step( 'Verify "pages', async () => {
+			const { pages } = responseJSON;
+			expect( pages ).toEqual( any( Array ) );
+
+			for ( const page of pages ) {
+				for ( const { field, type } of schemas.pages ) {
+					await test.step( `Verify page "${ page.page_name }"`, async () => {
+						expect( page[ field ] ).toEqual( type );
+					} );
+				}
+			}
+		} );
+
 		// expect( responseJSON ).toEqual(
 		// 	expect.objectContaining( {
 		// 		pages: expect.arrayContaining( [
