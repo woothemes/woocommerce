@@ -97,6 +97,13 @@ class ProductSaleBadge extends AbstractBlock {
 			return $content;
 		}
 
+		// Check if woocommerce_sale_flash filter is in use
+		if ( has_filter( 'woocommerce_sale_flash' ) ) {
+			ob_start();
+			wc_get_template( 'single-product/sale-flash.php' );
+			return ob_get_clean();
+		}
+
 		$post_id = isset( $block->context['postId'] ) ? $block->context['postId'] : '';
 		$product = wc_get_product( $post_id );
 
