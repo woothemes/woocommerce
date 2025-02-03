@@ -9,12 +9,24 @@ $wc-setting-email-width: 634px;
 	background: $gray-100;
 	border: 1px solid $gray-200;
 	border-radius: 4px;
+	box-sizing: border-box;
 	display: grid;
 	grid-gap: $wc-setting-email-preview-gap;
 	grid-template-rows: 36px 1fr;
 	height: 960px;
 	padding: $wc-setting-email-preview-gap;
-	width: 652px;
+	width: 684px;
+
+	@include breakpoint( "<782px" ) {
+		margin-top: 16px;
+		width: 100%;
+	}
+
+	@include breakpoint( "<600px" ) {
+		border-left: 0;
+		border-right: 0;
+		padding: $wc-setting-email-preview-gap 0;
+	}
 }
 
 .wc-settings-email-preview-container-floating {
@@ -35,6 +47,10 @@ $wc-setting-email-width: 634px;
 
 .wc-settings-email-preview-type {
 	width: 200px;
+
+	@include breakpoint( "<600px" ) {
+		width: 150px;
+	}
 }
 
 .wc-settings-email-preview-spinner {
@@ -53,6 +69,10 @@ $wc-setting-email-width: 634px;
 	grid-gap: 8px;
 	grid-template-columns: 32px 32px;
 	padding-right: 8px;
+
+	@include breakpoint( "<600px" ) {
+		display: none;
+	}
 
 	button {
 		align-items: center;
@@ -90,6 +110,11 @@ $wc-setting-email-width: 634px;
 	margin: 0 auto;
 	transition: max-width 0.3s ease-in-out;
 	width: 100%;
+
+	@include breakpoint( "<600px" ) {
+		// Always show mobile email preview on small screens
+		max-width: 360px !important;
+	}
 
 	iframe {
 		border-radius: 0 0 3px 3px;
