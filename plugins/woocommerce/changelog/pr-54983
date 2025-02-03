@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Make the global product variable available for grouped products in single product blocks
