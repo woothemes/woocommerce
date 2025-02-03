@@ -19,6 +19,9 @@ export interface ProductGalleryContext {
 	elementThatTriggeredDialogOpening: HTMLElement | null;
 	disableLeft: boolean;
 	disableRight: boolean;
+	touchStartX: number;
+	touchCurrentX: number;
+	isDragging: boolean;
 }
 
 const getContext = ( ns?: string ) =>
@@ -204,6 +207,47 @@ const productGallery = {
 			document.body.classList.remove(
 				'wc-block-product-gallery-dialog-open'
 			);
+		},
+		onTouchStart: ( event: TouchEvent ) => {
+			const context = getContext();
+			const { clientX } = event.touches[ 0 ];
+			context.touchStartX = clientX;
+			context.touchCurrentX = clientX;
+			context.isDragging = true;
+		},
+		onTouchMove: ( event: TouchEvent ) => {
+			const context = getContext();
+			if ( ! context.isDragging ) {
+				return;
+			}
+			const { clientX } = event.touches[ 0 ];
+			context.touchCurrentX = clientX;
+			event.preventDefault();
+		},
+		onTouchEnd: () => {
+			const context = getContext();
+			if ( ! context.isDragging ) {
+				return;
+			}
+
+			const SNAP_THRESHOLD = 0.2;
+			const delta = context.touchCurrentX - context.touchStartX;
+			const element = getElement()?.ref as HTMLElement;
+			const imageWidth = element?.offsetWidth || 0;
+
+			// Only trigger swipe actions if there was significant movement
+			if ( Math.abs( delta ) > imageWidth * SNAP_THRESHOLD ) {
+				if ( delta > 0 && ! context.disableLeft ) {
+					actions.selectPreviousImage();
+				} else if ( delta < 0 && ! context.disableRight ) {
+					actions.selectNextImage();
+				}
+			}
+
+			// Reset touch state
+			context.isDragging = false;
+			context.touchStartX = 0;
+			context.touchCurrentX = 0;
 		},
 	},
 	callbacks: {
