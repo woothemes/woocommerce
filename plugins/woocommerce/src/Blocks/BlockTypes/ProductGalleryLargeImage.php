@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\ProductGalleryUtils;
@@ -118,10 +120,10 @@ class ProductGalleryLargeImage extends AbstractBlock {
 	private function get_main_images_html( $context, $product_id ) {
 		$attributes = array(
 			'class'                  => 'wc-block-woocommerce-product-gallery-large-image__image',
-			'data-wc-watch'          => 'callbacks.scrollInto',
-			'data-wc-bind--tabindex' => 'state.thumbnailTabIndex',
-			'data-wc-on--keydown'    => 'actions.onSelectedLargeImageKeyDown',
-			'data-wc-class--wc-block-woocommerce-product-gallery-large-image__image--active-image-slide' => 'state.isSelected',
+			'data-wp-watch'          => 'callbacks.scrollInto',
+			'data-wp-bind--tabindex' => 'state.thumbnailTabIndex',
+			'data-wp-on--keydown'    => 'actions.onSelectedLargeImageKeyDown',
+			'data-wp-class--wc-block-woocommerce-product-gallery-large-image__image--active-image-slide' => 'state.isSelected',
 		);
 
 		if ( $context['fullScreenOnClick'] ) {
@@ -130,7 +132,7 @@ class ProductGalleryLargeImage extends AbstractBlock {
 
 		if ( $context['hoverZoom'] ) {
 			$attributes['class']              .= ' wc-block-woocommerce-product-gallery-large-image__image--hoverZoom';
-			$attributes['data-wc-bind--style'] = 'state.styles';
+			$attributes['data-wp-bind--style'] = 'state.styles';
 		}
 
 		$main_images = ProductGalleryUtils::get_product_gallery_images(
@@ -185,10 +187,10 @@ class ProductGalleryLargeImage extends AbstractBlock {
 		);
 
 		return array(
-			'data-wc-interactive'    => wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-context'        => wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
-			'data-wc-on--mousemove'  => 'actions.startZoom',
-			'data-wc-on--mouseleave' => 'actions.resetZoom',
+			'data-wp-interactive'    => $this->get_full_block_name(),
+			'data-wp-context'        => wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ),
+			'data-wp-on--mousemove'  => 'actions.startZoom',
+			'data-wp-on--mouseleave' => 'actions.resetZoom',
 		);
 	}
 
@@ -205,7 +207,18 @@ class ProductGalleryLargeImage extends AbstractBlock {
 		}
 
 		return array(
-			'data-wc-on--click' => 'actions.openDialog',
+			'data-wp-on--click' => 'actions.openDialog',
 		);
+	}
+
+	/**
+	 * Disable the block type script, this block's frontend script is a script module.
+	 *
+	 * @param string|null $key The key.
+	 *
+	 * @return null
+	 */
+	protected function get_block_type_script( $key = null ) {
+		return null;
 	}
 }

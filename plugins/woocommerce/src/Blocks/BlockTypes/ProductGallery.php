@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
@@ -116,14 +118,14 @@ class ProductGallery extends AbstractBlock {
 			)
 		);
 
-		$html_processor->remove_attribute( 'data-wc-context' );
+		$html_processor->remove_attribute( 'data-wp-context' );
 
 		$gallery_dialog = strtr(
 			'
-			<dialog data-wc-bind--open="context.isDialogOpen" role="dialog" aria-modal="true" aria-label="{{dialog_aria_label}}" hidden data-wc-bind--hidden="!context.isDialogOpen" data-wc-watch="callbacks.keyboardAccess" data-wc-watch--dialog-focus-trap="callbacks.dialogFocusTrap" data-wc-class--wc-block-product-gallery--dialog-open="context.isDialogOpen">
+			<dialog data-wp-bind--open="context.isDialogOpen" role="dialog" aria-modal="true" aria-label="{{dialog_aria_label}}" hidden data-wp-bind--hidden="!context.isDialogOpen" data-wp-watch="callbacks.keyboardAccess" data-wp-watch--dialog-focus-trap="callbacks.dialogFocusTrap" data-wp-class--wc-block-product-gallery--dialog-open="context.isDialogOpen">
 				<div class="wc-block-product-gallery-dialog__header">
 				<div class="wc-block-product-galler-dialog__header-right">
-					<button class="wc-block-product-gallery-dialog__close" data-wc-on--click="actions.closeDialog" aria-label="{{close_dialog_aria_label}}">
+					<button class="wc-block-product-gallery-dialog__close" data-wp-on--click="actions.closeDialog" aria-label="{{close_dialog_aria_label}}">
 						<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<rect width="24" height="24" rx="2"/>
 							<path d="M13 11.8L19.1 5.5L18.1 4.5L12 10.7L5.9 4.5L4.9 5.5L11 11.8L4.5 18.5L5.5 19.5L12 12.9L18.5 19.5L19.5 18.5L13 11.8Z" fill="black"/>
@@ -162,6 +164,8 @@ class ProductGallery extends AbstractBlock {
 			return '';
 		}
 
+		wp_enqueue_script_module( $this->get_full_block_name() );
+
 		$product_gallery_images = ProductGalleryUtils::get_product_gallery_images( $post_id, 'thumbnail', array() );
 		$classname_single_image = '';
 
@@ -181,9 +185,9 @@ class ProductGallery extends AbstractBlock {
 		$p    = new \WP_HTML_Tag_Processor( $html );
 
 		if ( $p->next_tag() ) {
-			$p->set_attribute( 'data-wc-interactive', wp_json_encode( array( 'namespace' => 'woocommerce/product-gallery' ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) );
+			$p->set_attribute( 'data-wp-interactive', $this->get_full_block_name() );
 			$p->set_attribute(
-				'data-wc-context',
+				'data-wp-context',
 				wp_json_encode(
 					array(
 						'firstMainImageId'                => $product_gallery_first_image_id,
@@ -202,7 +206,7 @@ class ProductGallery extends AbstractBlock {
 			);
 
 			if ( $product->is_type( ProductType::VARIABLE ) ) {
-				$p->set_attribute( 'data-wc-init--watch-changes-on-add-to-cart-form', 'callbacks.watchForChangesOnAddToCartForm' );
+				$p->set_attribute( 'data-wp-init--watch-changes-on-add-to-cart-form', 'callbacks.watchForChangesOnAddToCartForm' );
 			}
 
 			$p->add_class( $classname );
@@ -211,5 +215,16 @@ class ProductGallery extends AbstractBlock {
 		}
 
 		return $html;
+	}
+
+	/**
+	 * Disable the block type script, this block's frontend script is a script module.
+	 *
+	 * @param string|null $key The key.
+	 *
+	 * @return null
+	 */
+	protected function get_block_type_script( $key = null ) {
+		return null;
 	}
 }
