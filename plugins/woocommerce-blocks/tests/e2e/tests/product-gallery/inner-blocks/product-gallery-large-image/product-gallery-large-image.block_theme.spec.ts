@@ -229,24 +229,70 @@ test.describe( `${ blockData.name }`, () => {
 
 			// Get the element's bounding box
 			const box = await largeImageElement.boundingBox();
-			if ( ! box ) return;
+			if ( ! box ) {
+				return;
+			}
 
 			// Calculate start and end points for the swipe
-			const startX = box.x + box.width / 2; // middle of element
-			const startY = box.y + box.height / 2;
-			const endX = startX - 200; // swipe left by 200px
-			const endY = startY;
+			const swipeStartX = box.x + box.width / 2; // middle of element
+			const swipeStartY = box.y + box.height / 2;
+			const swipeEndX = swipeStartX - 200; // swipe left by 200px
+			const swipeEndY = swipeStartY;
 
 			const initialImageSrc = await largeImageElement.getAttribute(
 				'src'
 			);
 
-			// Perform the touch gesture
-			await page.touchscreen.tap( startX, startY );
-			await page.mouse.move( startX, startY );
-			await page.mouse.down();
-			await page.mouse.move( endX, endY );
-			await page.mouse.up();
+			// Dispatch touch events to simulate swipe
+			await largeImageElement.evaluate(
+				( element, { startX, startY, endX, endY } ) => {
+					const touchStart = new TouchEvent( 'touchstart', {
+						bubbles: true,
+						cancelable: true,
+						touches: [
+							new Touch( {
+								identifier: 0,
+								target: element,
+								clientX: startX,
+								clientY: startY,
+							} ),
+						],
+					} );
+
+					const touchMove = new TouchEvent( 'touchmove', {
+						bubbles: true,
+						cancelable: true,
+						touches: [
+							new Touch( {
+								identifier: 0,
+								target: element,
+								clientX: endX,
+								clientY: endY,
+							} ),
+						],
+					} );
+
+					const touchEnd = new TouchEvent( 'touchend', {
+						bubbles: true,
+						cancelable: true,
+						touches: [],
+					} );
+
+					element.dispatchEvent( touchStart );
+					element.dispatchEvent( touchMove );
+					element.dispatchEvent( touchEnd );
+				},
+				{
+					startX: swipeStartX,
+					startY: swipeStartY,
+					endX: swipeEndX,
+					endY: swipeEndY,
+				}
+			);
+
+			// Verify dialog is not opened
+			const dialog = page.locator( '.wc-block-product-gallery-dialog' );
+			await expect( dialog ).toBeHidden();
 
 			// Timeout is needed to allow the image animation to finish.
 			// eslint-disable-next-line playwright/no-wait-for-timeout, no-restricted-syntax

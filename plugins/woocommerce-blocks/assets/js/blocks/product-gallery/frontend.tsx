@@ -125,15 +125,6 @@ const productGallery = {
 		get thumbnailTabIndex(): string {
 			return state.isSelected ? '0' : '-1';
 		},
-		get isDragging() {
-			return getContext().isDragging;
-		},
-		get touchStartX() {
-			return getContext().touchStartX;
-		},
-		get touchCurrentX() {
-			return getContext().touchCurrentX;
-		},
 	},
 	actions: {
 		selectImage: () => {
