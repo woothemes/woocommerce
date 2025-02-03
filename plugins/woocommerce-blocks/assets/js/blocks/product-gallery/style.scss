@@ -1,117 +1,13 @@
-$gallery: ".wc-block-product-gallery";
-$large-image: "#{$gallery}-large-image";
-$thumbnails: "#{$gallery}-thumbnails";
-$next-previous: "#{$large-image}-next-previous";
-$next-previous-left-off: "#{$next-previous}-left--off";
-$next-previous-right-off: "#{$next-previous}-right--off";
-$gallery-next-previous-outside-image: "#{$gallery}[data-next-previous-buttons-position='outsideTheImage']:not(.is-single-product-gallery-image)";
-$gallery-next-previous-inside-image: "#{$gallery}:not([data-next-previous-buttons-position='outsideTheImage']:not(.is-single-product-gallery-image))";
-
-$outside-image-offset: 30px;
-$outside-image-max-width: calc(100% - (2 * $outside-image-offset));
+$admin-bar-height: 32px;
 $thumbnails-gap: 15px;
-$default-number-of-thumbnails: 3;
-$dialog-header-height: 29px;
-$dialog-header-padding-top: calc(30px / 2);
-$dialog-padding: 16px;
-$admin-bar-desktop-height: 32px;
-$admin-bar-mobile-height: 46px;
+$thumbnails-border-width: 1px;
+$dialog-padding: 20px;
 
-$full-height-desktop: calc(100vh - (2 * $dialog-header-height) - $dialog-header-padding-top);
-$full-height-desktop-admin-bar: calc($full-height-desktop - $admin-bar-desktop-height);
-$full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-height);
-
-@mixin full-height-admin {
-	.admin-bar & {
-		max-height: $full-height-desktop-admin-bar;
-	}
-
-	@media screen and (max-width: 782px) {
-		.admin-bar & {
-			max-height: $full-height-mobile-admin-bar;
-		}
-	}
-}
-
-// Product Gallery
-#{$gallery} {
-	dialog {
-		flex-direction: column;
-		position: fixed;
-		border: none;
-		top: 0;
-		z-index: 9999;
-		padding: $dialog-padding;
-		height: 100vh;
-
-		.admin-bar & {
-			margin-top: $admin-bar-desktop-height;
-
-			.wc-block-product-gallery-dialog__header {
-				padding-top: $dialog-header-padding-top;
-			}
-		}
-
-		@media screen and (max-width: 782px) {
-			.admin-bar & {
-				margin-top: $admin-bar-mobile-height;
-			}
-		}
-
-		.wc-block-product-galler-dialog__header-right {
-			display: flex;
-			justify-content: flex-end;
-
-			.wc-block-product-gallery-dialog__close {
-				border: none;
-				background-color: transparent;
-				outline: none;
-				cursor: pointer;
-			}
-		}
-
-		#{$large-image} {
-			img {
-				max-height: $full-height-desktop;
-				width: 100%;
-			}
-
-			.wc-block-product-gallery-large-image__container {
-				height: $full-height-desktop;
-				overflow: hidden;
-			}
-
-			img,
-			.wc-block-product-gallery-large-image__container {
-				@include full-height-admin();
-			}
-
-			.wc-block-product-gallery-large-image__wrapper {
-				align-items: center;
-			}
-		}
-
-		#{$next-previous} {
-			height: $full-height-desktop;
-			@include full-height-admin();
-		}
-	}
-}
-
-// Large Image
-#{$large-image} {
+.wc-block-product-gallery-large-image {
 	width: 100%;
 	height: fit-content;
 	position: relative;
 	flex-grow: 1;
-
-	// Restrict the width of the Large Image when the Next/Previous buttons are outside the image.
-	#{$gallery-next-previous-outside-image} & .wc-block-product-gallery-large-image__image-element {
-		margin-right: auto;
-		margin-left: auto;
-		width: 100%;
-		max-width: $outside-image-max-width;
-	}
 
 	.wc-block-product-gallery-large-image__container {
 		display: flex;
@@ -136,7 +32,7 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		scroll-snap-align: none center;
 	}
 
-	#{$gallery-next-previous-inside-image} & .wc-block-product-gallery-large-image__image-element {
+	.wc-block-product-gallery-large-image__image-element {
 		width: 100%;
 		overflow: hidden;
 		margin-right: auto;
@@ -173,24 +69,16 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		top: 5px;
 		left: 5px;
 
-		// Reset the margin of the inner blocks when the Next/Previous buttons are outside the image.
-		#{$gallery-next-previous-outside-image} & > * {
-			margin-left: $outside-image-offset;
-			margin-right: $outside-image-offset;
-		}
-
-		// Unset the margin of the inner blocks when the Next/Previous buttons are inside the image.
-		#{$gallery-next-previous-inside-image}  & > * {
+		> * {
 			margin-left: unset;
 			margin-right: unset;
 		}
 	}
 }
 
-// Next/Previous Buttons
-#{$next-previous} {
+.wc-block-product-gallery-large-image-next-previous {
 	display: flex;
-	position: absolute;
+	align-items: flex-end;
 	flex-direction: row;
 	justify-content: space-between;
 	width: 100%;
@@ -228,12 +116,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 	width: 100%;
 }
 
-// Next/Previous Buttons Off Setting
-#{$next-previous-left-off},
-#{$next-previous-right-off} {
-	display: none;
-}
-
 //  Next/Previous Buttons Inside the Image Settings
 .wc-block-product-gallery-large-image-next-previous-left--inside-image {
 	margin-left: 15px;
@@ -241,24 +123,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 
 .wc-block-product-gallery-large-image-next-previous-right--inside-image {
 	margin-right: 15px;
-}
-
-// Next/Previous Buttons Outside the Image Settings
-#{$gallery-next-previous-outside-image} .wc-block-product-gallery-large-image-next-previous-left--outside-image {
-	bottom: 0;
-	left: 0;
-	position: absolute;
-}
-
-#{$gallery-next-previous-outside-image} .wc-block-product-gallery-large-image-next-previous-right--outside-image {
-	bottom: 0;
-	right: 0;
-	position: absolute;
-}
-
-#{$gallery-next-previous-outside-image} #{$large-image} #{$next-previous} {
-	margin-right: 0;
-	margin-left: 0;
 }
 
 .wc-block-product-gallery-large-image-next-previous-container {
@@ -272,133 +136,50 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 		margin-top: 15px;
 		margin-bottom: 15px;
 	}
-}
 
-// Pager
-.wc-block-product-gallery-pager__pager {
-	display: flex;
-	justify-content: center;
-	list-style: none;
-	gap: $gap-small;
-	margin-top: 0;
-	margin-bottom: 0;
-	padding: 0;
-
-	button {
-		border: none;
-		background: none;
-		color: inherit;
-		font-size: inherit;
-		font-weight: inherit;
-		padding: 0;
-		cursor: pointer;
+	svg {
+		z-index: 1;
 	}
 }
 
-.wc-block-product-gallery-pager__pager-item {
-	@include font-size(regular);
-	color: $gray-600;
-	cursor: pointer;
-}
-
-.wc-block-product-gallery-pager__pager-item--is-active {
-	font-weight: bold;
-	color: $black;
-}
-
-// Thumbnails
-#{$thumbnails} {
+.wc-block-product-gallery-thumbnails {
 	display: flex;
+	gap: $thumbnails-gap;
 
-	img {
+	&__image {
 		cursor: pointer;
-		height: auto;
-		width: auto;
 		max-width: 100%;
-	}
-
-	#{$gallery}[data-thumbnails-position='bottom'] & {
-		flex-direction: row;
-		gap: 0 15px;
-	}
-
-	#{$gallery}:not([data-thumbnails-position='bottom']) & {
-		flex-direction: column;
-		gap: 15px 0;
-
-		// Calculate the total width occupied by the gaps between thumbnails.
-		$gap-width: $thumbnails-gap * ($default-number-of-thumbnails - 1);
-
-		// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-		$border-width: #{$default-number-of-thumbnails * 1px * 2};
-
-		// Calculate the width of each thumbnail by accounting for the gap, border, and additional space.
-		flex-basis: calc((100% - #{$gap-width} - #{$border-width} - 4px) / #{$default-number-of-thumbnails});
-	}
-
-	@for $i from 3 through 8 {
-		#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}']:not([data-thumbnails-position='bottom']) & {
-			// Calculate the total width occupied by the gaps between thumbnails.
-			$gap-width: $thumbnails-gap * ($i - 1);
-
-			// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-			$border-width: $i * 1px * 2;
-
-			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-		}
-	}
-
-	.wc-block-product-gallery-thumbnails__thumbnail {
-		border: 1px solid rgba($color: #000, $alpha: 0.1);
-		height: auto;
-		width: auto;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		aspect-ratio: 1 / 1;
-		position: relative;
+		object-fit: contain;
+	}
+
+	&__thumbnail {
+		border: $thumbnails-border-width solid rgba($color: #000, $alpha: 0.1);
+		display: flex;
 		flex-basis: 0;
 		flex-grow: 1;
-
-		img {
-			aspect-ratio: 1 / 1;
-			object-fit: contain;
-		}
-
-		&::before {
-			content: "";
-			display: block;
-			padding-top: 100%;
-		}
-
-		@for $i from 3 through 8 {
-			#{$gallery}[data-thumbnails-number-of-thumbnails='#{$i}'][data-thumbnails-position="bottom"] & {
-				// Calculate the total width occupied by the gaps between thumbnails.
-				$gap-width: $thumbnails-gap * ($i - 1);
-
-				// Calculate the border width, which is multiplied by 2 to account for both sides of each thumbnail.
-				$border-width: $i * 1px * 2;
-
-				$thumbnail-width: calc((100% - #{$gap-width} - #{$border-width}) / $i);
-
-				flex: 0 0 $thumbnail-width;
-			}
-		}
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		aspect-ratio: 1 / 1;
 	}
 
-	.wc-block-product-gallery-thumbnails__thumbnail__overlay {
+	&__thumbnail__overlay {
 		container-type: inline-size;
-		cursor: pointer;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		position: absolute;
+		cursor: pointer;
+		color: #fff;
 		background-color: rgba(0, 0, 0, 0.4);
-		top: 0;
-		width: 100%;
-		height: 100%;
 		line-height: 1.5;
+
 
 		.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count {
 			font-size: 1.2rem;
@@ -407,11 +188,6 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 
 		.wc-block-product-gallery-thumbnails__thumbnail__view-all {
 			text-decoration: underline;
-		}
-
-		.wc-block-product-gallery-thumbnails__thumbnail__remaining-thumbnails-count,
-		.wc-block-product-gallery-thumbnails__thumbnail__view-all {
-			color: #fff;
 		}
 
 		@container (width < 70px) {
@@ -445,6 +221,107 @@ $full-height-mobile-admin-bar: calc($full-height-desktop - $admin-bar-mobile-hei
 
 			.wc-block-product-gallery-thumbnails__thumbnail__view-all {
 				font-size: 1rem;
+			}
+		}
+	}
+}
+
+// Automattically react to the Group container settings.
+.is-nowrap .wc-block-product-gallery-thumbnails,
+.is-horizontal.is-nowrap .wc-block-product-gallery-thumbnails {
+	flex-direction: column;
+
+	@for $i from 3 through 8 {
+		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
+			$gap-width: $thumbnails-gap * ($i - 1);
+			$border-width: $i * $thumbnails-border-width * 2;
+
+			flex-basis: calc((100% - #{$gap-width} - #{$border-width}) / $i);
+		}
+	}
+}
+
+.is-vertical .wc-block-product-gallery-thumbnails,
+.is-horizontal .wc-block-product-gallery-thumbnails {
+	flex-direction: row;
+
+	@for $i from 3 through 8 {
+		&.wc-block-product-gallery-thumbnails--number-of-thumbnails-#{$i} {
+			$gap-width: $thumbnails-gap * ($i - 1);
+			$border-width: $i * $thumbnails-border-width * 2;
+
+			flex: 0 0 calc((100% - #{$gap-width} - #{$border-width}) / $i);
+		}
+	}
+}
+
+body.wc-block-product-gallery-dialog-open {
+	overflow: hidden;
+}
+
+.wc-block-product-gallery-dialog {
+	height: 100vh;
+	width: 100vw;
+	padding: 0;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+	overflow: hidden;
+
+	.admin-bar & {
+		// Subtract the admin bar height.
+		height: calc(100vh - $admin-bar-height);
+		top: $admin-bar-height;
+	}
+
+	&__close-button {
+		padding: 5px;
+		position: absolute;
+		right: 25px;
+		top: 25px;
+		background: none;
+		border: none;
+		cursor: pointer;
+	}
+
+	&__content {
+		// Subtract the top and bottom padding.
+		height: calc(100vh - ($dialog-padding * 2));
+		overflow: hidden;
+		padding: 20px 0;
+
+		@media (min-width: 765px) {
+			padding: 20px 0;
+		}
+
+		.admin-bar & {
+			// Subtract the admin bar height.
+			height: calc(100vh - ($dialog-padding * 2) - $admin-bar-height);
+		}
+	}
+
+	&__images-container {
+		height: 100%;
+		overflow-y: auto;
+		box-sizing: border-box;
+		padding: 3px 0;
+	}
+
+	&__images {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		img {
+			max-width: 100%;
+			height: auto;
+			margin-bottom: 20px;
+
+			&:last-child {
+				margin-bottom: 0;
 			}
 		}
 	}

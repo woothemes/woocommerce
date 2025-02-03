@@ -1,4 +1,0 @@
-Significance: patch
-Type: fix
-
-Only calls misc recommendations API when the current user can install plugin.

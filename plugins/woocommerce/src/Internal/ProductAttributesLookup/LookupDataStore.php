@@ -5,7 +5,9 @@
 
 namespace Automattic\WooCommerce\Internal\ProductAttributesLookup;
 
+use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Enums\CatalogVisibility;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\StringUtil;
 
@@ -235,7 +237,7 @@ class LookupDataStore {
 
 		if ( in_array( 'catalog_visibility', $keys, true ) ) {
 			$new_visibility = $changeset['catalog_visibility'];
-			if ( 'visible' === $new_visibility || 'catalog' === $new_visibility ) {
+			if ( CatalogVisibility::VISIBLE === $new_visibility || CatalogVisibility::CATALOG === $new_visibility ) {
 				return self::ACTION_INSERT;
 			} else {
 				return self::ACTION_DELETE;
@@ -897,7 +899,7 @@ class LookupDataStore {
 		$variation_ids                 = $is_variation ? array( $product_id ) : array_keys( array_diff_key( $product_ids_with_stock_status, array( $product_id => null ) ) );
 		$product_ids_with_stock_status = ArrayUtil::select( $product_ids_with_stock_status, 'stock_status' );
 
-		$product_ids_with_stock_status = array_map( fn( $item ) => 'instock' === $item ? 1 : 0, $product_ids_with_stock_status );
+		$product_ids_with_stock_status = array_map( fn( $item ) => ProductStockStatus::IN_STOCK === $item ? 1 : 0, $product_ids_with_stock_status );
 
 		// * Obtain the list of attributes used for variations and not.
 		// Output: two lists of attribute slugs, all starting with 'pa_'.

@@ -51,7 +51,6 @@
 				"@wordpress/dom",
 				"@wordpress/dom-ready",
 				"@wordpress/e2e-test-utils",
-				"@wordpress/e2e-test-utils-playwright",
 				"@wordpress/e2e-tests",
 				"@wordpress/element",
 				"@wordpress/html-entities",
@@ -264,7 +263,7 @@
 				"@woocommerce/block-library",
 				"**"
 			],
-			"pinVersion": "10.14.0"
+			"pinVersion": "10.17.0"
 		},
 		{
 			"dependencies": [
@@ -273,7 +272,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "wp-6.6"
+			"pinVersion": "^1.15.0"
 		},
 		{
 			"dependencies": [
@@ -445,7 +444,7 @@
 			"packages": [
 				"**"
 			],
-			"pinVersion": "0.14.3"
+			"pinVersion": "0.14.10"
 		},
 		{
 			"dependencies": [

@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Ensure that category slugs with non-latin characters do not cause a redirection loop

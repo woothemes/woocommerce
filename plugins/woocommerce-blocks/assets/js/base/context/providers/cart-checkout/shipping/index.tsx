@@ -10,7 +10,7 @@ import {
 	useRef,
 } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { checkoutStore } from '@woocommerce/block-data';
 
 /**
  * Internal dependencies
@@ -45,7 +45,7 @@ export const ShippingDataProvider = ( {
 	children,
 }: ShippingDataProviderProps ) => {
 	const { __internalIncrementCalculating, __internalDecrementCalculating } =
-		useDispatch( CHECKOUT_STORE_KEY );
+		useDispatch( checkoutStore );
 	const { shippingRates, isLoadingRates, cartErrors } = useStoreCart();
 	const { selectedRates, isSelectingRate } = useShippingData();
 	const [ shippingErrorStatus, dispatchErrorStatus ] = useReducer(

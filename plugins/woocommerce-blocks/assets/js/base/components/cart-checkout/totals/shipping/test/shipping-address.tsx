@@ -3,7 +3,7 @@
  */
 import { render, screen, within } from '@testing-library/react';
 import ShippingAddress from '@woocommerce/base-components/cart-checkout/totals/shipping/shipping-address';
-import { CART_STORE_KEY, CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { CART_STORE_KEY, checkoutStore } from '@woocommerce/block-data';
 import { ShippingCalculatorContext } from '@woocommerce/base-components/cart-checkout';
 import { dispatch } from '@wordpress/data';
 import { previewCart } from '@woocommerce/resource-previews';
@@ -22,6 +22,22 @@ jest.mock( '@woocommerce/settings', () => {
 			}
 			if ( setting === 'collectableMethodIds' ) {
 				return [ 'pickup_location' ];
+			}
+			if ( setting === 'localPickupLocations' ) {
+				return {
+					'1': {
+						enabled: true,
+						name: 'Local pickup #1',
+						formatted_address: '123 Easy Street',
+						details: 'Details for Local pickup #1',
+					},
+					'2': {
+						enabled: true,
+						name: 'Local pickup #2',
+						formatted_address: '456 Main St',
+						details: 'Details for Local pickup #2',
+					},
+				};
 			}
 			return originalModule.getSetting( setting, ...rest );
 		},
@@ -95,7 +111,7 @@ describe( 'ShippingAddress', () => {
 	} );
 
 	it( 'Renders pickup location if shopper prefers collection', async () => {
-		dispatch( CHECKOUT_STORE_KEY ).setPrefersCollection( true );
+		dispatch( checkoutStore ).setPrefersCollection( true );
 
 		// Deselect the default selected rate and select pickup_location:1 rate.
 		const currentlySelectedIndex =
@@ -140,7 +156,7 @@ describe( 'ShippingAddress', () => {
 	} );
 
 	it( `renders an address if one is set in the methods metadata`, async () => {
-		dispatch( CHECKOUT_STORE_KEY ).setPrefersCollection( true );
+		dispatch( checkoutStore ).setPrefersCollection( true );
 
 		// Deselect the default selected rate and select pickup_location:1 rate.
 		const currentlySelectedIndex =
@@ -184,7 +200,7 @@ describe( 'ShippingAddress', () => {
 		).toBeInTheDocument();
 	} );
 	it( 'renders no address if one is not set in the methods metadata', async () => {
-		dispatch( CHECKOUT_STORE_KEY ).setPrefersCollection( true );
+		dispatch( checkoutStore ).setPrefersCollection( true );
 
 		// Deselect the default selected rate and select pickup_location:1 rate.
 		const currentlySelectedIndex =

@@ -690,7 +690,42 @@ class WC_REST_System_Status_V2_Controller extends WC_REST_Controller {
 					'context'     => array( 'view' ),
 					'readonly'    => true,
 					'items'       => array(
-						'type' => 'string',
+						'type'       => 'object',
+						'properties' => array(
+							'page_name'          => array(
+								'type' => 'string',
+							),
+							'page_id'            => array(
+								'type' => 'string',
+							),
+							'page_set'           => array(
+								'type' => 'boolean',
+							),
+							'page_exists'        => array(
+								'type' => 'boolean',
+							),
+							'page_visible'       => array(
+								'type' => 'boolean',
+							),
+							'shortcode'          => array(
+								'type' => 'string',
+							),
+							'block'              => array(
+								'type' => 'string',
+							),
+							'shortcode_required' => array(
+								'type' => 'boolean',
+							),
+							'shortcode_present'  => array(
+								'type' => 'boolean',
+							),
+							'block_present'      => array(
+								'type' => 'boolean',
+							),
+							'block_required'     => array(
+								'type' => 'boolean',
+							),
+						),
 					),
 				),
 				'post_type_counts'   => array(
@@ -1455,7 +1490,7 @@ class WC_REST_System_Status_V2_Controller extends WC_REST_Controller {
 							return $shortcode;
 						}
 					}
-					return false;
+					return '';
 				},
 				'block_callback'     => function ( $page ) {
 					if ( $page ) {
@@ -1466,7 +1501,7 @@ class WC_REST_System_Status_V2_Controller extends WC_REST_Controller {
 							return 'woocommerce/classic-shortcode';
 						}
 					}
-					return false;
+					return '';
 				},
 			),
 			_x( 'Checkout', 'Page setting', 'woocommerce' ) => array(
@@ -1480,7 +1515,7 @@ class WC_REST_System_Status_V2_Controller extends WC_REST_Controller {
 							return $shortcode;
 						}
 					}
-					return false;
+					return '';
 				},
 				'block_callback'     => function ( $page ) {
 					if ( $page ) {
@@ -1491,7 +1526,7 @@ class WC_REST_System_Status_V2_Controller extends WC_REST_Controller {
 							return 'woocommerce/classic-shortcode';
 						}
 					}
-					return false;
+					return '';
 				},
 			),
 			_x( 'My account', 'Page setting', 'woocommerce' ) => array(
@@ -1513,9 +1548,9 @@ class WC_REST_System_Status_V2_Controller extends WC_REST_Controller {
 			$shortcode_required = false;
 			$block_present      = false;
 			$block_required     = false;
-			$block              = false;
-			$shortcode          = false;
 			$page               = false;
+			$block              = '';
+			$shortcode          = '';
 
 			// Page checks.
 			if ( $page_id ) {
