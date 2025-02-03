@@ -266,6 +266,9 @@ class WC_Settings_General extends WC_Settings_Page {
 					'default'  => ',',
 					'type'     => 'text',
 					'desc_tip' => true,
+					'custom_attributes' => array(
+						'pattern'  => '[^a-zA-Z\d]{1}',
+					),
 				),
 
 				array(
@@ -276,6 +279,9 @@ class WC_Settings_General extends WC_Settings_Page {
 					'default'  => '.',
 					'type'     => 'text',
 					'desc_tip' => true,
+					'custom_attributes' => array(
+						'pattern'  => '[^a-zA-Z\d]{1}',
+					),
 				),
 
 				array(
