@@ -38,9 +38,7 @@ const Slot = ( {
 }: ExperimentalOrderLocalPickupPackagesProps ) => {
 	return (
 		<OrderLocalPickupPackagesSlot
-			className={ clsx(
-				'wc-block-components-local-pickup-rates-control'
-			) }
+			className={ clsx( 'wc-block-components-rates-control' ) }
 			fillProps={ {
 				extensions,
 				cart,
