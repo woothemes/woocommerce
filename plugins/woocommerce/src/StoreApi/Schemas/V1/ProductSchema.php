@@ -362,6 +362,17 @@ class ProductSchema extends AbstractSchema {
 					],
 				],
 			],
+			'grouped_products'    => [
+				'description' => __( 'List of grouped product IDs, if applicable.', 'woocommerce' ),
+				'type'        => 'array',
+				'context'     => [ 'view', 'edit' ],
+				'items'       => [
+					'description' => __( 'List of grouped product ids.', 'woocommerce' ),
+					'type'        => 'integer',
+					'context'     => [ 'view', 'edit' ],
+					'readonly'    => true,
+				],
+			],
 			'has_options'         => [
 				'description' => __( 'Does the product have additional options before it can be added to the cart?', 'woocommerce' ),
 				'type'        => 'boolean',
@@ -496,6 +507,7 @@ class ProductSchema extends AbstractSchema {
 			'tags'                => $this->get_term_list( $product, 'product_tag' ),
 			'attributes'          => $this->get_attributes( $product ),
 			'variations'          => $this->get_variations( $product ),
+			'grouped_products'    => $this->get_grouped_products( $product ),
 			'has_options'         => $product->has_options(),
 			'is_purchasable'      => $product->is_purchasable(),
 			'is_in_stock'         => $product->is_in_stock(),
@@ -689,6 +701,16 @@ class ProductSchema extends AbstractSchema {
 	}
 
 	/**
+	 * Get grouped product IDs.
+	 *
+	 * @param \WC_Product $product Product instance.
+	 * @return array
+	 */
+	protected function get_grouped_products( \WC_Product $product ) {
+		return $product->is_type( ProductType::GROUPED ) ? $product->get_visible_child_ids() : [];
+	}
+
+	/**
 	 * Get list of product attributes and attribute terms.
 	 *
 	 * @param \WC_Product $product Product instance.
@@ -826,7 +848,7 @@ class ProductSchema extends AbstractSchema {
 		}
 
 		if ( $product->is_type( ProductType::GROUPED ) ) {
-			$children       = array_filter( array_map( 'wc_get_product', $product->get_children() ), 'wc_products_array_filter_visible_grouped' );
+			$children       = $product->get_visible_children();
 			$price_function = 'incl' === $tax_display_mode ? 'wc_get_price_including_tax' : 'wc_get_price_excluding_tax';
 
 			foreach ( $children as $child ) {
