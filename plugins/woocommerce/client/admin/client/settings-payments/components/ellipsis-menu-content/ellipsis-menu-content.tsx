@@ -11,6 +11,7 @@ import {
 } from '@woocommerce/data';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -120,6 +121,11 @@ export const EllipsisMenuContent = ( {
 	 * Disables the payment gateway from payment processing.
 	 */
 	const disableGateway = () => {
+		// Record the event when user clicks on a gateway's disable button.
+		recordEvent( 'settings_payments_provider_disable_click', {
+			provider_id: providerId,
+		} );
+
 		const gatewayToggleNonce =
 			window.woocommerce_admin.nonces?.gateway_toggle || '';
 
@@ -136,6 +142,11 @@ export const EllipsisMenuContent = ( {
 			gatewayToggleNonce
 		)
 			.then( () => {
+				// Record the event when user successfully disables a gateway.
+				recordEvent( 'settings_payments_provider_disable', {
+					provider_id: providerId,
+				} );
+
 				invalidateResolutionForStoreSelector( 'getPaymentProviders' );
 				setIsDisabling( false );
 				onToggle();

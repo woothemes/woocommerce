@@ -14,6 +14,7 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { getHistory, getNewPath } from '@woocommerce/navigation';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -63,10 +64,12 @@ export const SettingsPaymentsMain = () => {
 			?.business_country_code || null
 	);
 
-	const urlParams = new URLSearchParams( window.location.search );
-
-	// Effect for handling URL parameters and displaying messages or modals.
 	useEffect( () => {
+		// Record the page view event
+		recordEvent( 'settings_payments_pageview' );
+
+		// Handle URL parameters and display messages or modals.
+		const urlParams = new URLSearchParams( window.location.search );
 		const isAccountTestDriveError =
 			urlParams.get( 'test_drive_error' ) === 'true';
 		if ( isAccountTestDriveError ) {
@@ -236,6 +239,11 @@ export const SettingsPaymentsMain = () => {
 					invalidateResolutionForStoreSelector(
 						'getPaymentProviders'
 					);
+
+					// Record the plugin installation event.
+					recordEvent( 'settings_payments_provider_installed', {
+						provider_id: id,
+					} );
 
 					// Wait for the state update and fetch the latest providers.
 					const updatedProviders = await resolveSelect(
