@@ -163,6 +163,30 @@ MESSAGE;
 		);
 	}
 
+	private function get_mock_exception( string $message, int $code, \Throwable $previous = null ): \Exception {
+		$exception = new \Exception( $message, $code, $previous );
+
+		$ref = new \ReflectionProperty( $exception, 'trace' );
+		$ref->setAccessible( true );
+		$ref->setValue( $exception, array(
+			array(
+				'file' => 'test.trace.php',
+				'line' => 100
+			)
+		));
+
+		$ref = new \ReflectionProperty( $exception, 'file' );
+		$ref->setAccessible( true );
+		$ref->setValue( $exception, 'test.file.php' );
+
+		$ref = new \ReflectionProperty( $exception, 'line' );
+		$ref->setAccessible( true );
+		$ref->setValue( $exception, 100 );
+
+		return $exception;
+	}
+
+
 	/**
 	 * Data provider for test_handle_context_output.
 	 *
@@ -202,6 +226,112 @@ MESSAGE;
 			array( 'backtrace' => 'Not actually a backtrace' ),
 			$context_delineator . '{"backtrace":"Not actually a backtrace"}',
 		);
+		yield 'array with too many items' => array(
+			array( 'ctx' => array_fill( 0, 1001, 'foo' ) ),
+			$context_delineator . wp_json_encode( array( 'ctx' => array_fill( 0, 1000, 'foo' ) + array( '...' => 'Over 1000 items (1001 total), aborting normalization' ) ) ),
+		);
+		yield 'array with too many levels' => array(
+			array( 'ctx' => array( 'foo' => array( 'bar' => array( 'baz' => array( 'qux' => array( 'quux' => array( 'corge' => array( 'grault' => array( 'garply' => array( 'waldo' => array( 'fred' => 'plugh' ) ) ) ) ) ) ) ) ) ) ),
+			$context_delineator . '{"ctx":{"foo":{"bar":{"baz":{"qux":{"quux":{"corge":{"grault":{"garply":{"waldo":"Over 9 levels deep, aborting normalization"}}}}}}}}}}',
+		);
+		yield 'DateTime' => array(
+			array( 'ctx' => new \DateTime( '2023-01-01 12:34:56', new \DateTimeZone( 'Europe/Warsaw' ) ) ),
+			$context_delineator . '{"ctx":"2023-01-01T12:34:56+01:00"}',
+		);
+
+		$json_serializable = new class() implements \JsonSerializable {
+			public function jsonSerialize() {
+				return array( 'foo' => 'bar' );
+			}
+		};
+		yield 'JsonSerializable' => array(
+			array( 'ctx' => $json_serializable ),
+			$context_delineator . stripslashes( wp_json_encode( array( 'ctx' => array( get_class( $json_serializable ) => array( 'foo' => 'bar' ) ) ) ) ),
+		);
+
+		yield 'incomplete class' => array(
+			array( 'ctx' => unserialize( 'O:1:"X":0:{}' ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
+			$context_delineator . '{"ctx":{"__PHP_Incomplete_Class":"X"}}',
+		);
+
+		$to_string = new class() {
+			public function __toString(): string {
+				return 'foo';
+			}
+		};
+		yield 'object with __toString' => array(
+			array( 'ctx' => $to_string ),
+			$context_delineator . stripslashes( wp_json_encode( array( 'ctx' => array( get_class( $to_string ) => 'foo' ) ) ) ),
+		);
+
+		$to_string_exception = new class() {
+			public function __toString(): string {
+				throw new \Exception( 'foo' );
+			}
+		};
+		yield 'object with __toString throwing exception' => array(
+			array( 'ctx' => $to_string_exception ),
+			$context_delineator . stripslashes( wp_json_encode( array( 'ctx' => array( get_class( $to_string_exception ) => array() ) ) ) ),
+		);
+		yield 'object without __toString' => array(
+			array( 'ctx' => new \stdClass() ),
+			$context_delineator . '{"ctx":{"stdClass":[]}}',
+		);
+		yield 'resource' => array(
+			array( 'ctx' => fopen( 'php://memory', 'r' ) ),
+			$context_delineator . '{"ctx":"[resource(stream)]"}',
+		);
+
+		yield 'exception' => array(
+			array('ctx' => $this->get_mock_exception('foo', 123) ),
+			$context_delineator . wp_json_encode(array('ctx' => array(
+				'class'   => 'Exception',
+				'message' => 'foo',
+				'code'    => 123,
+				'file'    => 'test.file.php:100',
+				'trace'   => array(
+					'test.trace.php:100'
+				),
+			)), \JSON_UNESCAPED_UNICODE),
+		);
+		yield 'exception with previous' => array(
+			array( 'ctx' => $this->get_mock_exception( 'foo', 123, $this->get_mock_exception( 'bar', 456 ) )),
+			$context_delineator . wp_json_encode(array('ctx' => array(
+				'class'    => 'Exception',
+				'message'  => 'foo',
+				'code'     => 123,
+				'file'    => 'test.file.php:100',
+				'trace'    => array(
+					'test.trace.php:100'
+				),
+				'previous' => array(
+					'class'   => 'Exception',
+					'message' => 'bar',
+					'code'    => 456,
+					'file'    => 'test.file.php:100',
+					'trace'   => array(
+						'test.trace.php:100'
+					),
+				),
+			))),
+		);
+		if ( class_exists( \SoapFault::class ) ) {
+			yield 'SoapFault' => array(
+				array( 'ctx' => new \SoapFault( 'foo', 'bar', 'baz', 'qux' ) ),
+				$context_delineator . wp_json_encode(array('ctx' => array(
+					'class'     => 'SoapFault',
+					'message'   => 'bar',
+					'code'      => 0,
+					'file'      => 'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ - 6),
+					'faultcode' => 'foo',
+					'faultactor' => 'baz',
+					'detail'    => 'qux',
+					'trace'     => array(
+						'tests/php/src/Internal/Admin/Logging/LogHandlerFileV2Test.php:' . (__LINE__ + 2),
+					),
+				))),
+			);
+		}
 	}
 
 	/**

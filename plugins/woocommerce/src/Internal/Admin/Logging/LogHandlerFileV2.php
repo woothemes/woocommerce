@@ -24,6 +24,12 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 	 */
 	private $settings;
 
+	/** @var int */
+	private static $max_normalize_depth = 9;
+
+	/** @var int */
+	private static $max_normalize_item_count = 1000;
+
 	/**
 	 * LogHandlerFileV2 class.
 	 */
@@ -88,7 +94,7 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 		unset( $context_for_entry['source'] );
 
 		if ( ! empty( $context_for_entry ) ) {
-			$formatted_context = wp_json_encode( $context_for_entry, JSON_UNESCAPED_UNICODE );
+			$formatted_context = wp_json_encode( self::normalize( $context_for_entry ), JSON_UNESCAPED_UNICODE );
 			$message          .= stripslashes( " CONTEXT: $formatted_context" );
 		}
 
@@ -107,6 +113,139 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 			)
 		);
 		// phpcs:enable WooCommerce.Commenting.CommentHooks.MissingSinceComment
+	}
+
+	/**
+	 * @param mixed $data
+	 *
+	 * @return null|scalar|array<mixed[]|scalar|null>
+	 */
+	private static function normalize( $data, int $depth = 0 ) {
+		if ( $depth > self::$max_normalize_depth ) {
+			return 'Over ' . self::$max_normalize_depth . ' levels deep, aborting normalization';
+		}
+
+		if ( null === $data || \is_scalar( $data ) ) {
+			if ( \is_float( $data ) ) {
+				if ( is_infinite( $data ) ) {
+					return ( $data > 0 ? '' : '-' ) . 'INF';
+				}
+				if ( is_nan( $data ) ) {
+					return 'NaN';
+				}
+			}
+
+			return $data;
+		}
+
+		if ( \is_array( $data ) ) {
+			$normalized = array();
+
+			$count = 1;
+			foreach ( $data as $key => $value ) {
+				if ( $count++ > self::$max_normalize_item_count ) {
+					$normalized['...'] = 'Over ' . self::$max_normalize_item_count . ' items (' . \count( $data ) . ' total), aborting normalization';
+					break;
+				}
+
+				$normalized[ $key ] = self::normalize( $value, $depth + 1 );
+			}
+
+			return $normalized;
+		}
+
+		if ( $data instanceof \DateTimeInterface ) {
+			return $data->format( 'Y-m-d\TH:i:sP' );
+		}
+
+		if ( \is_object( $data ) ) {
+			if ( $data instanceof \Throwable ) {
+				return self::normalize_exception( $data, $depth );
+			}
+
+			if ( $data instanceof \JsonSerializable ) {
+				/** @var null|scalar|array<mixed[]|scalar|null> $value */
+				$value = $data->jsonSerialize();
+			} elseif ( \get_class( $data ) === '__PHP_Incomplete_Class' ) {
+				$accessor = new \ArrayObject( $data );
+				$value    = (string) $accessor['__PHP_Incomplete_Class_Name'];
+			} elseif ( method_exists( $data, '__toString' ) ) {
+				try {
+					/** @var string $value */
+					$value = $data->__toString();
+				} catch ( \Throwable $t ) {
+					// if the toString method is failing, use the default behavior
+					/** @var null|scalar|array<mixed[]|scalar|null> $value */
+					$value = json_decode( wp_json_encode( $data, JSON_UNESCAPED_UNICODE ), true );
+				}
+			} else {
+				// the rest is normalized by json encoding and decoding it
+				/** @var null|scalar|array<mixed[]|scalar|null> $value */
+				$value = json_decode( wp_json_encode( $data, JSON_UNESCAPED_UNICODE ), true );
+			}
+
+			return array( get_class( $data ) => $value );
+		}
+
+		if ( \is_resource( $data ) ) {
+			return sprintf( '[resource(%s)]', get_resource_type( $data ) );
+		}
+
+		return '[unknown(' . \gettype( $data ) . ')]';
+	}
+
+	/**
+	 * @return array<array-key, string|int|array<string|int|array<string>>>
+	 */
+	private static function normalize_exception( \Throwable $e, int $depth = 0 ) {
+		if ( $depth > self::$max_normalize_depth ) {
+			return array( 'Over ' . self::$max_normalize_depth . ' levels deep, aborting normalization' );
+		}
+
+		if ( $e instanceof \JsonSerializable ) {
+			return (array) $e->jsonSerialize();
+		}
+
+		$file = preg_replace( '{^' . preg_quote( ABSPATH ) . '}', '', $e->getFile() );
+
+		$data = array(
+			'class'   => get_class( $e ),
+			'message' => $e->getMessage(),
+			'code'    => (int) $e->getCode(),
+			'file'    => $file . ':' . $e->getLine(),
+		);
+
+		if ( $e instanceof \SoapFault ) {
+			if ( isset( $e->faultcode ) ) {
+				$data['faultcode'] = $e->faultcode;
+			}
+
+			if ( isset( $e->faultactor ) ) {
+				$data['faultactor'] = $e->faultactor;
+			}
+
+			if ( isset( $e->detail ) ) {
+				if ( \is_string( $e->detail ) ) {
+					$data['detail'] = $e->detail;
+				} elseif ( \is_object( $e->detail ) || \is_array( $e->detail ) ) {
+					$data['detail'] = wp_json_encode( $e->detail, JSON_UNESCAPED_UNICODE );
+				}
+			}
+		}
+
+		$trace = $e->getTrace();
+		foreach ( $trace as $frame ) {
+			if ( isset( $frame['file'], $frame['line'] ) ) {
+				$file            = preg_replace( '{^' . preg_quote( ABSPATH ) . '}', '', $frame['file'] );
+				$data['trace'][] = $file . ':' . $frame['line'];
+			}
+		}
+
+		if ( ( $previous = $e->getPrevious() ) instanceof \Throwable ) {
+			$data['previous'] = self::normalize_exception( $previous, $depth + 1 );
+		}
+
+		return $data;
 	}
 
 	/**
@@ -245,7 +384,7 @@ class LogHandlerFileV2 extends WC_Log_Handler {
 
 		$files = array_filter(
 			$files,
-			function( $file ) use ( $timestamp ) {
+			function ( $file ) use ( $timestamp ) {
 				/**
 				 * Allows preventing an expired log file from being deleted.
 				 *
